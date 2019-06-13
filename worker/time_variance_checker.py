@@ -15,11 +15,13 @@ from tools.rabbit import publish
 from core.state import state
 from core.state import phase
 from core.state import set_dataset_state
-from core.state import set_item_state
+from core.state import get_processed_items_count
+from core.state import get_total_items_count
+from core.state import get_dataset
+from time_variance import processor
+consume_routing_key = "_dataset_checker"
 
-consume_routing_key = "_ocds_kingfisher_extractor_init"
-
-routing_key = "_ocds_kingfisher_extractor"
+routing_key = "_time_variance_checker"
 
 
 @click.command()
@@ -36,24 +38,26 @@ def callback(channel, method, properties, body):
     try:
         input_message = json.loads(body.decode('utf8'))
 
-        dataset_id = input_message["dataset_id"] + "_" + datetime.now().strftime('%Y%m%d_%H%M%S')
+        dataset_id = input_message["dataset_id"]
 
-        logger.info(
-            "Reading kingfisher data started. Dataset: {} processing_id: {}".format(
-                input_message["dataset_id"],
-                dataset_id))
+        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.TIME_VARIANCE)
 
-        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=3)
+        commit()
 
-        for i in range(5, 8):
+        logger.info("Time variance level checks calculation started for {}".format(dataset_id))
 
-            item_id = i
+        processor.do_work(dataset_id)
 
-            message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(item_id, dataset_id)
+        set_dataset_state(dataset_id, state.OK, phase.TIME_VARIANCE)
 
-            set_item_state(dataset_id, item_id, state.IN_PROGRESS)
+        commit()
 
-            publish(message, get_param("exchange_name") + routing_key)
+        logger.info("Time variance level checks calculated for {}".format(dataset_id))
+
+        message = """{{"dataset_id":"{}"}}""".format(dataset_id)
+
+        publish(message, get_param("exchange_name") + routing_key)
+
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
         logger.exception(
@@ -65,12 +69,12 @@ def init_worker(environment):
     init(environment)
 
     global logger
-    logger = init_logger("ocds_kingfisher_extractor")
+    logger = init_logger("time_variance_checker")
 
     global cursor
     cursor = get_cursor()
 
-    logger.debug("OCDS Kingfisher extractor initialized.")
+    logger.debug("Time variance checker started.")
 
 
 if __name__ == '__main__':
