@@ -19,6 +19,8 @@ from core.state import get_processed_items_count
 from core.state import get_total_items_count
 from core.state import get_dataset
 from time_variance import processor
+
+
 consume_routing_key = "_dataset_checker"
 
 routing_key = "_time_variance_checker"
