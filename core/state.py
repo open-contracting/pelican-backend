@@ -15,6 +15,7 @@ class phase():
     CONTRACTING_PROCESS = "CONTRACTING_PROCESS"
     DATASET = "DATASET"
     TIME_VARIANCE = "TIME_VARIANCE"
+    DONE = "DONE"
 
 
 def set_dataset_state(dataset_id, state, phase, size=None):

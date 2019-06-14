@@ -38,26 +38,23 @@ def start(environment):
 
 def callback(channel, method, properties, body):
     try:
+        # read and parse message
         input_message = json.loads(body.decode('utf8'))
-
         dataset_id = input_message["dataset_id"]
 
+        # mark dataset as beeing processed
         set_dataset_state(dataset_id, state.IN_PROGRESS, phase.TIME_VARIANCE)
-
-        commit()
-
         logger.info("Time variance level checks calculation started for {}".format(dataset_id))
 
+        # do actual calculations
         processor.do_work(dataset_id)
 
+        # all done, mark as completed
         set_dataset_state(dataset_id, state.OK, phase.TIME_VARIANCE)
-
-        commit()
-
         logger.info("Time variance level checks calculated for {}".format(dataset_id))
 
+        # send messages into next phases
         message = """{{"dataset_id":"{}"}}""".format(dataset_id)
-
         publish(message, get_param("exchange_name") + routing_key)
 
         channel.basic_ack(delivery_tag=method.delivery_tag)

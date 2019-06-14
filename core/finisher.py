@@ -3,6 +3,7 @@ import click
 import json
 import sys
 
+from datetime import datetime
 from settings.settings import get_param
 from settings.settings import init
 from tools.logging_helper import init_logger
@@ -12,13 +13,15 @@ from tools.db import rollback
 from tools.rabbit import consume
 from tools.rabbit import publish
 from core.state import state
-from core.state import set_item_state
-from contracting_process import processor
+from core.state import phase
+from core.state import set_dataset_state
+from core.state import get_processed_items_count
+from core.state import get_total_items_count
+from core.state import get_dataset
+from time_variance import processor
 
 
-consume_routing_key = "_ocds_kingfisher_extractor"
-
-routing_key = "_contracting_process_checker"
+consume_routing_key = "_time_variance_checker"
 
 
 @click.command()
@@ -33,24 +36,17 @@ def start(environment):
 
 def callback(channel, method, properties, body):
     try:
-        # parse input message
+        # read and parse message
         input_message = json.loads(body.decode('utf8'))
         dataset_id = input_message["dataset_id"]
-        item_id = input_message["item_id"]
 
-        logger.info("Processing message for dataset {} and item {}".format(dataset_id, item_id))
+        # mark dataset as beeing finished
+        set_dataset_state(dataset_id, state.OK, phase.DONE)
+        logger.info("All the work done for {}".format(dataset_id))
 
-        # perform actual action with the item
-        processor.do_work(item_id)
+        # perform finish actions
+        # send mails etc.
 
-        # set state of processed item
-        set_item_state(dataset_id, item_id, state.OK)
-
-        # send message to nect phase
-        message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(item_id, dataset_id)
-        publish(message, get_param("exchange_name") + routing_key)
-
-        # acknowledge message processing
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
         logger.exception(
@@ -62,12 +58,12 @@ def init_worker(environment):
     init(environment)
 
     global logger
-    logger = init_logger("contracting_process_checker")
+    logger = init_logger("finisher_worker")
 
     global cursor
     cursor = get_cursor()
 
-    logger.info("Contracting process checker initialised")
+    logger.debug("Finisher worker started.")
 
 
 if __name__ == '__main__':
