@@ -1,20 +1,15 @@
 #!/usr/bin/env python
-import click
 import json
 import sys
 
-from settings.settings import get_param
-from settings.settings import init
-from tools.logging_helper import init_logger
-from tools.db import commit
-from tools.db import get_cursor
-from tools.db import rollback
-from tools.rabbit import consume
-from tools.rabbit import publish
-from core.state import state
-from core.state import set_item_state
-from contracting_process import processor
+import click
 
+from contracting_process import processor
+from core.state import set_item_state, state
+from settings.settings import get_param, init
+from tools.db import commit, get_cursor, rollback
+from tools.logging_helper import init_logger
+from tools.rabbit import consume, publish
 
 consume_routing_key = "_ocds_kingfisher_extractor"
 
@@ -40,8 +35,17 @@ def callback(channel, method, properties, body):
 
         logger.info("Processing message for dataset {} and item {}".format(dataset_id, item_id))
 
+        # get item from storage
+        cursor.execute("""
+            SELECT data
+            FROM data_item
+            WHERE id = %s;
+            """, (int(item_id),))
+
+        item = cursor.fetchone()[0]
+
         # perform actual action with the item
-        processor.do_work(item_id)
+        processor.do_work(item)
 
         # set state of processed item
         set_item_state(dataset_id, item_id, state.OK)

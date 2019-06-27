@@ -17,12 +17,13 @@ from tools.rabbit import consume, publish
 @click.command()
 @click.argument("environment")
 @click.argument("dataset_id")
-def start(environment, dataset_id):
-    init_worker(environment, dataset_id)
+@click.argument("collection_id")
+def start(environment, dataset_id, collection_id):
+    init_worker(environment)
 
     routing_key = "_ocds_kingfisher_extractor_init"
 
-    message = """{{"dataset_id":"{}"}}""".format(dataset_id)
+    message = """{{"dataset_id":"{}", "collection_id":"{}"}}""".format(dataset_id, collection_id)
     publish(message, get_param("exchange_name") + routing_key)
 
     return
