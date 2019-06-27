@@ -3,7 +3,6 @@ import pika
 from settings.settings import get_param
 from tools.logging_helper import get_logger
 
-
 global connected
 connected = False
 

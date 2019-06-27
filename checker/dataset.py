@@ -1,25 +1,17 @@
 #!/usr/bin/env python
-import click
 import json
 import sys
-
 from datetime import datetime
-from settings.settings import get_param
-from settings.settings import init
-from tools.logging_helper import init_logger
-from tools.db import commit
-from tools.db import get_cursor
-from tools.db import rollback
-from tools.rabbit import consume
-from tools.rabbit import publish
-from core.state import state
-from core.state import phase
-from core.state import set_dataset_state
-from core.state import get_processed_items_count
-from core.state import get_total_items_count
-from core.state import get_dataset
-from dataset import processor
 
+import click
+
+from core.state import (get_dataset, get_processed_items_count,
+                        get_total_items_count, phase, set_dataset_state, state)
+from dataset import processor
+from settings.settings import get_param, init
+from tools.db import commit, get_cursor, rollback
+from tools.logging_helper import init_logger
+from tools.rabbit import consume, publish
 
 consume_routing_key = "_contracting_process_checker"
 

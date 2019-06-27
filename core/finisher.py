@@ -41,7 +41,7 @@ def callback(channel, method, properties, body):
         dataset_id = input_message["dataset_id"]
 
         # mark dataset as beeing finished
-        set_dataset_state(dataset_id, state.OK, phase.DONE)
+        set_dataset_state(dataset_id, state.OK, phase.CHECKED)
         logger.info("All the work done for {}".format(dataset_id))
 
         # perform finish actions

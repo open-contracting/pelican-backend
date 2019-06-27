@@ -1,25 +1,23 @@
 #!/usr/bin/env python
-import click
 import json
 import sys
-
 from datetime import datetime
-from settings.settings import get_param
-from settings.settings import init
+
+import click
+import psycopg2.extras
+from psycopg2.extras import Json
+
+from core.state import phase, set_dataset_state, set_item_state, state
+from settings.settings import get_param, init
+from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import init_logger
-from tools.db import commit
-from tools.db import get_cursor
-from tools.db import rollback
-from tools.rabbit import consume
-from tools.rabbit import publish
-from core.state import state
-from core.state import phase
-from core.state import set_dataset_state
-from core.state import set_item_state
+from tools.rabbit import consume, publish
 
 consume_routing_key = "_ocds_kingfisher_extractor_init"
 
 routing_key = "_ocds_kingfisher_extractor"
+
+page_size = 1000
 
 
 @click.command()
@@ -36,29 +34,105 @@ def callback(channel, method, properties, body):
     try:
         input_message = json.loads(body.decode('utf8'))
 
-        dataset_id = input_message["dataset_id"] + "_" + datetime.now().strftime('%Y%m%d_%H%M%S')
+        dataset_id = input_message["dataset_id"]
 
-        logger.info(
-            "Reading kingfisher data started. Dataset: {} processing_id: {}".format(
-                input_message["dataset_id"],
-                dataset_id))
+        if "command" not in input_message:
+            collection_id = input_message["collection_id"]
 
-        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=3)
+            logger.info(
+                "Reading kingfisher data started. Dataset: {} processing_id: {}".format(
+                    input_message["dataset_id"],
+                    dataset_id))
 
-        for i in range(5, 8):
+            set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=3)
 
-            item_id = i
+            kf_connection = psycopg2.connect("host='{}' dbname='{}' user='{}' password='{}' port ='{}'".format(
+                get_param("kf_extractor_host"),
+                get_param("kf_extractor_db"),
+                get_param("kf_extractor_user"),
+                get_param("kf_extractor_password"),
+                get_param("kf_extractor_port")))
 
-            message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(item_id, dataset_id)
+            kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            logger.info("King fisher DB connection established")
 
-            set_item_state(dataset_id, item_id, state.IN_PROGRESS)
+            kf_cursor.execute("""
+                SELECT compiled_release.data_id
+                FROM collection
+                INNER JOIN collection_file ON collection_file.collection_id = collection.id
+                INNER JOIN collection_file_item ON collection_file_item.collection_file_id = collection_file.id
+                INNER JOIN compiled_release ON compiled_release.collection_file_item_id = collection_file_item.id
+                WHERE collection.id = %s;
+                """, (collection_id,))
 
-            publish(message, get_param("exchange_name") + routing_key)
+            result = kf_cursor.fetchall()
+
+            print(len(result))
+            i = 0
+            while i * page_size < len(result):
+                ids = []
+                for item in result[i * page_size:(i + 1) * page_size]:
+                    ids.append(item[0])
+
+                i = i + 1
+
+                kf_cursor.execute("""
+                    SELECT data
+                    FROM data
+                    WHERE data.id IN %s;
+                    """, (tuple(ids),))
+
+                data = kf_cursor.fetchall()
+
+                for data_item in data:
+                    cursor.execute("""
+                        INSERT INTO data_item
+                        (data, dataset_id, created, modified)
+                        VALUES
+                        (%s, %s, now(), now()) RETURNING id
+                    """, (Json(data_item[0]), dataset_id))
+
+                    inserted_id = cursor.fetchone()[0]
+
+                    message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(inserted_id, dataset_id)
+
+                    set_item_state(dataset_id, inserted_id, state.IN_PROGRESS)
+
+                    commit()
+
+                    publish(message, get_param("exchange_name") + routing_key)
+
+                logger.info("Inserted page {} from {}".format(i, len(result)))
+        else:
+            # resend messages
+            resend(dataset_id)
+
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
         logger.exception(
             "Something went wrong when processing {}".format(body))
         sys.exit()
+
+
+def resend(dataset_id):
+    logger.info("Resending messages for {} started".format(dataset_id))
+    cursor.execute("""
+            SELECT id FROM data_item
+            WHERE dataset_id = %s
+        """, (dataset_id,))
+
+    ids = cursor.fetchall()
+
+    for entry in ids:
+        message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(entry[0], dataset_id)
+
+        set_item_state(dataset_id, entry[0], state.IN_PROGRESS)
+
+        commit()
+
+        publish(message, get_param("exchange_name") + routing_key)
+
+    logger.info("Resending messages for {} completed".format(dataset_id))
 
 
 def init_worker(environment):

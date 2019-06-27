@@ -46,7 +46,7 @@ def callback(channel, method, properties, body):
         # set state of processed item
         set_item_state(dataset_id, item_id, state.OK)
 
-        # send message to nect phase
+        # send message to next phase
         message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(item_id, dataset_id)
         publish(message, get_param("exchange_name") + routing_key)
 

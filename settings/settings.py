@@ -15,6 +15,11 @@ config_data = {
         "rabbit_port": "5672",
         "rabbit_username": "rabbit",
         "rabbit_password": "rabbit",
+        "kf_extractor_host": "scrape.kingfisher.open-contracting.org",
+        "kf_extractor_user": "ocdskfpreadonly",
+        "kf_extractor_password": "LJNBQvRT83QTi9og",
+        "kf_extractor_port": "5432",
+        "kf_extractor_db": "ocdskingfisherprocess",
     },
 }
 

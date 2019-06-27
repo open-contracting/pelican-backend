@@ -42,3 +42,16 @@ CREATE UNIQUE INDEX unique_dataset_id_item_id ON progress_monitor_item (dataset_
 ALTER TABLE progress_monitor_item
 ADD CONSTRAINT unique_dataset_id_item_id
 UNIQUE USING INDEX unique_dataset_id_item_id;
+
+
+CREATE TABLE data_item (
+    id SERIAL PRIMARY KEY,
+    data jsonb,
+    dataset_id character varying(255),
+    created timestamp without time zone,
+    modified timestamp without time zone
+);
+
+CREATE INDEX data_item_data_idx ON data_item USING gin (data jsonb_path_ops);
+CREATE INDEX data_item_modified_idx ON data_item (modified);
+CREATE INDEX data_item_dataset_id_idx ON data_item (dataset_id);

@@ -1,7 +1,5 @@
+from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import init_logger
-from tools.db import commit
-from tools.db import get_cursor
-from tools.db import rollback
 
 
 class state():
@@ -12,10 +10,11 @@ class state():
 
 
 class phase():
+    PLANNED = "PLANNED"
     CONTRACTING_PROCESS = "CONTRACTING_PROCESS"
     DATASET = "DATASET"
     TIME_VARIANCE = "TIME_VARIANCE"
-    DONE = "DONE"
+    CHECKED = "CHECKED"
 
 
 def set_dataset_state(dataset_id, state, phase, size=None):
@@ -36,7 +35,6 @@ def set_dataset_state(dataset_id, state, phase, size=None):
                        ON CONFLICT ON CONSTRAINT unique_dataset_id
                        DO UPDATE SET state = %s, phase = %s, modified = now();
                        """, (dataset_id, state, phase, size, state, phase))
-    commit()
 
 
 def set_item_state(dataset_id, item_id, state):
@@ -56,7 +54,6 @@ def set_item_state(dataset_id, item_id, state):
                        ON CONFLICT ON CONSTRAINT unique_dataset_id_item_id
                        DO UPDATE SET state = %s, modified = now();
                        """, (dataset_id, item_id, state, state))
-    commit()
 
 
 def get_processed_items_count(dataset_id):
