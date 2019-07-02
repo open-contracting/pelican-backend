@@ -1,4 +1,4 @@
-from contracting_process.processor import get_value
+from tools.getter import get_value
 
 item = {
     "id": "123",
