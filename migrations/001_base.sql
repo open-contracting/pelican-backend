@@ -5,7 +5,7 @@ CREATE SCHEMA development;
 SET search_path TO development;
 
 CREATE TABLE progress_monitor_dataset (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     dataset_id character varying(255),
     state character varying(255),
     phase character varying(255),
@@ -25,7 +25,7 @@ UNIQUE USING INDEX progress_monitor_dataset_dataset_id_idx;
 
 
 CREATE TABLE progress_monitor_item (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     dataset_id character varying(255),
     item_id character varying(255),
     state character varying(255),
@@ -45,7 +45,7 @@ UNIQUE USING INDEX unique_dataset_id_item_id;
 
 
 CREATE TABLE data_item (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     data jsonb,
     dataset_id character varying(255),
     created timestamp without time zone,
@@ -55,3 +55,19 @@ CREATE TABLE data_item (
 CREATE INDEX data_item_data_idx ON data_item USING gin (data jsonb_path_ops);
 CREATE INDEX data_item_modified_idx ON data_item (modified);
 CREATE INDEX data_item_dataset_id_idx ON data_item (dataset_id);
+
+
+CREATE TABLE field_level_check (
+    id BIGSERIAL PRIMARY KEY,
+    plugin_name,
+    result boolean,
+    meta jsonb,
+    data_item_id bigint,
+    dataset_id character varying(255),
+    created timestamp without time zone,
+    modified timestamp without time zone
+);
+
+CREATE INDEX contracting_process_check_data_item_id_idx ON contracting_process_check (data_item_id);
+CREATE INDEX contracting_process_check_dataset_id_idx ON contracting_process_check (dataset_id);
+CREATE INDEX contracting_process_check_modified_idx ON contracting_process_check (modified);

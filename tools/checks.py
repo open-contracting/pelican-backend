@@ -1,5 +1,3 @@
-
-
 def get_empty_result(version):
     empty_result = {
         "result": None,
