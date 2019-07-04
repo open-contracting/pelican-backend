@@ -1,5 +1,5 @@
 import sys
-
+import time
 from contracting_process.definitions import definitions
 from tools.getter import get_value
 
@@ -12,6 +12,5 @@ def do_work(item):
         value = get_value(item, path)
         for plugin in plugins:
             plugin(value)
-
-    sys.exit()
+    
     return
