@@ -3,14 +3,15 @@ import time
 
 from psycopg2.extras import Json
 
-from contracting_process.field_level.definitions import definitions
+from contracting_process.field_level.definitions import \
+    definitions as field_level_definitions
 from tools.db import commit, get_cursor
 from tools.getter import get_value
 
 
 def do_work(data, item_id, dataset_id):
     # perform field level checks
-    for path, checks in definitions.items():
+    for path, checks in field_level_definitions.items():
         # get the parent/parents
         path_chunks = path.split(".")
 

@@ -1,4 +1,5 @@
-from contracting_process.consistent.number_of_tenderers import calculate
+from contracting_process.resource_level.consistent.number_of_tenderers import \
+    calculate
 
 item_ok = {
     "tender": {
