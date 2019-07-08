@@ -71,3 +71,21 @@ CREATE TABLE field_level_check (
 CREATE INDEX field_level_check_data_item_id_idx ON field_level_check (data_item_id);
 CREATE INDEX field_level_check_dataset_id_idx ON field_level_check (dataset_id);
 CREATE INDEX field_level_check_modified_idx ON field_level_check (modified);
+
+
+CREATE TABLE resource_level_check (
+    id BIGSERIAL PRIMARY KEY,
+    name character varying,
+    result boolean,
+    succcess_rate int,
+    application_count int,
+    meta jsonb,
+    data_item_id bigint,
+    dataset_id character varying(255),
+    created timestamp without time zone,
+    modified timestamp without time zone
+);
+
+CREATE INDEX resource_level_check_data_item_id_idx ON resource_level_check (data_item_id);
+CREATE INDEX resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
+CREATE INDEX resource_level_check_modified_idx ON resource_level_check (modified);
