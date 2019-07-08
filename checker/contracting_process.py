@@ -42,10 +42,10 @@ def callback(channel, method, properties, body):
             WHERE id = %s;
             """, (int(item_id),))
 
-        item = cursor.fetchone()[0]
+        item_data = cursor.fetchone()[0]
 
         # perform actual action with the item
-        processor.do_work(item)
+        processor.do_work(item_data, item_id, dataset_id)
 
         # set state of processed item
         set_item_state(dataset_id, item_id, state.OK)

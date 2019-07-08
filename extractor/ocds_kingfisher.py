@@ -67,7 +67,6 @@ def callback(channel, method, properties, body):
 
             result = kf_cursor.fetchall()
 
-            print(len(result))
             i = 0
             while i * page_size < len(result):
                 ids = []

@@ -59,7 +59,7 @@ CREATE INDEX data_item_dataset_id_idx ON data_item (dataset_id);
 
 CREATE TABLE field_level_check (
     id BIGSERIAL PRIMARY KEY,
-    plugin_name,
+    path character varying,
     result boolean,
     meta jsonb,
     data_item_id bigint,
@@ -68,6 +68,6 @@ CREATE TABLE field_level_check (
     modified timestamp without time zone
 );
 
-CREATE INDEX contracting_process_check_data_item_id_idx ON contracting_process_check (data_item_id);
-CREATE INDEX contracting_process_check_dataset_id_idx ON contracting_process_check (dataset_id);
-CREATE INDEX contracting_process_check_modified_idx ON contracting_process_check (modified);
+CREATE INDEX field_level_check_data_item_id_idx ON field_level_check (data_item_id);
+CREATE INDEX field_level_check_dataset_id_idx ON field_level_check (dataset_id);
+CREATE INDEX field_level_check_modified_idx ON field_level_check (modified);

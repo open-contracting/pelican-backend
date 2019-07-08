@@ -1,46 +1,70 @@
 import sys
 import time
 
-from contracting_process.field_level.definitions import field_level_definitions
+from psycopg2.extras import Json
+
+from contracting_process.field_level.definitions import definitions
+from tools.db import commit, get_cursor
 from tools.getter import get_value
 
 
 def do_work(data, item_id, dataset_id):
-    print(data)
-
+    # perform field level checks
     for path, checks in definitions.items():
-        path = path.split(".")
+        # get the parent/parents
+        path_chunks = path.split(".")
 
-        value = data
-        if (len(path) > 1):
-            value = get_value(data, path[1:])
+        value = {}
+        if (len(path_chunks) > 1):
+            # dive deeper in tree
+            value = get_value(data, path_chunks[:-1])
+        else:
+            # checking top level item
+            value = data
 
-        print(value)
+        # "norm" value for iterations
+        if type(value) is not list:
+            values = [value]
+        else:
+            values = value
 
-        # execute plugin
-        for check in checks:
-            result = check(value)
+        # iterate over parents and perform checks
+        for value in values:
+            check_result = {}
 
-        print(result)
-        # save result
-        save_field_level_check(plugin_name, result)
+            # confront value with its checks
+            for check in checks:
+                check_result = check(value, path_chunks[-1])
+                if not check_result["result"]:
+                    break
 
-        sys.exit()
+            # save result
+            save_field_level_check(path, check_result, item_id, dataset_id)
+
+    commit()
+
+    sys.exit()
 
     return None
 
 
 def save_field_level_check(path, result, item_id, dataset_id):
     cursor = get_cursor()
+
+    if "reason" in result:
+        meta = Json({"reason": result["reason"], "value": result["value"]})
+    else:
+        meta = None
+
     cursor.execute("""
         INSERT INTO field_level_check
         (path, result, meta, data_item_id, dataset_id, created, modified)
         VALUES
         (%s, %s, %s, %s, %s, now(), now())
         """, (
-        plugin_name,
+        path,
         result["result"],
-        result["meta"],
+        meta,
         item_id,
         dataset_id)
     )
