@@ -1,5 +1,6 @@
 import sys
 import time
+from random import randrange
 
 from psycopg2.extras import Json
 
@@ -18,7 +19,8 @@ def do_work(data, item_id, dataset_id):
 
     commit()
 
-    sys.exit()
+    if randrange(50) > 40:
+        sys.exit()
 
     return None
 
