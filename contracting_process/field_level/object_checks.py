@@ -17,14 +17,14 @@ def non_empty(data, key):
             "reason": "missing key"
         }
 
-    if type(data[key]) is dict and not data[key]:
+    if type(data) is dict and type(data[key]) is dict and not data[key]:
         return {
             "result": False,
             "value": data[key],
             "reason": "empty dictionary"
         }
 
-    if type(data[key]) is list and not data[key]:
+    if type(data) is dict and type(data[key]) is list and not data[key]:
         return {
             "result": False,
             "value": data[key],

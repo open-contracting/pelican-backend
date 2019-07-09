@@ -5,5 +5,6 @@ definitions = {
     "parties.id": [exists, non_empty],
     "parties.ids": [exists, non_empty],
     "language": [exists, non_empty],
+    "languages": [exists, non_empty],
     "publisher.name": [exists, non_empty],
 }

@@ -8,13 +8,13 @@ from contracting_process.field_level.definitions import \
 from contracting_process.resource_level.definitions import \
     definitions as resource_level_definitions
 from tools.db import commit, get_cursor
-from tools.getter import get_value
+from tools.getter import get_values
 
 
 def do_work(data, item_id, dataset_id):
     field_level_checks(data, item_id, dataset_id)
 
-    resource_level_checks(data, item_id, dataset_id)
+    # resource_level_checks(data, item_id, dataset_id)
 
     commit()
 
@@ -39,39 +39,54 @@ def field_level_checks(data, item_id, dataset_id):
         # get the parent/parents
         path_chunks = path.split(".")
 
-        value = {}
+        values = []
         if (len(path_chunks) > 1):
             # dive deeper in tree
-            value = get_value(data, path_chunks[:-1])
+            values = get_values(data, ".".join(path_chunks[:-1]))
         else:
             # checking top level item
-            value = data
-
-        # "norm" value for iterations
-        if type(value) is not list:
-            values = [value]
-        else:
-            values = value
+            values = [{"path": "", "value": data}]
 
         # iterate over parents and perform checks
         for value in values:
-            check_result = {}
+            list_result = True
 
-            # confront value with its checks
-            for check in checks:
-                check_result = check(value, path_chunks[-1])
-                if not check_result["result"]:
-                    break
+            # create list from plain values
+            if type(value["value"]) is dict:
+                value["value"] = [value["value"]]
+                list_result = False
 
-            # save result
-            save_field_level_check(path, check_result, item_id, dataset_id)
+            # iterate over all returned values and check those
+            counter = 0
+            for item in value["value"]:
+                check_result = {}
+
+                # confront value with its checks
+                for check in checks:
+                    check_result = check(item, path_chunks[-1])
+                    if not check_result["result"]:
+                        break
+
+                # construct path based on "is the parent a list?"
+                if list_result:
+                    check_result["path"] = "{}[{}].{}".format(value["path"], counter, path_chunks[-1])
+                else:
+                    if value["path"]:
+                        check_result["path"] = "{}.{}".format(value["path"], path_chunks[-1])
+                    else:
+                        check_result["path"] = path_chunks[-1]
+
+                counter = counter + 1
+
+                # save result
+                save_field_level_check(path, check_result, item_id, dataset_id)
 
 
 def save_field_level_check(path, result, item_id, dataset_id):
     cursor = get_cursor()
 
     if "reason" in result:
-        meta = Json({"reason": result["reason"], "value": result["value"]})
+        meta = Json({"reason": result["reason"], "value": result["value"], "path": result["path"]})
     else:
         meta = None
 
