@@ -1,46 +1,53 @@
-def get_value(item, path, simplify=False):
+def get_values(item, str_path):
     # return whole item from root
-    if not path or path == [""]:
-        return item
+    if not str_path or str_path == "":
+        return [{"path": str_path, "value": item}]
 
     # return the value for key in the item
-    if type(path) is str and path in item:
-        return item[path]
-
-    # last item in the path - return the key value
-    if len(path) == 1 and path[0] in item:
-        return item[path[0]]
+    if "." not in str_path and str_path in item:
+        return [{"path": str_path, "value": item[str_path]}]
 
     # get new key identifying the new item
+    path = str_path.split(".")
     key = path[0]
 
     if key in item:
         # inner value is a dictionary { "key": {"aaa": "bbb"}}
         # lets go deeper
         if type(item[key]) is dict:
-            return get_value(item[key], path[1:], simplify)
+            result = get_values(item[key], ".".join(path[1:]))
 
-        # inner value is an aarray { "key" : [{"aaa":"bbb"}, {"ccc": "ddd"}]}
+            values = []
+            if type(result) is not list:
+                values.append(result)
+            else:
+                values = result
+
+            for item in values:
+                item["path"] = "{}.{}".format(key, item["path"])
+            return values
+
+        # inner value is an array { "key" : [{"aaa":"bbb"}, {"ccc": "ddd"}]}
         # iterate over the items and read the rest of the path from the
         if type(item[key]) is list:
-            values = []
+            index_counter = 0
+            result = []
             for list_item in item[key]:
-                result = get_value(list_item, path[1:], simplify)
+                values = get_values(list_item, ".".join(path[1:]))
 
-                if type(result) is not list:
-                    values.append(result)
-                else:
-                    if simplify:
-                        # simplify, flatten the result
-                        values = values + result
-                    else:
-                        values.append(result)
+                if values:
+                    for item in values:
+                        item["path"] = "{}[{}].{}".format(key, index_counter, item["path"])
 
-            return values
+                        result.append(item)
+
+                index_counter = index_counter + 1
+
+            return result
 
         # "primitive" value, return it
         if key in item:
-            return item[key]
+            return [{"path": key, "value": item[key]}]
 
     # nothing found
     return None
