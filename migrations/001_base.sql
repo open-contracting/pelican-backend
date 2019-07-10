@@ -77,7 +77,7 @@ CREATE TABLE resource_level_check (
     id BIGSERIAL PRIMARY KEY,
     name character varying,
     result boolean,
-    succcess_rate int,
+    pass_count int,
     application_count int,
     meta jsonb,
     data_item_id bigint,
@@ -88,4 +88,4 @@ CREATE TABLE resource_level_check (
 
 CREATE INDEX resource_level_check_data_item_id_idx ON resource_level_check (data_item_id);
 CREATE INDEX resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
-CREATE INDEX resource_level_check_modified_idx ON resource_level_check (modified);
+CREATE INDEX resource_level_check_modified_idx ON resource_level_check (modified);¨

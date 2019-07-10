@@ -15,7 +15,7 @@ from tools.getter import get_values
 def do_work(data, item_id, dataset_id):
     field_level_checks(data, item_id, dataset_id)
 
-    # resource_level_checks(data, item_id, dataset_id)
+    resource_level_checks(data, item_id, dataset_id)
 
     commit()
 
