@@ -23,8 +23,8 @@ def get_values(item, str_path):
             else:
                 values = result
 
-            for item in values:
-                item["path"] = "{}.{}".format(key, item["path"])
+            for list_item in values:
+                list_item["path"] = "{}.{}".format(key, item["path"])
             return values
 
         # inner value is an array { "key" : [{"aaa":"bbb"}, {"ccc": "ddd"}]}
