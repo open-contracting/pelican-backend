@@ -18,10 +18,12 @@ def calculate(item):
         # everything is set, we can compare
         if tender["numberOfTenderers"] == len(tender["tenderers"]):
             result["result"] = True
-            result["value"] = 100
+            result["application_count"] = 1
+            result["pass_count"] = 1
         else:
             result["result"] = False
-            result["value"] = 0
+            result["application_count"] = 1
+            result["pass_count"] = 0
             result["meta"] = {
                 "numberOfTenderers": tender["numberOfTenderers"],
                 "tenderers": tender["tenderers"]

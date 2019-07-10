@@ -75,7 +75,7 @@ CREATE INDEX field_level_check_modified_idx ON field_level_check (modified);
 
 CREATE TABLE resource_level_check (
     id BIGSERIAL PRIMARY KEY,
-    name character varying,
+    check_name character varying,
     result boolean,
     pass_count int,
     application_count int,
@@ -88,4 +88,4 @@ CREATE TABLE resource_level_check (
 
 CREATE INDEX resource_level_check_data_item_id_idx ON resource_level_check (data_item_id);
 CREATE INDEX resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
-CREATE INDEX resource_level_check_modified_idx ON resource_level_check (modified);¨
+CREATE INDEX resource_level_check_modified_idx ON resource_level_check (modified);
