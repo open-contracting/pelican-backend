@@ -33,6 +33,5 @@ def calculate(item):
 
     # unable to compare, undefined
     result["result"] = None
-    result["value"] = None
     result["meta"] = {"reason": "incomplete data for comparsion"}
     return result
