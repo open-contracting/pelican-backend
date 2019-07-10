@@ -18,7 +18,7 @@ def get_values(item, str_path):
             result = get_values(item[key], ".".join(path[1:]))
 
             if not result:
-                return [{"path": key, "value": None}]
+                return None
 
             values = []
             if type(result) is not list:

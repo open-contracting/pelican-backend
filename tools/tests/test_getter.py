@@ -29,6 +29,7 @@ def test_get_value_simple():
     assert get_values(item, "") == [{"path": "", "value": item}]
     assert get_values(item, "tender") == [{"path": "tender", "value": item["tender"]}]
     assert get_values(item, "tender.id") == [{"path": "tender.id", "value": "0rw29R-005-2011-1"}]
+    assert get_values(item, "tender.ids") is None
 
 
 def test_get_value_lists():
@@ -48,6 +49,8 @@ def test_get_value_lists():
         {"path": "tender.items[0].unit.name", "value": "Unidad"},
         {"path": "tender.items[2].unit.name", "value": "Unimom"},
     ]
+
+    assert get_values(item, "tender.items.non_existing") is None
 
 
 def test_join():
