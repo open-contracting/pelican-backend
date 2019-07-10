@@ -48,39 +48,40 @@ def field_level_checks(data, item_id, dataset_id):
             # checking top level item
             values = [{"path": "", "value": data}]
 
-        # iterate over parents and perform checks
-        for value in values:
-            list_result = True
+        if values:
+            # iterate over parents and perform checks
+            for value in values:
+                list_result = True
 
-            # create list from plain values
-            if type(value["value"]) is dict:
-                value["value"] = [value["value"]]
-                list_result = False
+                # create list from plain values
+                if type(value["value"]) is dict:
+                    value["value"] = [value["value"]]
+                    list_result = False
 
-            # iterate over all returned values and check those
-            counter = 0
-            for item in value["value"]:
-                check_result = {}
+                # iterate over all returned values and check those
+                counter = 0
+                for item in value["value"]:
+                    check_result = {}
 
-                # confront value with its checks
-                for check in checks:
-                    check_result = check(item, path_chunks[-1])
-                    if not check_result["result"]:
-                        break
+                    # confront value with its checks
+                    for check in checks:
+                        check_result = check(item, path_chunks[-1])
+                        if not check_result["result"]:
+                            break
 
-                # construct path based on "is the parent a list?"
-                if list_result:
-                    check_result["path"] = "{}[{}].{}".format(value["path"], counter, path_chunks[-1])
-                else:
-                    if value["path"]:
-                        check_result["path"] = "{}.{}".format(value["path"], path_chunks[-1])
+                    # construct path based on "is the parent a list?"
+                    if list_result:
+                        check_result["path"] = "{}[{}].{}".format(value["path"], counter, path_chunks[-1])
                     else:
-                        check_result["path"] = path_chunks[-1]
+                        if value["path"]:
+                            check_result["path"] = "{}.{}".format(value["path"], path_chunks[-1])
+                        else:
+                            check_result["path"] = path_chunks[-1]
 
-                counter = counter + 1
+                    counter = counter + 1
 
-                # save result
-                save_field_level_check(path, check_result, item_id, dataset_id)
+                    # save result
+                    save_field_level_check(path, check_result, item_id, dataset_id)
 
 
 def save_field_level_check(path, result, item_id, dataset_id):
