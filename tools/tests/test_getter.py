@@ -32,7 +32,8 @@ def test_get_value_simple():
 
 
 def test_get_value_lists():
-    assert get_values(item, "tender.items.quantity") == [
+    result = get_values(item, "tender.items.quantity")
+    assert result == [
         {"path": "tender.items[0].quantity", "value": 4.0},
         {"path": "tender.items[1].quantity", "value": 5.0},
         {"path": "tender.items[2].quantity", "value": 5.0},

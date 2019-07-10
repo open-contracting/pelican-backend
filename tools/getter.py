@@ -17,6 +17,9 @@ def get_values(item, str_path):
         if type(item[key]) is dict:
             result = get_values(item[key], ".".join(path[1:]))
 
+            if not result:
+                return [{"path": key, "value": None}]
+
             values = []
             if type(result) is not list:
                 values.append(result)
@@ -24,7 +27,8 @@ def get_values(item, str_path):
                 values = result
 
             for list_item in values:
-                list_item["path"] = "{}.{}".format(key, item["path"])
+                if list_item and "path" in list_item:
+                    list_item["path"] = "{}.{}".format(key, list_item["path"])
             return values
 
         # inner value is an array { "key" : [{"aaa":"bbb"}, {"ccc": "ddd"}]}
@@ -36,10 +40,11 @@ def get_values(item, str_path):
                 values = get_values(list_item, ".".join(path[1:]))
 
                 if values:
-                    for item in values:
-                        item["path"] = "{}[{}].{}".format(key, index_counter, item["path"])
+                    for list_item in values:
+                        if list_item and "path" in list_item:
+                            list_item["path"] = "{}[{}].{}".format(key, index_counter, list_item["path"])
 
-                        result.append(item)
+                            result.append(list_item)
 
                 index_counter = index_counter + 1
 
