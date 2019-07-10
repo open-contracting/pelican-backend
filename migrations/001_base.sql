@@ -75,9 +75,9 @@ CREATE INDEX field_level_check_modified_idx ON field_level_check (modified);
 
 CREATE TABLE resource_level_check (
     id BIGSERIAL PRIMARY KEY,
-    name character varying,
+    check_name character varying,
     result boolean,
-    succcess_rate int,
+    pass_count int,
     application_count int,
     meta jsonb,
     data_item_id bigint,

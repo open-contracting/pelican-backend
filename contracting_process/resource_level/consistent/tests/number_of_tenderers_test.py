@@ -48,7 +48,8 @@ def test_general():
     empty_result = calculate({})
     assert type(empty_result) == dict
     assert empty_result["result"] is None
-    assert empty_result["value"] is 0
+    assert empty_result["application_count"] is None
+    assert empty_result["pass_count"] is None
     assert empty_result["meta"] == {"reason": "missing tender key"}
 
 
@@ -56,7 +57,8 @@ def test_ok():
     result = calculate(item_ok)
     assert type(result) == dict
     assert result["result"] is True
-    assert result["value"] is 100
+    assert result["application_count"] == 1
+    assert result["pass_count"] == 1
     assert result["meta"] is None
 
 
@@ -64,7 +66,8 @@ def test_failed():
     result = calculate(item_failed)
     assert type(result) == dict
     assert result["result"] is False
-    assert result["value"] is 0
+    assert result["application_count"] == 1
+    assert result["pass_count"] == 0
     assert result["meta"] == {"numberOfTenderers": 1, "tenderers": [
         {
             "quantity": 4.0,
@@ -79,5 +82,6 @@ def test_undefined():
     result = calculate(item_undefined)
     assert type(result) == dict
     assert result["result"] is None
-    assert result["value"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
     assert result["meta"] == {"reason": "incomplete data for comparsion"}

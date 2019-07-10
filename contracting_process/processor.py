@@ -15,7 +15,7 @@ from tools.getter import get_values
 def do_work(data, item_id, dataset_id):
     field_level_checks(data, item_id, dataset_id)
 
-    # resource_level_checks(data, item_id, dataset_id)
+    resource_level_checks(data, item_id, dataset_id)
 
     commit()
 
@@ -30,9 +30,8 @@ def resource_level_checks(data, item_id, dataset_id):
     for check_name, checks in resource_level_definitions.items():
         # confront value with its checks
         for check in checks:
-            check_result = check(value, path_chunks[-1])
-            if not check_result["result"]:
-                break
+            check_result = check(data)
+            save_resource_level_check(check_name, check_result, item_id, dataset_id)
 
 
 def field_level_checks(data, item_id, dataset_id):
@@ -100,6 +99,28 @@ def save_field_level_check(path, result, item_id, dataset_id):
         """, (
         path,
         result["result"],
+        meta,
+        item_id,
+        dataset_id)
+    )
+
+
+def save_resource_level_check(check_name, result, item_id, dataset_id):
+    cursor = get_cursor()
+
+    result["meta"]["version"] = result["version"]
+    meta = Json(result["meta"])
+
+    cursor.execute("""
+        INSERT INTO resource_level_check
+        (check_name, result, pass_count, application_count, meta, data_item_id, dataset_id, created, modified)
+        VALUES
+        (%s, %s, %s, %s, %s, %s, %s, now(), now())
+        """, (
+        check_name,
+        result["result"],
+        result["pass_count"],
+        result["application_count"],
         meta,
         item_id,
         dataset_id)
