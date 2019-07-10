@@ -29,8 +29,9 @@ def calculate(item):
             path_counter = 0
             for supplier in value["value"]:
                 application_count = application_count + 1
+
                 current_path = "{}[{}]".format(value["path"], path_counter)
-                path_count = path_counter + 1
+                path_counter = path_counter + 1
 
                 if "parties" not in item or not item["parties"]:
                     failed_paths.append(current_path)
@@ -47,12 +48,13 @@ def calculate(item):
     if application_count > 0:
         if application_count == pass_count:
             result["result"] = True
+            result["meta"] = {}
         else:
             result["result"] = False
+            result["meta"] = {"failed_paths": failed_paths}
 
         result["application_count"] = application_count
         result["pass_count"] = pass_count
-        result["meta"] = {}
         return result
     else:
         result["result"] = None

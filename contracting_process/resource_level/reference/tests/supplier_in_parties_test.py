@@ -29,7 +29,7 @@ item_ok = {
 }
 
 
-def test_general():
+def test_empty():
     empty_result = calculate({})
     assert type(empty_result) == dict
     assert empty_result["result"] is None
@@ -71,6 +71,29 @@ item_failed = {
     ]
 }
 
+item_failed_all = {
+    "awards": [
+        {
+            "suppliers": [
+                {
+                    "name": "aaa",
+                    "id": "aaa"
+                },
+                {
+                    "name": "bbb",
+                    "id": "bbb"
+                }
+            ]
+        }
+    ],
+    "parties": [
+        {
+            "name": "bbb",
+            "id": "ddd"
+        }
+    ]
+}
+
 
 def test_failed():
     result = calculate(item_failed)
@@ -79,4 +102,76 @@ def test_failed():
     assert result["application_count"] is 2
     assert result["pass_count"] is 1
     assert result["version"] == 1.0
-    assert result["meta"] == {}
+    assert result["meta"] == {
+        "failed_paths": [
+            "awards[0].suppliers[0]",
+        ]
+    }
+
+    result = calculate(item_failed_all)
+    assert type(result) == dict
+    assert result["result"] is False
+    assert result["application_count"] is 2
+    assert result["pass_count"] is 0
+    assert result["version"] == 1.0
+    assert result["meta"] == {
+        "failed_paths": [
+            "awards[0].suppliers[0]",
+            "awards[0].suppliers[1]",
+        ]
+    }
+
+
+item_complex = {
+    "awards": [
+        {
+            "suppliers": [
+                {
+                    "name": "aaa",
+                    "id": "aaa"
+                },
+                {
+                    "name": "bbb",
+                    "id": "bbb"
+                }
+            ]
+        },
+        {
+            "suppliers": [
+                {
+                    "name": "aaa",
+                    "id": "aaa"
+                },
+                {
+                    "name": "ccc",
+                    "id": "ccc"
+                }
+            ]
+        }
+    ],
+    "parties": [
+        {
+            "name": "bbb",
+            "id": "ddd"
+        },
+        {
+            "name": "aaa",
+            "id": "aaa"
+        }
+    ]
+}
+
+
+def test_complex():
+    result = calculate(item_complex)
+    assert type(result) == dict
+    assert result["result"] is False
+    assert result["application_count"] is 4
+    assert result["pass_count"] is 2
+    assert result["version"] == 1.0
+    assert result["meta"] == {
+        "failed_paths": [
+            "awards[0].suppliers[1]",
+            "awards[1].suppliers[1]",
+        ]
+    }
