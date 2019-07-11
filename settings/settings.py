@@ -2,7 +2,7 @@ import logging
 
 config_data = {
     "development": {
-        "log_level": logging.INFO,
+        "log_level": logging.DEBUG,
         "log_filename": "/tmp/dqt.log",
         "host": "localhost",
         "user": "dqt",
