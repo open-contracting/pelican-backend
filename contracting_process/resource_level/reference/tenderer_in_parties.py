@@ -6,5 +6,5 @@ version = 1.0
 
 
 def calculate(item):
-    values = get_values(item, "awards.suppliers")
+    values = get_values(item, "tender.tenderers")
     return calculate_reference_in_parties(item, values, version)
