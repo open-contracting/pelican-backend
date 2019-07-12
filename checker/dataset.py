@@ -55,7 +55,7 @@ def callback(channel, method, properties, body):
                 commit()
 
                 # calculate all the stuff
-                processor.do_work(dataset_id)
+                processor.do_work(dataset_id, logger)
 
                 # mark dataset as done
                 set_dataset_state(dataset_id, state.OK, phase.DATASET)

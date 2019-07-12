@@ -7,7 +7,7 @@ from tools.db import commit, get_cursor
 page_size = 1000
 
 
-def do_work(dataset_id):
+def do_work(dataset_id, logger):
     processed_count = 1000
     id = -1
     pager = 0
@@ -31,6 +31,7 @@ def do_work(dataset_id):
                 plugin.add_item(item)
 
             processed_count = processed_count + 1
+            id = item["id"]
 
         pager = pager + 1
 
