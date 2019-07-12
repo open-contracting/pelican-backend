@@ -27,7 +27,17 @@ def set_dataset_state(dataset_id, state, phase, size=None):
         size: amount of contract process items to be processed
     """
     cursor = get_cursor()
-    cursor.execute("""
+    if size:
+        cursor.execute("""
+                       INSERT INTO progress_monitor_dataset
+                       (dataset_id, state, phase, size, created, modified)
+                       VALUES
+                       (%s, %s, %s, %s, now(), now())
+                       ON CONFLICT ON CONSTRAINT unique_dataset_id
+                       DO UPDATE SET state = %s, phase = %s, size = %s, modified = now();
+                       """, (dataset_id, state, phase, size, state, phase, size))
+    else:
+        cursor.execute("""
                        INSERT INTO progress_monitor_dataset
                        (dataset_id, state, phase, size, created, modified)
                        VALUES

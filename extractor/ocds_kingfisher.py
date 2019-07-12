@@ -44,8 +44,6 @@ def callback(channel, method, properties, body):
                     input_message["dataset_id"],
                     dataset_id))
 
-            set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=3)
-
             kf_connection = psycopg2.connect("host='{}' dbname='{}' user='{}' password='{}' port ='{}'".format(
                 get_param("kf_extractor_host"),
                 get_param("kf_extractor_db"),
@@ -68,6 +66,7 @@ def callback(channel, method, properties, body):
             result = kf_cursor.fetchall()
 
             i = 0
+            items_inserted = 0
             while i * page_size < len(result):
                 ids = []
                 for item in result[i * page_size:(i + 1) * page_size]:
@@ -93,12 +92,15 @@ def callback(channel, method, properties, body):
 
                     inserted_id = cursor.fetchone()[0]
 
-                    message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(inserted_id, dataset_id)
+                    items_inserted = items_inserted + 1
 
                     set_item_state(dataset_id, inserted_id, state.IN_PROGRESS)
 
+                    set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=items_inserted)
+
                     commit()
 
+                    message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(inserted_id, dataset_id)
                     publish(message, get_param("exchange_name") + routing_key)
 
                 logger.info("Inserted page {} from {}".format(i, len(result)))
