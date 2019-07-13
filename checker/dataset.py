@@ -49,7 +49,8 @@ def callback(channel, method, properties, body):
             # check, if there is not another worker already calculating checks
             if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.CONTRACTING_PROCESS:
                 # set state to processing
-                logger.info("All messages for {} processed, starting to calculate dataset level checks".format(dataset_id))
+                logger.info("All messages for {} processed, starting to calculate dataset level checks".format(
+                    dataset_id))
                 set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
 
                 commit()

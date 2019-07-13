@@ -54,6 +54,9 @@ def do_work(dataset_id, logger):
 def save_dataset_level_check(check_name, result, dataset_id):
     cursor = get_cursor()
 
+    if "meta" not in result or result["meta"] is None:
+        result["meta"] = {}
+
     result["meta"]["version"] = result["version"]
     meta = Json(result["meta"])
 
