@@ -6,10 +6,10 @@ version = 1.0
 
 
 def calculate(item):
-    """Checks whether the item.award.suppliers are all referenced in the item.parties array.
+    """Checks whether the item.contracts.implementation.transactions.payer are all referenced in the item.parties array.
 
     Args:
         item: item to be checked
     """
-    values = get_values(item, "awards.suppliers")
+    values = get_values(item, "contracts.implementation.transactions.payer")
     return calculate_reference_in_parties(item, values, version)

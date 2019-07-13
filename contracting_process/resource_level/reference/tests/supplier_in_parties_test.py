@@ -35,7 +35,7 @@ def test_empty():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "no suppliers available"}
+    assert empty_result["meta"] == {"reason": "no values available"}
 
 
 def test_ok():
