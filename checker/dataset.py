@@ -38,7 +38,7 @@ def callback(channel, method, properties, body):
         processed_count = get_processed_items_count(dataset_id)
         total_count = get_total_items_count(dataset_id)
 
-        if processed_count < total_count:
+        if not processed_count or not total_count or (processed_count < total_count):
             # we have to wait for a while
             logger.debug("There are {} remaining messages to be processed for {}".format(
                 total_count - processed_count, dataset_id))
@@ -52,17 +52,26 @@ def callback(channel, method, properties, body):
                 logger.info("All messages for {} processed, starting to calculate dataset level checks".format(dataset_id))
                 set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
 
+                commit()
+
                 # calculate all the stuff
-                processor.do_work(dataset_id)
+                processor.do_work(dataset_id, logger)
 
                 # mark dataset as done
                 set_dataset_state(dataset_id, state.OK, phase.DATASET)
 
+                commit()
+
                 logger.info("Dataset level checks calculated for {}.".format(dataset_id))
+
+                sys.exit()
 
                 # send message for a next phase
                 message = """{{"dataset_id":"{}"}}""".format(dataset_id)
                 publish(message, get_param("exchange_name") + routing_key)
+
+            elif dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:
+                logger.info("Checks has been already calculated for this dataset.")
             else:
                 # lets do nothing, calculations is already in progress
                 logger.info("Probably other worker already started with the job. Doing nothing.")

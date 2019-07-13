@@ -1,6 +1,5 @@
 import sys
 import time
-from random import randrange
 
 from psycopg2.extras import Json
 
@@ -18,9 +17,6 @@ def do_work(data, item_id, dataset_id):
     resource_level_checks(data, item_id, dataset_id)
 
     commit()
-
-    if randrange(50) > 40:
-        sys.exit()
 
     return None
 

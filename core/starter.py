@@ -23,6 +23,8 @@ def start(environment, dataset_id, collection_id):
 
     routing_key = "_ocds_kingfisher_extractor_init"
 
+    dataset_id = "{}_{}".format(dataset_id, datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
+
     message = """{{"dataset_id":"{}", "collection_id":"{}"}}""".format(dataset_id, collection_id)
     publish(message, get_param("exchange_name") + routing_key)
 

@@ -1,10 +1,10 @@
-from tools.checks import get_empty_result
+from tools.checks import get_empty_result_resource
 
 version = 1.0
 
 
 def calculate(item):
-    result = get_empty_result(version)
+    result = get_empty_result_resource(version)
 
     # completely missing tender value
     if "tender" not in item:

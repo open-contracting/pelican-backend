@@ -1,9 +1,9 @@
-from tools.checks import get_empty_result
+from tools.checks import get_empty_result_resource
 from tools.getter import get_values
 
 
 def calculate_reference_in_parties(item, values, version):
-    result = get_empty_result(version)
+    result = get_empty_result_resource(version)
 
     if not values:
         result["meta"] = {"reason": "no suppliers available"}
