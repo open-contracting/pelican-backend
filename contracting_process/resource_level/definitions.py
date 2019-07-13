@@ -1,3 +1,5 @@
+from contracting_process.resource_level.coherent import \
+    procurement_method_vs_number_of_tenderers
 from contracting_process.resource_level.consistent import number_of_tenderers
 from contracting_process.resource_level.reference import (
     buyer_in_parties, payee_in_parties, payer_in_parties,
@@ -11,4 +13,5 @@ definitions = {
     "reference.procuring_entity_in_parties": [procuring_entity_in_parties.calculate],
     "reference.payer_in_parties": [payer_in_parties.calculate],
     "reference.payee_in_parties": [payee_in_parties.calculate],
+    "coherent.procurement_method_vs_number_of_tenderers": [procurement_method_vs_number_of_tenderers.calculate],
 }
