@@ -64,6 +64,8 @@ def callback(channel, method, properties, body):
 
                 logger.info("Dataset level checks calculated for {}.".format(dataset_id))
 
+                sys.exit()
+
                 # send message for a next phase
                 message = """{{"dataset_id":"{}"}}""".format(dataset_id)
                 publish(message, get_param("exchange_name") + routing_key)

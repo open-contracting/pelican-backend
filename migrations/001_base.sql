@@ -89,3 +89,19 @@ CREATE TABLE resource_level_check (
 CREATE INDEX resource_level_check_data_item_id_idx ON resource_level_check (data_item_id);
 CREATE INDEX resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
 CREATE INDEX resource_level_check_modified_idx ON resource_level_check (modified);
+
+
+CREATE TABLE dataset_level_check (
+    id BIGSERIAL PRIMARY KEY,
+    check_name character varying,
+    result boolean,
+    value int,
+    meta jsonb,
+    dataset_id character varying(255),
+    created timestamp without time zone,
+    modified timestamp without time zone
+);
+
+CREATE INDEX dataset_level_check_data_item_id_idx ON dataset_level_check (data_item_id);
+CREATE INDEX dataset_level_check_dataset_id_idx ON dataset_level_check (dataset_id);
+CREATE INDEX dataset_level_check_modified_idx ON dataset_level_check (modified);
