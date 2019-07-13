@@ -1,9 +1,14 @@
 from contracting_process.resource_level.consistent import number_of_tenderers
-from contracting_process.resource_level.reference import (supplier_in_parties,
-                                                          tenderer_in_parties)
+from contracting_process.resource_level.reference import (
+    buyer_in_parties, payee_in_parties, payer_in_parties,
+    procuring_entity_in_parties, supplier_in_parties, tenderer_in_parties)
 
 definitions = {
     "consistent.number_of_tenderers": [number_of_tenderers.calculate],
     "reference.supplier_in_parties": [supplier_in_parties.calculate],
-    "reference.tenderer_in_parties": [tenderer_in_parties.calculate]
+    "reference.tenderer_in_parties": [tenderer_in_parties.calculate],
+    "reference.buyer_in_parties": [buyer_in_parties.calculate],
+    "reference.procuring_entity_in_parties": [procuring_entity_in_parties.calculate],
+    "reference.payer_in_parties": [payer_in_parties.calculate],
+    "reference.payee_in_parties": [payee_in_parties.calculate],
 }

@@ -124,10 +124,13 @@ def resend(dataset_id):
 
     ids = cursor.fetchall()
 
+    items_inserted = 0
     for entry in ids:
         message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(entry[0], dataset_id)
 
         set_item_state(dataset_id, entry[0], state.IN_PROGRESS)
+        items_inserted = items_inserted + 1
+        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=items_inserted)
 
         commit()
 
