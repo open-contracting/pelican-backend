@@ -105,6 +105,9 @@ def save_field_level_check(path, result, item_id, dataset_id):
 def save_resource_level_check(check_name, result, item_id, dataset_id):
     cursor = get_cursor()
 
+    if "meta" not in result or not result["meta"]:
+        result["meta"] = {}
+
     result["meta"]["version"] = result["version"]
     meta = Json(result["meta"])
 
