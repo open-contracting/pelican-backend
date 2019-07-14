@@ -68,6 +68,13 @@ def get_result(scope):
                     "20_50": count_20_50_percent,
                     "50_100": count_50_100_percent,
                 },
+                "examples": {
+                    "0_1": sorted_values[:percent_index_1][:10],
+                    "1_5": sorted_values[percent_index_1:percent_index_5][:10],
+                    "5_20": sorted_values[percent_index_5:percent_index_20][:10],
+                    "20_50": sorted_values[percent_index_20:percent_index_50][:10],
+                    "50_100": sorted_values[percent_index_50:][:10],
+                },
                 "sum": sum_value
             }
 
