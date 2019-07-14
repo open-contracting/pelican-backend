@@ -47,7 +47,6 @@ def do_work(dataset_id, logger):
         result = plugin.get_result(scope[plugin_name])
         save_dataset_level_check(plugin_name, result, dataset_id)
 
-    time.sleep(1)
     return
 
 

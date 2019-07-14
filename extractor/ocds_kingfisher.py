@@ -130,7 +130,7 @@ def resend(dataset_id):
 
         set_item_state(dataset_id, entry[0], state.IN_PROGRESS)
         items_inserted = items_inserted + 1
-        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=items_inserted)
+        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=len(ids))
 
         commit()
 
