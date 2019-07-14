@@ -3,6 +3,7 @@ atomicwrites==1.3.0
 attrs==19.1.0
 autopep8==1.4.4
 Click==7.0
+CurrencyConverter==0.13.9
 importlib-metadata==0.18
 isort==4.3.20
 jsonschema==3.0.1
