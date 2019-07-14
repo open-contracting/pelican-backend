@@ -24,8 +24,10 @@ def calculate(item):
 
         return result
 
+    parties_by_id = []
     for party in item["parties"]:
         if "id" in party and party["id"] == buyer_id:
+            parties_by_id.append(party)
             if "roles" in party and "buyer" in party["roles"]:
                 result["result"] = True
                 result["application_count"] = 1
@@ -40,6 +42,7 @@ def calculate(item):
     result["application_count"] = 1
     result["pass_count"] = 0
     result["meta"] = {
-        "reason": "no organization with buyer role"
+        "reason": "no organization with buyer role",
+        "parties": parties_by_id,
     }
     return result

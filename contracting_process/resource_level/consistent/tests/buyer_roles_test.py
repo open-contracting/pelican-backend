@@ -100,4 +100,12 @@ def test_failed():
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
-    assert result["meta"] == {"reason": "no organization with buyer role"}
+    assert result["meta"] == {
+        "reason": "no organization with buyer role",
+        "parties": [
+            {
+                "name": "aaa",
+                "id": "aaa",
+                "roles": ["other_role"]
+            },
+        ]}
