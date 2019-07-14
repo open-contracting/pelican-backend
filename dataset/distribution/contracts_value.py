@@ -1,9 +1,14 @@
 import operator
+from datetime import date
+
+from currency_converter import CurrencyConverter
 
 from tools.checks import get_empty_result_dataset
 from tools.getter import get_values
 
 version = 1.0
+
+c = CurrencyConverter("http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip", fallback_on_wrong_date=True)
 
 
 def add_item(scope, item, item_id):
@@ -15,8 +20,16 @@ def add_item(scope, item, item_id):
         if values:
             for value in values:
                 value["item_id"] = item_id
-                value["abs_amount"] = value["value"]["amount"]
-                scope["values"].append(value)
+                if value["value"]["currency"] in c.currencies:
+                    if value["value"]["currency"] != "USD":
+                        value["abs_amount"] = int(c.convert(
+                            value["value"]["amount"],
+                            value["value"]["currency"],
+                            'USD', date=date(1986, 2, 2)))
+                    else:
+                        value["abs_amount"] = value["value"]["amount"]
+
+                    scope["values"].append(value)
 
     return scope
 

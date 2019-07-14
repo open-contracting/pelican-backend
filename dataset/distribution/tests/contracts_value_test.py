@@ -17,7 +17,7 @@ first = {
         {
             "value": {
                 "amount": 10000000,
-                "currency": "USD",
+                "currency": "EUR",
             },
         },
     ]
@@ -65,7 +65,7 @@ def test_failed():
             "5_20": 15,
         },
         "shares": {
-            "0_1": 10000000,
+            "0_1": 11789000,
             "1_5": 4,
             "20_50": 30,
             "50_100": 50,
@@ -73,7 +73,7 @@ def test_failed():
         },
         "examples": {
             "0_1": [
-                {'abs_amount': 10000000, 'item_id': 1, 'path': 'contracts[0].value', 'value': {'amount': 10000000, 'currency': 'USD'}}
+                {'abs_amount': 11789000, 'item_id': 1, 'path': 'contracts[0].value', 'value': {'amount': 10000000, 'currency': 'EUR'}}
             ],
             "1_5": [
                 {'abs_amount': 1, 'item_id': 2, 'path': 'contracts[0].value', 'value': {'amount': 1, 'currency': 'USD'}},
@@ -118,7 +118,7 @@ def test_failed():
                 {'abs_amount': 1, 'item_id': 60, 'path': 'contracts[0].value', 'value': {'amount': 1, 'currency': 'USD'}},
             ],
         },
-        "sum": 10000099
+        "sum": 11789099
     }
 
 
