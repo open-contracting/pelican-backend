@@ -1,12 +1,14 @@
 from contracting_process.resource_level.coherent import (
     procurement_method_vs_number_of_tenderers, tender_status)
-from contracting_process.resource_level.consistent import number_of_tenderers
+from contracting_process.resource_level.consistent import (buyer_roles,
+                                                           number_of_tenderers)
 from contracting_process.resource_level.reference import (
     buyer_in_parties, payee_in_parties, payer_in_parties,
     procuring_entity_in_parties, supplier_in_parties, tenderer_in_parties)
 
 definitions = {
     "consistent.number_of_tenderers": [number_of_tenderers.calculate],
+    "consistent.buyer_roles": [buyer_roles.calculate],
     "reference.supplier_in_parties": [supplier_in_parties.calculate],
     "reference.tenderer_in_parties": [tenderer_in_parties.calculate],
     "reference.buyer_in_parties": [buyer_in_parties.calculate],
