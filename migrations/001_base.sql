@@ -102,6 +102,5 @@ CREATE TABLE dataset_level_check (
     modified timestamp without time zone
 );
 
-CREATE INDEX dataset_level_check_data_item_id_idx ON dataset_level_check (data_item_id);
 CREATE INDEX dataset_level_check_dataset_id_idx ON dataset_level_check (dataset_id);
 CREATE INDEX dataset_level_check_modified_idx ON dataset_level_check (modified);
