@@ -13,6 +13,7 @@ def test_empty():
 
 
 first = {
+    "date": "2011-03-28T16:47:36.860000-06:00",
     "contracts": [
         {
             "value": {
@@ -25,6 +26,7 @@ first = {
 
 
 second = {
+    "date": "2011-03-28T16:47:36.860000-06:00",
     "contracts": [
         {
             "value": {
@@ -65,7 +67,7 @@ def test_failed():
             "5_20": 15,
         },
         "shares": {
-            "0_1": 11789000,
+            "0_1": 13809000,
             "1_5": 4,
             "20_50": 30,
             "50_100": 50,
@@ -73,7 +75,7 @@ def test_failed():
         },
         "examples": {
             "0_1": [
-                {'abs_amount': 11789000, 'item_id': 1, 'path': 'contracts[0].value', 'value': {'amount': 10000000, 'currency': 'EUR'}}
+                {'abs_amount': 13809000, 'item_id': 1, 'path': 'contracts[0].value', 'value': {'amount': 10000000, 'currency': 'EUR'}}
             ],
             "1_5": [
                 {'abs_amount': 1, 'item_id': 2, 'path': 'contracts[0].value', 'value': {'amount': 1, 'currency': 'USD'}},
@@ -118,7 +120,7 @@ def test_failed():
                 {'abs_amount': 1, 'item_id': 60, 'path': 'contracts[0].value', 'value': {'amount': 1, 'currency': 'USD'}},
             ],
         },
-        "sum": 11789099
+        "sum": 13809099
     }
 
 

@@ -1,5 +1,5 @@
 import operator
-from datetime import date
+from datetime import date, datetime
 
 from currency_converter import CurrencyConverter
 
@@ -22,14 +22,16 @@ def add_item(scope, item, item_id):
                 value["item_id"] = item_id
                 if value["value"]["currency"] in c.currencies:
                     if value["value"]["currency"] != "USD":
-                        value["abs_amount"] = int(c.convert(
-                            value["value"]["amount"],
-                            value["value"]["currency"],
-                            'USD', date=date(1986, 2, 2)))
+                        if item["date"]:
+                            rel_date = datetime.strptime(item["date"][:9], "%Y-%m-%d").date()
+                            value["abs_amount"] = int(c.convert(
+                                value["value"]["amount"],
+                                value["value"]["currency"],
+                                'USD', rel_date))
+                        scope["values"].append(value)
                     else:
                         value["abs_amount"] = value["value"]["amount"]
-
-                    scope["values"].append(value)
+                        scope["values"].append(value)
 
     return scope
 
