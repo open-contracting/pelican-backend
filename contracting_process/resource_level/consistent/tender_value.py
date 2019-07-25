@@ -13,6 +13,7 @@ def calculate(item):
     tender_value = get_values(item, 'tender.value')
     planning_budget_amount = get_values(item, 'planning.budget.amount')
 
+    # path not found
     if not tender_value or not planning_budget_amount:
         result['meta'] = {'reason': 'values are not set'}
         return result
@@ -20,7 +21,7 @@ def calculate(item):
     tender_value = tender_value[0]['value']
     planning_budget_amount = planning_budget_amount[0]['value']
 
-    # missing fields
+    # missing amount or currency fields
     if 'amount' not in tender_value or 'currency' not in tender_value or \
        'amount' not in planning_budget_amount or 'currency' not in planning_budget_amount:
         
@@ -36,9 +37,9 @@ def calculate(item):
 
     cc = CurrencyConverter("http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip", fallback_on_wrong_date=True)
     
-    # non-supported currencies
+    # unsupported currencies
     if tender_value['currency'] not in cc.currencies or planning_budget_amount['currency'] not in cc.currencies:
-        result['meta'] = {'reason': 'non-supported currency', 'tender.value': tender_value, 'planning.budget.amount': planning_budget_amount}
+        result['meta'] = {'reason': 'unsupported currency', 'tender.value': tender_value, 'planning.budget.amount': planning_budget_amount}
         return result
 
     # currency conversion if necessary
@@ -46,7 +47,7 @@ def calculate(item):
         tender_value_amount = tender_value['amount']
         planning_budget_amount_amount = planning_budget_amount['amount']
     else:
-        ref_date = datetime.strptime(item.get_values(item, 'date')[0]['value'][:9], '%Y-%m-%d').date()
+        ref_date = datetime.strptime(get_values(item, 'date')[0]['value'][:10], '%Y-%m-%d').date()
         tender_value_amount = cc.convert(tender_value['amount'], tender_value['currency'], 'USD', date=ref_date)
         planning_budget_amount_amount = cc.convert(planning_budget_amount['amount'], planning_budget_amount['currency'],
                                                    'USD', date=ref_date)
@@ -67,6 +68,8 @@ def calculate(item):
     passed = ratio <= 0.5
 
     result['result'] = passed
+    result['application_count'] = 1
+    result['pass_count'] = 1 if passed else 0
     result['meta'] = {'tender.value': tender_value, 'planning.budget.amount': planning_budget_amount}
 
     return result
