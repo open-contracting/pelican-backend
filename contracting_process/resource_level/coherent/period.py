@@ -13,8 +13,8 @@ def calculate(item):
                     'tender.enquiryPeriod',
                     'tender.awardPeriod',
                     'tender.contractPeriod',
-                    'award.contractPeriod',
-                    'contract.period']
+                    'awards.contractPeriod',
+                    'contracts.period']
 
     application_count = None
     pass_count = None
@@ -25,9 +25,13 @@ def calculate(item):
             continue
 
         for index in range(0, len(periods)):
-            period = periods[index]
+            period = periods[index]['value']
 
             # missing dates
+            if 'startDate' not in period or 'endDate' not in period:
+                continue
+
+            # null dates
             if not period['startDate'] or not period['endDate']:
                 continue
             
@@ -40,12 +44,12 @@ def calculate(item):
 
             passed = startDate <= endDate
 
-            if application_count:
+            if application_count is not None:
                 application_count += 1
             else:
                 application_count = 1
 
-            if pass_count:
+            if pass_count is not None:
                 pass_count = pass_count + 1 if passed else pass_count
             else:
                 pass_count = 1 if passed else 0
@@ -60,7 +64,7 @@ def calculate(item):
     result['application_count'] = application_count
     result['pass_count'] = pass_count
 
-    if application_count and pass_count:
+    if application_count is not None and pass_count is not None:
         result['result'] = application_count == pass_count
     else:
         result['meta'] = {'reason': 'incomplete data for check'}
@@ -86,7 +90,7 @@ def parse_datetime(str_datetime):
     str_datetime = str_datetime[:19] + str_timezone
 
     try:       
-        return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%s%z')
+        return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%S%z')
     except ValueError:
         return None
     
