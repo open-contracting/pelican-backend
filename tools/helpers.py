@@ -26,3 +26,16 @@ def parse_datetime(str_datetime):
         return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%S%z')
     except ValueError:
         return None
+
+
+def parse_date(str_date):
+    '''
+    Parse string to valid date.
+    '''
+    if str_date is None:
+        return None
+
+    try:
+        return datetime.strptime(str_date[:10], '%Y-%m-%d').date()
+    except ValueError:
+        return None

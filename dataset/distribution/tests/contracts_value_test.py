@@ -67,7 +67,7 @@ def test_failed():
             "5_20": 15,
         },
         "shares": {
-            "0_1": 13809000,
+            "0_1": 14032000,
             "1_5": 4,
             "20_50": 30,
             "50_100": 50,
@@ -75,7 +75,7 @@ def test_failed():
         },
         "examples": {
             "0_1": [
-                {'abs_amount': 13809000, 'item_id': 1, 'path': 'contracts[0].value', 'value': {'amount': 10000000, 'currency': 'EUR'}}
+                {'abs_amount': 14032000, 'item_id': 1, 'path': 'contracts[0].value', 'value': {'amount': 10000000, 'currency': 'EUR'}}
             ],
             "1_5": [
                 {'abs_amount': 1, 'item_id': 2, 'path': 'contracts[0].value', 'value': {'amount': 1, 'currency': 'USD'}},
@@ -120,7 +120,7 @@ def test_failed():
                 {'abs_amount': 1, 'item_id': 60, 'path': 'contracts[0].value', 'value': {'amount': 1, 'currency': 'USD'}},
             ],
         },
-        "sum": 13809099
+        "sum": 14032099
     }
 
 

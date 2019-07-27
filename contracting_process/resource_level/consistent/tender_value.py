@@ -1,9 +1,8 @@
-from datetime import datetime
-
 from currency_converter import CurrencyConverter
 
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
+from tools.helpers import parse_date
 
 version = 1.0
 
@@ -51,7 +50,7 @@ def calculate(item):
         tender_value_amount = tender_value['amount']
         planning_budget_amount_amount = planning_budget_amount['amount']
     else:
-        ref_date = datetime.strptime(get_values(item, 'date')[0]['value'][:10], '%Y-%m-%d').date()
+        ref_date = parse_date(get_values(item, 'date')[0]['value'])
         tender_value_amount = cc.convert(tender_value['amount'], tender_value['currency'], 'USD', date=ref_date)
         planning_budget_amount_amount = cc.convert(planning_budget_amount['amount'], planning_budget_amount['currency'],
                                                    'USD', date=ref_date)

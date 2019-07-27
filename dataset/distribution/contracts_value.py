@@ -1,10 +1,10 @@
 import operator
-from datetime import date, datetime
 
 from currency_converter import CurrencyConverter
 
 from tools.checks import get_empty_result_dataset
 from tools.getter import get_values
+from tools.helpers import parse_date
 
 version = 1.0
 
@@ -23,7 +23,7 @@ def add_item(scope, item, item_id):
                 if value["value"]["currency"] in c.currencies:
                     if value["value"]["currency"] != "USD":
                         if item["date"]:
-                            rel_date = datetime.strptime(item["date"][:9], "%Y-%m-%d").date()
+                            rel_date = parse_date(item["date"])
                             value["abs_amount"] = int(c.convert(
                                 value["value"]["amount"],
                                 value["value"]["currency"],
