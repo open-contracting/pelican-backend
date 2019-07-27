@@ -1,7 +1,7 @@
+from datetime import datetime
+
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
-
-from datetime import datetime
 
 version = 1.0
 
@@ -9,7 +9,7 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    period_paths = ['tender.tenderPeriod', 
+    period_paths = ['tender.tenderPeriod',
                     'tender.enquiryPeriod',
                     'tender.awardPeriod',
                     'tender.contractPeriod',
@@ -34,7 +34,7 @@ def calculate(item):
             # null dates
             if not period['startDate'] or not period['endDate']:
                 continue
-            
+
             startDate = parse_datetime(period['startDate'])
             endDate = parse_datetime(period['endDate'])
 
@@ -59,7 +59,7 @@ def calculate(item):
                 result['meta'] = []
 
             # filling in the path of the processed period
-            result['meta'].append({'path': path, 'index': index, 'result': passed})
+            result['meta'].append({'path': "{}[{}]".format(path, index), 'result': passed})
 
     result['application_count'] = application_count
     result['pass_count'] = pass_count
@@ -71,13 +71,14 @@ def calculate(item):
 
     return result
 
-'''
-the following are valid dates according to ocds:
 
-‘2014-10-21T09:30:00Z’ - 9:30 am on the 21st October 2014, UTC
-‘2014-11-18T18:00:00-06:00’ - 6pm on 18th November 2014 CST (Central Standard Time)
-'''
 def parse_datetime(str_datetime):
+    '''
+    the following are valid dates according to ocds:
+
+    ‘2014-10-21T09:30:00Z’ - 9:30 am on the 21st October 2014, UTC
+    ‘2014-11-18T18:00:00-06:00’ - 6pm on 18th November 2014 CST (Central Standard Time)
+    '''
     try:
         return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%SZ')
     except ValueError:
@@ -86,12 +87,10 @@ def parse_datetime(str_datetime):
     if len(str_datetime) != 25:
         return None
 
-    str_timezone = str_datetime[19:].replace(':','')
+    str_timezone = str_datetime[19:].replace(':', '')
     str_datetime = str_datetime[:19] + str_timezone
 
-    try:       
+    try:
         return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%S%z')
     except ValueError:
         return None
-    
-
