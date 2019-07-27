@@ -1,11 +1,15 @@
+from datetime import datetime
+
+from currency_converter import CurrencyConverter
+
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
 
-from currency_converter import CurrencyConverter
-from datetime import datetime
-
-
 version = 1.0
+
+
+cc = CurrencyConverter("http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip", fallback_on_wrong_date=True)
+
 
 def calculate(item):
     result = get_empty_result_resource(version)
@@ -24,7 +28,7 @@ def calculate(item):
     # missing amount or currency fields
     if 'amount' not in tender_value or 'currency' not in tender_value or \
        'amount' not in planning_budget_amount or 'currency' not in planning_budget_amount:
-        
+
         result['meta'] = {'reason': 'amount or currency is not set'}
         return result
 
@@ -32,14 +36,14 @@ def calculate(item):
     if tender_value['amount'] is None or tender_value['currency'] is None or \
        planning_budget_amount['amount'] is None or planning_budget_amount['currency'] is None:
 
-       result['meta'] = {'reason': 'amount or currency is null'}
-       return result
+        result['meta'] = {'reason': 'amount or currency is null'}
+        return result
 
-    cc = CurrencyConverter("http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip", fallback_on_wrong_date=True)
-    
     # unsupported currencies
     if tender_value['currency'] not in cc.currencies or planning_budget_amount['currency'] not in cc.currencies:
-        result['meta'] = {'reason': 'unsupported currency', 'tender.value': tender_value, 'planning.budget.amount': planning_budget_amount}
+        result['meta'] = {
+            'reason': 'unsupported currency', 'tender.value': tender_value,
+            'planning.budget.amount': planning_budget_amount}
         return result
 
     # currency conversion if necessary
@@ -51,17 +55,20 @@ def calculate(item):
         tender_value_amount = cc.convert(tender_value['amount'], tender_value['currency'], 'USD', date=ref_date)
         planning_budget_amount_amount = cc.convert(planning_budget_amount['amount'], planning_budget_amount['currency'],
                                                    'USD', date=ref_date)
-    
+
     # amount is equal to zero
     if tender_value_amount == 0 or planning_budget_amount_amount == 0:
-        result['meta'] = {'reason': 'amount is equal to zero', 'tender.value': tender_value, 'planning.budget.amount': planning_budget_amount}
+        result['meta'] = {
+            'reason': 'amount is equal to zero', 'tender.value': tender_value,
+            'planning.budget.amount': planning_budget_amount}
         return result
 
     # different signs
     if (tender_value_amount > 0 and planning_budget_amount_amount < 0) or \
        (tender_value_amount < 0 and planning_budget_amount_amount > 0):
 
-        result['meta'] = {'reason': 'amounts have different signs', 'tender.value': tender_value, 'planning.budget.amount': planning_budget_amount}
+        result['meta'] = {'reason': 'amounts have different signs',
+                          'tender.value': tender_value, 'planning.budget.amount': planning_budget_amount}
         return result
 
     ratio = abs(tender_value_amount - planning_budget_amount_amount) / abs(tender_value_amount)
@@ -73,11 +80,3 @@ def calculate(item):
     result['meta'] = {'tender.value': tender_value, 'planning.budget.amount': planning_budget_amount}
 
     return result
-
-
-
-
-    
-
-    
-
