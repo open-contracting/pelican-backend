@@ -127,7 +127,7 @@ item_test_one_fail = {
 def test_one_fail():
     result = calculate(item_test_one_fail)
     assert type(result) == dict
-    assert result["result"] == False
+    assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == [{"path": "tender.awardPeriod[0]", "result": False}]
