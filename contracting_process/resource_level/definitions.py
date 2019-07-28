@@ -1,5 +1,5 @@
 from contracting_process.resource_level.coherent import (
-    procurement_method_vs_number_of_tenderers, tender_status, period)
+    dates, period, procurement_method_vs_number_of_tenderers, tender_status)
 from contracting_process.resource_level.consistent import (buyer_roles,
                                                            number_of_tenderers,
                                                            tender_value)
@@ -19,5 +19,6 @@ definitions = {
     "reference.payee_in_parties": [payee_in_parties.calculate],
     "coherent.procurement_method_vs_number_of_tenderers": [procurement_method_vs_number_of_tenderers.calculate],
     "coherent.tender_status": [tender_status.calculate],
-    "coherent.period": [period.calculate]
+    "coherent.period": [period.calculate],
+    "coherent.dates": [dates.calculate]
 }
