@@ -47,28 +47,36 @@ def calculate(item):
                             else:
                                 result["pass_count"] = result["pass_count"] + 1
 
-    same_size_date_pairs_paths = [
-        ["awards.date", "contracts.dateSigned"]
-    ]
+    # special case for awards[i].id = contracts[j].awardID
+    awards = get_values(item, "awards")[0]["value"]
+    for award_index in range(0, len(awards)):
+        award = awards[award_index]
 
-    for date_pair_path in same_size_date_pairs_paths:
-        first_dates = get_values(item, date_pair_path[0])
-        second_dates = get_values(item, date_pair_path[1])
+        if "id" in award and "date" in award:
+            award_id = award["id"]
+            award_date = parse_date(award["date"])
 
-        if first_dates and second_dates and len(first_dates) == len(second_dates):
-            for index in range(0, len(first_dates)):
-                first_date = parse_date(first_dates[index]["value"])
-                second_date = parse_date(second_dates[index]["value"])
+            if not award_date or not award_id:
+                continue
 
-                if first_date and second_date:
+            contracts = get_values(item, "contracts")[0]["value"]
+            for contract_index in range(0, len(contracts)):
+                contract = contracts[contract_index]
+                if "awardID" in contract and "dateSigned" in contract:
+                    contract_id = contract["awardID"]
+                    contract_date = parse_date(contract["dateSigned"])
+
+                    if not contract_date or not contract_id or contract_id != award_id:
+                        continue
+
                     result["application_count"] = result["application_count"] + 1
 
-                    if first_date > second_date:
+                    if award_date > contract_date:
                         failed_paths.append({
-                            "path_1": first_dates[index]["path"],
-                            "value_1": first_dates[index]["value"],
-                            "path_2": second_dates[index]["path"],
-                            "value_2": second_dates[index]["value"],
+                            "path_1": "awards[{}].date".format(award_index),
+                            "value_1": award["date"],
+                            "path_2": "contracts[{}].dateSigned".format(contract_index),
+                            "value_2": contract["dateSigned"],
                         })
                     else:
                         result["pass_count"] = result["pass_count"] + 1

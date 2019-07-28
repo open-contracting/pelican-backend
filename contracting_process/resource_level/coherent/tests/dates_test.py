@@ -21,12 +21,12 @@ item_ok = {
         }
     },
     "contracts": [
-        {"dateSigned": "2015-12-31T00:00:00Z"},
-        {"dateSigned": "2017-12-31T00:00:00Z"}
+        {"dateSigned": "2015-12-31T00:00:00Z", "awardID": "1"},
+        {"dateSigned": "2017-12-31T00:00:00Z", "awardID": "2"}
     ],
     "awards": [
-        {"date": "2015-12-30T00:00:00Z"},
-        {"date": "2017-12-30T00:00:00Z"}
+        {"date": "2015-12-30T00:00:00Z", "id": "1"},
+        {"date": "2017-12-30T00:00:00Z", "id": "2"}
     ]
 }
 
@@ -51,12 +51,12 @@ item_failed = {
         }
     },
     "contracts": [
-        {"dateSigned": "2015-12-30T00:00:00Z"},
-        {"dateSigned": "2017-12-30T00:00:00Z"}
+        {"dateSigned": "2015-12-30T00:00:00Z", "awardID": "1"},
+        {"dateSigned": "2017-12-30T00:00:00Z", "awardID": "2"}
     ],
     "awards": [
-        {"date": "2015-12-31T00:00:00Z"},
-        {"date": "2017-12-31T00:00:00Z"}
+        {"date": "2015-12-31T00:00:00Z", "id": "1"},
+        {"date": "2017-12-31T00:00:00Z", "id": "3"}
     ]
 }
 
@@ -65,7 +65,7 @@ def test_failed():
     result = calculate(item_failed)
     assert type(result) == dict
     assert result["result"] is False
-    assert result["application_count"] is 12
+    assert result["application_count"] is 11
     assert result["pass_count"] is 0
     assert result["meta"] == {"failed_paths": [
         {
@@ -101,8 +101,5 @@ def test_failed():
         }, {
             "path_1": "awards[0].date", "path_2": "contracts[0].dateSigned", "value_1": "2015-12-31T00:00:00Z",
             "value_2": "2015-12-30T00:00:00Z"
-        }, {
-            "path_1": "awards[1].date", "path_2": "contracts[1].dateSigned", "value_1": "2017-12-31T00:00:00Z",
-            "value_2": "2017-12-30T00:00:00Z"
         }
     ]}
