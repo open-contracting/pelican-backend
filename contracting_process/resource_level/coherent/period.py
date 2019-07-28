@@ -8,12 +8,12 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    period_paths = ['tender.tenderPeriod',
-                    'tender.enquiryPeriod',
-                    'tender.awardPeriod',
-                    'tender.contractPeriod',
-                    'awards.contractPeriod',
-                    'contracts.period']
+    period_paths = ["tender.tenderPeriod",
+                    "tender.enquiryPeriod",
+                    "tender.awardPeriod",
+                    "tender.contractPeriod",
+                    "awards.contractPeriod",
+                    "contracts.period"]
 
     application_count = None
     pass_count = None
@@ -24,18 +24,18 @@ def calculate(item):
             continue
 
         for index in range(0, len(periods)):
-            period = periods[index]['value']
+            period = periods[index]["value"]
 
             # missing dates
-            if 'startDate' not in period or 'endDate' not in period:
+            if "startDate" not in period or "endDate" not in period:
                 continue
 
             # null dates
-            if not period['startDate'] or not period['endDate']:
+            if not period["startDate"] or not period["endDate"]:
                 continue
 
-            startDate = parse_datetime(period['startDate'])
-            endDate = parse_datetime(period['endDate'])
+            startDate = parse_datetime(period["startDate"])
+            endDate = parse_datetime(period["endDate"])
 
             # ill-formatted dates
             if not startDate or not endDate:
@@ -54,18 +54,18 @@ def calculate(item):
                 pass_count = 1 if passed else 0
 
             # initializing meta
-            if not result['meta']:
-                result['meta'] = []
+            if not result["meta"]:
+                result["meta"] = []
 
             # filling in the path of the processed period
-            result['meta'].append({'path': "{}[{}]".format(path, index), 'result': passed})
+            result["meta"].append({"path": "{}[{}]".format(path, index), "result": passed})
 
-    result['application_count'] = application_count
-    result['pass_count'] = pass_count
+    result["application_count"] = application_count
+    result["pass_count"] = pass_count
 
     if application_count is not None and pass_count is not None:
-        result['result'] = application_count == pass_count
+        result["result"] = application_count == pass_count
     else:
-        result['meta'] = {'reason': 'incomplete data for check'}
+        result["meta"] = {"reason": "incomplete data for check"}
 
     return result

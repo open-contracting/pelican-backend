@@ -27,7 +27,7 @@ def add_item(scope, item, item_id):
                             value["abs_amount"] = int(c.convert(
                                 value["value"]["amount"],
                                 value["value"]["currency"],
-                                'USD', rel_date))
+                                "USD", rel_date))
                         scope["values"].append(value)
                     else:
                         value["abs_amount"] = value["value"]["amount"]
