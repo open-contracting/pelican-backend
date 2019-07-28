@@ -65,9 +65,9 @@ def calculate(item):
 
                     if first_date > second_date:
                         failed_paths.append({
-                            "path_1": "{}[{}]".format(first_dates[index]["path"]),
+                            "path_1": first_dates[index]["path"],
                             "value_1": first_dates[index]["value"],
-                            "path_2": "{}[{}]".format(second_dates[index]["path"]),
+                            "path_2": second_dates[index]["path"],
                             "value_2": second_dates[index]["value"],
                         })
                     else:
