@@ -6,7 +6,7 @@ version = 1.0
 
 def calculate(item):
     result = get_empty_result_resource(version)
-    if not item:
+    if not item or "awards" not in item or "contracts" not in item:
         result["meta"] = {"reason": "insufficient data for check"}
         return result
 

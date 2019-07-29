@@ -41,9 +41,9 @@ def test_multiple_contracts():
     assert result["result"] is True
     assert result["application_count"] == 3
     assert result["pass_count"] == 3
-    assert result["meta"] == [{"path": "contracts.period[0]", "result": True},
-                              {"path": "contracts.period[1]", "result": True},
-                              {"path": "contracts.period[2]", "result": True}]
+    assert result["meta"] == {"failed_paths": [{"path": "contracts.period[0]", "result": True},
+                                               {"path": "contracts.period[1]", "result": True},
+                                               {"path": "contracts.period[2]", "result": True}]}
 
 
 item_test_missing_dates = {
@@ -130,7 +130,7 @@ def test_one_fail():
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
-    assert result["meta"] == [{"path": "tender.awardPeriod[0]", "result": False}]
+    assert result["meta"] == {"failed_paths": [{"path": "tender.awardPeriod[0]", "result": False}]}
 
 
 item_test_mixed_time_zones = {
@@ -149,7 +149,7 @@ def test_mixed_time_zones():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == [{"path": "tender.tenderPeriod[0]", "result": True}]
+    assert result["meta"] == {"failed_paths": [{"path": "tender.tenderPeriod[0]", "result": True}]}
 
 
 item_test_multiple_fails_and_passes = {
@@ -188,6 +188,6 @@ def test_multiple_fails_and_passes():
     assert result["result"] is False
     assert result["application_count"] == 3
     assert result["pass_count"] == 2
-    assert result["meta"] == [{"path": "awards.contractPeriod[0]", "result": True},
-                              {"path": "awards.contractPeriod[1]", "result": True},
-                              {"path": "awards.contractPeriod[2]", "result": False}]
+    assert result["meta"] == {"failed_paths": [{"path": "awards.contractPeriod[0]", "result": True},
+                                               {"path": "awards.contractPeriod[1]", "result": True},
+                                               {"path": "awards.contractPeriod[2]", "result": False}]}

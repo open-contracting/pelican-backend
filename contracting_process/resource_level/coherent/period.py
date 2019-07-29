@@ -17,6 +17,7 @@ def calculate(item):
 
     application_count = None
     pass_count = None
+    failed_paths = []
     for path in period_paths:
         periods = get_values(item, path)
 
@@ -53,19 +54,14 @@ def calculate(item):
             else:
                 pass_count = 1 if passed else 0
 
-            # initializing meta
-            if not result["meta"]:
-                result["meta"] = []
-
-            # filling in the path of the processed period
-            result["meta"].append({"path": "{}[{}]".format(path, index), "result": passed})
+            failed_paths.append({"path": "{}[{}]".format(path, index), "result": passed})
 
     result["application_count"] = application_count
     result["pass_count"] = pass_count
-
     if application_count is not None and pass_count is not None:
         result["result"] = application_count == pass_count
     else:
         result["meta"] = {"reason": "incomplete data for check"}
-
+    if failed_paths:
+        result["meta"] = {"failed_paths": failed_paths}
     return result
