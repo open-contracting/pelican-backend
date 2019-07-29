@@ -10,7 +10,7 @@ version = 1.0
 
 
 def add_item(scope, item, item_id):
-    return common_add_item(scope, item, item_id, "contracts.value")
+    return common_add_item(scope, item, item_id, "tender.value")
 
 
 def get_result(scope):
