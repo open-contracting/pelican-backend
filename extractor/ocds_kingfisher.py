@@ -19,6 +19,10 @@ routing_key = "_ocds_kingfisher_extractor"
 
 page_size = 1000
 
+logger = None
+
+cursor = None
+
 
 @click.command()
 @click.argument("environment")
