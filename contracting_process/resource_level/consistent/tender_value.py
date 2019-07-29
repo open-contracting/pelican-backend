@@ -1,13 +1,9 @@
-from currency_converter import CurrencyConverter
 
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
-from tools.helpers import parse_date
+from tools.helpers import convert, currency_available, parse_date
 
 version = 1.0
-
-
-cc = CurrencyConverter("http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip", fallback_on_wrong_date=True)
 
 
 def calculate(item):
@@ -39,7 +35,7 @@ def calculate(item):
         return result
 
     # unsupported currencies
-    if tender_value["currency"] not in cc.currencies or planning_budget_amount["currency"] not in cc.currencies:
+    if not currency_available(tender_value["currency"]) or not currency_available(planning_budget_amount["currency"]):
         result["meta"] = {
             "reason": "unsupported currency", "tender.value": tender_value,
             "planning.budget.amount": planning_budget_amount}
@@ -51,9 +47,9 @@ def calculate(item):
         planning_budget_amount_amount = planning_budget_amount["amount"]
     else:
         ref_date = parse_date(get_values(item, "date")[0]["value"])
-        tender_value_amount = cc.convert(tender_value["amount"], tender_value["currency"], "USD", date=ref_date)
-        planning_budget_amount_amount = cc.convert(planning_budget_amount["amount"], planning_budget_amount["currency"],
-                                                   "USD", date=ref_date)
+        tender_value_amount = convert(tender_value["amount"], tender_value["currency"], "USD", ref_date)
+        planning_budget_amount_amount = convert(planning_budget_amount["amount"], planning_budget_amount["currency"],
+                                                "USD", ref_date)
 
     # amount is equal to zero
     if tender_value_amount == 0 or planning_budget_amount_amount == 0:

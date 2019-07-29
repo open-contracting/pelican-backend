@@ -1,4 +1,22 @@
 from datetime import datetime
+from decimal import Decimal
+
+from currency_converter import CurrencyConverter
+
+cc = CurrencyConverter("http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip", fallback_on_wrong_date=True)
+
+
+def currency_available(currency):
+    if currency and currency.upper() in cc.currencies:
+        return True
+    return False
+
+
+def convert(amount, original_currency, target_currency, rel_date):
+    if original_currency in cc.currencies and target_currency in cc.currencies:
+        return round(Decimal(cc.convert(float(amount), original_currency, target_currency, rel_date)), 4)
+
+    return None
 
 
 def parse_datetime(str_datetime):
