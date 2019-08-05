@@ -9,29 +9,27 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    contracts = get_values(item, 'contracts')
-    contracts = [c['value'] for c in contracts if c['value']]
-
+    contracts = item['contracts'] if 'contracts' in item else None
     if not contracts:
         result['meta'] = {'reason': 'there are no contracts'}
         return result
 
-    awards = get_values(item, 'awards')
-    awards = [a['value'] for a in awards if a['value']]
+    awards = item['awards'] if 'awards' in item else None
+    if not awards:
+        result['meta'] = {'reason': 'there are no awards'}
+        return result
 
-    relevant_contracts = []
     for contract in contracts:
         matching_awards = [a for a in awards if contract['awardID'] == a['id']]
 
         # matching award can be only one
         if len(matching_awards) != 1:
-            result['meta'] = {'reason': 'contract.awardID is not identity \
-                    mapping to award.id'}
+            result['meta'] = {'reason': 'multiple awards with the same id'}
             return result
 
         matching_award = matching_awards[0]
 
-        # value and amount fields set
+        # checking whether amout or curreny fields are set
         if 'value' not in contract or 'value' not in matching_award or \
                 'currency' not in contract['value'] or \
                 'amount' not in contract['value'] or \
@@ -42,12 +40,12 @@ def calculate(item):
                 matching_award['value']['currency'] is None or \
                 matching_award['value']['amount'] is None:
 
-            result['meta'] = {'reason': 'value or amount fields not set'}
+            result['meta'] = {'reason': 'amount or currency is not set'}
             return result
 
         # checking for non-existing currencies
-        if not currency_available(contract['currency']) or \
-                not currency_available(matching_award['currency']):
+        if not currency_available(contract['value']['currency']) or \
+                not currency_available(matching_award['value']['currency']):
 
             result['meta'] = {'reason': 'non-existing currencies'}
             return result
@@ -125,12 +123,16 @@ def calculate(item):
         passed = ratio <= 0.5
 
         result_result = result_result and passed
+
+        if result['meta'] is None:
+            result['meta'] = []
+
         result['meta'].append(
-            [
+            {
                 'awardID': award['id'],
                 'awards.value': award['value'],
                 'contracts.value_sum': contracts_value_amount_sum
-            ]
+            }
         )
 
     result['result'] = result_result
