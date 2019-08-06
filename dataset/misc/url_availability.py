@@ -64,13 +64,13 @@ def get_result(scope):
     ok_status_num = 0
     for sample in scope['samples']:
         try:
-            request = requests.get(sample['value'], stream=True)
+            request = requests.get(sample['value'], timeout=30, stream=True)
             if 200 <= request.status_code < 400:
                 sample['status'] = 'OK'
                 ok_status_num += 1
             else:
                 sample['status'] = 'ERROR'
-        except requests.exceptions.ConnectionError:
+        except:
             sample['status'] = 'ERROR'
 
     result['result'] = ok_status_num == samples_num
