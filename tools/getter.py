@@ -56,3 +56,9 @@ def get_values(item, str_path):
 
     # nothing found
     return None
+
+
+def get_values_list(item, str_path):
+    values = get_values(item, str_path)
+
+    return [] if values is None else values
