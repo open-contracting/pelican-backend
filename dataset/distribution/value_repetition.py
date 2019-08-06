@@ -75,7 +75,11 @@ def get_result(scope):
 
         result['result'] = passed
         result['value'] = ratio
-        result['meta'] = [scope[key]['examples_id'] for key in most_frequent]
+        result['meta'] = {
+            'most_frequent': {
+                key: scope[key] for key in most_frequent
+            }
+        }
 
     return result
 
