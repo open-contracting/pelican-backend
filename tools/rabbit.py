@@ -30,7 +30,8 @@ def connect():
                                                                    port=get_param(
                                                                        "rabbit_port"),
                                                                    credentials=credentials,
-                                                                   blocked_connection_timeout=1800))
+                                                                   blocked_connection_timeout=1800,
+                                                                   heartbeat=0))
     global channel
     channel = connection.channel()
 
