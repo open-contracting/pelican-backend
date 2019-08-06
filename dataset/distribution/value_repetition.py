@@ -19,7 +19,7 @@ def add_item(scope, item, item_id, path):
         v for v in values
         if (
             'amount' in v and 'currency' in v and
-            v['amount'] and v['currency']
+            v['amount'] is not None and v['currency'] is not None
         )
     ]
 
@@ -75,7 +75,7 @@ def get_result(scope):
 
         result['result'] = passed
         result['value'] = ratio
-        result['meta'] = most_frequent
+        result['meta'] = [scope[key]['examples_id'] for key in most_frequent]
 
     return result
 
