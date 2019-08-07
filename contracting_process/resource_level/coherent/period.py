@@ -24,19 +24,19 @@ def calculate(item):
         if not periods:
             continue
 
-        for index in range(0, len(periods)):
-            period = periods[index]["value"]
-
+        for period in periods:
             # missing dates
-            if "startDate" not in period or "endDate" not in period:
+            if "startDate" not in period["value"] or \
+                    "endDate" not in period["value"]:
                 continue
 
             # null dates
-            if not period["startDate"] or not period["endDate"]:
+            if not period["value"]["startDate"] or \
+                    not period["value"]["endDate"]:
                 continue
 
-            startDate = parse_datetime(period["startDate"])
-            endDate = parse_datetime(period["endDate"])
+            startDate = parse_datetime(period["value"]["startDate"])
+            endDate = parse_datetime(period["value"]["endDate"])
 
             # ill-formatted dates
             if not startDate or not endDate:
@@ -54,7 +54,7 @@ def calculate(item):
             else:
                 pass_count = 1 if passed else 0
 
-            failed_paths.append({"path": "{}[{}]".format(path, index), "result": passed})
+            failed_paths.append({"path": period["path"], "result": passed})
 
     result["application_count"] = application_count
     result["pass_count"] = pass_count
