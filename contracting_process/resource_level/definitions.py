@@ -4,7 +4,7 @@ from contracting_process.resource_level.consistent import (buyer_roles,
                                                            number_of_tenderers,
                                                            tender_value,
                                                            contracts_value)
-                                                           
+
 from contracting_process.resource_level.reference import (
     buyer_in_parties, contract_in_awards, payee_in_parties, payer_in_parties,
     procuring_entity_in_parties, supplier_in_parties, tenderer_in_parties)
