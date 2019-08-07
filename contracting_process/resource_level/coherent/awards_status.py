@@ -1,6 +1,6 @@
 
 from tools.checks import get_empty_result_resource
-from tools.getter import get_values_list
+from tools.getter import get_values
 
 version = 1.0
 
@@ -8,13 +8,7 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    values = get_values_list(item, 'contracts.awardID')
-    contracts_awardID = [
-        v['value'] for v in values
-        if v['value'] is not None
-    ]
-
-    values = get_values_list(item, 'awards')
+    values = get_values(item, 'awards')
     awards = [
         v for v in values
         if 'status' in v['value'] and
@@ -26,6 +20,12 @@ def calculate(item):
             'reason': 'there are no awards with check-specific properties'
         }
         return result
+    
+    values = get_values(item, 'contracts.awardID')
+    contracts_awardID = [
+        v['value'] for v in values
+        if v['value'] is not None
+    ]
 
     application_count = 0
     pass_count = 0
@@ -33,7 +33,11 @@ def calculate(item):
     for award in awards:
         passed = award['value']['id'] not in contracts_awardID
         result['meta']['processed_awards'].append(
-            {'path': award['path'], 'result': passed}
+            {
+                'path': award['path'],
+                'id': award['value']['id'],
+                'result': passed
+            }
         )
         application_count += 1
         pass_count = pass_count + 1 if passed else pass_count
