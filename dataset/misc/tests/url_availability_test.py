@@ -106,6 +106,7 @@ items_test_failed_multiple.append(
 )
 
 
+# working when samples_num is set to 100
 def test_failed_multiple():
     scope = {}
 
@@ -126,19 +127,3 @@ def test_failed_multiple():
         [s for s in result['meta']['samples']
             if s['status'] == 'OK']
     ) == 99
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
