@@ -22,27 +22,17 @@ def calculate_reference_in_parties(item, values, version):
     failed_paths = []
     for value in values:
         if value["value"]:
-            path_counter = 0
-
-            add_counter_to_path = True
-            if type(value["value"]) is not list:
-                value["value"] = (value["value"],)
-                add_counter_to_path = False
-            for party in value["value"]:
                 application_count = application_count + 1
 
                 current_path = value["path"]
-                if add_counter_to_path:
-                    current_path = "{}[{}]".format(value["path"], path_counter)
-                    path_counter = path_counter + 1
 
                 if "parties" not in item or not item["parties"]:
                     failed_paths.append(current_path)
                     continue
-                if "id" not in party:
+                if "id" not in value["value"]:
                     failed_paths.append(current_path)
                     continue
-                if party["id"] not in parties_ids:
+                if value["value"]["id"] not in parties_ids:
                     failed_paths.append(current_path)
                     continue
 

@@ -13,32 +13,31 @@ def calculate(item):
     result["application_count"] = 0
     result["pass_count"] = 0
 
-    awards = get_values(item, "awards")[0]["value"]
-    contracts = get_values(item, "contracts")[0]["value"]
+    awards = get_values(item, "awards")
+    contracts = get_values(item, "contracts")
 
     failed_paths = []
-    for contract_index in range(0, len(contracts)):
-        contract = contracts[contract_index]
-
+    for contract in contracts:
         result["application_count"] = result["application_count"] + 1
 
         if not awards or len(awards) == 0:
-            failed_paths.append("contracts[{}]".format(contract_index))
+            failed_paths.append(contract["path"])
             continue
 
-        if "awardID" not in contract:
-            failed_paths.append("contracts[{}]".format(contract_index))
+        if "awardID" not in contract["value"]:
+            failed_paths.append(contract["path"])
             continue
 
         awards_found_count = 0
         for award in awards:
-            if "id" in award and award["id"] and award["id"] == contract["awardID"]:
+            if "id" in award["value"] and award["value"]["id"] and \
+                    award["value"]["id"] == contract["value"]["awardID"]:
                 awards_found_count = awards_found_count + 1
 
         if awards_found_count == 1:
             result["pass_count"] = result["pass_count"] + 1
         else:
-            failed_paths.append("contracts[{}]".format(contract_index))
+            failed_paths.append(contract["path"])
 
     if result["application_count"] == 0:
         result["application_count"] = None
