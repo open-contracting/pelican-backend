@@ -29,7 +29,10 @@ def test_get_value_simple():
     assert get_values(item, "") == [{"path": "", "value": item}]
     assert get_values(item, "tender") == [{"path": "tender", "value": item["tender"]}]
     assert get_values(item, "tender.id") == [{"path": "tender.id", "value": "0rw29R-005-2011-1"}]
-    assert get_values(item, "tender.ids") is None
+    
+    result = get_values(item, "tender.ids")
+    assert type(result) is list
+    assert(len(result)) == 0
 
 
 def test_get_value_lists():
@@ -50,19 +53,53 @@ def test_get_value_lists():
         {"path": "tender.items[2].unit.name", "value": "Unimom"},
     ]
 
-    assert get_values(item, "tender.items.non_existing") is None
+    result = get_values(item, "tender.items.non_existing")
+    assert type(result) is list
+    assert len(result) == 0
 
 
 def test_join():
     assert get_values(item, "tender.items.inner_list.aaa") == [
-        {'path': 'tender.items[0].inner_list[0].aaa', 'value': 'bbb'},
-        {'path': 'tender.items[0].inner_list[1].aaa', 'value': 'ccc'},
-        {'path': 'tender.items[1].inner_list[0].aaa', 'value': 'ddd'},
-        {'path': 'tender.items[1].inner_list[1].aaa', 'value': 'eee'},
-        {'path': 'tender.items[2].inner_list[0].aaa', 'value': 'ddd'},
-        {'path': 'tender.items[2].inner_list[1].aaa', 'value': 'eee'}]
+        {"path": "tender.items[0].inner_list[0].aaa", "value": "bbb"},
+        {"path": "tender.items[0].inner_list[1].aaa", "value": "ccc"},
+        {"path": "tender.items[1].inner_list[0].aaa", "value": "ddd"},
+        {"path": "tender.items[1].inner_list[1].aaa", "value": "eee"},
+        {"path": "tender.items[2].inner_list[0].aaa", "value": "ddd"},
+        {"path": "tender.items[2].inner_list[1].aaa", "value": "eee"}]
 
     assert get_values(item, "tender.items.inner_list") == [
-        {'path': 'tender.items[0].inner_list', 'value': [{"aaa": "bbb"}, {"aaa": "ccc"}]},
-        {'path': 'tender.items[1].inner_list', 'value': [{"aaa": "ddd"}, {"aaa": "eee"}]},
-        {'path': 'tender.items[2].inner_list', 'value': [{"aaa": "ddd"}, {"aaa": "eee"}]}]
+        {"path": "tender.items[0].inner_list[0]", "value": {"aaa": "bbb"}},
+        {"path": "tender.items[0].inner_list[1]", "value": {"aaa": "ccc"}},
+        {"path": "tender.items[1].inner_list[0]", "value": {"aaa": "ddd"}},
+        {"path": "tender.items[1].inner_list[1]", "value": {"aaa": "eee"}},
+        {"path": "tender.items[2].inner_list[0]", "value": {"aaa": "ddd"}},
+        {"path": "tender.items[2].inner_list[1]", "value": {"aaa": "eee"}}]
+
+
+def test_end_of_path():
+    result = get_values(item, "tender")
+    assert type(result) is list
+    assert result == [
+        {
+            "path": "tender",
+            "value": item["tender"]
+        }
+    ]
+
+    result = get_values(item, "tender.items")
+    assert type(result) is list
+    assert len(result) == 3
+    assert result == [
+        {
+            "path": "tender.items[0]",
+            "value": item['tender']['items'][0]
+        },
+        {
+            "path": "tender.items[1]",
+            "value": item['tender']['items'][1]
+        },
+        {
+            "path": "tender.items[2]",
+            "value": item['tender']['items'][2]
+        }
+    ]

@@ -5,7 +5,19 @@ def get_values(item, str_path):
 
     # return the value for key in the item
     if "." not in str_path and str_path in item:
-        return [{"path": str_path, "value": item[str_path]}]
+        if type(item[str_path]) is list:
+            values = []
+            for index in range(len(item[str_path])):
+                values.append(
+                    {
+                        "path": "{}[{}]".format(str_path, index),
+                        "value": item[str_path][index]    
+                    }
+                )
+
+            return values
+        else:
+            return [{"path": str_path, "value": item[str_path]}]
 
     # get new key identifying the new item
     path = str_path.split(".")
@@ -18,7 +30,7 @@ def get_values(item, str_path):
             result = get_values(item[key], ".".join(path[1:]))
 
             if not result:
-                return None
+                return []
 
             values = []
             if type(result) is not list:
@@ -55,4 +67,4 @@ def get_values(item, str_path):
             return [{"path": key, "value": item[key]}]
 
     # nothing found
-    return None
+    return []
