@@ -1,6 +1,6 @@
 
 from tools.checks import get_empty_result_resource
-from tools.getter import get_values_list
+from tools.getter import get_values
 
 version = 1.0
 
@@ -8,7 +8,7 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    values = get_values_list(item, 'contracts')
+    values = get_values(item, 'contracts')
     contracts = [
         v for v in values
         if 'status' in v['value'] and
