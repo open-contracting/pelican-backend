@@ -10,6 +10,7 @@ examples_id_cap = 20
 
 
 def add_item(scope, item, item_id):
+    # scope initialization
     if not scope:
         scope = {
             'buyers': {},
@@ -17,6 +18,7 @@ def add_item(scope, item, item_id):
             'resources_num': 0
         }
 
+    # filtering values containing required fields
     values = get_values(item, 'buyer.identifier')
     buyers = [
         v['value'] for v in values
@@ -56,6 +58,7 @@ def get_result(scope):
             }
             return result
 
+        # initializing histogram
         ocid_histogram = {
             '1': {'buyers': [], 'ocid_set': set()},
             '2-20': {'buyers': [], 'ocid_set': set()},
@@ -64,6 +67,7 @@ def get_result(scope):
             '100+': {'buyers': [], 'ocid_set': set()}
         }
 
+        # filling in the histogram
         max_buyer = {'buyer': None, 'ocid_count': -1}
         for buyer, value in scope['buyers'].items():
             ocid_count = len(value['ocid_set'])
@@ -93,6 +97,7 @@ def get_result(scope):
 
             value.pop('ocid_set', None)
 
+        # checking whether the check passed or not
         total_ocid_count = len(scope['ocid_set'])
         max_ocid_count = max_buyer['ocid_count']
         single_ocid_count = ocid_histogram['1']['ocid_count']
@@ -102,6 +107,7 @@ def get_result(scope):
             single_ocid_count < 0.5 * total_ocid_count
         )
 
+        # sampling item_ids from buyers appearing in items with one distinct ocid
         single_ocid_examples_id = [
             random.choice(scope['buyers'][buyer]['examples_id'])
             for buyer in random.sample(
@@ -112,6 +118,7 @@ def get_result(scope):
             )
         ]
 
+        # sampling item_ids from buyer that appeard in items with the most distinct ocids
         max_ocid_examples_id = random.sample(
             scope['buyers'][max_buyer['buyer']]['examples_id'],
             k=examples_id_cap
