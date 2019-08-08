@@ -1,4 +1,3 @@
-
 from dataset.misc import url_availability
 
 item_test_undefined = {
@@ -11,12 +10,6 @@ item_test_undefined = {
 
 
 def test_undefined():
-    scope = None
-    result = url_availability.get_result(scope)
-    assert result['result'] is None
-    assert result['value'] is None
-    assert result['meta'] == {'reason': 'missing scope'}
-
     scope = {}
     scope = url_availability.add_item(scope, {}, 0)
     result = url_availability.get_result(scope)
