@@ -1,4 +1,4 @@
-from contracting_process.field_level.number_checks import positive_integer
+from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
 
 definitions = {
@@ -43,18 +43,19 @@ definitions = {
     "tender.tenderPeriod.startDate": [exists, non_empty],
     "tender.tenderPeriod.endDate": [exists, non_empty],
     "tender.tenderPeriod.maxExtentDate": [exists, non_empty],
-    "tender.tenderPeriod.durationInDays": [exists, non_empty],
+    "tender.tenderPeriod.durationInDays": [exists, non_empty, positive_number],
     "tender.awardPeriod": [exists, non_empty],
     "tender.awardPeriod.startDate": [exists, non_empty],
     "tender.awardPeriod.endDate": [exists, non_empty],
     "tender.awardPeriod.maxExtentDate": [exists, non_empty],
-    "tender.awardPeriod.durationInDays": [exists, non_empty],
+    "tender.awardPeriod.durationInDays": [exists, non_empty, positive_number],
     "tender.contractPeriod": [exists, non_empty],
     "tender.contractPeriod.startDate": [exists, non_empty],
     "tender.contractPeriod.endDate": [exists, non_empty],
     "tender.contractPeriod.maxExtentDate": [exists, non_empty],
-    "tender.contractPeriod.durationInDays": [exists, non_empty],
-    "tender.numberOfTenderers": [exists, non_empty],
+    "tender.contractPeriod.durationInDays": [exists, non_empty, positive_number],
+    "tender.enquiryPeriod.durationInDays": [exists, non_empty, positive_number],
+    "tender.numberOfTenderers": [exists, non_empty, positive_number],
     "tender.tenderers": [exists, non_empty],
     "awards": [exists, non_empty],
     "awards.id": [exists, non_empty],
@@ -71,7 +72,7 @@ definitions = {
     "awards.contractPeriod.startDate": [exists, non_empty],
     "awards.contractPeriod.endDate": [exists, non_empty],
     "awards.contractPeriod.maxExtentDate": [exists, non_empty],
-    "awards.contractPeriod.durationInDays": [exists, non_empty],
+    "awards.contrsctPeriod.durationInDays": [exists, non_empty, positive_number],
     "contracts": [exists, non_empty],
     "contracts.id": [exists, non_empty],
     "contracts.awardID": [exists, non_empty],
@@ -108,6 +109,10 @@ definitions = {
     "contracts.documents.dateModified": [exists, non_empty],
     "contracts.documents.format": [exists, non_empty],
     "contracts.documents.language": [exists, non_empty],
+    "contracts.durationInDays": [exists, non_empty, positive_number],
+    "contracts.implementation.transactions.value.amount": [exists, non_empty, positive_number],
     "language": [exists, non_empty],
     "relatedProcesses": [exists, non_empty],
-}
+    "item.unit.value.amount": [exists, non_empty, positive_number],
+    "item.quantity": [exists, non_empty, positive_number],
+    }

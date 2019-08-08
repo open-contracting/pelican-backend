@@ -30,9 +30,7 @@ def test_positive_number():
         "reason": "not a number"
     }
     assert positive_number({"number": 0}, "number") == {
-        "result": False,
-        "value": 0,
-        "reason": "number is not positive"
+        "result": True,
     }
     assert positive_number({"number": -1}, "number") == {
         "result": False,

@@ -1,8 +1,6 @@
-import logging
 
 
 def positive_number(data, key):
-    logging.debug("Checking on correct number in {}", key)
     if key not in data:
         return {
             "result": False,
@@ -10,17 +8,26 @@ def positive_number(data, key):
             "reason": "missing key"
         }
     value = data[key]
-    data_type = type(value)
-    if data_type != int and data_type != float:
+    if is_not_a_number(value):
         return {
             "result": False,
             "value": value,
             "reason": "not a number"
         }
-    if float(value) <= 0:
+    if float(value) < 0:
         return {
             "result": False,
             "value": value,
             "reason": "number is not positive"
         }
     return {"result": True}
+
+
+def is_not_a_number(value):
+    if type(value) == complex:
+        return True
+    try:
+        float(value)
+        return False
+    except ValueError:
+        return True
