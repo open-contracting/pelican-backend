@@ -8,6 +8,9 @@ examples_cap = 10
 
 
 def add_item(scope, item, item_id, path):
+    if scope is None:
+        scope = {}
+
     values = get_values(item, '{}.value'.format(path))
     if not values:
         return scope
@@ -25,9 +28,6 @@ def add_item(scope, item, item_id, path):
 
     # intermediate computation
     for value in values:
-        if not scope:
-            scope = {}
-
         key = '{},{}'.format(value['amount'], value['currency'])
         if key not in scope:
             scope[key] = {
@@ -48,25 +48,17 @@ def add_item(scope, item, item_id, path):
 def get_result(scope):
     result = get_empty_result_dataset(version)
 
-    if scope is not None:
+    if scope:
         total_count = 0
         most_frequent = []
 
-        # determine three most frequent value.amount and value.currency
-        # combinations
+        # determine three most frequent value.amount and value.currency combinations
         for key in scope:
             most_frequent.append(key)
             most_frequent.sort(key=lambda k: scope[k]['count'], reverse=True)
             most_frequent = most_frequent[:3]
 
             total_count += scope[key]['count']
-
-        if total_count == 0:
-            result['meta'] = {
-                'reason': ('total count of distinct value.amount and '
-                           'value.currency is zero')
-            }
-            return result
 
         most_frequent_count = sum([scope[k]['count'] for k in most_frequent])
 
@@ -76,11 +68,11 @@ def get_result(scope):
         result['result'] = passed
         result['value'] = ratio
         result['meta'] = {
-            'most_frequent': {
-                key: scope[key] for key in most_frequent
-            }
+            'most_frequent': [
+                scope[key] for key in most_frequent
+            ]
         }
+    else:
+        result['meta'] = {'reason': 'there are is no suitable data item for this check'}
 
     return result
-
-

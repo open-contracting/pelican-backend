@@ -14,8 +14,7 @@ def test_undefined():
     assert result['result'] is None
     assert result['value'] is None
     assert result['meta'] == {
-        'reason': ('total count of distinct value.amount and '
-                   'value.currency is zero')
+        'reason': 'there are is no suitable data item for this check'
     }
 
 item_test_passed = {
@@ -38,7 +37,10 @@ def test_passed():
     result = awards_value_repetition.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 3/31
-    assert result['meta'] == [[0], [0], [0]]
+    assert len(result['meta']['most_frequent']) == 3
+    assert sum(
+        [len(el['examples_id']) for el in result['meta']['most_frequent']]
+    ) == 3
 
 items_test_passed_multiple = [
     {
@@ -67,7 +69,10 @@ def test_passed_multiple():
     result = contracts_value_repetition.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 3/31
-    assert result['meta'] == [[0], [1], [2]]
+    assert len(result['meta']['most_frequent']) == 3
+    assert sum(
+        [len(el['examples_id']) for el in result['meta']['most_frequent']]
+    ) == 3
 
 items_test_big_load = [
     {
@@ -101,5 +106,7 @@ def test_big_load():
 
     # following asserts will pass with high probability
     assert result['result'] is True
-    assert len(result['meta']) == 3
-    assert sum([len(el) for el in result['meta']]) == 30
+    assert len(result['meta']['most_frequent']) == 3
+    assert sum(
+        [len(el['examples_id']) for el in result['meta']['most_frequent']]
+    ) == 30
