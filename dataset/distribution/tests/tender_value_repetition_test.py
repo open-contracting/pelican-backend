@@ -1,10 +1,7 @@
 
 import random
 
-from dataset.distribution import \
-    tender_value_repetition, \
-    awards_value_repetition, \
-    contracts_value_repetition
+from dataset.distribution import tender_value_repetition
 
 
 def test_undefined():
@@ -17,34 +14,9 @@ def test_undefined():
         'reason': 'there are is no suitable data item for this check'
     }
 
-item_test_passed = {
-    'awards': [
-        {
-            'value': {'amount': num, 'currency': 'USD'}
-        }
-        for num in range(31)
-    ]
-}
-
-
-def test_passed():
-    scope = {}
-    scope = awards_value_repetition.add_item(
-        scope,
-        item_test_passed,
-        0
-    )
-    result = awards_value_repetition.get_result(scope)
-    assert result['result'] is True
-    assert result['value'] == 3/31
-    assert len(result['meta']['most_frequent']) == 3
-    assert sum(
-        [len(el['examples_id']) for el in result['meta']['most_frequent']]
-    ) == 3
-
 items_test_passed_multiple = [
     {
-        'contracts': [
+        'tender': [
             {
                 'value': {'amount': num, 'currency': 'USD'}
             }
@@ -59,14 +31,14 @@ def test_passed_multiple():
 
     id = 0
     for item in items_test_passed_multiple:
-        scope = contracts_value_repetition.add_item(
+        scope = tender_value_repetition.add_item(
             scope,
             item,
             id
         )
         id += 1
 
-    result = contracts_value_repetition.get_result(scope)
+    result = tender_value_repetition.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 3/31
     assert len(result['meta']['most_frequent']) == 3
@@ -76,17 +48,14 @@ def test_passed_multiple():
 
 items_test_big_load = [
     {
-        'contracts': [
-            {
-                'value': {
-                    'amount': random.randint(1, 100),
-                    'currency': random.choice(['USD', 'CZK', 'JPY'])
-                }
+        'tender': {
+            'value': {
+                'amount': random.randint(1, 100),
+                'currency': random.choice(['USD', 'CZK', 'JPY'])
             }
-            for __ in range(random.randint(0, 5))
-        ]
+        }
     }
-    for _ in range(100000)
+    for _ in range(300000)
 ]
 
 
@@ -95,14 +64,14 @@ def test_big_load():
 
     id = 0
     for item in items_test_big_load:
-        scope = contracts_value_repetition.add_item(
+        scope = tender_value_repetition.add_item(
             scope,
             item,
             id
         )
         id += 1
 
-    result = contracts_value_repetition.get_result(scope)
+    result = tender_value_repetition.get_result(scope)
 
     # following asserts will pass with high probability
     assert result['result'] is True
