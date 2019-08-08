@@ -26,7 +26,7 @@ def add_item(scope, item, item_id):
         )
     ]
 
-    ocid = get_values(item, 'ocid')['value']
+    ocid = get_values(item, 'ocid')[0]['value']
     scope['ocid_set'].add(ocid)
     for buyer in buyers:
         scope['resources_num'] += 1
@@ -95,7 +95,7 @@ def get_result(scope):
 
         total_ocid_count = len(scope['ocid_set'])
         max_ocid_count = max_buyer['ocid_count']
-        single_ocid_count = len(ocid_histogram['1']['ocid_count'])
+        single_ocid_count = ocid_histogram['1']['ocid_count']
         passed = (
             max_ocid_count > 0.01 * total_ocid_count and
             max_ocid_count < 0.5 * total_ocid_count and
