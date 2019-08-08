@@ -1,4 +1,3 @@
-
 import random
 import requests
 
@@ -17,9 +16,6 @@ paths = [
 
 
 def add_item(scope, item, item_id):
-    if not scope:
-        scope = {'samples': [], 'index': 0}
-
     values = []
     for path in paths:
         pos_values = get_values(item, path)
