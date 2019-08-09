@@ -20,7 +20,7 @@ def calculate_path_role(item, path, role):
         }
         return result
 
-    parties_id = [p['value']['id'] for p in parties]
+    parties_id = [p['value']['id'] for p in parties_values]
 
     values = get_values(item, path)
     check_values = [
@@ -50,12 +50,15 @@ def calculate_path_role(item, path, role):
         pass_count = pass_count + 1 if passed else pass_count
 
         result['meta']['references'].append(
-            'organization.id': str(value['value']['id']),
-            'expected_role': role,
-            'referenced_party_path': referenced_party['path'],
-            'referenced_party': referenced_party['value'],
-            'resource_path': value['path'],
-            'resource': value['value'],
+            {
+                'organization.id': str(value['value']['id']),
+                'expected_role': role,
+                'referenced_party_path': referenced_party['path'],
+                'referenced_party': referenced_party['value'],
+                'resource_path': value['path'],
+                'resource': value['value'],
+                'result': passed
+            }
         )
 
     result['result'] = application_count == pass_count
