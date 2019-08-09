@@ -8,7 +8,7 @@ def positive_number(data, key):
             "reason": "missing key"
         }
     value = data[key]
-    if is_not_a_number(value):
+    if not is_number(value):
         return {
             "result": False,
             "value": value,
@@ -23,11 +23,11 @@ def positive_number(data, key):
     return {"result": True}
 
 
-def is_not_a_number(value):
+def is_number(value):
     if type(value) == complex:
-        return True
+        return False
     try:
         float(value)
-        return False
     except ValueError:
-        return True
+        return False
+    return True
