@@ -1,13 +1,25 @@
 import functools
 
 from contracting_process.resource_level.coherent import (
-    awards_status, contracts_status, dates, period,
-    procurement_method_vs_number_of_tenderers, tender_status)
-from contracting_process.resource_level.consistent import (buyer_roles,
-                                                           contracts_value,
-                                                           number_of_tenderers,
-                                                           tender_value)
-from contracting_process.resource_level.reference import (parties)
+    awards_status,
+    contracts_status,
+    dates,
+    period,
+    procurement_method_vs_number_of_tenderers,
+    tender_status
+)
+
+from contracting_process.resource_level.consistent import (
+    buyer_roles,
+    contracts_value,
+    number_of_tenderers,
+    tender_value
+)
+
+from contracting_process.resource_level.reference import (
+    parties,
+    contract_in_awards
+)
 
 definitions = {
     "consistent.number_of_tenderers": [number_of_tenderers.calculate],

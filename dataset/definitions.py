@@ -1,10 +1,18 @@
-from dataset.distribution import (buyer,
-                                  main_procurement_category,
-                                  tender_status,
-                                  value_repetition,
-                                  value)
-from dataset.misc import url_availability
-from dataset.unique import id
+from dataset.distribution import (
+    buyer,
+    main_procurement_category,
+    tender_status,
+    value_repetition,
+    value
+)
+
+from dataset.misc import (
+    url_availability
+)
+
+from dataset.unique import (
+    id
+)
 
 definitions = {
     "distribution.main_procurement_category": main_procurement_category,
