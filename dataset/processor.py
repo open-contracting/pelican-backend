@@ -12,6 +12,7 @@ page_size = 1000
 def do_work(dataset_id, logger):
     processed_count = 1000
     id = -1
+    no_item_processed = True
     pager = 0
     scope = {}
 
@@ -38,10 +39,17 @@ def do_work(dataset_id, logger):
 
             processed_count = processed_count + 1
             id = item["id"]
+            no_item_processed = False
 
         pager = pager + 1
 
         logger.info("Processed page {}".format(pager))
+
+    if no_item_processed:
+        logger.info(
+            "No item with dataset_id = {} found. Skipping dataset checks computation.".format(dataset_id)
+        )
+        return
 
     for plugin_name, plugin in definitions.items():
         result = plugin.get_result(scope[plugin_name])
