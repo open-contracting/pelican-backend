@@ -1,5 +1,9 @@
-from contracting_process.resource_level.reference.tenderer_in_parties import \
-    calculate
+import functools
+
+from contracting_process.resource_level.reference import parties
+calculate = functools.partial(
+    parties.calculate_path, path="tender.tenderers"
+)
 
 item_complex = {
     "tender": [

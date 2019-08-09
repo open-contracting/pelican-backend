@@ -1,5 +1,9 @@
-from contracting_process.resource_level.reference.payer_in_parties import \
-    calculate
+import functools
+
+from contracting_process.resource_level.reference import parties
+calculate = functools.partial(
+    parties.calculate_path, path="contracts.implementation.transactions.payer"
+)
 
 item_complex = {
     "contracts": [
