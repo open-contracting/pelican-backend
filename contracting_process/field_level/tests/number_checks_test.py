@@ -1,11 +1,6 @@
 from contracting_process.field_level.number_checks import positive_number
 
 
-def test_positive_number():
-    test_ok()
-    test_failed()
-
-
 def test_ok():
     assert positive_number({"number": 10}, "number") == {"result": True}
     assert positive_number({"number": 10.0}, "number") == {"result": True}
