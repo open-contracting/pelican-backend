@@ -1,4 +1,5 @@
-from dataset.distribution import contracts_value
+from dataset.distribution import value
+contracts_value = value.ModuleType("contracts.value")
 
 
 def test_empty():

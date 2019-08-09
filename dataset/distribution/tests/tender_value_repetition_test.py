@@ -1,7 +1,8 @@
 
 import random
 
-from dataset.distribution import tender_value_repetition
+from dataset.distribution import value_repetition
+tender_value_repetition = value_repetition.ModuleType('tender')
 
 
 def test_undefined():

@@ -1,7 +1,8 @@
 
 import random
 
-from dataset.distribution import awards_value_repetition
+from dataset.distribution import value_repetition
+awards_value_repetition = value_repetition.ModuleType('awards')
 
 
 def test_undefined():
