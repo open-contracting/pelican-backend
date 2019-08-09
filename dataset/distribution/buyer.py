@@ -91,7 +91,7 @@ def get_result(scope):
                 max_buyer['buyer'] = buyer
                 max_buyer['ocid_count'] = ocid_count
 
-        for _, value in ocid_histogram.items():
+        for value in ocid_histogram.values():
             value['ocid_count'] = len(value['ocid_set'])
             value['buyer_count'] = len(value['buyers'])
 
@@ -126,7 +126,7 @@ def get_result(scope):
             else len(scope['buyers'][max_buyer['buyer']]['examples_id'])
         )
 
-        for _, value in ocid_histogram.items():
+        for value in ocid_histogram.values():
             value.pop('buyers', None)
 
         result['result'] = passed
