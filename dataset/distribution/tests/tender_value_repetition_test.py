@@ -1,0 +1,81 @@
+
+import random
+
+from dataset.distribution import tender_value_repetition
+
+
+def test_undefined():
+    scope = {}
+    scope = tender_value_repetition.add_item(scope, {}, 1)
+    result = tender_value_repetition.get_result(scope)
+    assert result['result'] is None
+    assert result['value'] is None
+    assert result['meta'] == {
+        'reason': 'there are is no suitable data item for this check'
+    }
+
+items_test_passed_multiple = [
+    {
+        'tender': [
+            {
+                'value': {'amount': num, 'currency': 'USD'}
+            }
+        ]
+    }
+    for num in range(31)
+]
+
+
+def test_passed_multiple():
+    scope = {}
+
+    id = 0
+    for item in items_test_passed_multiple:
+        scope = tender_value_repetition.add_item(
+            scope,
+            item,
+            id
+        )
+        id += 1
+
+    result = tender_value_repetition.get_result(scope)
+    assert result['result'] is True
+    assert result['value'] == 3/31
+    assert len(result['meta']['most_frequent']) == 3
+    assert sum(
+        [len(el['examples_id']) for el in result['meta']['most_frequent']]
+    ) == 3
+
+items_test_big_load = [
+    {
+        'tender': {
+            'value': {
+                'amount': random.randint(1, 100),
+                'currency': random.choice(['USD', 'CZK', 'JPY'])
+            }
+        }
+    }
+    for _ in range(300000)
+]
+
+
+def test_big_load():
+    scope = {}
+
+    id = 0
+    for item in items_test_big_load:
+        scope = tender_value_repetition.add_item(
+            scope,
+            item,
+            id
+        )
+        id += 1
+
+    result = tender_value_repetition.get_result(scope)
+
+    # following asserts will pass with high probability
+    assert result['result'] is True
+    assert len(result['meta']['most_frequent']) == 3
+    assert sum(
+        [len(el['examples_id']) for el in result['meta']['most_frequent']]
+    ) == 30
