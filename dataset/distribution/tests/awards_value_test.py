@@ -1,4 +1,5 @@
-from dataset.distribution import awards_value
+from dataset.distribution import value
+awards_value = value.ModuleType("awards.value")
 
 
 def test_empty():

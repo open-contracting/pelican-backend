@@ -1,4 +1,5 @@
-from dataset.distribution import tender_value
+from dataset.distribution import value
+tender_value = value.ModuleType("tender.value")
 
 
 def test_empty():

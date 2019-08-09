@@ -1,7 +1,8 @@
 
 import random
 
-from dataset.distribution import contracts_value_repetition
+from dataset.distribution import value_repetition
+contracts_value_repetition = value_repetition.ModuleType('contracts')
 
 
 def test_undefined():

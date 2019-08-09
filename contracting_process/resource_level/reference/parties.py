@@ -1,10 +1,20 @@
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
 
+version = 1.0
 
-def calculate_reference_in_parties(item, values, version):
+
+def calculate_path(item, path):
+    """
+    Checks whether the item.{path} are all referenced in the item.parties array
+
+    Args:
+        path: path to be checked
+    """
+
     result = get_empty_result_resource(version)
 
+    values = get_values(item, path)
     if not values:
         result["meta"] = {"reason": "no values available"}
         return result

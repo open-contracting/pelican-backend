@@ -1,10 +1,17 @@
 import operator
+import functools
 
 from tools.checks import get_empty_result_dataset
 from tools.getter import get_values
 from tools.helpers import convert, currency_available, parse_date
 
 version = 1.0
+
+
+class ModuleType:
+    def __init__(self, path):
+        self.add_item = functools.partial(add_item, path=path)
+        self.get_result = get_result
 
 
 def add_item(scope, item, item_id, path):
