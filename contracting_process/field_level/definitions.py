@@ -118,7 +118,6 @@ definitions = {
     "contracts.implementation.documents.language": [exists, non_empty, right_code],
     "contracts.milestones.documents.language": [exists, non_empty, right_code],
     "language": [exists, non_empty, right_code],
-    "language.codelist": [exists, non_empty, right_code],
     "relatedProcesses": [exists, non_empty],
     "item.unit.value.amount": [exists, non_empty, positive_number],
     "item.quantity": [exists, non_empty, positive_number],
