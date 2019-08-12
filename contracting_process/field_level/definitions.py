@@ -1,3 +1,4 @@
+from contracting_process.field_level.language import language_code
 from contracting_process.field_level.date_time import date_realistic
 from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
@@ -27,10 +28,12 @@ definitions = {
     "buyer": [exists, non_empty],
     "buyer.id": [exists, non_empty],
     "planning": [exists, non_empty],
+    "planing.documents.language": [exists, non_empty, language_code],
     "tender": [exists, non_empty],
     "tender.id": [exists, non_empty],
     "tender.title": [exists, non_empty],
     "tender.description": [exists, non_empty],
+    "tender.documents.language": [exists, non_empty, language_code],
     "tender.status": [exists, non_empty],
     "tender.procuringEntity": [exists, non_empty],
     "tender.items": [exists, non_empty],
@@ -80,6 +83,7 @@ definitions = {
     "awards.contractPeriod.endDate": [exists, non_empty, date_realistic],
     "awards.contractPeriod.maxExtentDate": [exists, non_empty, date_realistic],
     "awards.contrsctPeriod.durationInDays": [exists, non_empty, positive_number],
+    "awards.documents.language": [exists, non_empty, language_code],
     "awards.documents.datePublished": [exists, non_empty, date_realistic],
     "awards.documents.dateModified": [exists, non_empty, date_realistic],
     "contracts": [exists, non_empty],
@@ -117,7 +121,7 @@ definitions = {
     "contracts.documents.datePublished": [exists, non_empty, date_realistic],
     "contracts.documents.dateModified": [exists, non_empty, date_realistic],
     "contracts.documents.format": [exists, non_empty],
-    "contracts.documents.language": [exists, non_empty],
+    "contracts.documents.language": [exists, non_empty, language_code],
     "contracts.durationInDays": [exists, non_empty, positive_number],
     "contracts.milestones.dateMet": [exists, non_empty, date_realistic],
     "contracts.milestones.dateModified": [exists, non_empty, date_realistic],
@@ -127,9 +131,11 @@ definitions = {
     "contracts.implementation.transactions.date": [exists, non_empty, date_realistic],
     "contracts.implementation.documents.dateModified": [exists, non_empty, date_realistic],
     "contracts.implementation.documents.datePublished": [exists, non_empty, date_realistic],
+    "contracts.implementation.documents.language": [exists, non_empty, language_code],
     "contracts.amendments.date": [exists, non_empty, date_realistic],
     "contracts.amendment.date": [exists, non_empty, date_realistic],
-    "language": [exists, non_empty],
+    "contracts.milestones.documents.language": [exists, non_empty, language_code],
+    "language": [exists, non_empty, language_code],
     "relatedProcesses": [exists, non_empty],
     "item.unit.value.amount": [exists, non_empty, positive_number],
     "item.quantity": [exists, non_empty, positive_number],
