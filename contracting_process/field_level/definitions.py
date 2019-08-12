@@ -1,4 +1,4 @@
-from contracting_process.field_level.language import right_code
+from contracting_process.field_level.language import language_code
 from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
 
@@ -26,12 +26,12 @@ definitions = {
     "buyer": [exists, non_empty],
     "buyer.id": [exists, non_empty],
     "planning": [exists, non_empty],
-    "planing.documents.language": [exists, non_empty, right_code],
+    "planing.documents.language": [exists, non_empty, language_code],
     "tender": [exists, non_empty],
     "tender.id": [exists, non_empty],
     "tender.title": [exists, non_empty],
     "tender.description": [exists, non_empty],
-    "tender.documents.language": [exists, non_empty, right_code],
+    "tender.documents.language": [exists, non_empty, language_code],
     "tender.status": [exists, non_empty],
     "tender.procuringEntity": [exists, non_empty],
     "tender.items": [exists, non_empty],
@@ -76,7 +76,7 @@ definitions = {
     "awards.contractPeriod.endDate": [exists, non_empty],
     "awards.contractPeriod.maxExtentDate": [exists, non_empty],
     "awards.contrsctPeriod.durationInDays": [exists, non_empty, positive_number],
-    "awards.documents.language": [exists, non_empty, right_code],
+    "awards.documents.language": [exists, non_empty, language_code],
     "contracts": [exists, non_empty],
     "contracts.id": [exists, non_empty],
     "contracts.awardID": [exists, non_empty],
@@ -112,12 +112,12 @@ definitions = {
     "contracts.documents.datePublished": [exists, non_empty],
     "contracts.documents.dateModified": [exists, non_empty],
     "contracts.documents.format": [exists, non_empty],
-    "contracts.documents.language": [exists, non_empty, right_code],
+    "contracts.documents.language": [exists, non_empty, language_code],
     "contracts.durationInDays": [exists, non_empty, positive_number],
     "contracts.implementation.transactions.value.amount": [exists, non_empty, positive_number],
-    "contracts.implementation.documents.language": [exists, non_empty, right_code],
-    "contracts.milestones.documents.language": [exists, non_empty, right_code],
-    "language": [exists, non_empty, right_code],
+    "contracts.implementation.documents.language": [exists, non_empty, language_code],
+    "contracts.milestones.documents.language": [exists, non_empty, language_code],
+    "language": [exists, non_empty, language_code],
     "relatedProcesses": [exists, non_empty],
     "item.unit.value.amount": [exists, non_empty, positive_number],
     "item.quantity": [exists, non_empty, positive_number],
