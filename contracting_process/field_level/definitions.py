@@ -1,8 +1,9 @@
 from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
+from contracting_process.field_level.ocid_prefix_check import right_ocid_format
 
 definitions = {
-    "ocid": [exists, non_empty],
+    "ocid": [exists, non_empty, right_ocid_format],
     "id": [exists, non_empty],
     "date": [exists, non_empty],
     "tag": [exists, non_empty],
