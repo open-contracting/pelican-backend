@@ -10,10 +10,10 @@ from contracting_process.resource_level.coherent import (
 )
 
 from contracting_process.resource_level.consistent import (
-    buyer_roles,
     contracts_value,
     number_of_tenderers,
-    tender_value
+    tender_value,
+    roles
 )
 
 from contracting_process.resource_level.reference import (
@@ -23,9 +23,26 @@ from contracting_process.resource_level.reference import (
 
 definitions = {
     "consistent.number_of_tenderers": [number_of_tenderers.calculate],
-    "consistent.buyer_roles": [buyer_roles.calculate],
     "consistent.tender_value": [tender_value.calculate],
     "consistent.contracts_value": [contracts_value.calculate],
+    "consistent.supplier_in_parties_roles": [
+        functools.partial(roles.calculate_path_role, path="awards.suppliers", role="supplier")
+    ],
+    "consistent.tenderer_in_parties_roles": [
+        functools.partial(roles.calculate_path_role, path="tender.tenderers", role="tenderer")
+    ],
+    "consistent.buyer_in_parties_roles": [
+        functools.partial(roles.calculate_path_role, path="buyer", role="buyer")
+    ],
+    "consistent.procuring_entity_in_parties_roles": [
+        functools.partial(roles.calculate_path_role, path="tender.procuringEntity", role="procuringEntity")
+    ],
+    "consistent.payer_in_parties_roles": [
+        functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payer", role="payer")
+    ],
+    "consistent.payee_in_parties_roles": [
+        functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payee", role="payee")
+    ],
     "reference.supplier_in_parties": [
         functools.partial(parties.calculate_path, path="awards.suppliers")
     ],
