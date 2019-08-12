@@ -1,11 +1,11 @@
-from contracting_process.field_level.language import language_code
 from contracting_process.field_level.date_time import date_realistic
+from contracting_process.field_level.language import language_code
 from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
-from contracting_process.field_level.ocid_prefix_check import right_ocid_format
+from contracting_process.field_level.ocid_prefix_check import ocid_prefix
 
 definitions = {
-    "ocid": [exists, non_empty, right_ocid_format],
+    "ocid": [exists, non_empty, ocid_prefix],
     "id": [exists, non_empty],
     "date": [exists, non_empty, date_realistic],
     "tag": [exists, non_empty],

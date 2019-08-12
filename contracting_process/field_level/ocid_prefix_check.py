@@ -3,7 +3,7 @@ import csv
 global_OCIDs = []
 
 
-def right_ocid_format(data, key):
+def ocid_prefix(data, key):
     if key not in data:
         return {"result": False,
                 "value": None,

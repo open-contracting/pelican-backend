@@ -11,7 +11,7 @@ def language_code(data, key):
     if not value.islower():
         return {"result": False,
                 "value": value,
-                "reason": "incorrect formatting"}
+                "reason": "language code must be in lower case"}
 
     language = pycountry.languages.get(alpha_2=value)
     if language is None:
