@@ -8,7 +8,6 @@ def test_date_realistic_ok():
 
 
 def test_date_realistic_failed():
-    assert date_realistic({}, "date") == {"result": False, "value": None, "reason": "missing key"}
     assert date_realistic({"date": ""}, "date") == {"result": False, "value": "", "reason": "incorrect date format"}
     assert date_realistic({"date": "abcabc"}, "date") == {"result": False,
                                                           "value": "abcabc", "reason": "incorrect date format"}
