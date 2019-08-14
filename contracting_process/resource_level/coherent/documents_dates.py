@@ -28,7 +28,7 @@ def calculate(item):
 
     failed_paths = []
     result['application_count'] = 0
-    result['pass_count']
+    result['pass_count'] = 0
     for document in documents:
         date_published = {
             'value': document['value']['datePublished'] if 'datePublished' in document['value'] else None,
