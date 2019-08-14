@@ -13,7 +13,8 @@ from contracting_process.resource_level.consistent import (
     contracts_value,
     number_of_tenderers,
     tender_value,
-    roles
+    roles,
+    period_duration_in_days
 )
 
 from contracting_process.resource_level.reference import (
@@ -43,6 +44,7 @@ definitions = {
     "consistent.payee_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payee", role="payee")
     ],
+    "consistent.period_duration_in_days": [period_duration_in_days.calculate],
     "reference.supplier_in_parties": [
         functools.partial(parties.calculate_path, path="awards.suppliers")
     ],
