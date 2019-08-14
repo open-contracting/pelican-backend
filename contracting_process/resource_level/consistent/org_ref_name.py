@@ -24,7 +24,7 @@ def calculate(item, path):
     values_to_check = [
         value for value in values
         if "id" in value["value"] and value["value"]["id"] and
-        parties_id.count(value["value"]["id"]) == 1
+        parties_id.count(str(value["value"]["id"])) == 1
     ]
     if not values_to_check:
         result["meta"] = {
@@ -37,10 +37,12 @@ def calculate(item, path):
     for value in values_to_check:
         referenced_part = ""
         for part in parties_values:
-            if part["value"]["id"] == value["value"]["id"]:
+            if str(part["value"]["id"]) == str(value["value"]["id"]):
                 referenced_part = part
                 break
-        expected_name = value["value"]["name"]
+        if not parties_values:
+            continue
+        expected_name = str(value["value"]["name"])
         passed = (
             expected_name is referenced_part["value"]["name"]
         )
