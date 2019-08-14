@@ -57,7 +57,7 @@ def calculate(item):
     )
 
     failed_paths = []
-    result['aaplication_count'] = 0
+    result['application_count'] = 0
     result['pass_count'] = 0
     for first_date, second_date in pairs:
         first_date_parsed = parse_date(first_date['value'])
