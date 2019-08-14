@@ -24,7 +24,7 @@ def calculate(item, path):
     values_to_check = [
         value for value in values
         if "id" in value["value"] and value["value"]["id"] and
-        parties_id.count(str(value["value"]["id"])) == 1
+        parties_id.count(value["value"]["id"]) == 1
     ]
     if not values_to_check:
         result["meta"] = {
@@ -35,10 +35,11 @@ def calculate(item, path):
     application_count = 0
     pass_count = 0
     for value in values_to_check:
-        referenced_part = [
-            part for part in parties_values
-            if part["value"]["id"] == str(value["value"]["id"])
-        ][0]
+        referenced_part = ""
+        for part in parties_values:
+            if part["value"]["id"] == value["value"]["id"]:
+                referenced_part = part
+                break
         expected_name = value["value"]["name"]
         passed = (
             expected_name is referenced_part["value"]["name"]
@@ -48,7 +49,7 @@ def calculate(item, path):
 
         result["meta"]["references"].append(
             {
-                "organization.id": str(value["value"]["id"]),
+                "organization.id": value["value"]["id"],
                 "expected_name": expected_name,
                 "referenced_party_path": referenced_part["path"],
                 "resource_path": value["path"],

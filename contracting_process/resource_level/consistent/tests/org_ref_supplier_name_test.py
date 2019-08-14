@@ -1,6 +1,6 @@
 import functools
 
-from contracting_process.resource_level.consistent.org_ref_name_consistent import \
+from contracting_process.resource_level.consistent.org_ref_name import \
     calculate
 from tools.checks import get_empty_result_resource
 
@@ -8,10 +8,10 @@ version = "1.0"
 
 calculate_prepared = functools.partial(
     calculate,
-    path="tender.tenderers"
+    path="awards.suppliers"
 )
 
-tender_item_ok = {
+suppliers_item_ok = {
     "parties": [
         {
             "id": "111",
@@ -22,17 +22,23 @@ tender_item_ok = {
             "name": "aaa",
         }
     ],
-    "tender": {
-        "tenderers": [
-            {
-                "id": "111",
-                "name": "bbb"
-            }
-        ]
-    }
+    "awards": [
+        {
+            "suppliers": [
+                {
+                    "id": "000",
+                    "name": "aaa"
+                },
+                {
+                    "id": "111",
+                    "name": "bbb"
+                }
 
+            ]
+        }
+    ]
 }
-tender_item_fail_partially = {
+suppliers_item_fail_partially = {
     "parties": [
         {
             "id": "111",
@@ -43,18 +49,21 @@ tender_item_fail_partially = {
             "name": "aaa",
         }
     ],
-    "tender": {
-        "tenderers": [
-            {
-                "id": "111",
-                "name": "bbb"
-            },
-            {
-                "id": "000",
-                "name": "ccc"  # wrong
-            }
-        ]
-    }
+    "awards": [
+        {
+            "suppliers": [
+                {
+                    "id": "000",
+                    "name": "aaa"
+                },
+                {
+                    "id": "111",
+                    "name": "ccc"  # wrong
+                }
+
+            ]
+        }
+    ]
 }
 
 
@@ -67,26 +76,26 @@ def test_fail():
     expected_result["meta"] = {
         "references": [
             {
-                "organization.id": "111",
-                "expected_name": "bbb",
-                "referenced_party_path": "parties[0]",
+                "organization.id": "000",
+                "expected_name": "aaa",
+                "referenced_party_path": "parties[1]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
-                "resource_path": "tender.tenderers[0]",
+                "resource_path": "awards[0].suppliers[0]",
                 # -"resource": buyer_item_ok["buyer"],
                 # -"result": True
             },
             {
-                "organization.id": "000",
+                "organization.id": "111",
                 "expected_name": "ccc",
-                "referenced_party_path": "parties[1]",
+                "referenced_party_path": "parties[0]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
-                "resource_path": "tender.tenderers[1]",
+                "resource_path": "awards[0].suppliers[1]",
                 # -"resource": buyer_item_ok["buyer"],
                 # -"result": True
             }
         ]
     }
-    result = calculate_prepared(tender_item_fail_partially)
+    result = calculate_prepared(suppliers_item_fail_partially)
     assert result == expected_result
 
 
@@ -94,20 +103,29 @@ def test_ok():
     expected_result = get_empty_result_resource(version)
     expected_result["result"] = True
     expected_result["value"] = None
-    expected_result["application_count"] = 1
-    expected_result["pass_count"] = 1
+    expected_result["application_count"] = 2
+    expected_result["pass_count"] = 2
     expected_result["meta"] = {
         "references": [
+            {
+                "organization.id": "000",
+                "expected_name": "aaa",
+                "referenced_party_path": "parties[1]",
+                # -"referenced_party": buyer_item_ok["parties"][0],
+                "resource_path": "awards[0].suppliers[0]",
+                # -"resource": buyer_item_ok["buyer"],
+                # -"result": True
+            },
             {
                 "organization.id": "111",
                 "expected_name": "bbb",
                 "referenced_party_path": "parties[0]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
-                "resource_path": "tender.tenderers[0]",
+                "resource_path": "awards[0].suppliers[1]",
                 # -"resource": buyer_item_ok["buyer"],
                 # -"result": True
             }
         ]
     }
-    result = calculate_prepared(tender_item_ok)
+    result = calculate_prepared(suppliers_item_ok)
     assert result == expected_result

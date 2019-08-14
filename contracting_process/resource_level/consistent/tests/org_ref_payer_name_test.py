@@ -1,6 +1,6 @@
 import functools
 
-from contracting_process.resource_level.consistent.org_ref_name_consistent import \
+from contracting_process.resource_level.consistent.org_ref_name import \
     calculate
 from tools.checks import get_empty_result_resource
 
@@ -8,7 +8,7 @@ version = "1.0"
 
 calculate_prepared = functools.partial(
     calculate,
-    path="contracts.implementation.transactions.payee"
+    path="contracts.implementation.transactions.payer"
 )
 
 payer_item_ok = {
@@ -27,7 +27,7 @@ payer_item_ok = {
             "implementation": {
                 "transactions": [
                     {
-                        "payee": {
+                        "payer": {
                             "id": "000",
                             "name": "aaa",
                         }
@@ -39,7 +39,7 @@ payer_item_ok = {
             "implementation": {
                 "transactions": [
                     {
-                        "payee": {
+                        "payer": {
                             "id": "111",
                             "name": "bbb",
                         }
@@ -66,7 +66,7 @@ payer_item_fail_partially = {
             "implementation": {
                 "transactions": [
                     {
-                        "payee": {
+                        "payer": {
                             "id": "000",
                             "name": "aaa",
                         }
@@ -78,7 +78,7 @@ payer_item_fail_partially = {
             "implementation": {
                 "transactions": [
                     {
-                        "payee": {
+                        "payer": {
                             "id": "111",
                             "name": "bcd",
                         }
@@ -104,7 +104,7 @@ def test_fail():
                 "expected_name": "aaa",
                 "referenced_party_path": "parties[0]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
-                "resource_path": "contracts[0].implementation.transactions[0].payee",
+                "resource_path": "contracts[0].implementation.transactions[0].payer",
                 # -"resource": buyer_item_ok["buyer"],
                 # -"result": True
             },
@@ -113,7 +113,7 @@ def test_fail():
                 "expected_name": "bcd",
                 "referenced_party_path": "parties[1]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
-                "resource_path": "contracts[1].implementation.transactions[0].payee",
+                "resource_path": "contracts[1].implementation.transactions[0].payer",
                 # -"resource": buyer_item_ok["buyer"],
                 # -"result": True
             }
@@ -136,7 +136,7 @@ def test_ok():
                 "expected_name": "aaa",
                 "referenced_party_path": "parties[0]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
-                "resource_path": "contracts[0].implementation.transactions[0].payee",
+                "resource_path": "contracts[0].implementation.transactions[0].payer",
                 # -"resource": buyer_item_ok["buyer"],
                 # -"result": True
             },
@@ -145,7 +145,7 @@ def test_ok():
                 "expected_name": "bbb",
                 "referenced_party_path": "parties[1]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
-                "resource_path": "contracts[1].implementation.transactions[0].payee",
+                "resource_path": "contracts[1].implementation.transactions[0].payer",
                 # -"resource": buyer_item_ok["buyer"],
                 # -"result": True
             }
