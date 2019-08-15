@@ -10,22 +10,15 @@ def calculate(item):
     result = get_empty_result_resource(version)
 
     contracts = get_values(item, 'contracts')
-    awards_id = get_values(item, 'awards.id')
-    awards_id = [str(id['value']) for id in awards_id]
+    awards_id = [str(id) for id in get_values(item, 'awards.id', value_only=True)]
 
     result['application_count'] = 0
     result['pass_count'] = 0
     result['meta'] = {'contracts': []}
     for contract in contracts:
-        # testing whether there are any transactions for the current contract
-        if (
-            'implementation' not in contract['value'] or
-            'transactions' not in contract['value']['implementation'] or
-            not contract['value']['implementation']['transactions']
-        ):
+        transactions = get_values(contract['value'], 'implementation.transactions', value_only=True)
+        if not transactions:
             continue
-
-        transactions = contract['value']['implementation']['transactions']
 
         # checking if referenced award exists and is the only one
         if awards_id.count(str(contract['value']['awardID'])) != 1:
