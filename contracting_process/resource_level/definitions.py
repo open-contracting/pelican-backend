@@ -16,10 +16,14 @@ definitions = {
     "consistent.contracts_value": [contracts_value.calculate],
     "consistent.supplier_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="awards.suppliers", role="supplier")
+    ],
+    "consistent.parties_role_supplier": [
         functools.partial(parties_role.calculate, path="awards.suppliers", role="supplier")
     ],
     "consistent.tenderer_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="tender.tenderers", role="tenderer")
+    ],
+    "consistent.parties_role_tenderer": [
         functools.partial(parties_role.calculate, path="tender.tenderers", role="tenderer")
     ],
     "consistent.buyer_in_parties_roles": [
@@ -27,14 +31,20 @@ definitions = {
     ],
     "consistent.procuring_entity_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="tender.procuringEntity", role="procuringEntity")
+    ],
+    "consistent.parties_role_procuring_entity": [
         functools.partial(parties_role.calculate, path="tender.procuringEntity", role="procuringEntity")
     ],
     "consistent.payer_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payer", role="payer")
+    ],
+    "consistent.parties_role_payer": [
         functools.partial(parties_role.calculate, path="contracts.implementation.transactions.payer", role="payer")
     ],
     "consistent.payee_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payee", role="payee")
+    ],
+    "consistent.parites_role_payee": [
         functools.partial(parties_role.calculate, path="contracts.implementation.transactions.payee", role="payee")
     ],
     "reference.supplier_in_parties": [
