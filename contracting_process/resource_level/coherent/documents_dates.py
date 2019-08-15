@@ -45,9 +45,7 @@ def calculate(item):
         if first_date and second_date:
             result['application_count'] += 1
 
-            passed = first_date <= second_date
-
-            if passed:
+            if first_date <= second_date:
                 result['pass_count'] += 1
             else:
                 failed_paths.append(
@@ -65,9 +63,7 @@ def calculate(item):
         if first_date and second_date:
             result['application_count'] += 1
 
-            passed = first_date <= second_date
-
-            if passed:
+            if first_date <= second_date:
                 result['pass_count'] += 1
             else:
                 failed_paths.append(
@@ -85,9 +81,7 @@ def calculate(item):
         if first_date and second_date:
             result['application_count'] += 1
 
-            passed = first_date <= second_date
-
-            if passed:
+            if first_date <= second_date:
                 result['pass_count'] += 1
             else:
                 failed_paths.append(
