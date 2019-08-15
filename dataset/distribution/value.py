@@ -23,6 +23,11 @@ def add_item(scope, item, item_id, path):
         if values:
             for value in values:
                 value["item_id"] = item_id
+
+                if "currency" not in value["value"] or value["value"]["currency"] is None or \
+                        "amount" not in value["value"] or value["value"]["amount"] is None:
+                    continue
+
                 if currency_available(value["value"]["currency"]):
                     if value["value"]["currency"] != "USD":
                         if item["date"]:
@@ -31,7 +36,8 @@ def add_item(scope, item, item_id, path):
                                 value["value"]["amount"],
                                 value["value"]["currency"],
                                 "USD", rel_date)
-                        scope["values"].append(value)
+                        if value["abs_amount"] is not None:
+                            scope["values"].append(value)
                     else:
                         value["abs_amount"] = value["value"]["amount"]
                         scope["values"].append(value)
