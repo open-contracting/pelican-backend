@@ -8,11 +8,9 @@ version = 1.0
 
 def add_item(scope, item, item_id):
     if type(item) == dict:
-        values = get_values(item, "id")
-        if values:
-            for value in values:
-                category = value["value"]
-
+        categories = get_values(item, "id", value_only=True)
+        if categories:
+            for category in categories:
                 if category not in scope:
                     scope[category] = {}
                     scope[category]["count"] = 0

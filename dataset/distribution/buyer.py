@@ -19,16 +19,16 @@ def add_item(scope, item, item_id):
         }
 
     # filtering values containing required fields
-    values = get_values(item, 'buyer.identifier')
+    values = get_values(item, 'buyer.identifier', value_only=True)
     buyers = [
-        v['value'] for v in values
+        v for v in values
         if (
-            'scheme' in v['value'] and 'id' in v['value'] and
-            v['value']['scheme'] is not None and v['value']['id'] is not None
+            'scheme' in v and 'id' in v and
+            v['scheme'] is not None and v['id'] is not None
         )
     ]
 
-    ocid = get_values(item, 'ocid')[0]['value']
+    ocid = get_values(item, 'ocid', value_only=True)[0]
     scope['ocid_set'].add(ocid)
     for buyer in buyers:
         scope['resources_num'] += 1
