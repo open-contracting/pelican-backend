@@ -8,7 +8,8 @@ from contracting_process.resource_level.coherent import (
     procurement_method_vs_number_of_tenderers,
     tender_status,
     milestones_dates,
-    documents_dates
+    amendments_dates,
+    documents_dates,
 )
 
 from contracting_process.resource_level.consistent import (
@@ -81,5 +82,6 @@ definitions = {
     "coherent.contracts_status": [contracts_status.calculate],
     "coherent.awards_status": [awards_status.calculate],
     "coherent.milestones_dates": [milestones_dates.calculate],
-    "coherent.documents_dates": [documents_dates.calculate]
+    "coherent.amendments_dates": [amendments_dates.calculate],
+    "coherent.documents_dates": [documents_dates.calculate],
 }
