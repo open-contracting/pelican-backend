@@ -47,6 +47,34 @@ def calculate(item):
                             else:
                                 result["pass_count"] = result["pass_count"] + 1
 
+    # special case for contracts[i].dateSined and contracts[i].implementation.transactions[j].date
+    first_dates = get_values(item, "contracts.dateSigned")
+    second_dates = get_values(item, "contracts.implementation.transactions.date")
+
+    if first_dates and second_dates:
+        for first_date_item in first_dates:
+            first_date = parse_date(first_date_item["value"])
+
+            if first_date:
+                for second_date_item in second_dates:
+                    if first_date_item["path"].split(".")[0] != second_date_item["path"].split(".")[0]:
+                        continue
+
+                    second_date = parse_date(second_date_item["value"])
+
+                    if second_date:
+                        result["application_count"] = result["application_count"] + 1
+
+                        if first_date > second_date:
+                            failed_paths.append({
+                                "path_1": first_date_item["path"],
+                                "value_1": first_date_item["value"],
+                                "path_2": second_date_item["path"],
+                                "value_2": second_date_item["value"],
+                            })
+                        else:
+                            result["pass_count"] = result["pass_count"] + 1
+
     # special case for awards[i].id = contracts[j].awardID
     if "awards" in item and "contracts" in item:
         awards = get_values(item, "awards")

@@ -38,8 +38,7 @@ def add_item(scope, item, item_id, path):
         key = '{},{}'.format(value['amount'], value['currency'])
         if key not in scope:
             scope[key] = {
-                'value.amount': value['amount'],
-                'value.currency': value['currency'],
+                'value': value,
                 'count': 1,
                 'examples_id': [item_id]
             }
@@ -72,12 +71,16 @@ def get_result(scope):
         ratio = (most_frequent_count / total_count)
         passed = ratio < 0.1
 
+        for key in most_frequent:
+            scope[key]['share'] = scope[key]['count'] / total_count
+
         result['result'] = passed
         result['value'] = ratio
         result['meta'] = {
             'most_frequent': [
                 scope[key] for key in most_frequent
-            ]
+            ],
+            'total_processed': total_count
         }
     else:
         result['meta'] = {'reason': 'there are is no suitable data item for this check'}
