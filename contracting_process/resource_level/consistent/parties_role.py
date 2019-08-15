@@ -25,7 +25,6 @@ def calculate(item, path, role):
         role in party["value"]["roles"]
     ]
     if not parties_values:
-        # result["result"] = False
         result["reason"] = "There are no parties with set role and id"
         return result
     values_from_path = get_values(item, path)
