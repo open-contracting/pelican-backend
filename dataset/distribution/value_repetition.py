@@ -71,11 +71,14 @@ def get_result(scope):
         ratio = (most_frequent_count / total_count)
         passed = ratio < 0.1
 
+        for key in most_frequent:
+            scope[key]['share'] = scope[key]['count'] / total_count
+
         result['result'] = passed
         result['value'] = ratio
         result['meta'] = {
             'most_frequent': [
-                dict(scope[key], **{'share': scope[key]['count'] / total_count}) for key in most_frequent
+                scope[key] for key in most_frequent
             ],
             'total_processed': total_count
         }
