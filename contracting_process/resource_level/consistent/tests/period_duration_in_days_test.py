@@ -33,7 +33,7 @@ item_test_passed = {
         {
             'contractPeriod': {
                 'startDate': '2019-08-14T16:47:36+01:00',
-                'endDate': '2019-08-14T16:47:36+01:00',
+                'endDate': None,
                 'maxExtentDate': '2019-08-15T16:47:36+01:00',
                 'durationInDays': 1
             }

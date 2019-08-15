@@ -39,9 +39,9 @@ def calculate(item):
 
         passed = False
         if end_date is not None:
-            passed = passed or (end_date - start_date).days == duration_in_days
-        if max_extent_day is not None:
-            passed = passed or (max_extent_day - start_date).days == duration_in_days
+            passed = (end_date - start_date).days == duration_in_days
+        else:
+            passed = (max_extent_day - start_date).days == duration_in_days
 
         result['application_count'] += 1
         result['pass_count'] = result['pass_count'] + 1 if passed else result['pass_count']
