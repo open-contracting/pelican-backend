@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-import json
+import simplejson as json
 import sys
 from datetime import datetime
 
 import click
 import psycopg2.extras
-from psycopg2.extras import Json
 
 from core.state import phase, set_dataset_state, set_item_state, state
 from settings.settings import get_param, init
@@ -92,7 +91,7 @@ def callback(channel, method, properties, body):
                         (data, dataset_id, created, modified)
                         VALUES
                         (%s, %s, now(), now()) RETURNING id
-                    """, (Json(data_item[0]), dataset_id))
+                    """, (json.dumps(data_item[0]), dataset_id))
 
                     inserted_id = cursor.fetchone()[0]
 
