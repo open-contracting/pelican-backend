@@ -1,8 +1,15 @@
 import functools
 
 from contracting_process.resource_level.coherent import (
-    awards_status, contracts_status, dates, period,
-    procurement_method_vs_number_of_tenderers, tender_status)
+    awards_status,
+    contracts_status,
+    dates,
+    period,
+    procurement_method_vs_number_of_tenderers,
+    tender_status,
+    documents_dates
+)
+
 from contracting_process.resource_level.consistent import (
     contracts_value, number_of_tenderers, org_ref_name, roles,
     tender_value)
@@ -62,5 +69,6 @@ definitions = {
     "coherent.period": [period.calculate],
     "coherent.dates": [dates.calculate],
     "coherent.contracts_status": [contracts_status.calculate],
-    "coherent.awards_status": [awards_status.calculate]
+    "coherent.awards_status": [awards_status.calculate],
+    "coherent.documents_dates": [documents_dates.calculate]
 }
