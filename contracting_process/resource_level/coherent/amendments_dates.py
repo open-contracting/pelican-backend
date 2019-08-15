@@ -67,9 +67,8 @@ def calculate(item):
             continue
 
         result['application_count'] += 1
-        passed = first_date_parsed <= second_date_parsed
 
-        if passed:
+        if first_date_parsed <= second_date_parsed:
             result['pass_count'] += 1
         else:
             failed_paths.append(
