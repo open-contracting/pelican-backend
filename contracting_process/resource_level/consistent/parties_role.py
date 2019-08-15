@@ -50,8 +50,7 @@ def calculate(item, path, role):
         result["meta"] = {
             "referenced_party_path": referenced_item_path,
             "examined_role": role,
-            "recource_path": party["path"],
-            "result": is_passed
+            "recource_path": party["path"]
         }
 
     result["application_count"] = application_count

@@ -1,4 +1,3 @@
-
 import functools
 
 from contracting_process.resource_level.consistent.parties_role import \
@@ -9,9 +8,10 @@ version = "1.0"
 
 calculate_prepared = functools.partial(
     calculate,
-    path='tender.procuringEntity',
-    role='procuringEntity'
+    path="awards.suppliers",
+    role="supplier"
 )
+
 
 item_with_no_correct_parties = {
     "parties": [
@@ -35,47 +35,56 @@ item_with_no_correct_parties = {
     ]
 }
 
+
 correct_item_with_procurungEntity = {
     "parties": [
         {
             "id": "0rw29R-7rBOL0",  # empty list of roles
             "name": "Unidad Central",
-            "roles": ["procuringEntity"],
+            "roles": ["supplier"],
             "memberOf": [
                 {"id": "7rBOL0", "name": "Secretaria de Desarrollo Economico"}
             ],
         }
     ],
-    "tender": {
-        "procuringEntity": {
-            "id": "0rw29R-7rBOL0"
+    "awards": [
+        {
+            "suppliers": [
+                {
+                    "id": "0rw29R-7rBOL0"
+                }
+            ]
         }
-    }
+    ]
 }
 incorrect_item_with_procurungEntity = {
     "parties": [
         {
             "id": "0rw29R-7rBOL0",  # empty list of roles
             "name": "Unidad Central",
-            "roles": ["procuringEntity"],
+            "roles": ["supplier"],
             "memberOf": [
                 {"id": "7rBOL0", "name": "Secretaria de Desarrollo Economico"}
             ],
         }
     ],
-    "tender": {
-        "procuringEntity": {
-            "id": "000000000000"
+    "awards": [
+        {
+            "suppliers": [
+                {
+                    "id": "000000000000"
+                }
+            ]
         }
-    }
+    ]
 }
 
-incorrect_item_with_no_procuringEntity = {
+incorrect_item_with_no_supplier = {
     "parties": [
         {
             "id": "0rw29R-7rBOL0",  # empty list of roles
             "name": "Unidad Central",
-            "roles": ["procuringEntity"],
+            "roles": ["supplier"],
             "memberOf": [
                 {"id": "7rBOL0", "name": "Secretaria de Desarrollo Economico"}
             ],
@@ -91,23 +100,22 @@ def test_on_inaction():
     assert expecting_result == result
 
 
-def test_correct_tender_procuring_entity():
+def test_correct_tender_supplier():
     expecting_result = get_empty_result_resource(version)
     expecting_result["result"] = True
     # expecting_result["value"] = None  # already None
     expecting_result["application_count"] = 1
     expecting_result["pass_count"] = 1
     expecting_result["meta"] = {
-        "referenced_party_path": "tender.procuringEntity",
-        "examined_role": "procuringEntity",
-        "recource_path": "parties[0]",
-        "result": True
+        "referenced_party_path": "awards[0].suppliers[0]",
+        "examined_role": "supplier",
+        "recource_path": "parties[0]"
     }
     result = calculate_prepared(correct_item_with_procurungEntity)
     assert expecting_result == result
 
 
-def test_incorrect_tender_procuring_entity():
+def test_incorrect_tender_supplier():
     expecting_result1 = get_empty_result_resource(version)
     expecting_result1["result"] = False
     # expecting_result["value"] = None  # already None
@@ -115,9 +123,8 @@ def test_incorrect_tender_procuring_entity():
     expecting_result1["pass_count"] = 0
     expecting_result1["meta"] = {
         "referenced_party_path": None,
-        "examined_role": "procuringEntity",
-        "recource_path": "parties[0]",
-        "result": False
+        "examined_role": "supplier",
+        "recource_path": "parties[0]"
     }
     result1 = calculate_prepared(incorrect_item_with_procurungEntity)
     assert expecting_result1 == result1
@@ -128,9 +135,8 @@ def test_incorrect_tender_procuring_entity():
     expecting_result2["pass_count"] = 0
     expecting_result2["meta"] = {
         "referenced_party_path": None,
-        "examined_role": "procuringEntity",
-        "recource_path": "parties[0]",
-        "result": False
+        "examined_role": "supplier",
+        "recource_path": "parties[0]"
     }
-    result2 = calculate_prepared(incorrect_item_with_no_procuringEntity)
+    result2 = calculate_prepared(incorrect_item_with_no_supplier)
     assert expecting_result2 == result2
