@@ -40,7 +40,7 @@ correct_item_with_payer = {
         {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
-            "roles": ["payee"],
+            "roles": ["payer"],
             "memberOf": [
                 {"id": "0rw29R-11341234", "name": "aabbcc"}
             ],
@@ -65,7 +65,7 @@ incorrect_item_with_payer = {
         {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
-            "roles": ["payee"],
+            "roles": ["payer"],
             "memberOf": [
                 {"id": "0rw29R-11341234", "name": "aabbcc"}
             ],
@@ -91,7 +91,7 @@ incorrect_item_with_no_payer = {
         {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
-            "roles": ["payee"],
+            "roles": ["payer"],
             "memberOf": [
                 {"id": "0rw29R-11341234", "name": "aabbcc"}
             ],

@@ -41,7 +41,7 @@ correct_item_with_tenderer = {
         {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
-            "roles": ["payee"],
+            "roles": ["tenderer"],
             "memberOf": [
                 {"id": "0rw29R-11341234", "name": "aabbcc"}
             ],
@@ -60,7 +60,7 @@ incorrect_item_with_tenderer = {
         {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
-            "roles": ["payee"],
+            "roles": ["tenderer"],
             "memberOf": [
                 {"id": "0rw29R-11341234", "name": "aabbcc"}
             ],
@@ -80,7 +80,7 @@ incorrect_item_with_no_tenderer = {
         {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
-            "roles": ["payee"],
+            "roles": ["tenderer"],
             "memberOf": [
                 {"id": "0rw29R-11341234", "name": "aabbcc"}
             ],

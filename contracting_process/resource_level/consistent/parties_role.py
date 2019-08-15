@@ -20,8 +20,9 @@ def calculate(item, path, role):
     result = get_empty_result_resource(version)
     parties = get_values(item, "parties")
     parties_values = [
-        party for party in parties
-        if "value" in party and "roles" in party["value"] and "id" in party["value"] and party["value"]["roles"]
+        party for party in parties if "value" in party and "roles" in party["value"] and
+        "id" in party["value"] and party["value"]["roles"] and
+        role in party["value"]["roles"]
     ]
     if not parties_values:
         # result["result"] = False

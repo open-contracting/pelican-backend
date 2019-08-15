@@ -1,25 +1,14 @@
 import functools
 
 from contracting_process.resource_level.coherent import (
-    awards_status,
-    contracts_status,
-    dates,
-    period,
-    procurement_method_vs_number_of_tenderers,
-    tender_status
-)
-
-from contracting_process.resource_level.consistent import (
-    contracts_value,
-    number_of_tenderers,
-    tender_value,
-    roles
-)
-
-from contracting_process.resource_level.reference import (
-    parties,
-    contract_in_awards
-)
+    awards_status, contracts_status, dates, period,
+    procurement_method_vs_number_of_tenderers, tender_status)
+from contracting_process.resource_level.consistent import (contracts_value,
+                                                           number_of_tenderers,
+                                                           parties_role, roles,
+                                                           tender_value)
+from contracting_process.resource_level.reference import (contract_in_awards,
+                                                          parties)
 
 definitions = {
     "consistent.number_of_tenderers": [number_of_tenderers.calculate],
@@ -27,21 +16,26 @@ definitions = {
     "consistent.contracts_value": [contracts_value.calculate],
     "consistent.supplier_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="awards.suppliers", role="supplier")
+        functools.partial(parties_role.calculate, path="awards.suppliers", role="supplier")
     ],
     "consistent.tenderer_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="tender.tenderers", role="tenderer")
+        functools.partial(parties_role.calculate, path="tender.tenderers", role="tenderer")
     ],
     "consistent.buyer_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="buyer", role="buyer")
     ],
     "consistent.procuring_entity_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="tender.procuringEntity", role="procuringEntity")
+        functools.partial(parties_role.calculate, path="tender.procuringEntity", role="procuringEntity")
     ],
     "consistent.payer_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payer", role="payer")
+        functools.partial(parties_role.calculate, path="contracts.implementation.transactions.payer", role="payer")
     ],
     "consistent.payee_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payee", role="payee")
+        functools.partial(parties_role.calculate, path="contracts.implementation.transactions.payee", role="payee")
     ],
     "reference.supplier_in_parties": [
         functools.partial(parties.calculate_path, path="awards.suppliers")
@@ -68,4 +62,5 @@ definitions = {
     "coherent.dates": [dates.calculate],
     "coherent.contracts_status": [contracts_status.calculate],
     "coherent.awards_status": [awards_status.calculate]
+
 }
