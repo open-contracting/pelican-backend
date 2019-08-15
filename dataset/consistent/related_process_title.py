@@ -21,28 +21,26 @@ def add_item(scope, item, item_id):
         scope['original_ocid'][ocid] = tender_title
 
     related_processes = []
-    related_processes.extend(
-        [el['value'] for el in get_values(item, 'relatedProcesses')]
-    )
-    related_processes.extend(
-        [el['value'] for el in get_values(item, 'contracts.relatedProcesses')]
-    )
+    related_processes.extend(get_values(item, 'relatedProcesses'))
+    related_processes.extend(get_values(item, 'contracts.relatedProcesses'))
 
     for related_process in related_processes:
         # checking if all required fields are set
-        if 'scheme' not in related_process or related_process['scheme'] != 'ocid':
+        if 'scheme' not in related_process['value'] or related_process['value']['scheme'] != 'ocid':
             continue
 
-        if 'identifier' not in related_process or related_process['identifier'] is None:
+        if 'identifier' not in related_process['value'] or related_process['value']['identifier'] is None:
             continue
 
-        if 'title' not in related_process or related_process['title'] is None:
+        if 'title' not in related_process['value'] or related_process['value']['title'] is None:
             continue
 
         scope['related_processes'].append(
             {
-                'ocid': related_process['identifier'],
-                'title': related_process['title']
+                'ocid': ocid,
+                'related_ocid': related_process['value']['identifier'],
+                'related_title': related_process['value']['title'],
+                'related_path': related_process['path']
             }
         )
 
@@ -58,27 +56,31 @@ def get_result(scope):
     failed_examples = []
 
     for related_process in scope['related_processes']:
-        if related_process['ocid'] not in scope['original_ocid']:
+        if related_process['related_ocid'] not in scope['original_ocid']:
             continue
 
         original_process = {
-            'ocid': related_process['ocid'],
-            'title': scope['original_ocid'][related_process['ocid']]
+            'ocid': related_process['related_ocid'],
+            'title': scope['original_ocid'][related_process['related_ocid']]
         }
 
-        passed = related_process['title'] == original_process['title']
+        passed = related_process['related_title'] == original_process['title']
 
         if passed and len(passed_examples) < examples_cap:
             passed_examples.append(
-                'original_process': original_process,
-                'related_process': related_process,
-                'result': passed
+                {
+                    'original_process': original_process,
+                    'related_process': related_process,
+                    'result': passed
+                }
             )
         elif not passed and len(failed_examples) < examples_cap:
             failed_examples.append(
-                'original_process': original_process,
-                'related_process': related_process,
-                'result': passed
+                {
+                    'original_process': original_process,
+                    'related_process': related_process,
+                    'result': passed
+                }
             )
 
         application_count += 1
