@@ -11,10 +11,18 @@ from contracting_process.resource_level.coherent import (
 )
 
 from contracting_process.resource_level.consistent import (
-    contracts_value, number_of_tenderers, org_ref_name, roles,
-    tender_value)
-from contracting_process.resource_level.reference import (contract_in_awards,
-                                                          parties)
+    contracts_value,
+    number_of_tenderers,
+    tender_value,
+    roles,
+    period_duration_in_days,
+    org_ref_name
+)
+
+from contracting_process.resource_level.reference import (
+    parties,
+    contract_in_awards
+)
 
 definitions = {
     "consistent.number_of_tenderers": [number_of_tenderers.calculate],
@@ -39,6 +47,7 @@ definitions = {
     "consistent.payee_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payee", role="payee")
     ],
+    "consistent.period_duration_in_days": [period_duration_in_days.calculate],
     "reference.supplier_in_parties": [
         functools.partial(parties.calculate_path, path="awards.suppliers"),
         functools.partial(org_ref_name.calculate, path="awards.suppliers")
