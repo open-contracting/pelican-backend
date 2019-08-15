@@ -6,7 +6,7 @@ from contracting_process.resource_level.coherent import (
     tender_status)
 from contracting_process.resource_level.consistent import (
     contracts_value, number_of_tenderers, org_ref_name,
-    period_duration_in_days, roles, tender_value)
+    period_duration_in_days, roles, tender_value, parties_role)
 from contracting_process.resource_level.reference import (contract_in_awards,
                                                           parties)
 
@@ -17,8 +17,14 @@ definitions = {
     "consistent.supplier_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="awards.suppliers", role="supplier")
     ],
+    "consistent.parties_role_supplier": [
+        functools.partial(parties_role.calculate, path="awards.suppliers", role="supplier")
+    ],
     "consistent.tenderer_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="tender.tenderers", role="tenderer")
+    ],
+    "consistent.parties_role_tenderer": [
+        functools.partial(parties_role.calculate, path="tender.tenderers", role="tenderer")
     ],
     "consistent.buyer_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="buyer", role="buyer")
@@ -26,11 +32,20 @@ definitions = {
     "consistent.procuring_entity_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="tender.procuringEntity", role="procuringEntity")
     ],
+    "consistent.parties_role_procuring_entity": [
+        functools.partial(parties_role.calculate, path="tender.procuringEntity", role="procuringEntity")
+    ],
     "consistent.payer_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payer", role="payer")
     ],
+    "consistent.parties_role_payer": [
+        functools.partial(parties_role.calculate, path="contracts.implementation.transactions.payer", role="payer")
+    ],
     "consistent.payee_in_parties_roles": [
         functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payee", role="payee")
+    ],
+    "consistent.parites_role_payee": [
+        functools.partial(parties_role.calculate, path="contracts.implementation.transactions.payee", role="payee")
     ],
     "consistent.period_duration_in_days": [period_duration_in_days.calculate],
     "reference.supplier_in_parties": [
