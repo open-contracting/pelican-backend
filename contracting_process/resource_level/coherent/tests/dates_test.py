@@ -103,3 +103,53 @@ def test_failed():
             "value_2": "2015-12-30T00:00:00Z"
         }
     ]}
+
+item_failed_in_contracts = {
+    "contracts": [
+        {
+            "dateSigned": "2015-12-30T00:00:00Z",
+            "implementation": {
+                "transactions": [
+                    {
+                        "date": "2014-12-30T00:00:00Z"
+                    },
+                    {
+                        "date": "2014-12-30T00:00:00Z"
+                    }
+                ]
+            }
+        },
+        {
+            "dateSigned": "2015-12-30T00:00:00Z",
+            "implementation": {
+                "transactions": [
+                    {
+                        "date": "2014-12-30T00:00:00Z"
+                    }
+                ]
+            }
+        }
+    ]
+}
+
+
+def test_failed_in_contracts():
+    result = calculate(item_failed_in_contracts)
+    assert type(result) == dict
+    assert result["result"] is False
+    assert result["application_count"] is 3
+    assert result["pass_count"] is 0
+    assert result["meta"] == {"failed_paths": [
+        {
+            "path_1": "contracts[0].dateSigned", "path_2": "contracts[0].implementation.transactions[0].date",
+            "value_1": "2015-12-30T00:00:00Z", "value_2": "2014-12-30T00:00:00Z"
+        },
+        {
+            "path_1": "contracts[0].dateSigned", "path_2": "contracts[0].implementation.transactions[1].date",
+            "value_1": "2015-12-30T00:00:00Z", "value_2": "2014-12-30T00:00:00Z"
+        },
+        {
+            "path_1": "contracts[1].dateSigned", "path_2": "contracts[1].implementation.transactions[0].date",
+            "value_1": "2015-12-30T00:00:00Z", "value_2": "2014-12-30T00:00:00Z"
+        }
+    ]}

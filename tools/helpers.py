@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-from currency_converter import CurrencyConverter
+from currency_converter import CurrencyConverter, RateNotFoundError
 
 cc = CurrencyConverter("http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip", fallback_on_wrong_date=True)
 
@@ -14,7 +14,10 @@ def currency_available(currency):
 
 def convert(amount, original_currency, target_currency, rel_date):
     if original_currency in cc.currencies and target_currency in cc.currencies:
-        return round(Decimal(cc.convert(float(amount), original_currency, target_currency, rel_date)), 4)
+        try:
+            return round(Decimal(cc.convert(float(amount), original_currency, target_currency, rel_date)), 4)
+        except RateNotFoundError:
+            return None
 
     return None
 
