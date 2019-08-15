@@ -16,20 +16,20 @@ calculate_prepared = functools.partial(
 item_with_no_correct_parties = {
     "parties": [
         {
-            "id": "7rBOL0",  # no roles
-            "name": "Secretaria de Desarrollo Economico",
+            "id": "adsjk-fhjdkf",  # no roles
+            "name": "abcd",
             "address": {
-                "streetAddress": "Edificio San José,3 piso Boulevard KUWAIT "
+                "streetAddress": "dcba "
             },
-            "identifier": {"scheme": "HN-ONCAE-CE"},
+            "identifier": {"scheme": "12-12-12"},
             "contactPoint": {}
         },
         {
-            "id": "0rw29R-7rBOL0",  # empty list of roles
+            "id": "0rw29R-dsfad",  # empty list of roles
             "name": "Unidad Central",
             "roles": [],
             "memberOf": [
-                {"id": "7rBOL0", "name": "Secretaria de Desarrollo Economico"}
+                {"id": "adsjk-fhjdkf", "name": "abcd"}
             ],
         }
     ]
@@ -39,11 +39,11 @@ item_with_no_correct_parties = {
 correct_item_with_procurungEntity = {
     "parties": [
         {
-            "id": "0rw29R-7rBOL0",  # empty list of roles
-            "name": "Unidad Central",
-            "roles": ["supplier"],
+            "id": "010101-a01010",  # empty list of roles
+            "name": "Uni",
+            "roles": ["payee"],
             "memberOf": [
-                {"id": "7rBOL0", "name": "Secretaria de Desarrollo Economico"}
+                {"id": "0rw29R-11341234", "name": "aabbcc"}
             ],
         }
     ],
@@ -51,7 +51,7 @@ correct_item_with_procurungEntity = {
         {
             "suppliers": [
                 {
-                    "id": "0rw29R-7rBOL0"
+                    "id": "010101-a01010"
                 }
             ]
         }
@@ -60,11 +60,11 @@ correct_item_with_procurungEntity = {
 incorrect_item_with_procurungEntity = {
     "parties": [
         {
-            "id": "0rw29R-7rBOL0",  # empty list of roles
-            "name": "Unidad Central",
-            "roles": ["supplier"],
+            "id": "010101-a01010",  # empty list of roles
+            "name": "Uni",
+            "roles": ["payee"],
             "memberOf": [
-                {"id": "7rBOL0", "name": "Secretaria de Desarrollo Economico"}
+                {"id": "0rw29R-11341234", "name": "aabbcc"}
             ],
         }
     ],
@@ -82,11 +82,11 @@ incorrect_item_with_procurungEntity = {
 incorrect_item_with_no_supplier = {
     "parties": [
         {
-            "id": "0rw29R-7rBOL0",  # empty list of roles
-            "name": "Unidad Central",
-            "roles": ["supplier"],
+            "id": "010101-a01010",  # empty list of roles
+            "name": "Uni",
+            "roles": ["payee"],
             "memberOf": [
-                {"id": "7rBOL0", "name": "Secretaria de Desarrollo Economico"}
+                {"id": "0rw29R-11341234", "name": "aabbcc"}
             ],
         }
     ]

@@ -9,7 +9,7 @@ author: Iaroslav Kolodka
 Method is designed to test items from parties on existing refereced items (depending on role)
 
 paramtertes:
-    - item: testimg JSON
+    - item: testing JSON
     - path: path to referenced items
     - role: testing role
 
