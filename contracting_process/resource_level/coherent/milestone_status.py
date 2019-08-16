@@ -10,14 +10,13 @@ def calculate(item):
     milestones.extend(get_values(item, "tender.milestones"))
     milestones.extend(get_values(item, "contracts.milestones"))
     milestones.extend(get_values(item, "contracts.implementation.milestones"))
-    is_passed = None
     application_count = 0
     pass_count = 0
     result["meta"] = {}
     if milestones:
         result["meta"] = {"references": []}
         for milestone in milestones:
-            is_passed = None
+            passed = None
             status = None
             if "value" in milestone and milestone["value"]:
                 statuses = get_values(milestone["value"], "properties.status")
@@ -25,14 +24,15 @@ def calculate(item):
                 for status in statuses:
                     if "value" in status and status["value"] is "scheduled" or status["value"] is "notMet":
                         application_count += 1
-                        is_passed = False
                         status = status["value"]
-                        if date_met:
-                            is_passed = True
+                        if not date_met:
+                            passed = True
                             pass_count += 1
+                        else:
+                            passed = False
                         result["meta"]["references"].append(
                             {
-                                "result": is_passed,
+                                "result": passed,
                                 "status": status,
                                 "path": milestone["path"]
                             }

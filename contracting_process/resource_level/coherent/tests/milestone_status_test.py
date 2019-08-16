@@ -33,7 +33,6 @@ item_with_all_milestones_locations = {
                 "title": "some_milestone",
                 "properties": {
                     "status": "notMet",
-                    "dateMet": {}
                 }
             }
         ]
@@ -44,7 +43,6 @@ item_with_all_milestones_locations = {
                 "title": "some_milestone",
                 "properties": {
                     "status": "notMet",
-                    "dateMet": {}
                 }
             }
         ]
@@ -56,7 +54,6 @@ item_with_all_milestones_locations = {
                     "title": "some_milestone",
                     "properties": {
                         "status": "notMet",
-                        "dateMet": {}
                     }
                 }
             ],
@@ -66,7 +63,6 @@ item_with_all_milestones_locations = {
                         "title": "some_milestone",
                         "properties": {
                             "status": "notMet",
-                            "dateMet": {}
                         }
                     }
                 ]
@@ -85,14 +81,12 @@ item_with_few_milestones_in_one_location = {
                     "title": "some_milestone",
                     "properties": {
                         "status": "notMet",
-                        "dateMet": {}
                     }
                 },
                 {
                     "title": "some_another_milestone",
                     "properties": {
                         "status": "notMet",
-                        "dateMet": {}
                     }
                 }
             ]
@@ -103,14 +97,12 @@ item_with_few_milestones_in_one_location = {
                     "title": "some_milestone",
                     "properties": {
                         "status": "notMet",
-                        "dateMet": {}
                     }
                 },
                 {
                     "title": "some_another_milestone",
                     "properties": {
                         "status": "notMet",
-                        "dateMet": {}
                     }
                 }
             ]
@@ -128,7 +120,7 @@ item_with_incorrect_milestones = {
                 "title": "some_milestone",
                 "properties": {
                     "status": "scheduled",
-                    # "dateMet": {}
+                    "dateMet": {}
                 }
             }
         ]
@@ -139,7 +131,6 @@ item_with_incorrect_milestones = {
                 "title": "some_milestone",
                 "properties": {
                     "status": None,
-                    "dateMet": {}
                 }
             },
             {
@@ -147,7 +138,6 @@ item_with_incorrect_milestones = {
                 "title": "some_milestone",
                 "properties": {
                     "status": "met",
-                    "dateMet": {}
                 }
             }
         ]
@@ -159,7 +149,6 @@ item_with_incorrect_milestones = {
                     "title": "some_milestone",
                     "properties": {
                         "status": "notMet",
-                        "dateMet": {}
                     }
                 }
             ],
@@ -169,7 +158,6 @@ item_with_incorrect_milestones = {
                         "title": "some_milestone",
                         "properties": {
                             "status": "notMet",
-                            "dateMet": {}
                         }
                     }
                 ]
