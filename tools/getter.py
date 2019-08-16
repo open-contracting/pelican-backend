@@ -1,3 +1,9 @@
+
+import re
+
+regex = r"^([^[]*)\[([\d]*)\]$"
+
+
 def get_values(item, str_path, value_only=False):
     # return whole item from root
     if not str_path or str_path == "":
@@ -27,6 +33,31 @@ def get_values(item, str_path, value_only=False):
                 return [item[str_path]]
             else:
                 return [{"path": str_path, "value": item[str_path]}]
+
+    # indexing used
+    field = None
+    index = None
+    groups = re.findall(regex, str_path)
+    if len(groups) == 1:
+        try:
+            field = groups[0][0]
+            index = int(groups[0][1])
+        except:
+            pass
+
+    if field is not None and index is not None and field in item:
+        if type(item[field]) is list and len(item[field]) > index:
+            if value_only:
+                values = [item[field][index]]
+            else:
+                values = [
+                    {
+                        "path": "{}[{}]".format(field, index),
+                        "value": item[field][index]
+                    }
+                ]
+
+            return values
 
     # get new key identifying the new item
     path = str_path.split(".")
@@ -81,6 +112,36 @@ def get_values(item, str_path, value_only=False):
                 return [item[key]]
             else:
                 return [{"path": key, "value": item[key]}]
+
+    # indexing used
+    field = None
+    index = None
+    groups = re.findall(regex, key)
+    if len(groups) == 1:
+        try:
+            field = groups[0][0]
+            index = int(groups[0][1])
+        except:
+            pass
+
+    if field is not None and index is not None and field in item:
+        if type(item[field]) is list and len(item[field]) > index:
+            result = []
+
+            values = get_values(item[field][index], ".".join(path[1:]), value_only=value_only)
+
+            if values:
+                for list_item in values:
+                    if value_only:
+                        if list_item is not None:
+                            result.append(list_item)
+                    else:
+                        if list_item and "path" in list_item:
+                            list_item["path"] = "{}[{}].{}".format(field, index, list_item["path"])
+
+                            result.append(list_item)
+
+            return result
 
     # nothing found
     return []
