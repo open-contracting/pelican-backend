@@ -20,7 +20,26 @@ item = {
                 "inner_list": [{"aaa": "ddd"}, {"aaa": "eee"}]
             },
         ],
-    }
+    },
+    "contracts": [
+        {
+            "documents": [
+                {
+                    "id": 0
+                },
+                {
+                    "id": 1
+                }
+            ]
+        },
+        {
+            "documents": [
+                {
+                    "id": 2
+                }
+            ]
+        }
+    ]
 }
 
 
@@ -138,4 +157,80 @@ def test_end_of_path():
         item["tender"]["items"][0],
         item["tender"]["items"][1],
         item["tender"]["items"][2]
+    ]
+
+
+def test_indexing():
+    result = get_values(item, "tender.items[0]")
+    assert type(result) is list
+    assert len(result) == 1
+    assert result == [
+        {
+            "path": "tender.items[0]",
+            "value": item["tender"]["items"][0]
+        }
+    ]
+
+    result = get_values(item, "tender.items[0]", value_only=True)
+    assert type(result) is list
+    assert len(result) == 1
+    assert result == [item["tender"]["items"][0]]
+
+    result = get_values(item, "contracts.documents[0]")
+    assert type(result) is list
+    assert len(result) == 2
+    assert result == [
+        {
+            "path": "contracts[0].documents[0]",
+            "value": item["contracts"][0]["documents"][0]
+        },
+        {
+            "path": "contracts[1].documents[0]",
+            "value": item["contracts"][1]["documents"][0]
+        }
+    ]
+
+    result = get_values(item, "contracts.documents[0]", value_only=True)
+    assert type(result) is list
+    assert len(result) == 2
+    assert result == [
+        item["contracts"][0]["documents"][0],
+        item["contracts"][1]["documents"][0]
+    ]
+
+    result = get_values(item, "contracts.documents[1]")
+    assert type(result) is list
+    assert len(result) == 1
+    assert result == [
+        {
+            "path": "contracts[0].documents[1]",
+            "value": item["contracts"][0]["documents"][1]
+        }
+    ]
+
+    result = get_values(item, "contracts.documents[1]", value_only=True)
+    assert type(result) is list
+    assert len(result) == 1
+    assert result == [item["contracts"][0]["documents"][1]]
+
+    result = get_values(item, "contracts[0].documents")
+    assert type(result) is list
+    assert len(result) == 2
+    assert result == [
+        {
+            "path": "contracts[0].documents[0]",
+            "value": item["contracts"][0]["documents"][0]
+        },
+        {
+            "path": "contracts[0].documents[1]",
+            "value": item["contracts"][0]["documents"][1]
+        }
+    ]
+
+    result = get_values(item, "contracts[0].documents", value_only=True)
+    assert type(result) is list
+    assert len(result) == 2
+    assert result == [
+        item["contracts"][0]["documents"][0],
+        item["contracts"][0]["documents"][1]
     ]
