@@ -1,23 +1,63 @@
-def get_values(item, str_path):
+
+import re
+
+regex = r"^([^[]*)\[([\d]*)\]$"
+
+
+def get_values(item, str_path, value_only=False):
     # return whole item from root
     if not str_path or str_path == "":
-        return [{"path": str_path, "value": item}]
+        if value_only:
+            return [item]
+        else:
+            return [{"path": str_path, "value": item}]
 
     # return the value for key in the item
     if "." not in str_path and str_path in item:
         if type(item[str_path]) is list:
             values = []
             for index in range(len(item[str_path])):
-                values.append(
-                    {
-                        "path": "{}[{}]".format(str_path, index),
-                        "value": item[str_path][index]    
-                    }
-                )
+                if value_only:
+                    values.append(item[str_path][index])
+                else:
+                    values.append(
+                        {
+                            "path": "{}[{}]".format(str_path, index),
+                            "value": item[str_path][index]
+                        }
+                    )
 
             return values
         else:
-            return [{"path": str_path, "value": item[str_path]}]
+            if value_only:
+                return [item[str_path]]
+            else:
+                return [{"path": str_path, "value": item[str_path]}]
+
+    # indexing used
+    field = None
+    index = None
+    groups = re.findall(regex, str_path)
+    if len(groups) == 1:
+        try:
+            field = groups[0][0]
+            index = int(groups[0][1])
+        except:
+            pass
+
+    if field is not None and index is not None and field in item:
+        if type(item[field]) is list and len(item[field]) > index:
+            if value_only:
+                values = [item[field][index]]
+            else:
+                values = [
+                    {
+                        "path": "{}[{}]".format(field, index),
+                        "value": item[field][index]
+                    }
+                ]
+
+            return values
 
     # get new key identifying the new item
     path = str_path.split(".")
@@ -27,7 +67,7 @@ def get_values(item, str_path):
         # inner value is a dictionary { "key": {"aaa": "bbb"}}
         # lets go deeper
         if type(item[key]) is dict:
-            result = get_values(item[key], ".".join(path[1:]))
+            result = get_values(item[key], ".".join(path[1:]), value_only=value_only)
 
             if not result:
                 return []
@@ -39,7 +79,7 @@ def get_values(item, str_path):
                 values = result
 
             for list_item in values:
-                if list_item and "path" in list_item:
+                if not value_only and list_item and "path" in list_item:
                     list_item["path"] = "{}.{}".format(key, list_item["path"])
             return values
 
@@ -49,14 +89,18 @@ def get_values(item, str_path):
             index_counter = 0
             result = []
             for list_item in item[key]:
-                values = get_values(list_item, ".".join(path[1:]))
+                values = get_values(list_item, ".".join(path[1:]), value_only=value_only)
 
                 if values:
                     for list_item in values:
-                        if list_item and "path" in list_item:
-                            list_item["path"] = "{}[{}].{}".format(key, index_counter, list_item["path"])
+                        if value_only:
+                            if list_item is not None:
+                                result.append(list_item)
+                        else:
+                            if list_item and "path" in list_item:
+                                list_item["path"] = "{}[{}].{}".format(key, index_counter, list_item["path"])
 
-                            result.append(list_item)
+                                result.append(list_item)
 
                 index_counter = index_counter + 1
 
@@ -64,7 +108,40 @@ def get_values(item, str_path):
 
         # "primitive" value, return it
         if key in item:
-            return [{"path": key, "value": item[key]}]
+            if value_only:
+                return [item[key]]
+            else:
+                return [{"path": key, "value": item[key]}]
+
+    # indexing used
+    field = None
+    index = None
+    groups = re.findall(regex, key)
+    if len(groups) == 1:
+        try:
+            field = groups[0][0]
+            index = int(groups[0][1])
+        except:
+            pass
+
+    if field is not None and index is not None and field in item:
+        if type(item[field]) is list and len(item[field]) > index:
+            result = []
+
+            values = get_values(item[field][index], ".".join(path[1:]), value_only=value_only)
+
+            if values:
+                for list_item in values:
+                    if value_only:
+                        if list_item is not None:
+                            result.append(list_item)
+                    else:
+                        if list_item and "path" in list_item:
+                            list_item["path"] = "{}[{}].{}".format(field, index, list_item["path"])
+
+                            result.append(list_item)
+
+            return result
 
     # nothing found
     return []

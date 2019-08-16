@@ -8,9 +8,8 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    values = get_values(item, 'awards')
     awards = [
-        v for v in values
+        v for v in get_values(item, 'awards')
         if 'status' in v['value'] and
         v['value']['status'] in ['pending', 'cancelled', 'unsuccessful']
     ]
@@ -20,11 +19,10 @@ def calculate(item):
             'reason': 'there are no awards with check-specific properties'
         }
         return result
-    
-    values = get_values(item, 'contracts.awardID')
+
     contracts_awardID = [
-        v['value'] for v in values
-        if v['value'] is not None
+        v for v in get_values(item, 'contracts.awardID', value_only=True)
+        if v is not None
     ]
 
     application_count = 0

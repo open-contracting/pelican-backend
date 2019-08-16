@@ -1,7 +1,7 @@
 import sys
 import time
 
-from psycopg2.extras import Json
+import simplejson as json
 
 from dataset.definitions import definitions
 from tools.db import commit, get_cursor
@@ -65,7 +65,7 @@ def save_dataset_level_check(check_name, result, dataset_id):
         result["meta"] = {}
 
     result["meta"]["version"] = result["version"]
-    meta = Json(result["meta"])
+    meta = json.dumps(result["meta"])
 
     cursor.execute("""
         INSERT INTO dataset_level_check

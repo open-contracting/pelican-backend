@@ -8,9 +8,8 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    values = get_values(item, 'contracts')
     contracts = [
-        v for v in values
+        v for v in get_values(item, 'contracts')
         if 'status' in v['value'] and
         v['value']['status'] in ['pending', 'cancelled']
     ]

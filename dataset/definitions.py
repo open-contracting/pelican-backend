@@ -14,6 +14,14 @@ from dataset.unique import (
     id
 )
 
+from dataset.consistent import (
+    related_process_title
+)
+
+from dataset.reference import (
+    related_process_identifier
+)
+
 definitions = {
     "distribution.main_procurement_category": main_procurement_category,
     "unique.id": id,
@@ -25,5 +33,7 @@ definitions = {
     "distribution.awards_value_repetition": value_repetition.ModuleType("awards"),
     "distribution.contracts_value_repetition": value_repetition.ModuleType("contracts"),
     "distribution.tender_status": tender_status,
-    "misc.url_availability": url_availability
+    "misc.url_availability": url_availability,
+    "consistent.related_process_title": related_process_title,
+    "reference.related_process_identifier": related_process_identifier
 }
