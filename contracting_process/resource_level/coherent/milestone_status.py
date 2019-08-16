@@ -3,6 +3,22 @@ from tools.getter import get_values
 
 version = 1.0
 
+"""
+author: Iaroslav Kolodka
+
+This check is calculated by application of
+"milestone.status.coherent"(https://gitlab.com/datlab/ocp/dqt/wikis/Data-quality-checks/Resource-level-checks/milestone.status.coherent)
+rule on all instances of $ref: "#/definitions/Milestone" from
+
+- planning.milestones[]
+- tender.milestones[]
+- contracts[i].milestones[]
+- contracts[i].implementation.milestones[]
+
+parametr: testing JSON
+
+"""
+
 
 def calculate(item):
     result = get_empty_result_resource(version)
@@ -19,13 +35,12 @@ def calculate(item):
             passed = None
             status = None
             if "value" in milestone and milestone["value"]:
-                statuses = get_values(milestone["value"], "properties.status")
-                date_met = get_values(milestone["value"], "properties.dateMet")
-                for status in statuses:
-                    if "value" in status and status["value"] is "scheduled" or status["value"] is "notMet":
+                statuses = get_values(milestone["value"], "properties.status", True)
+                date_met = get_values(milestone["value"], "properties.dateMet", True)
+                for status in statuses:  # because get_values return array of values
+                    if status is "scheduled" or status is "notMet":
                         application_count += 1
-                        status = status["value"]
-                        if not date_met:
+                        if not date_met or not date_met[0]:
                             passed = True
                             pass_count += 1
                         else:
@@ -37,7 +52,7 @@ def calculate(item):
                                 "path": milestone["path"]
                             }
                         )
-        if application_count > 0:
+        if application_count > 0:  # else: None
             result["result"] = application_count == pass_count
 
     result["application_count"] = application_count

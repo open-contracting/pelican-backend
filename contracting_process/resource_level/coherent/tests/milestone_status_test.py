@@ -120,6 +120,15 @@ item_with_incorrect_milestones = {
                 "title": "some_milestone",
                 "properties": {
                     "status": "scheduled",
+                    "dateMet": {
+                        "some": "thing"
+                    }
+                }
+            },
+            {
+                "title": "some_milestone",
+                "properties": {
+                    "status": "scheduled",
                     "dateMet": {}
                 }
             }
@@ -252,8 +261,8 @@ def test_on_few_milestones_in_one_location():
 def test_on_false_result():
     result = get_empty_result_resource(version)
     result["result"] = False
-    result["application_count"] = 3
-    result["pass_count"] = 2
+    result["application_count"] = 4
+    result["pass_count"] = 3
     # result[]
     result["meta"] = {"references": []}
     result["meta"]["references"] = [
@@ -261,6 +270,11 @@ def test_on_false_result():
             "result": False,
             "status": "scheduled",
             "path": "tender.milestones[0]"
+        },
+        {
+            "result": True,
+            "status": "scheduled",
+            "path": "tender.milestones[1]"
         },
         {
             "result": True,
