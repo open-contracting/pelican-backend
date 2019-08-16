@@ -9,16 +9,16 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    tender_value = get_values(item, "tender.value")
-    planning_budget_amount = get_values(item, "planning.budget.amount")
+    tender_value = get_values(item, "tender.value", value_only=True)
+    planning_budget_amount = get_values(item, "planning.budget.amount", value_only=True)
 
     # path not found
     if not tender_value or not planning_budget_amount:
         result["meta"] = {"reason": "values are not set"}
         return result
 
-    tender_value = tender_value[0]["value"]
-    planning_budget_amount = planning_budget_amount[0]["value"]
+    tender_value = tender_value[0]
+    planning_budget_amount = planning_budget_amount[0]
 
     # missing amount or currency fields
     if "amount" not in tender_value or "currency" not in tender_value or \
@@ -46,7 +46,7 @@ def calculate(item):
         tender_value_amount = tender_value["amount"]
         planning_budget_amount_amount = planning_budget_amount["amount"]
     else:
-        ref_date = parse_date(get_values(item, "date")[0]["value"])
+        ref_date = parse_date(get_values(item, "date", value_only=True)[0])
         tender_value_amount = convert(tender_value["amount"], tender_value["currency"], "USD", ref_date)
         planning_budget_amount_amount = convert(planning_budget_amount["amount"], planning_budget_amount["currency"],
                                                 "USD", ref_date)

@@ -18,11 +18,9 @@ def add_item(scope, item, item_id, path):
     if scope is None:
         scope = {}
 
-    values = get_values(item, '{}.value'.format(path))
+    values = get_values(item, '{}.value'.format(path), value_only=True)
     if not values:
         return scope
-
-    values = [v['value'] for v in values]
 
     # check whether amount and currency fields are set
     values = [

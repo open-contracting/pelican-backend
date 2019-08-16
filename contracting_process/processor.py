@@ -1,7 +1,6 @@
 import sys
 import time
-
-from psycopg2.extras import Json
+import simplejson as json
 
 from contracting_process.field_level.definitions import \
     definitions as field_level_definitions
@@ -84,7 +83,7 @@ def save_field_level_check(path, result, item_id, dataset_id):
     cursor = get_cursor()
 
     if "reason" in result:
-        meta = Json({"reason": result["reason"], "value": result["value"], "path": result["path"]})
+        meta = json.dumps({"reason": result["reason"], "value": result["value"], "path": result["path"]})
     else:
         meta = None
 
@@ -109,7 +108,7 @@ def save_resource_level_check(check_name, result, item_id, dataset_id):
         result["meta"] = {}
 
     result["meta"]["version"] = result["version"]
-    meta = Json(result["meta"])
+    meta = json.dumps(result["meta"])
 
     cursor.execute("""
         INSERT INTO resource_level_check
