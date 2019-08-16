@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-import json
+import simplejson as json
 import sys
 
 from datetime import datetime
