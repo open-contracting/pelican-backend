@@ -18,10 +18,9 @@ def add_item(scope, item, item_id):
             for status in possible_status
         }
 
-    values = get_values(item, 'tender.status')
     values = [
-        v['value'] for v in values
-        if v['value'] in possible_status
+        v for v in get_values(item, 'tender.status', value_only=True)
+        if v in possible_status
     ]
 
     if not values:
