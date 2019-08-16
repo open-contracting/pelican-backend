@@ -23,25 +23,22 @@ def calculate(item):
                 statuses = get_values(milestone["value"], "properties.status")
                 date_met = get_values(milestone["value"], "properties.dateMet")
                 for status in statuses:
-                    if "value" in status:
-                        if status["value"] is "scheduled" or status["value"] is "notMet":
-                            application_count += 1
-                            is_passed = False
-                            status = status["value"]
-                            if date_met:
-                                is_passed = True
-                                pass_count += 1
-                            result["meta"]["references"].append(
-                                {
-                                    "result": is_passed,
-                                    "status": status,
-                                    "path": milestone["path"]
-                                }
-                            )
+                    if "value" in status and status["value"] is "scheduled" or status["value"] is "notMet":
+                        application_count += 1
+                        is_passed = False
+                        status = status["value"]
+                        if date_met:
+                            is_passed = True
+                            pass_count += 1
+                        result["meta"]["references"].append(
+                            {
+                                "result": is_passed,
+                                "status": status,
+                                "path": milestone["path"]
+                            }
+                        )
         if application_count > 0:
             result["result"] = application_count == pass_count
-    else:
-        result["result"] = None
 
     result["application_count"] = application_count
     result["pass_count"] = pass_count
