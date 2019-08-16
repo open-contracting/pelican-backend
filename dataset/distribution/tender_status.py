@@ -7,7 +7,7 @@ from tools.getter import get_values
 version = 1.0
 samples_num = 20
 possible_status = [
-    'planning', 'planned', 'active', 'cancelled', 'unsuccessufl', 'complete', 'withdrawn'
+    'planning', 'planned', 'active', 'cancelled', 'unsuccessful', 'complete', 'withdrawn'
 ]
 
 
@@ -64,12 +64,11 @@ def get_result(scope):
 
     for _, value in scope.items():
         value['share'] = value['count'] / total_valid_status
-        value.pop('count', None)
 
     result['result'] = passed
     result['value'] = 100 if passed else 0
     result['meta'] = {
-        'status': scope
+        'shares': scope
     }
 
     return result
