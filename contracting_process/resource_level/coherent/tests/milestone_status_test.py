@@ -179,7 +179,7 @@ item_with_incorrect_milestones = {
 }
 
 
-def test_no_Milestones():
+def test_no_milestones():
     result = get_empty_result_resource(version)
     result["result"] = None
     result["application_count"] = 0
@@ -188,7 +188,7 @@ def test_no_Milestones():
     assert calculate(item_without_milestones) == result
 
 
-def test_on_empty_Milestone():
+def test_on_empty_milestone():
     result = get_empty_result_resource(version)
     result["result"] = None
     result["application_count"] = 0
