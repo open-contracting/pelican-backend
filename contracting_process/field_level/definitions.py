@@ -4,6 +4,7 @@ from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
 from contracting_process.field_level.ocid_prefix_check import ocid_prefix
 from contracting_process.field_level.telephone import telephone_number_format
+from functools import partial
 
 definitions = {
     "ocid": [exists, non_empty, ocid_prefix],
