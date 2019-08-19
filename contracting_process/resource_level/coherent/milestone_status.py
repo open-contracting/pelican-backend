@@ -37,7 +37,7 @@ def calculate(item):
             if "value" in milestone and milestone["value"]:
                 statuses = get_values(milestone["value"], "properties.status", True)
                 date_met = get_values(milestone["value"], "properties.dateMet", True)
-                for status in statuses:  # because get_values return array of values
+                for status in statuses:  # because 'get_values' return array of values
                     if status is "scheduled" or status is "notMet":
                         application_count += 1
                         if not date_met or not date_met[0]:
@@ -52,6 +52,7 @@ def calculate(item):
                                 "path": milestone["path"]
                             }
                         )
+                    break  # there should be only one status
         if application_count > 0:  # else: None
             result["result"] = application_count == pass_count
 
