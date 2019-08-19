@@ -97,6 +97,13 @@ def get_result(scope):
                     "20_50": sum_20_50_percent / sum_value,
                     "50_100": sum_50_100_percent / sum_value
                 },
+                "sums": {
+                    "0_1": sum_0_1_percent,
+                    "1_5": sum_1_5_percent,
+                    "5_20": sum_5_20_percent,
+                    "20_50": sum_20_50_percent,
+                    "50_100": sum_50_100_percent
+                },
                 "counts": {
                     "0_1": count_0_1_percent,
                     "1_5": count_1_5_percent,
