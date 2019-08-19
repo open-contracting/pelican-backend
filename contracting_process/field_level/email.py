@@ -9,7 +9,7 @@ and existence (in case formatting is correct).
 
 parametre:
     - item: tested JSON
-    - path: path to email
+    - key:  email key
 
 """
 
