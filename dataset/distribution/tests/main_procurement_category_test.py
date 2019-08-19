@@ -51,12 +51,12 @@ def test_ok():
             "B": {
                 "share": 66,
                 "count": 2,
-                "examples": [2, 3]
+                "examples_id": [2, 3]
             },
             "A": {
                 "share": 33,
                 "count": 1,
-                "examples": [1]
+                "examples_id": [1]
             },
         }
     }
@@ -75,7 +75,7 @@ def test_failed():
             "B": {
                 "share": 100,
                 "count": 2,
-                "examples": [2, 3]
+                "examples_id": [2, 3]
             },
         }
     }
