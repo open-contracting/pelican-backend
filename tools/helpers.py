@@ -3,7 +3,10 @@ from decimal import Decimal
 
 from currency_converter import CurrencyConverter, RateNotFoundError
 
-cc = CurrencyConverter("http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip", fallback_on_wrong_date=True)
+online_exchange_rates = "http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip"
+offline_exchange_rates = "./tools/exchange_rates.csv"
+
+cc = CurrencyConverter(offline_exchange_rates, fallback_on_wrong_date=True)
 
 
 def currency_available(currency):
