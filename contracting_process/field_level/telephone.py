@@ -14,11 +14,11 @@ parametres:
 """
 
 
-def telephone_number_format(item, path, default_region):
-    numbers = get_values(item, path, True)
+def telephone_number_format(item, key, default_region):
+    number = item[key]
     value = None
-    if numbers:
-        value = numbers[0]
+    if number:
+        value = number
         try:
             parsed_number = phonenumbers.parse(value, default_region)
             is_valid = phonenumbers.is_possible_number(parsed_number)

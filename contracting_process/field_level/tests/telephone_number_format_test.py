@@ -14,56 +14,32 @@ The file contain tests for a function contracting_process.field_level.telephone.
 
 telephone_number_format_prepared = partial(
     telephone_number_format,
-    path="buyer.contactPoint.telephone",
+    key="telephone",
     default_region="CZ"
 )
 
 item_with_valid_number1 = {
-    "buyer": {
-        "contactPoint": {
-            "telephone": "+420777555333"
-        }
-    }
+    "telephone": "+420777555333"
 }
 
 item_with_valid_number2 = {
-    "buyer": {
-        "contactPoint": {
-            "telephone": "420777555333"
-        }
-    }
+    "telephone": "420777555333"
 }
 
 item_with_valid_number3 = {
-    "buyer": {
-        "contactPoint": {
-            "telephone": "777555333"
-        }
-    }
+    "telephone": "777555333"
 }
 
 item_with_invalid_number1 = {
-    "buyer": {
-        "contactPoint": {
-            "telephone": "+42077755533"
-        }
-    }
+    "telephone": "+42077755533"
 }
 
 item_with_invalid_number2 = {
-    "buyer": {
-        "contactPoint": {
-            "telephone": "+420777555a33"
-        }
-    }
+    "telephone": "+420777555a33"
 }
 
 item_with_invalid_number3 = {
-    "buyer": {
-        "contactPoint": {
-            "telephone": "+999777555333"
-        }
-    }
+    "telephone": "+999777555333"
 }
 
 
