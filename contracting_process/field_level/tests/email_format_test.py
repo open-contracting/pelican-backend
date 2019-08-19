@@ -14,40 +14,17 @@ The file contain tests for a function contracting_process.field_level.email.emai
 
 """
 
-email_format_prepared = partial(
-    email_format,
-    path="parties.contactPoint.email"
-)
-
 item_with_valid_email = {
-    "parties": [
-        {
-            "contactPoint": {
-                "email": "yaroslav.kolodka@gmail.com"
-            }
-        }
-    ]
+    "email": "yaroslav.kolodka@gmail.com"
 }
 
 item_with_invalid_email = {
-    "parties": [
-        {
-            "contactPoint": {
-                "email": "email#google.com"
-            }
-        }
-    ]
+    "email": "email#google.com"
 }
 
 
 item_with_valid_email_which_does_not_exist = {
-    "parties": [
-        {
-            "contactPoint": {
-                "email": "agdshfgasdhgfsjdhfgasjkdhgfaskjfgahsdfg@gmail.com"
-            }
-        }
-    ]
+    "email": "agdshfgasdhgfsjdhfgasjkdhgfaskjfgahsdfg@gmail.com"
 }
 
 
@@ -55,7 +32,7 @@ def test_with_correct_email():
     expected_result = {
         "result": True
     }
-    result = email_format_prepared(item_with_valid_email)
+    result = email_format(item_with_valid_email, "email")
     assert result == expected_result
 
 
@@ -65,7 +42,7 @@ def test_with_incorrect_email():
         "value": "email#google.com",
         "reason": "Email is formatted incorrectly or does not exist"
     }
-    result = email_format_prepared(item_with_invalid_email)
+    result = email_format(item_with_invalid_email, "email")
     assert result == expected_result
 
 
@@ -75,5 +52,5 @@ def test_with_correct_email_which_does_not_exist():
         "value": "agdshfgasdhgfsjdhfgasjkdhgfaskjfgahsdfg@gmail.com",  # there must be a definitely non-existent email
         "reason": "Email is formatted incorrectly or does not exist"
     }
-    result = email_format_prepared(item_with_valid_email_which_does_not_exist)
+    result = email_format(item_with_valid_email_which_does_not_exist, "email")
     assert result == expected_result

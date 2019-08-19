@@ -14,11 +14,11 @@ parametre:
 """
 
 
-def email_format(item, path):
-    email = get_values(item, path, True)
+def email_format(item, key):
+    email = item[key]
     value = None
     if email:
-        value = email[0]
+        value = email
         is_valid = validate_email(value, verify=True)
         if is_valid:
             return {
