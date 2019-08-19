@@ -4,9 +4,10 @@ from validate_email import validate_email
 """
 author: Iaroslav Kolodka
 
-Method is designed to check email address on correct formatting
+The method is designed to check the email address for the correct formatting
+and existence (in case formatting is correct).
 
-parametr:
+parametre:
     - item: tested JSON
     - path: path to email
 
@@ -15,14 +16,16 @@ parametr:
 
 def email_format(item, path):
     email = get_values(item, path, True)
-    is_valid = validate_email(email[0], verify=True)
-    if is_valid:
-        return {
-            "result": True
-        }
-    else:
-        return{
-            "result": False,
-            "value": email[0],
-            "reason": "Email has incorrect formatting or doesn`t exists"
-        }
+    value = None
+    if email:
+        value = email[0]
+        is_valid = validate_email(value, verify=True)
+        if is_valid:
+            return {
+                "result": True
+            }
+    return{
+        "result": False,
+        "value": value,
+        "reason": "Email is formatted incorrectly or does not exist"
+    }

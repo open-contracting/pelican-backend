@@ -1,11 +1,25 @@
 from contracting_process.field_level.email import email_format
 from functools import partial
+
+"""
+author: Iaroslav Kolodka
+
+The file contain tests for a function contracting_process.field_level.email.emaill_format.
+
+'test_with_correct_email' is the case when the input item contains an existing correctly formatted email.
+'test_with_incorrect_email' is the case when the input item contains an incorrectly formatted email.
+'test_with_correct_email_which_does_not_exist' is the case when the input item contains a non-existing correctly
+ formatted email.
+
+
+"""
+
 email_format_prepared = partial(
     email_format,
     path="parties.contactPoint.email"
 )
 
-item_with_correct_email = {
+item_with_valid_email = {
     "parties": [
         {
             "contactPoint": {
@@ -15,7 +29,7 @@ item_with_correct_email = {
     ]
 }
 
-item_with_incorrect_email = {
+item_with_invalid_email = {
     "parties": [
         {
             "contactPoint": {
@@ -26,11 +40,11 @@ item_with_incorrect_email = {
 }
 
 
-item_with_correct_email_which_does_not_exist = {
+item_with_valid_email_which_does_not_exist = {
     "parties": [
         {
             "contactPoint": {
-                "email": "email.does.not@exist.com.com.com"
+                "email": "agdshfgasdhgfsjdhfgasjkdhgfaskjfgahsdfg@gmail.com"
             }
         }
     ]
@@ -38,28 +52,28 @@ item_with_correct_email_which_does_not_exist = {
 
 
 def test_with_correct_email():
-    expcted_result = {
+    expected_result = {
         "result": True
     }
-    result = email_format_prepared(item_with_correct_email)
-    assert result == expcted_result
+    result = email_format_prepared(item_with_valid_email)
+    assert result == expected_result
 
 
 def test_with_incorrect_email():
-    expcted_result = {
+    expected_result = {
         "result": False,
         "value": "email#google.com",
-        "reason": "Email has incorrect formatting or doesn`t exists"
+        "reason": "Email is formatted incorrectly or does not exist"
     }
-    result = email_format_prepared(item_with_incorrect_email)
-    assert result == expcted_result
+    result = email_format_prepared(item_with_invalid_email)
+    assert result == expected_result
 
 
 def test_with_correct_email_which_does_not_exist():
-    expcted_result = {
+    expected_result = {
         "result": False,
-        "value": "email.does.not@exist.com.com.com",
-        "reason": "Email has incorrect formatting or doesn`t exists"
+        "value": "agdshfgasdhgfsjdhfgasjkdhgfaskjfgahsdfg@gmail.com",  # there must be a definitely non-existent email
+        "reason": "Email is formatted incorrectly or does not exist"
     }
-    result = email_format_prepared(item_with_correct_email_which_does_not_exist)
-    assert result == expcted_result
+    result = email_format_prepared(item_with_valid_email_which_does_not_exist)
+    assert result == expected_result
