@@ -3,6 +3,7 @@ from contracting_process.field_level.language import language_code
 from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
 from contracting_process.field_level.ocid_prefix_check import ocid_prefix
+from contracting_process.field_level.document_description_length import description_length
 
 definitions = {
     "ocid": [exists, non_empty, ocid_prefix],
@@ -29,11 +30,14 @@ definitions = {
     "buyer.id": [exists, non_empty],
     "planning": [exists, non_empty],
     "planning.documents.language": [exists, non_empty, language_code],
+    "planning.documents.description": [exists, non_empty, description_length],
+    "planning.milestones.documents.description": [exists, non_empty, description_length],
     "tender": [exists, non_empty],
     "tender.id": [exists, non_empty],
     "tender.title": [exists, non_empty],
     "tender.description": [exists, non_empty],
     "tender.documents.language": [exists, non_empty, language_code],
+    "tender.documents.description": [exists, non_empty, description_length],
     "tender.status": [exists, non_empty],
     "tender.procuringEntity": [exists, non_empty],
     "tender.items": [exists, non_empty],
@@ -67,6 +71,7 @@ definitions = {
     "tender.tenderers": [exists, non_empty],
     "tender.documents.datePublished": [exists, non_empty, date_realistic],
     "tender.documents.dateModified": [exists, non_empty, date_realistic],
+    "tender.milestones.documents.description": [exists, non_empty, description_length],
     "awards": [exists, non_empty],
     "awards.id": [exists, non_empty],
     "awards.title": [exists, non_empty],
@@ -86,6 +91,7 @@ definitions = {
     "awards.documents.language": [exists, non_empty, language_code],
     "awards.documents.datePublished": [exists, non_empty, date_realistic],
     "awards.documents.dateModified": [exists, non_empty, date_realistic],
+    "awards.documents.description": [exists, non_empty, description_length],
     "contracts": [exists, non_empty],
     "contracts.id": [exists, non_empty],
     "contracts.awardID": [exists, non_empty],
@@ -116,7 +122,7 @@ definitions = {
     "contracts.documents.id": [exists, non_empty],
     "contracts.documents.documentType": [exists, non_empty],
     "contracts.documents.title": [exists, non_empty],
-    "contracts.documents.description": [exists, non_empty],
+    "contracts.documents.description": [exists, non_empty, description_length],
     "contracts.documents.url": [exists, non_empty],
     "contracts.documents.datePublished": [exists, non_empty, date_realistic],
     "contracts.documents.dateModified": [exists, non_empty, date_realistic],
@@ -127,11 +133,13 @@ definitions = {
     "contracts.milestones.dateModified": [exists, non_empty, date_realistic],
     "contracts.milestones.documents.dateModified": [exists, non_empty, date_realistic],
     "contracts.milestones.documents.datePublished": [exists, non_empty, date_realistic],
+    "contracts.milestones.documents.description": [exists, non_empty, description_length],
     "contracts.implementation.transactions.value.amount": [exists, non_empty, positive_number],
     "contracts.implementation.transactions.date": [exists, non_empty, date_realistic],
     "contracts.implementation.documents.dateModified": [exists, non_empty, date_realistic],
     "contracts.implementation.documents.datePublished": [exists, non_empty, date_realistic],
     "contracts.implementation.documents.language": [exists, non_empty, language_code],
+    "contracts.implementation.documents.description": [exists, non_empty, description_length],
     "contracts.amendments.date": [exists, non_empty, date_realistic],
     "contracts.amendment.date": [exists, non_empty, date_realistic],
     "contracts.milestones.documents.language": [exists, non_empty, language_code],
