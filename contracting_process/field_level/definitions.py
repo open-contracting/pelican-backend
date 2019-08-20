@@ -1,9 +1,13 @@
+
+import functools
+
 from contracting_process.field_level.date_time import date_realistic
 from contracting_process.field_level.language import language_code
 from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
 from contracting_process.field_level.ocid_prefix_check import ocid_prefix
 from contracting_process.field_level.document_description_length import description_length
+from contracting_process.field_level.document_type import document_type_coherent
 
 definitions = {
     "ocid": [exists, non_empty, ocid_prefix],
@@ -29,6 +33,9 @@ definitions = {
     "buyer": [exists, non_empty],
     "buyer.id": [exists, non_empty],
     "planning": [exists, non_empty],
+    "planning.documents.documentType": [
+        exists, non_empty, functools.partial(document_type_coherent, section='planning')
+    ],
     "planning.documents.language": [exists, non_empty, language_code],
     "planning.documents.description": [exists, non_empty, description_length],
     "planning.milestones.documents.description": [exists, non_empty, description_length],
@@ -72,6 +79,9 @@ definitions = {
     "tender.documents.datePublished": [exists, non_empty, date_realistic],
     "tender.documents.dateModified": [exists, non_empty, date_realistic],
     "tender.milestones.documents.description": [exists, non_empty, description_length],
+    "tender.documents.documentType": [
+        exists, non_empty, functools.partial(document_type_coherent, section='tender')
+    ],
     "awards": [exists, non_empty],
     "awards.id": [exists, non_empty],
     "awards.title": [exists, non_empty],
@@ -92,6 +102,9 @@ definitions = {
     "awards.documents.datePublished": [exists, non_empty, date_realistic],
     "awards.documents.dateModified": [exists, non_empty, date_realistic],
     "awards.documents.description": [exists, non_empty, description_length],
+    "awards.documents.documentType": [
+        exists, non_empty, functools.partial(document_type_coherent, section='award')
+    ],
     "contracts": [exists, non_empty],
     "contracts.id": [exists, non_empty],
     "contracts.awardID": [exists, non_empty],
@@ -120,7 +133,9 @@ definitions = {
     "contracts.dateSigned": [exists, non_empty, date_realistic],
     "contracts.documents": [exists, non_empty],
     "contracts.documents.id": [exists, non_empty],
-    "contracts.documents.documentType": [exists, non_empty],
+    "contracts.documents.documentType": [
+        exists, non_empty, functools.partial(document_type_coherent, section='contract')
+    ],
     "contracts.documents.title": [exists, non_empty],
     "contracts.documents.description": [exists, non_empty, description_length],
     "contracts.documents.url": [exists, non_empty],
@@ -140,6 +155,9 @@ definitions = {
     "contracts.implementation.documents.datePublished": [exists, non_empty, date_realistic],
     "contracts.implementation.documents.language": [exists, non_empty, language_code],
     "contracts.implementation.documents.description": [exists, non_empty, description_length],
+    "contracts.implementation.documents.documentType": [
+        exists, non_empty, functools.partial(document_type_coherent, section='implementation')
+    ],
     "contracts.amendments.date": [exists, non_empty, date_realistic],
     "contracts.amendment.date": [exists, non_empty, date_realistic],
     "contracts.milestones.documents.language": [exists, non_empty, language_code],
