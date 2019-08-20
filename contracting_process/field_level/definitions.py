@@ -6,6 +6,9 @@ from contracting_process.field_level.language import language_code
 from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
 from contracting_process.field_level.ocid_prefix_check import ocid_prefix
+from contracting_process.field_level.telephone import telephone_number_format
+from contracting_process.field_level.document_description_length import description_length
+from contracting_process.field_level.email import email_format
 from contracting_process.field_level.document_type import document_type_coherent
 from contracting_process.field_level.document_format_codelist import document_format_codelist
 
@@ -30,8 +33,14 @@ definitions = {
     "parties.address.postalCode": [exists, non_empty],
     "parties.address.countryName": [exists, non_empty],
     "parties.roles": [exists, non_empty],
+    "parties.contactPoint.telephone": [exists, non_empty, telephone_number_format],
+    "parties.contactPoint.faxNumber": [exists, non_empty, telephone_number_format],
+    "buyer.contactPoint.telephone": [exists, non_empty, telephone_number_format],
+    "buyer.contactPoint.faxNumber": [exists, non_empty, telephone_number_format],
+    "parties.contactPoint.email": [exists, non_empty, email_format],
     "buyer": [exists, non_empty],
     "buyer.id": [exists, non_empty],
+    "buyer.contactPoint.email": [exists, non_empty, email_format],
     "planning": [exists, non_empty],
     "planning.documents.documentType": [
         exists, non_empty, functools.partial(document_type_coherent, section='planning')
@@ -39,13 +48,19 @@ definitions = {
     "planning.documents.language": [exists, non_empty, language_code],
     "planning.documents": [exists, non_empty, document_format_codelist],
     "planning.milestones.documents": [exists, non_empty, document_format_codelist],
+    "planning.documents.description": [exists, non_empty, description_length],
+    "planning.milestones.documents.description": [exists, non_empty, description_length],
     "tender": [exists, non_empty],
     "tender.id": [exists, non_empty],
     "tender.title": [exists, non_empty],
     "tender.description": [exists, non_empty],
     "tender.documents.language": [exists, non_empty, language_code],
+    "tender.documents.description": [exists, non_empty, description_length],
     "tender.status": [exists, non_empty],
     "tender.procuringEntity": [exists, non_empty],
+    "tender.procuringEntity.contactPoint.telephone": [exists, non_empty, telephone_number_format],
+    "tender.procuringEntity.contactPoint.faxNumber": [exists, non_empty, telephone_number_format],
+    "tender.procuringEntity.contactPoint.email": [exists, non_empty, email_format],
     "tender.items": [exists, non_empty],
     "tender.value": [exists, non_empty],
     "tender.value.amount": [exists, non_empty],
@@ -75,8 +90,12 @@ definitions = {
     "tender.enquiryPeriod.maxExtentDate": [exists, non_empty, date_realistic],
     "tender.numberOfTenderers": [exists, non_empty, positive_number],
     "tender.tenderers": [exists, non_empty],
+    "tender.tenderers.contactPoint.telephone": [exists, non_empty, telephone_number_format],
+    "tender.tenderers.contactPoint.faxNumber": [exists, non_empty, telephone_number_format],
+    "tender.tenderers.contactPoint.email": [exists, non_empty, email_format],
     "tender.documents.datePublished": [exists, non_empty, date_realistic],
     "tender.documents.dateModified": [exists, non_empty, date_realistic],
+    "tender.milestones.documents.description": [exists, non_empty, description_length],
     "tender.documents.documentType": [
         exists, non_empty, functools.partial(document_type_coherent, section='tender')
     ],
@@ -93,6 +112,9 @@ definitions = {
     "awards.suppliers": [exists, non_empty],
     "awards.suppliers.name": [exists, non_empty],
     "awards.suppliers.id": [exists, non_empty],
+    "awards.suppliers.contactPoint.telephone": [exists, non_empty, telephone_number_format],
+    "awards.suppliers.contactPoint.faxNumber": [exists, non_empty, telephone_number_format],
+    "awards.suppliers.contactPoint.email": [exists, non_empty, email_format],
     "awards.contractPeriod": [exists, non_empty],
     "awards.contractPeriod.startDate": [exists, non_empty, date_realistic],
     "awards.contractPeriod.endDate": [exists, non_empty, date_realistic],
@@ -101,6 +123,7 @@ definitions = {
     "awards.documents.language": [exists, non_empty, language_code],
     "awards.documents.datePublished": [exists, non_empty, date_realistic],
     "awards.documents.dateModified": [exists, non_empty, date_realistic],
+    "awards.documents.description": [exists, non_empty, description_length],
     "awards.documents.documentType": [
         exists, non_empty, functools.partial(document_type_coherent, section='award')
     ],
@@ -137,7 +160,7 @@ definitions = {
         exists, non_empty, functools.partial(document_type_coherent, section='contract')
     ],
     "contracts.documents.title": [exists, non_empty],
-    "contracts.documents.description": [exists, non_empty],
+    "contracts.documents.description": [exists, non_empty, description_length],
     "contracts.documents.url": [exists, non_empty],
     "contracts.documents.datePublished": [exists, non_empty, date_realistic],
     "contracts.documents.dateModified": [exists, non_empty, date_realistic],
@@ -148,11 +171,19 @@ definitions = {
     "contracts.milestones.dateModified": [exists, non_empty, date_realistic],
     "contracts.milestones.documents.dateModified": [exists, non_empty, date_realistic],
     "contracts.milestones.documents.datePublished": [exists, non_empty, date_realistic],
+    "contracts.milestones.documents.description": [exists, non_empty, description_length],
     "contracts.implementation.transactions.value.amount": [exists, non_empty, positive_number],
     "contracts.implementation.transactions.date": [exists, non_empty, date_realistic],
+    "contracts.implementation.transactions.payer.contactPoint.telephone": [exists, non_empty, telephone_number_format],
+    "contracts.implementation.transactions.payer.contactPoint.faxNumber": [exists, non_empty, telephone_number_format],
+    "contracts.implementation.transactions.payee.contactPoint.telephone": [exists, non_empty, telephone_number_format],
+    "contracts.implementation.transactions.payee.contactPoint.faxNumber": [exists, non_empty, telephone_number_format],
+    "contracts.implementation.transactions.payer.contactPoint.email": [exists, non_empty, email_format],
+    "contracts.implementation.transactions.payee.contactPoint.email": [exists, non_empty, email_format],
     "contracts.implementation.documents.dateModified": [exists, non_empty, date_realistic],
     "contracts.implementation.documents.datePublished": [exists, non_empty, date_realistic],
     "contracts.implementation.documents.language": [exists, non_empty, language_code],
+    "contracts.implementation.documents.description": [exists, non_empty, description_length],
     "contracts.implementation.documents.documentType": [
         exists, non_empty, functools.partial(document_type_coherent, section='implementation')
     ],
