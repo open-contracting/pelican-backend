@@ -88,10 +88,10 @@ def test():
         "path": "tender.value"
     })
     result5 = result_initialiser(version, None, 0, 0)
-    # assert value_realistic(item_with_valid_value_in_USD) == result1
-    # assert value_realistic(item_with_valid_value_in_EUR) == result2
-    # assert value_realistic(item_with_invalid_value_in_USD) == result3
-    # assert value_realistic(item_with_invalid_value_in_HUF) == result4
+    assert value_realistic(item_with_valid_value_in_USD) == result1
+    assert value_realistic(item_with_valid_value_in_EUR) == result2
+    assert value_realistic(item_with_invalid_value_in_USD) == result3
+    assert value_realistic(item_with_invalid_value_in_HUF) == result4
     assert value_realistic(item_with_valid_value_in_non_eisting_currency) == result5
 
 
