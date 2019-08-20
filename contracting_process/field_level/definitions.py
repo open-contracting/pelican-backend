@@ -7,6 +7,7 @@ from contracting_process.field_level.number_checks import positive_number
 from contracting_process.field_level.object_checks import exists, non_empty
 from contracting_process.field_level.ocid_prefix_check import ocid_prefix
 from contracting_process.field_level.document_type import document_type_coherent
+from contracting_process.field_level.document_format_codelist import document_format_codelist
 
 definitions = {
     "ocid": [exists, non_empty, ocid_prefix],
@@ -36,6 +37,8 @@ definitions = {
         exists, non_empty, functools.partial(document_type_coherent, section='planning')
     ],
     "planning.documents.language": [exists, non_empty, language_code],
+    "planning.documents": [exists, non_empty, document_format_codelist],
+    "planning.milestones.documents": [exists, non_empty, document_format_codelist],
     "tender": [exists, non_empty],
     "tender.id": [exists, non_empty],
     "tender.title": [exists, non_empty],
@@ -77,6 +80,8 @@ definitions = {
     "tender.documents.documentType": [
         exists, non_empty, functools.partial(document_type_coherent, section='tender')
     ],
+    "tender.documents": [exists, non_empty, document_format_codelist],
+    "tender.milestones.documents": [exists, non_empty, document_format_codelist],
     "awards": [exists, non_empty],
     "awards.id": [exists, non_empty],
     "awards.title": [exists, non_empty],
@@ -99,6 +104,7 @@ definitions = {
     "awards.documents.documentType": [
         exists, non_empty, functools.partial(document_type_coherent, section='award')
     ],
+    "awards.documents": [exists, non_empty, document_format_codelist],
     "contracts": [exists, non_empty],
     "contracts.id": [exists, non_empty],
     "contracts.awardID": [exists, non_empty],
@@ -125,7 +131,7 @@ definitions = {
     "contracts.items.unit.value": [exists, non_empty],
     "contracts.items.unit.uri": [exists, non_empty],
     "contracts.dateSigned": [exists, non_empty, date_realistic],
-    "contracts.documents": [exists, non_empty],
+    "contracts.documents": [exists, non_empty, document_format_codelist],
     "contracts.documents.id": [exists, non_empty],
     "contracts.documents.documentType": [
         exists, non_empty, functools.partial(document_type_coherent, section='contract')
@@ -150,9 +156,12 @@ definitions = {
     "contracts.implementation.documents.documentType": [
         exists, non_empty, functools.partial(document_type_coherent, section='implementation')
     ],
+    "contracts.implementation.documents": [exists, non_empty, document_format_codelist],
+    "contracts.implementation.milestones.documents": [exists, non_empty, document_format_codelist],
     "contracts.amendments.date": [exists, non_empty, date_realistic],
     "contracts.amendment.date": [exists, non_empty, date_realistic],
     "contracts.milestones.documents.language": [exists, non_empty, language_code],
+    "contracts.milestones.documents": [exists, non_empty, document_format_codelist],
     "language": [exists, non_empty, language_code],
     "relatedProcesses": [exists, non_empty],
     "item.unit.value.amount": [exists, non_empty, positive_number],
