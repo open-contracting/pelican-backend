@@ -14,11 +14,11 @@ def add_item(scope, item, item_id):
                 if category not in scope:
                     scope[category] = {}
                     scope[category]["count"] = 0
-                    scope[category]["examples"] = []
+                    scope[category]["examples_id"] = []
 
                 scope[category]["count"] = scope[category]["count"] + 1
-                if len(scope[category]["examples"]) < 100:
-                    scope[category]["examples"].append(item_id)
+                if len(scope[category]["examples_id"]) < 100:
+                    scope[category]["examples_id"].append(item_id)
 
     return scope
 
@@ -38,7 +38,7 @@ def get_result(scope):
             data[item[0]] = {}
             data[item[0]]["share"] = int(item[1]["count"] / (sum_value/100))
             data[item[0]]["count"] = int(item[1]["count"])
-            data[item[0]]["examples"] = item[1]["examples"]
+            data[item[0]]["examples_id"] = item[1]["examples_id"]
 
         result["meta"] = {
             "shares": data

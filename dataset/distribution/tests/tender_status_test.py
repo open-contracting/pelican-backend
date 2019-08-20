@@ -92,13 +92,15 @@ def test_passed():
     result = tender_status.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 100
-    assert len(result['meta']['status']) == len(tender_status.possible_status)
-    assert result['meta']['status']['active'] == {
+    assert len(result['meta']['shares']) == len(tender_status.possible_status)
+    assert result['meta']['shares']['active'] == {
         'share': 0.5,
+        'count': 1,
         'examples_id': [0]
     }
-    assert result['meta']['status']['planning'] == {
+    assert result['meta']['shares']['planning'] == {
         'share': 0.5,
+        'count': 1,
         'examples_id': [1]
     }
 
@@ -127,9 +129,10 @@ def test_failed():
     result = tender_status.get_result(scope)
     assert result['result'] is False
     assert result['value'] == 0
-    assert len(result['meta']['status']) == len(tender_status.possible_status)
-    assert result['meta']['status']['active'] == {
+    assert len(result['meta']['shares']) == len(tender_status.possible_status)
+    assert result['meta']['shares']['active'] == {
         'share': 1,
+        'count': 1,
         'examples_id': [0]
     }
 
@@ -155,10 +158,10 @@ def test_passed_big_load():
     result = tender_status.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 100
-    assert len(result['meta']['status']) == len(tender_status.possible_status)
+    assert len(result['meta']['shares']) == len(tender_status.possible_status)
     assert sum(
-        [len(value['examples_id']) for _, value in result['meta']['status'].items()]
+        [len(value['examples_id']) for _, value in result['meta']['shares'].items()]
     ) == tender_status.samples_num * len(tender_status.possible_status)
     assert all(
-        [0 < value['share'] < 1 for _, value in result['meta']['status'].items()]
+        [0 < value['share'] < 1 for _, value in result['meta']['shares'].items()]
     )

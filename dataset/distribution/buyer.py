@@ -14,7 +14,6 @@ def add_item(scope, item, item_id):
     if not scope:
         scope = {
             'buyers': {},
-            'ocid_set': set(),
             'resources_num': 0
         }
 
@@ -29,7 +28,6 @@ def add_item(scope, item, item_id):
     ]
 
     ocid = get_values(item, 'ocid', value_only=True)[0]
-    scope['ocid_set'].add(ocid)
     for buyer in buyers:
         scope['resources_num'] += 1
         key = (buyer['scheme'], buyer['id'])
@@ -61,9 +59,9 @@ def get_result(scope):
         # initializing histogram
         ocid_histogram = {
             '1': {'buyers': [], 'ocid_set': set()},
-            '2-20': {'buyers': [], 'ocid_set': set()},
-            '21-50': {'buyers': [], 'ocid_set': set()},
-            '51-100': {'buyers': [], 'ocid_set': set()},
+            '2_20': {'buyers': [], 'ocid_set': set()},
+            '21_50': {'buyers': [], 'ocid_set': set()},
+            '51_100': {'buyers': [], 'ocid_set': set()},
             '100+': {'buyers': [], 'ocid_set': set()}
         }
 
@@ -75,14 +73,14 @@ def get_result(scope):
                 ocid_histogram['1']['buyers'].append(buyer)
                 ocid_histogram['1']['ocid_set'].update(value['ocid_set'])
             elif 2 <= ocid_count <= 20:
-                ocid_histogram['2-20']['buyers'].append(buyer)
-                ocid_histogram['2-20']['ocid_set'].update(value['ocid_set'])
+                ocid_histogram['2_20']['buyers'].append(buyer)
+                ocid_histogram['2_20']['ocid_set'].update(value['ocid_set'])
             elif 21 <= ocid_count <= 50:
-                ocid_histogram['21-50']['buyers'].append(buyer)
-                ocid_histogram['21-50']['ocid_set'].update(value['ocid_set'])
+                ocid_histogram['21_50']['buyers'].append(buyer)
+                ocid_histogram['21_50']['ocid_set'].update(value['ocid_set'])
             elif 51 <= ocid_count <= 100:
-                ocid_histogram['51-100']['buyers'].append(buyer)
-                ocid_histogram['51-100']['ocid_set'].update(value['ocid_set'])
+                ocid_histogram['51_100']['buyers'].append(buyer)
+                ocid_histogram['51_100']['ocid_set'].update(value['ocid_set'])
             else:
                 ocid_histogram['100+']['buyers'].append(buyer)
                 ocid_histogram['100+']['ocid_set'].update(value['ocid_set'])
@@ -91,14 +89,18 @@ def get_result(scope):
                 max_buyer['buyer'] = buyer
                 max_buyer['ocid_count'] = ocid_count
 
+        total_ocid_count = 0
+        total_buyer_count = 0
         for value in ocid_histogram.values():
             value['ocid_count'] = len(value['ocid_set'])
             value['buyer_count'] = len(value['buyers'])
 
+            total_ocid_count += len(value['ocid_set'])
+            total_buyer_count += len(value['buyers'])
+
             value.pop('ocid_set', None)
 
         # checking whether the check passed or not
-        total_ocid_count = len(scope['ocid_set'])
         max_ocid_count = max_buyer['ocid_count']
         single_ocid_count = ocid_histogram['1']['ocid_count']
         passed = (
@@ -130,12 +132,22 @@ def get_result(scope):
             value.pop('buyers', None)
 
         result['result'] = passed
-        result['value'] = None
+        result['value'] = 100 if passed else 0
         result['meta'] = {
+            'shares': {
+                key: {
+                    'ocid_share': value['ocid_count'] / total_ocid_count,
+                    'buyer_share': value['buyer_count'] / total_buyer_count
+                }
+                for key, value in ocid_histogram.items()
+            },
+            'counts': ocid_histogram,
+            'examples': {
+                'single_ocid_examples_id': single_ocid_examples_id,
+                'max_ocid_examples_id': max_ocid_examples_id
+            },
             'total_ocid_count': total_ocid_count,
-            'ocid_histogram': ocid_histogram,
-            'single_ocid_examples_id': single_ocid_examples_id,
-            'max_ocid_examples_id': max_ocid_examples_id
+            'total_buyer_count': total_buyer_count
         }
     else:
         result['meta'] = {
