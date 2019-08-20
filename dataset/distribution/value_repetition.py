@@ -1,11 +1,14 @@
 
 import functools
+import random
 
 from tools.checks import get_empty_result_dataset
 from tools.getter import get_values
 
 version = 1.0
 examples_cap = 10
+most_frequent_cap = 5
+most_frequent_computation = 3
 
 
 class ModuleType:
@@ -33,18 +36,24 @@ def add_item(scope, item, item_id, path):
 
     # intermediate computation
     for value in values:
-        key = '{},{}'.format(value['amount'], value['currency'])
+        key = (value['amount'], value['currency'])
         if key not in scope:
             scope[key] = {
-                'value': value,
-                'count': 1,
-                'examples_id': [item_id]
+                'amount': value['amount'],
+                'currency': value['currency'],
+                'count': 0,
+                'examples_id': []
             }
+
+        # reservoir sampling
+        if scope[key]['count'] < examples_cap:
+            scope[key]['examples_id'].append(item_id)
         else:
-            scope[key]['count'] += 1
-            if item_id not in scope[key]['examples_id'] and \
-                    len(scope[key]['examples_id']) < examples_cap:
-                scope[key]['examples_id'].append(item_id)
+            r = random.randint(0, scope[key]['count'])
+            if r < examples_cap:
+                scope[key]['examples_id'][r] = item_id
+
+        scope[key]['count'] += 1
 
     return scope
 
@@ -60,20 +69,20 @@ def get_result(scope):
         for key in scope:
             most_frequent.append(key)
             most_frequent.sort(key=lambda k: scope[k]['count'], reverse=True)
-            most_frequent = most_frequent[:3]
+            most_frequent = most_frequent[:most_frequent_cap]
 
             total_count += scope[key]['count']
 
-        most_frequent_count = sum([scope[k]['count'] for k in most_frequent])
+        most_frequent_count = sum([scope[k]['count'] for k in most_frequent[:most_frequent_computation]])
 
         ratio = (most_frequent_count / total_count)
         passed = ratio < 0.1
 
         for key in most_frequent:
-            scope[key]['share'] = scope[key]['count'] / total_count
+            scope[key]['share'] = 100 * (scope[key]['count'] / total_count)
 
         result['result'] = passed
-        result['value'] = ratio
+        result['value'] = 100 * ratio
         result['meta'] = {
             'most_frequent': [
                 scope[key] for key in most_frequent

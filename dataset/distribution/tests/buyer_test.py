@@ -148,14 +148,14 @@ def test_failed():
 
     result = buyer.get_result(scope)
     assert result['result'] is False
-    assert result['value'] is None
+    assert result['value'] == 0
     assert result['meta']['total_ocid_count'] == buyer.min_resources_num
-    assert result['meta']['ocid_histogram']['100+'] == {
+    assert result['meta']['counts']['100+'] == {
         'buyer_count': 1,
         'ocid_count': 1000
     }
-    assert len(result['meta']['single_ocid_examples_id']) == 0
-    assert len(result['meta']['max_ocid_examples_id']) == buyer.examples_id_cap
+    assert len(result['meta']['examples']['single_ocid_examples_id']) == 0
+    assert len(result['meta']['examples']['max_ocid_examples_id']) == buyer.examples_id_cap
 
     scope = {}
 
@@ -166,14 +166,14 @@ def test_failed():
 
     result = buyer.get_result(scope)
     assert result['result'] is False
-    assert result['value'] is None
+    assert result['value'] == 0
     assert result['meta']['total_ocid_count'] == 1
-    assert result['meta']['ocid_histogram']['1'] == {
+    assert result['meta']['counts']['1'] == {
         'buyer_count': 1000,
         'ocid_count': 1
     }
-    assert len(result['meta']['single_ocid_examples_id']) == buyer.examples_id_cap
-    assert len(result['meta']['max_ocid_examples_id']) == 1
+    assert len(result['meta']['examples']['single_ocid_examples_id']) == buyer.examples_id_cap
+    assert len(result['meta']['examples']['max_ocid_examples_id']) == 1
 
 items_test_passed_multiple = []
 items_test_passed_multiple.extend(
@@ -273,14 +273,40 @@ def test_passed_multiple():
 
     result = buyer.get_result(scope)
     assert result['result'] is True
-    assert result['value'] is None
+    assert result['value'] == 100
     assert result['meta']['total_ocid_count'] == 313 - 9
-    assert result['meta']['ocid_histogram'] == {
+    assert result['meta']['counts'] == {
         '1': {'ocid_count': 1, 'buyer_count': 200},
-        '2-20': {'ocid_count': 10, 'buyer_count': 200},
-        '21-50': {'ocid_count': 30, 'buyer_count': 200},
-        '51-100': {'ocid_count': 60, 'buyer_count': 200},
+        '2_20': {'ocid_count': 10, 'buyer_count': 200},
+        '21_50': {'ocid_count': 30, 'buyer_count': 200},
+        '51_100': {'ocid_count': 60, 'buyer_count': 200},
         '100+': {'ocid_count': 313 - 110, 'buyer_count': 201}
     }
-    assert len(result['meta']['single_ocid_examples_id']) == buyer.examples_id_cap
-    assert len(result['meta']['max_ocid_examples_id']) == buyer.examples_id_cap
+    assert result['meta']['shares'] == {
+        '1': {
+            'ocid_share': 1 / result['meta']['total_ocid_count'],
+            'buyer_share': 200 / result['meta']['total_buyer_count']
+        },
+        '2_20': {
+            'ocid_share': 10 / result['meta']['total_ocid_count'],
+            'buyer_share': 200 / result['meta']['total_buyer_count']
+        },
+        '21_50': {
+            'ocid_share': 30 / result['meta']['total_ocid_count'],
+            'buyer_share': 200 / result['meta']['total_buyer_count']
+        },
+        '51_100': {
+            'ocid_share': 60 / result['meta']['total_ocid_count'],
+            'buyer_share': 200 / result['meta']['total_buyer_count']
+        },
+        '100+': {
+            'ocid_share': (313 - 110) / result['meta']['total_ocid_count'],
+            'buyer_share': 201 / result['meta']['total_buyer_count']
+        }
+    }
+    assert len(result['meta']['examples']['single_ocid_examples_id']) == buyer.examples_id_cap
+    assert len(result['meta']['examples']['max_ocid_examples_id']) == buyer.examples_id_cap
+    assert sum([value['ocid_count'] for value in result['meta']['counts'].values()]) == \
+        result['meta']['total_ocid_count']
+    assert sum([value['buyer_count'] for value in result['meta']['counts'].values()]) == \
+        result['meta']['total_buyer_count']
