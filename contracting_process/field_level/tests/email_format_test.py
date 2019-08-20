@@ -32,7 +32,7 @@ def test_with_incorrect_email():
     expected_result = {
         "result": False,
         "value": "invalid#email.com",
-        "reason": "Email is formatted incorrectly or does not exist"
+        "reason": "Incorrect email format"
     }
     result = email_format(item_with_invalid_email, "email")
     assert result == expected_result
