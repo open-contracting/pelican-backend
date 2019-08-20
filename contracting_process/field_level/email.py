@@ -4,8 +4,7 @@ from validate_email import validate_email
 """
 author: Iaroslav Kolodka
 
-The method is designed to check the email address for the correct formatting
-and existence (in case formatting is correct).
+The method is designed to check the email address for the correct formatting.
 
 parametre:
     - item: tested JSON
@@ -19,7 +18,7 @@ def email_format(item, key):
     value = None
     if email:
         value = email
-        is_valid = validate_email(value, verify=True)
+        is_valid = validate_email(value)
         if is_valid:
             return {
                 "result": True
