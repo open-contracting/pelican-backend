@@ -26,5 +26,5 @@ def email_format(item, key):
     return{
         "result": False,
         "value": value,
-        "reason": "Email is formatted incorrectly or does not exist"
+        "reason": "Incorrect email format"
     }
