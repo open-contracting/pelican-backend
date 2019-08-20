@@ -73,9 +73,10 @@ def test_passed():
     result = url_availability.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 100
-    assert len(result['meta']['samples']) == 100
+    assert len(result['meta']['passed_examples']) == 100
+    assert len(result['meta']['failed_examples']) == 0
     assert all(
-        [s['status'] == 'OK' for s in result['meta']['samples']]
+        [s['status'] == 'OK' for s in result['meta']['passed_examples']]
     )
 
 items_test_failed_multiple = [
@@ -115,8 +116,13 @@ def test_failed_multiple():
     result = url_availability.get_result(scope)
     assert result['result'] is False
     assert result['value'] == 99
-    assert len(result['meta']['samples']) == 100
+    assert len(result['meta']['passed_examples']) == 99
+    assert len(result['meta']['failed_examples']) == 1
     assert len(
-        [s for s in result['meta']['samples']
+        [s for s in result['meta']['passed_examples']
             if s['status'] == 'OK']
     ) == 99
+    assert len(
+        [s for s in result['meta']['failed_examples']
+            if s['status'] == 'ERROR']
+    ) == 1
