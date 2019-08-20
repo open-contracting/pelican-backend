@@ -35,5 +35,5 @@ def telephone_number_format(item, key):
     return{
         "result": False,
         "value": value,
-        "reason": "Telephone number is formatted incorrectly or does not exist"
+        "reason": "Telephone number is formatted incorrectly."
     }
