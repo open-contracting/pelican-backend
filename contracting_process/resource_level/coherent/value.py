@@ -62,7 +62,7 @@ def value_realistic(item):
                     else:
                         value_amount_usd = value_amount_int
                     application_count += 1
-                    passed = value_amount_usd >= -1000000000 and value_amount_usd <= 1000000000
+                    passed = value_amount_usd >= -5000000000 and value_amount_usd <= 5000000000
                     pass_count = pass_count + 1 if passed else pass_count
                     if not result["meta"]:
                         result["meta"] = {"references": []}

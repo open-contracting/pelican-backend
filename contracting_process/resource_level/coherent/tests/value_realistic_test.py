@@ -37,7 +37,7 @@ item_with_valid_value_in_EUR = {
 item_with_invalid_value_in_USD = {
     "tender": {
         "value": {
-            "amount": "1222333444555",
+            "amount": "9222333444555",
             "currency": "EUR"
         }
     }
@@ -46,7 +46,7 @@ item_with_invalid_value_in_USD = {
 item_with_invalid_value_in_HUF = {
     "tender": {
         "value": {
-            "amount": "999888000",
+            "amount": "4999888000",
             "currency": "GBP"
         }
     }
@@ -77,13 +77,13 @@ def test_ivalues_in_usd():
     })
     result3 = result_initialiser(version, False, 1, 0, {
         "result": False,
-        "amount": "1222333444555",
+        "amount": "9222333444555",
         "currency": "EUR",
         "path": "tender.value"
     })
     result4 = result_initialiser(version, False, 1, 0, {
         "result": False,
-        "amount": "999888000",
+        "amount": "4999888000",
         "currency": "GBP",
         "path": "tender.value"
     })
