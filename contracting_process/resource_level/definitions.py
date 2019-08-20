@@ -58,7 +58,7 @@ definitions = {
         functools.partial(roles.calculate_path_role, path="contracts.implementation.transactions.payee", role="payee")
     ],
     "consistent.contracts_implementation_transactions_value": [contracts_implementation_transactions_value.calculate],
-    "consistent.parites_role_payee": [
+    "consistent.parties_role_payee": [
         functools.partial(parties_role.calculate, path="contracts.implementation.transactions.payee", role="payee")
     ],
     "consistent.period_duration_in_days": [period_duration_in_days.calculate],
