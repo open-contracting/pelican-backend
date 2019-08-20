@@ -1,12 +1,5 @@
 
 def document_type_coherent(data, key, section):
-    if key not in data:
-        return {
-            'result': None,
-            'value': None,
-            'reason': 'missing key'
-        }
-
     value = data[key]
 
     if value not in code_to_section_mapping:
