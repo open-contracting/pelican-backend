@@ -1,24 +1,26 @@
 import functools
 
-from contracting_process.resource_level.coherent import (
-    amendments_dates, awards_status, contracts_status, dates, documents_dates,
-    milestones_dates, period, procurement_method_vs_number_of_tenderers,
-    tender_status)
-from contracting_process.resource_level.consistent import (
-    contracts_value,
-    number_of_tenderers,
-    tender_value,
-    roles,
-    contracts_implementation_transactions_value,
-    org_ref_name,
-    period_duration_in_days,
-    parties_role
-)
 
-from contracting_process.resource_level.reference import (
-    parties,
-    contract_in_awards
-)
+from contracting_process.resource_level.coherent import (amendments_dates,
+                                                         awards_status,
+                                                         contracts_status,
+                                                         dates,
+                                                         documents_dates,
+                                                         milestones_dates,
+                                                         period,
+                                                         procurement_method_vs_number_of_tenderers,
+                                                         tender_status,
+                                                         milestone_status)
+from contracting_process.resource_level.consistent import (contracts_value,
+                                                           number_of_tenderers,
+                                                           tender_value,
+                                                           roles,
+                                                           contracts_implementation_transactions_value,
+                                                           org_ref_name,
+                                                           period_duration_in_days,
+                                                           parties_role)
+from contracting_process.resource_level.reference import (contract_in_awards,
+                                                          parties)
 
 
 definitions = {
@@ -104,6 +106,7 @@ definitions = {
     "coherent.contracts_status": [contracts_status.calculate],
     "coherent.awards_status": [awards_status.calculate],
     "coherent.milestones_dates": [milestones_dates.calculate],
+    "coherent.milestone_status": [milestone_status.calculate],
     "coherent.amendments_dates": [amendments_dates.calculate],
     "coherent.documents_dates": [documents_dates.calculate],
 }

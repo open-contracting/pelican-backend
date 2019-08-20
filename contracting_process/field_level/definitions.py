@@ -35,7 +35,7 @@ definitions = {
     "planning.documents.documentType": [
         exists, non_empty, functools.partial(document_type_coherent, section='planning')
     ],
-    "planing.documents.language": [exists, non_empty, language_code],
+    "planning.documents.language": [exists, non_empty, language_code],
     "tender": [exists, non_empty],
     "tender.id": [exists, non_empty],
     "tender.title": [exists, non_empty],
@@ -157,6 +157,6 @@ definitions = {
     "relatedProcesses": [exists, non_empty],
     "item.unit.value.amount": [exists, non_empty, positive_number],
     "item.quantity": [exists, non_empty, positive_number],
-    "planing.documents.datePublished": [exists, non_empty, date_realistic],
-    "planing.documents.dateModified": [exists, non_empty, date_realistic],
+    "planning.documents.datePublished": [exists, non_empty, date_realistic],
+    "planning.documents.dateModified": [exists, non_empty, date_realistic],
 }
