@@ -1,7 +1,8 @@
 from tools.getter import get_values
 from tools.checks import get_empty_result_resource
-from currency_converter import CurrencyConverter
+from tools.helpers import convert
 from datetime import date
+from decimal import Decimal
 
 version = 1.0
 
@@ -40,7 +41,8 @@ def value_realistic(item):
     application_count = 0
     pass_count = 0
     if value_boxes:
-        converter = CurrencyConverter()
+        lower_bound = Decimal(-5000000000)
+        upper_bound = Decimal(5000000000)
         for value_box in value_boxes:
             passed = None
             value = None
@@ -56,13 +58,17 @@ def value_realistic(item):
                         continue
                     value_currency = value_currency[0]
                     if value_currency is not "USD":
-                        value_amount_usd = converter.convert(amount=value_amount_int,
-                                                             currency=value_currency,
-                                                             new_currency="USD")
+                        value_amount_usd = convert(amount=value_amount_int,
+                                                   original_currency=value_currency,
+                                                   target_currency="USD",
+                                                   rel_date=date.today())
                     else:
                         value_amount_usd = value_amount_int
+                    if not value_amount_usd:
+                        continue
                     application_count += 1
-                    passed = value_amount_usd >= -5000000000 and value_amount_usd <= 5000000000
+
+                    passed = value_amount_usd >= lower_bound and value_amount_usd <= upper_bound
                     pass_count = pass_count + 1 if passed else pass_count
                     if not result["meta"]:
                         result["meta"] = {"references": []}
