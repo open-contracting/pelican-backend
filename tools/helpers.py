@@ -6,7 +6,7 @@ from currency_converter import CurrencyConverter, RateNotFoundError
 online_exchange_rates = "http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip"
 offline_exchange_rates = "./tools/exchange_rates.csv"
 
-cc = CurrencyConverter(offline_exchange_rates, fallback_on_wrong_date=True)
+cc = CurrencyConverter(offline_exchange_rates, fallback_on_wrong_date=True, fallback_on_missing_rate=True)
 
 
 def currency_available(currency):
