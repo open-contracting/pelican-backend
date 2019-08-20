@@ -71,6 +71,16 @@ def get_result(scope):
 
     result["result"] = ok_status_num == samples_num
     result["value"] = 100 * (ok_status_num / samples_num)
-    result["meta"] = {"samples": scope["samples"]}
+    result["meta"] = {
+        "total_processed": samples_num,
+        "total_passed": ok_status_num,
+        "total_failed": samples_num - ok_status_num,
+        "passed_examples": [
+            sample for sample in scope["samples"] if sample["status"] == "OK"
+        ],
+        "failed_examples": [
+            sample for sample in scope["samples"] if sample["status"] == "ERROR"
+        ]
+    }
 
     return result
