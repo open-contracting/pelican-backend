@@ -15,6 +15,6 @@ def test_failed():
     result = description_length(data, 'description')
     assert result == {
         'result': False,
-        'value': data['description'],
+        'value': len(data['description']),
         'reason': 'description exceeds max length of 250 characters'
     }
