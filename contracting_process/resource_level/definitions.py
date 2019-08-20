@@ -3,7 +3,7 @@ import functools
 from contracting_process.resource_level.coherent import (
     amendments_dates, awards_status, contracts_status, dates, documents_dates,
     milestones_dates, period, procurement_method_vs_number_of_tenderers,
-    tender_status)
+    tender_status, value)
 from contracting_process.resource_level.consistent import (
     contracts_value,
     number_of_tenderers,
@@ -106,4 +106,5 @@ definitions = {
     "coherent.milestones_dates": [milestones_dates.calculate],
     "coherent.amendments_dates": [amendments_dates.calculate],
     "coherent.documents_dates": [documents_dates.calculate],
+    "coherent.value_realistic": [value.value_realistic]
 }
