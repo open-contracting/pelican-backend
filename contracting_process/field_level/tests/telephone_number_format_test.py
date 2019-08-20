@@ -1,5 +1,5 @@
 from contracting_process.field_level.telephone import telephone_number_format
-from functools import partial
+
 
 """
 author: Iaroslav Kolodka
@@ -12,22 +12,8 @@ The file contain tests for a function contracting_process.field_level.telephone.
 
 """
 
-telephone_number_format_prepared = partial(
-    telephone_number_format,
-    key="telephone",
-    default_region="CZ"
-)
-
 item_with_valid_number1 = {
     "telephone": "+420777555333"
-}
-
-item_with_valid_number2 = {
-    "telephone": "420777555333"
-}
-
-item_with_valid_number3 = {
-    "telephone": "777555333"
 }
 
 item_with_invalid_number1 = {
@@ -47,12 +33,8 @@ def test_with_correct_number():
     expected_result = {
         "result": True
     }
-    result1 = telephone_number_format_prepared(item_with_valid_number1)
-    result2 = telephone_number_format_prepared(item_with_valid_number2)
-    result3 = telephone_number_format_prepared(item_with_valid_number3)
+    result1 = telephone_number_format(item_with_valid_number1, "telephone")
     assert result1 == expected_result
-    assert result2 == expected_result
-    assert result3 == expected_result
 
 
 def test_with_incorrect_number():
@@ -71,9 +53,9 @@ def test_with_incorrect_number():
         "value": "+999777555333",  # the region shuld not exist
         "reason": "Telephone number is formatted incorrectly or does not exist"
     }
-    result1 = telephone_number_format_prepared(item_with_invalid_number1)
-    result2 = telephone_number_format_prepared(item_with_invalid_number2)
-    result3 = telephone_number_format_prepared(item_with_invalid_number3)
+    result1 = telephone_number_format(item_with_invalid_number1, "telephone")
+    result2 = telephone_number_format(item_with_invalid_number2, "telephone")
+    result3 = telephone_number_format(item_with_invalid_number3, "telephone")
     assert result1 == expected_result1
     assert result2 == expected_result2
     assert result3 == expected_result3
