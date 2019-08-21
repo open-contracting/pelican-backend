@@ -16,7 +16,10 @@ def identifier_scheme_codelist_cheker(item, key: str) -> dict:
 
     parametres
     ----------
-    None
+    item : dict
+        tested JSON
+    key : str
+        key to value
 
     returns
     ----------
