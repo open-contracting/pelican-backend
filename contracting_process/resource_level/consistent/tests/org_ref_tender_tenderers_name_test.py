@@ -4,6 +4,15 @@ from contracting_process.resource_level.consistent.org_ref_name import \
     calculate
 from tools.checks import get_empty_result_resource
 
+"""
+author: Iaroslav Kolodka
+
+The file contains part of the tests for the
+ contracting_process.resource_level.consistent.org_ref_name.calculate function .
+
+"""
+
+
 version = "1.0"
 
 calculate_prepared = functools.partial(
@@ -67,7 +76,7 @@ def test_fail():
     expected_result["meta"] = {
         "references": [
             {
-                "organization.id": "111",
+                "organization_id": "111",
                 "expected_name": "bbb",
                 "referenced_party_path": "parties[0]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
@@ -76,7 +85,7 @@ def test_fail():
                 # -"result": True
             },
             {
-                "organization.id": "000",
+                "organization_id": "000",
                 "expected_name": "ccc",
                 "referenced_party_path": "parties[1]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
@@ -99,7 +108,7 @@ def test_ok():
     expected_result["meta"] = {
         "references": [
             {
-                "organization.id": "111",
+                "organization_id": "111",
                 "expected_name": "bbb",
                 "referenced_party_path": "parties[0]",
                 # -"referenced_party": buyer_item_ok["parties"][0],

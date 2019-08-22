@@ -4,6 +4,15 @@ from contracting_process.resource_level.consistent.org_ref_name import \
     calculate
 from tools.checks import get_empty_result_resource
 
+"""
+author: Iaroslav Kolodka
+
+The file contains part of the tests for the
+ contracting_process.resource_level.consistent.org_ref_name.calculate function .
+
+"""
+
+
 version = "1.0"
 
 calculate_prepared = functools.partial(
@@ -101,7 +110,7 @@ def test_fail():
     expected_result["meta"] = {
         "references": [
             {
-                "organization.id": "0",
+                "organization_id": "0",
                 "expected_name": "aaa",
                 "referenced_party_path": "parties[0]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
@@ -119,8 +128,8 @@ def test_no_action():
     expected_result = get_empty_result_resource(version)
     expected_result["result"] = None
     expected_result["value"] = None
-    expected_result["application_count"] = None
-    expected_result["pass_count"] = None
+    expected_result["application_count"] = 0
+    expected_result["pass_count"] = 0
     expected_result["meta"] = {
         "reason": "there are no values with check-specific properties"
     }
@@ -130,8 +139,8 @@ def test_no_action():
     expected_result = get_empty_result_resource(version)
     expected_result["result"] = None
     expected_result["value"] = None
-    expected_result["application_count"] = None
-    expected_result["pass_count"] = None
+    expected_result["application_count"] = 0
+    expected_result["pass_count"] = 0
     expected_result["meta"] = {
         "reason": "there are no parties with id set"
     }
@@ -141,8 +150,8 @@ def test_no_action():
     expected_result = get_empty_result_resource(version)
     expected_result["result"] = None
     expected_result["value"] = None
-    expected_result["application_count"] = None
-    expected_result["pass_count"] = None
+    expected_result["application_count"] = 0
+    expected_result["pass_count"] = 0
     expected_result["meta"] = {
         "reason": "there are no parties with id set"
     }
@@ -160,7 +169,7 @@ def test_ok():
     expected_result["meta"] = {
         "references": [
             {
-                "organization.id": "0",
+                "organization_id": "0",
                 "expected_name": "aaa",
                 "referenced_party_path": "parties[0]",
                 # -"referenced_party": buyer_item_ok["parties"][0],
