@@ -134,16 +134,18 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == [
-        {
-            'awardID': 'str',
-            'awards.value': {
-                'amount': 100,
-                'currency': 'USD'
-            },
-            'contracts.value_sum': 125
-        }
-    ]
+    assert result["meta"] == {
+        'awards': [
+            {
+                'awardID': 'str',
+                'awards.value': {
+                    'amount': 100,
+                    'currency': 'USD'
+                },
+                'contracts.value_sum': 125
+            }
+        ]
+    }
 
 item_test_failed = {
     'contracts': [
@@ -179,16 +181,18 @@ def test_failed():
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
-    assert result["meta"] == [
-        {
-            'awardID': 'str',
-            'awards.value': {
-                'amount': -100,
-                'currency': 'USD'
-            },
-            'contracts.value_sum': -151
-        }
-    ]
+    assert result["meta"] == {
+        'awards': [
+            {
+                'awardID': 'str',
+                'awards.value': {
+                    'amount': -100,
+                    'currency': 'USD'
+                },
+                'contracts.value_sum': -151
+            }
+        ]
+    }
 
 
 item_test_passed_multiple_awards = {
@@ -239,24 +243,26 @@ def test_passed_multiple_awards():
     assert result["result"] is True
     assert result["application_count"] == 2
     assert result["pass_count"] == 2
-    assert result["meta"] == [
-        {
-            'awardID': 0,
-            'awards.value': {
-                'amount': 100,
-                'currency': 'USD'
+    assert result["meta"] == {
+        'awards': [
+            {
+                'awardID': 0,
+                'awards.value': {
+                    'amount': 100,
+                    'currency': 'USD'
+                },
+                'contracts.value_sum': 125
             },
-            'contracts.value_sum': 125
-        },
-        {
-            'awardID': 1,
-            'awards.value': {
-                'amount': 10,
-                'currency': 'USD'
-            },
-            'contracts.value_sum': 10
-        }
-    ]
+            {
+                'awardID': 1,
+                'awards.value': {
+                    'amount': 10,
+                    'currency': 'USD'
+                },
+                'contracts.value_sum': 10
+            }
+        ]
+    }
 
 item_test_failed_multiple_awards = {
     'contracts': [
@@ -306,21 +312,23 @@ def test_failed_multiple_awards():
     assert result["result"] is False
     assert result["application_count"] == 2
     assert result["pass_count"] == 1
-    assert result["meta"] == [
-        {
-            'awardID': 0,
-            'awards.value': {
-                'amount': 100,
-                'currency': 'USD'
+    assert result["meta"] == {
+        'awards': [
+            {
+                'awardID': 0,
+                'awards.value': {
+                    'amount': 100,
+                    'currency': 'USD'
+                },
+                'contracts.value_sum': 125
             },
-            'contracts.value_sum': 125
-        },
-        {
-            'awardID': 1,
-            'awards.value': {
-                'amount': 20,
-                'currency': 'USD'
-            },
-            'contracts.value_sum': 1
-        }
-    ]
+            {
+                'awardID': 1,
+                'awards.value': {
+                    'amount': 20,
+                    'currency': 'USD'
+                },
+                'contracts.value_sum': 1
+            }
+        ]
+    }

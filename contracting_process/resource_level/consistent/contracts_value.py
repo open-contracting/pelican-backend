@@ -84,8 +84,8 @@ def calculate(item):
             result['meta'] = {'reason': 'different signs for value.amount(s)'}
             return result
 
-    application_count = None
-    pass_count = None
+    application_count = 0
+    pass_count = 0
     result_result = True
     for award in awards:
         matching_contracts = [
@@ -123,10 +123,6 @@ def calculate(item):
             / abs(award_value_amount)
         passed = ratio <= 0.5
 
-        if application_count is None:
-            application_count = 0
-            pass_count = 0
-
         application_count += 1
         if passed:
             pass_count += 1
@@ -134,9 +130,9 @@ def calculate(item):
         result_result = result_result and passed
 
         if result['meta'] is None:
-            result['meta'] = []
+            result['meta'] = {'awards': []}
 
-        result['meta'].append(
+        result['meta']['awards'].append(
             {
                 'awardID': award['id'],
                 'awards.value': award['value'],
