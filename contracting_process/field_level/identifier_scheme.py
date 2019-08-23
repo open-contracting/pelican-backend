@@ -5,10 +5,14 @@ author: Iaroslav Kolodka
 
 """
 
+"""
+A global list containing 'contracting_process/field_level/identifier_scheme_codelist.csv' .
+
+"""
 global_identifier_scheme_codelist = []
 
 
-def identifier_scheme_codelist_cheker(item, key: str) -> dict:
+def identifier_scheme_codelist_checker(item, key: str) -> dict:
     """ The fumction checks 'schema' in '$ref: "#/definitions/Identifier"' object from 'OCDS schema'.
 
     The value must be from 'org-id.guide'. The codelist is placed under the name: 'identifier_scheme_codelist.csv'
@@ -34,10 +38,8 @@ def identifier_scheme_codelist_cheker(item, key: str) -> dict:
     """
     scheme_type = None
     identifier = item[key]
-    if identifier and "properties" in identifier:
-        propeties = identifier["properties"]
-        if propeties and "scheme" in propeties:
-            scheme_type = propeties["scheme"]
+    if identifier and "scheme" in identifier:
+            scheme_type = identifier["scheme"]
             if scheme_type and type(scheme_type) == str:
                 if not global_identifier_scheme_codelist:
                     initialise_global_identifier_scheme_codelist()
@@ -45,7 +47,6 @@ def identifier_scheme_codelist_cheker(item, key: str) -> dict:
                     return {
                         "result": True
                     }
-
     return{
         "result": False,
         "value": scheme_type,
