@@ -13,24 +13,35 @@ The file contains tests for contracting_process.field_level.document_format_code
 
 def test_ocid_prefix_ok():
     item1 = {
-        "document": {
-            "format": "application/AML"
-        }
+        "documents": [
+            {
+                "format": "application/AML"
+            }
+        ]
     }
     item2 = {
-        "document": {
-            "format": "offline/print"
-        }
+        "documents": [
+            {
+                "format": "offline/print"
+            }
+        ]
     }
-    assert document_format_codelist(item1, "document") == {"result": True}
-    assert document_format_codelist(item2, "document") == {"result": True}
+    assert document_format_codelist(item1, "documents") == {"result": True}
+    assert document_format_codelist(item2, "documents") == {"result": True}
 
 
 def test_ocid_prefix_failed():
-    fail_result = {"result": False,
-                   "value": None,
-                   "reason": "wrong file format"}
-    assert document_format_codelist({"document": {}}, "document") == fail_result
-    assert document_format_codelist({"document": {"format": None}}, "document") == fail_result
+    fail_result = {
+        "result": False,
+        "value": None,
+        "reason": "wrong file format"
+    }
+    not_found_result = {
+        "result": None,
+        "value": None,
+        "reason": "Document has no format",
+    }
+    assert document_format_codelist({"documents": [{}]}, "documents") == not_found_result
+    assert document_format_codelist({"documents": [{"format": None}]}, "documents") == fail_result
     fail_result["value"] = "lalala"
-    assert document_format_codelist({"document": {"format": "lalala"}}, "document") == fail_result
+    assert document_format_codelist({"documents": [{"format": "lalala"}]}, "documents") == fail_result
