@@ -41,11 +41,11 @@ def test_passed_multiple():
 
     result = tender_value_repetition.get_result(scope)
     assert result['result'] is True
-    assert result['value'] == 3/31
-    assert len(result['meta']['most_frequent']) == 3
+    assert result['value'] == 100 * (3 / 31)
+    assert len(result['meta']['most_frequent']) == value_repetition.most_frequent_cap
     assert sum(
         [len(el['examples_id']) for el in result['meta']['most_frequent']]
-    ) == 3
+    ) == value_repetition.most_frequent_cap
 
 items_test_big_load = [
     {
@@ -76,7 +76,7 @@ def test_big_load():
 
     # following asserts will pass with high probability
     assert result['result'] is True
-    assert len(result['meta']['most_frequent']) == 3
+    assert len(result['meta']['most_frequent']) == value_repetition.most_frequent_cap
     assert sum(
         [len(el['examples_id']) for el in result['meta']['most_frequent']]
-    ) == 30
+    ) == 50

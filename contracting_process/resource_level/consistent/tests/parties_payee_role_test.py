@@ -5,13 +5,18 @@ from contracting_process.resource_level.consistent.parties_role import \
     calculate
 from tools.checks import get_empty_result_resource
 
-version = "1.0"
+"""
+author: Iaroslav Kolodka
 
-calculate_prepared = functools.partial(
-    calculate,
-    path="contracts.implementation.transactions.payee",
-    role="payee"
-)
+The file contain tests for a 'function contracting_process.resource_level.consistent.parties_role.calculate' .
+
+'test_on_inaction' - an input item has no valid parties -> "There are no parties with set role and id"
+'test_with_correct_input' - an input item has two valid parties with corresponding valid objects
+'test_with_incorrect_input' - an inputs has no corresponding valid objects
+
+"""
+
+version = "1.0"
 
 item_with_no_correct_parties = {
     "parties": [
@@ -103,47 +108,56 @@ incorrect_item_with_no_payee = {
 def test_on_inaction():
     expecting_result = get_empty_result_resource(version)
     expecting_result["reason"] = "There are no parties with set role and id"
-    result = calculate_prepared(item_with_no_correct_parties)
+    result = calculate(item_with_no_correct_parties)
     assert expecting_result == result
 
 
-def test_correct_tender_payee():
+def test_with_correct_input():
     expecting_result = get_empty_result_resource(version)
     expecting_result["result"] = True
     # expecting_result["value"] = None  # already None
     expecting_result["application_count"] = 1
     expecting_result["pass_count"] = 1
-    expecting_result["meta"] = {
-        "referenced_party_path": "contracts[0].implementation.transactions[0].payee",
-        "examined_role": "payee",
-        "recource_path": "parties[0]"
-    }
-    result = calculate_prepared(correct_item_with_payee)
+    expecting_result["meta"] = {"references": []}
+    expecting_result["meta"]["references"] = [
+        {
+            "party_path": "parties[0]",
+            "examined_role": "payee",
+            "resource_identification": "010101-a01010"
+        }
+    ]
+    result = calculate(correct_item_with_payee)
     assert expecting_result == result
 
 
-def test_incorrect_tender_payee():
+def test_with_incorrect_input():
     expecting_result1 = get_empty_result_resource(version)
     expecting_result1["result"] = False
     # expecting_result["value"] = None  # already None
     expecting_result1["application_count"] = 1
     expecting_result1["pass_count"] = 0
-    expecting_result1["meta"] = {
-        "referenced_party_path": None,
-        "examined_role": "payee",
-        "recource_path": "parties[0]"
-    }
-    result1 = calculate_prepared(incorrect_item_with_payee)
+    expecting_result1["meta"] = {"references": []}
+    expecting_result1["meta"]["references"] = [
+        {
+            "party_path": "parties[0]",
+            "examined_role": "payee",
+            "resource_identification": "010101-a01010"
+        }
+    ]
+    result1 = calculate(incorrect_item_with_payee)
     assert expecting_result1 == result1
     expecting_result2 = get_empty_result_resource(version)
     expecting_result2["result"] = False
     # expecting_result["value"] = None  # already None
     expecting_result2["application_count"] = 1
     expecting_result2["pass_count"] = 0
-    expecting_result2["meta"] = {
-        "referenced_party_path": None,
-        "examined_role": "payee",
-        "recource_path": "parties[0]"
-    }
-    result2 = calculate_prepared(incorrect_item_with_no_payee)
+    expecting_result2["meta"] = {"references": []}
+    expecting_result2["meta"]["references"] = [
+        {
+            "party_path": "parties[0]",
+            "examined_role": "payee",
+            "resource_identification": "010101-a01010"
+        }
+    ]
+    result2 = calculate(incorrect_item_with_no_payee)
     assert expecting_result2 == result2

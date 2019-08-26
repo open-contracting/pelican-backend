@@ -73,6 +73,13 @@ def test_failed():
             "50_100": 50,
             "5_20": 15,
         },
+        "shares": {
+            "0_1": 14032000 / result["meta"]["sum"],
+            "1_5": 4 / result["meta"]["sum"],
+            "20_50": 30 / result["meta"]["sum"],
+            "50_100": 50 / result["meta"]["sum"],
+            "5_20": 15 / result["meta"]["sum"],
+        },
         "examples": {
             "0_1": [
                 {
@@ -178,12 +185,19 @@ def test_ok():
             "20_50": 30,
             "50_100": 50,
         },
-        "shares": {
+        "sums": {
             "0_1": 1,
             "1_5": 4,
             "5_20": 15,
             "20_50": 30,
             "50_100": 50,
+        },
+        "shares": {
+            "0_1": 1 / result["meta"]["sum"],
+            "1_5": 4 / result["meta"]["sum"],
+            "5_20": 15 / result["meta"]["sum"],
+            "20_50": 30 / result["meta"]["sum"],
+            "50_100": 50 / result["meta"]["sum"],
         },
         "examples": {
             "0_1": [
