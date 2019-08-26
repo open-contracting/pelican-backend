@@ -1,6 +1,7 @@
 
 import json
 import requests
+import psycopg2.extras
 from datetime import datetime, date, timedelta
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import init_logger
@@ -15,7 +16,6 @@ class MissingRate(Exception):
     pass
 
 
-# TODO extrapolation, updates after initialization
 class EuroConverter():
     BASE = 'EUR'
     DATE_FORMAT = '%Y-%m-%d'
@@ -34,15 +34,17 @@ class EuroConverter():
         'TTD', 'TWD', 'TZS', 'UAH', 'UGX', 'USD', 'UYU', 'UZS', 'VEF', 'VND', 'VUV', 'WST', 'XAF', 'XAG', 'XAU', 'XCD',
         'XDR', 'XOF', 'XPF', 'YER', 'ZAR', 'ZMK', 'ZMW', 'ZWL'
     ]
+    FIXER_IO_CURRENCIES_STR = ','.join(FIXER_IO_CURRENCIES)
 
     """
-    interpolation_type ... 'linear'/'closest'
+    interpolation_type ... 'linear'|'closest'|None
+    extrapolation_type ... 'closest'|None
     """
     def __init__(
         self,
         environment='development',
-        fill_missing_rates=True,
         interpolation_type='closest',
+        extrapolation_type='closest',
         max_fallback_days=7
     ):
         # needs further discussion
@@ -52,8 +54,8 @@ class EuroConverter():
         self.cursor = get_cursor()
         #
 
-        self.fill_missing_rates = fill_missing_rates
         self.interpolation_type = interpolation_type
+        self.extrapolation_type = extrapolation_type
         self.max_fallback_days = max_fallback_days
         self.max_date = None
         self._update_max_date()
@@ -82,7 +84,9 @@ class EuroConverter():
     def _load_from_db(self):
         self._update_db()
         self.rates.clear()
-        self.rates_bounds.clear()
+        self.rates_bound
+        self.logger = init_logger("EuroConverter")
+        self.cursor = get_cursor()s.clear()
 
         self.cursor.execute(
             """
@@ -92,7 +96,7 @@ class EuroConverter():
             """
         )
 
-        if self.fill_missing_rates:
+        if self.interpolation_type:
             real_data_dates = {currency: [] for currency in self.FIXER_IO_CURRENCIES}
 
             for query_result in self.cursor.fetchall():
@@ -145,12 +149,12 @@ class EuroConverter():
 
             if self.max_fallback_days != -1 and distance_to_start > self.max_fallback_days \
                     and distance_to_end > self.max_fallback_days:
-                current_date += timedelta(days=self.max_fallback_days - distance_to_end)
+                current_date += timedelta(days=distance_to_end - self.max_fallback_days)
                 continue
             elif distance_to_start < distance_to_end:
-                self.rates[current_date][currency] = start_date
+                self.rates[current_date][currency] = start_date_rate
             else:
-                self.rates[current_date][currency] = end_date
+                self.rates[current_date][currency] = end_date_rate
 
             current_date += timedelta(days=1)
 
@@ -170,7 +174,7 @@ class EuroConverter():
 
             if self.max_fallback_days != -1 and distance_to_start > self.max_fallback_days \
                     and distance_to_end > self.max_fallback_days:
-                current_date += timedelta(days=self.max_fallback_days - distance_to_end)
+                current_date += timedelta(days=distance_to_end - self.max_fallback_days)
                 continue
             else:
                 self.rates[current_date][currency] = round(
@@ -180,6 +184,16 @@ class EuroConverter():
                 )
 
             current_date += timedelta(days=1)
+
+    def _extrapolation_closest_rate(self, currency, rel_date):
+        bounds = self.rates_bounds[currency]
+
+        if bounds[0] > rel_date and (bounds[0] - rel_date).days <= self.max_fallback_days:
+            return self.rates[bounds[0]][currency]
+        elif bounds[1] < rel_date and (rel_date - bounds[1]).days <= self.max_fallback_days:
+            return self.rates[bounds[1]][currency]
+
+        return None
 
     def _update_db(self):
         self._update_max_date()
@@ -198,7 +212,7 @@ class EuroConverter():
                         date_historical=date_str,
                         access_key=self.FIXER_IO_API_KEY,
                         base=self.BASE,
-                        symbols=self.FIXER_IO_CURRENCIES
+                        symbols=self.FIXER_IO_CURRENCIES_STR
                     ),
                     timeout=10
                 )
@@ -211,11 +225,15 @@ class EuroConverter():
 
                 self.cursor.execute(
                     """
-                    insert into exchange rates (valid_on, rates)
+                    insert into exchange_rates (valid_on, rates)
                     values ('{}', '{}');
                     """.format(date_str, json.dumps(data['rates']))
                 )
                 commit()
+
+            except psycopg2.Error:
+                rollback()
+                break
 
             except:
                 break
@@ -225,12 +243,28 @@ class EuroConverter():
         self.last_failed_fixer_io_call['target_date'] = target_date
         self.last_failed_fixer_io_call['call_date'] = date_now
 
-    def convert(amount, original_currency, target_currency, rel_date):
+    def convert(self, amount, original_currency, target_currency, rel_date):
         if type(rel_date) != date:
             rel_date = rel_date.date()
 
-        if rel_date not in self.rates or original_currency not in self.rates[rel_date] or \
-                target_currency not in self.rates[rel_date]:
-            raise MemoryError()
+        # original currency
+        original_currency_rate = None
+        if rel_date in self.rates and original_currency in self.rates[rel_date]:
+            original_currency_rate = self.rates[rel_date][original_currency]
+        elif self.extrapolation_type == 'closest':
+            original_currency_rate = self._extrapolation_closest_rate(original_currency, rel_date)
 
-        return round(amount * (target_currency / original_currency), 6)
+        if original_currency_rate is None:
+            return None
+
+        # target currency
+        target_currency_rate = None
+        if rel_date in self.rates and target_currency in self.rates[rel_date]:
+            target_currency_rate = self.rates[rel_date][target_currency]
+        elif self.extrapolation_type == 'closest':
+            target_currency_rate = self._extrapolation_closest_rate(target_currency, rel_date)
+
+        if target_currency_rate is None:
+            None
+
+        return round(amount * (target_currency_rate / original_currency_rate), 6)
