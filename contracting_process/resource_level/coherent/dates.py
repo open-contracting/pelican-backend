@@ -12,7 +12,7 @@ def calculate(item):
         return result
     date_pairs_paths = [
         ["tender.tenderPeriod.endDate", "tender.contractPeriod.startDate"],
-        ["tender.tenderPeriod.endDate", "date"],
+        # ["tender.tenderPeriod.endDate", "date"],
         ["tender.tenderPeriod.endDate", "contracts.dateSigned"],
         ["contracts.dateSigned", "date"],
         ["tender.tenderPeriod.endDate", "awards.date"],
