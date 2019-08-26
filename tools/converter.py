@@ -12,16 +12,12 @@ class EmptyExchangeRatesTable(Exception):
     pass
 
 
-class MissingRate(Exception):
-    pass
-
-
 class EuroConverter():
     BASE = 'EUR'
     DATE_FORMAT = '%Y-%m-%d'
     FIXER_IO_API_KEY = 'c744ed8d097ea8f6d4daeb2fc56a0e44'
     FIXER_IO_LINK = 'http://data.fixer.io/api/{date_historical}?access_key={access_key}&base={base}&symbols={symbols}'
-    FIXER_IO_CURRENCIES = [
+    FIXER_IO_CURRENCIES = {
         'AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN', 'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF',
         'BMD', 'BND', 'BOB', 'BRL', 'BSD', 'BTC', 'BTN', 'BWP', 'BYR', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLF', 'CLP',
         'CNY', 'COP', 'CRC', 'CUC', 'CUP', 'CVE', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD', 'EGP', 'ERN', 'ETB', 'EUR', 'FJD',
@@ -33,7 +29,7 @@ class EuroConverter():
         'SEK', 'SGD', 'SHP', 'SLL', 'SOS', 'SRD', 'STD', 'SVC', 'SYP', 'SZL', 'THB', 'TJS', 'TMT', 'TND', 'TOP', 'TRY',
         'TTD', 'TWD', 'TZS', 'UAH', 'UGX', 'USD', 'UYU', 'UZS', 'VEF', 'VND', 'VUV', 'WST', 'XAF', 'XAG', 'XAU', 'XCD',
         'XDR', 'XOF', 'XPF', 'YER', 'ZAR', 'ZMK', 'ZMW', 'ZWL'
-    ]
+    }
     FIXER_IO_CURRENCIES_STR = ','.join(FIXER_IO_CURRENCIES)
 
     """
@@ -47,12 +43,10 @@ class EuroConverter():
         extrapolation_type='closest',
         max_fallback_days=7
     ):
-        # needs further discussion
+        # project dependent
         init(environment)
-
         self.logger = init_logger("EuroConverter")
         self.cursor = get_cursor()
-        #
 
         self.interpolation_type = interpolation_type
         self.extrapolation_type = extrapolation_type
@@ -84,9 +78,7 @@ class EuroConverter():
     def _load_from_db(self):
         self._update_db()
         self.rates.clear()
-        self.rates_bound
-        self.logger = init_logger("EuroConverter")
-        self.cursor = get_cursor()s.clear()
+        self.rates_bounds.clear()
 
         self.cursor.execute(
             """
@@ -244,8 +236,15 @@ class EuroConverter():
         self.last_failed_fixer_io_call['call_date'] = date_now
 
     def convert(self, amount, original_currency, target_currency, rel_date):
+        if original_currency not in EuroConverter.FIXER_IO_CURRENCIES or \
+                target_currency not in EuroConverter.FIXER_IO_CURRENCIES:
+            return None
+
         if type(rel_date) != date:
-            rel_date = rel_date.date()
+            try:
+                rel_date = rel_date.date()
+            except AttributeError:
+                return None
 
         # original currency
         original_currency_rate = None
@@ -265,6 +264,6 @@ class EuroConverter():
             target_currency_rate = self._extrapolation_closest_rate(target_currency, rel_date)
 
         if target_currency_rate is None:
-            None
+            return None
 
         return round(amount * (target_currency_rate / original_currency_rate), 6)

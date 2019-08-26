@@ -34,6 +34,6 @@ def test_currency_available():
 
 def test_convert():
     assert convert(1000, "USD", "USD", datetime(2014, 10, 21).date()) == 1000
-    assert convert(1000, "USD", "CZK", datetime(2014, 10, 21).date()) == Decimal("21636.8908")
+    assert convert(1000, "USD", "CZK", datetime(2014, 10, 21).date()) == 21681.137438
     assert convert(1000, "USDf", "CZK", datetime(2014, 10, 21).date()) is None
     assert convert(1000, "USD", "CZK1", datetime(2014, 10, 21).date()) is None

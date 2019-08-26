@@ -68,7 +68,7 @@ def test_failed():
             "5_20": 15,
         },
         "shares": {
-            "0_1": 14032000,
+            "0_1": 14083930,
             "1_5": 4,
             "20_50": 30,
             "50_100": 50,
@@ -77,7 +77,7 @@ def test_failed():
         "examples": {
             "0_1": [
                 {
-                    "abs_amount": 14032000, "item_id": 1, "path": "awards[0].value", "value":
+                    "abs_amount": 14083930, "item_id": 1, "path": "awards[0].value", "value":
                         {"amount": 10000000, "currency": "EUR"}
                 }
             ],
@@ -158,7 +158,7 @@ def test_failed():
                     {"amount": 1, "currency": "USD"}},
             ],
         },
-        "sum": 14032099
+        "sum": 14084029
     }
 
 
