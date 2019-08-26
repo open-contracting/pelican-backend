@@ -12,7 +12,7 @@ class EmptyExchangeRatesTable(Exception):
     pass
 
 
-class EuroConverter():
+class CurrencyConverter():
     BASE = 'EUR'
     DATE_FORMAT = '%Y-%m-%d'
     FIXER_IO_API_KEY = 'c744ed8d097ea8f6d4daeb2fc56a0e44'
@@ -45,7 +45,7 @@ class EuroConverter():
     ):
         # project dependent
         init(environment)
-        self.logger = init_logger("EuroConverter")
+        self.logger = init_logger("CurrencyConverter")
         self.cursor = get_cursor()
 
         self.interpolation_type = interpolation_type
@@ -236,8 +236,8 @@ class EuroConverter():
         self.last_failed_fixer_io_call['call_date'] = date_now
 
     def convert(self, amount, original_currency, target_currency, rel_date):
-        if original_currency not in EuroConverter.FIXER_IO_CURRENCIES or \
-                target_currency not in EuroConverter.FIXER_IO_CURRENCIES:
+        if original_currency not in CurrencyConverter.FIXER_IO_CURRENCIES or \
+                target_currency not in CurrencyConverter.FIXER_IO_CURRENCIES:
             return None
 
         if type(rel_date) != date:

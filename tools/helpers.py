@@ -1,25 +1,20 @@
 from datetime import datetime
 from decimal import Decimal
 
-# from currency_converter import CurrencyConverter, RateNotFoundError
-from tools.converter import EuroConverter
+from tools.currency_converter import CurrencyConverter
 
-# online_exchange_rates = "http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip"
-# offline_exchange_rates = "./tools/exchange_rates.csv"
-
-# cc = CurrencyConverter(offline_exchange_rates, fallback_on_wrong_date=True, fallback_on_missing_rate=True)
-ec = EuroConverter()
+cc = CurrencyConverter()
 
 
 def currency_available(currency):
-    if currency and currency.upper() in EuroConverter.FIXER_IO_CURRENCIES:
+    if currency and currency.upper() in CurrencyConverter.FIXER_IO_CURRENCIES:
         return True
 
     return False
 
 
 def convert(amount, original_currency, target_currency, rel_date):
-    return ec.convert(amount, original_currency, target_currency, rel_date)
+    return cc.convert(amount, original_currency, target_currency, rel_date)
 
 
 def parse_datetime(str_datetime):
