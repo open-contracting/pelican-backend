@@ -1,6 +1,16 @@
 from contracting_process.resource_level.coherent.dates import calculate
 
 
+item_special_case = {  # tender.tenderPeriod.endDate > date
+    "date": "2019-12-31T00:00:00Z",
+    "tender": {
+        "tenderPeriod": {
+            "endDate": "2020-12-31T00:00:00Z"
+        }
+    }
+}
+
+
 def test_undefined():
     empty_result = calculate({})
     assert type(empty_result) == dict
@@ -8,6 +18,12 @@ def test_undefined():
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
     assert empty_result["meta"] == {"reason": "insufficient data for check"}
+    empty_result2 = calculate(item_special_case)
+    assert type(empty_result2) == dict
+    assert empty_result2["result"] is None
+    assert empty_result2["application_count"] is None
+    assert empty_result2["pass_count"] is None
+    assert empty_result2["meta"] == {"reason": "insufficient data for check"}
 
 
 item_ok = {
@@ -35,8 +51,8 @@ def test_ok():
     result = calculate(item_ok)
     assert type(result) == dict
     assert result["result"] is True
-    assert result["application_count"] is 12
-    assert result["pass_count"] is 12
+    assert result["application_count"] is 11
+    assert result["pass_count"] is 11
     assert result["meta"] is None
 
 
@@ -65,15 +81,13 @@ def test_failed():
     result = calculate(item_failed)
     assert type(result) == dict
     assert result["result"] is False
-    assert result["application_count"] is 11
+    # assert result["application_count"] is 11
+    assert result["application_count"] is 10
     assert result["pass_count"] is 0
     assert result["meta"] == {"failed_paths": [
         {
             "path_1": "tender.tenderPeriod.endDate", "path_2": "tender.contractPeriod.startDate",
             "value_1": "2021-12-31T00:00:00Z", "value_2": "2020-12-31T00:00:00Z"
-        }, {
-            "path_1": "tender.tenderPeriod.endDate", "path_2": "date", "value_1": "2021-12-31T00:00:00Z",
-            "value_2": "2011-12-31T00:00:00Z"
         }, {
             "path_1": "tender.tenderPeriod.endDate", "path_2": "contracts[0].dateSigned",
             "value_1": "2021-12-31T00:00:00Z", "value_2": "2015-12-30T00:00:00Z"
@@ -103,6 +117,7 @@ def test_failed():
             "value_2": "2015-12-30T00:00:00Z"
         }
     ]}
+
 
 item_failed_in_contracts = {
     "contracts": [
