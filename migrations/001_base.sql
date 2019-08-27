@@ -106,18 +106,3 @@ CREATE TABLE dataset_level_check (
 
 CREATE INDEX dataset_level_check_dataset_id_idx ON dataset_level_check (dataset_id);
 CREATE INDEX dataset_level_check_modified_idx ON dataset_level_check (modified);
-
-
-CREATE TABLE exchange_rates (
-    id BIGSERIAL PRIMARY KEY,
-    valid_on DATE NOT NULL UNIQUE,
-    rates jsonb NOT NULL,
-    created timestamp without time zone default current_timestamp,
-    modified timestamp without time zone default current_timestamp
-);
-
-CREATE INDEX exchange_rates_rates_idx ON exchange_rates USING gin (rates jsonb_path_ops);
-CREATE INDEX exchange_rates_valid_on_idx ON exchange_rates (valid_on);
-
-COPY exchange_rates_temp (id, valid_on, rates, created, modified)
-FROM './tools/exchange_rates_dump.csv' DELIMITER ',' CSV HEADER;

@@ -51,13 +51,6 @@ def calculate(item):
         planning_budget_amount_amount = convert(planning_budget_amount["amount"], planning_budget_amount["currency"],
                                                 "USD", ref_date)
 
-    # non-convertible
-    if tender_value_amount is None or planning_budget_amount_amount is None:
-        result["meta"] = {
-            "reason": "could not convert between currencies", "tender.value": tender_value,
-            "planning.budget.amount": planning_budget_amount}
-        return result
-
     # amount is equal to zero
     if tender_value_amount == 0 or planning_budget_amount_amount == 0:
         result["meta"] = {
