@@ -9,8 +9,10 @@ import psycopg2.extras
 from core.state import phase, set_dataset_state, set_item_state, state
 from settings.settings import get_param, init
 from tools.db import commit, get_cursor, rollback
-from tools.logging_helper import init_logger
+from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
+from tools.bootstrap import bootstrap
+
 
 consume_routing_key = "_ocds_kingfisher_extractor_init"
 
@@ -143,10 +145,10 @@ def resend(dataset_id):
 
 
 def init_worker(environment):
-    init(environment)
+    bootstrap(environment, "ocds_kingfisher_extractor")
 
     global logger
-    logger = init_logger("ocds_kingfisher_extractor")
+    logger = get_logger()
 
     global cursor
     cursor = get_cursor()

@@ -5,11 +5,13 @@ from settings.settings import get_param
 global initialized
 initialized = False
 
+global logger
+logger = None
+
 
 def get_logger():
     if not initialized:
-        print("logger not initialised")
-        return False
+        init_logger("system")
 
     return logger
 

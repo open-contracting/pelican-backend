@@ -7,11 +7,12 @@ import click
 
 from core.state import (get_dataset, get_processed_items_count,
                         get_total_items_count, phase, set_dataset_state, state)
-from settings.settings import get_param, init
+from settings.settings import get_param
 from time_variance import processor
 from tools.db import commit, get_cursor, rollback
-from tools.logging_helper import init_logger
+from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
+from tools.bootstrap import bootstrap
 
 
 @click.command()
@@ -32,15 +33,15 @@ def start(environment, dataset_id, collection_id):
 
 
 def init_worker(environment):
-    init(environment)
+    bootstrap(environment, "starter_worker")
 
     global logger
-    logger = init_logger("starter")
+    logger = get_logger()
 
     global cursor
     cursor = get_cursor()
 
-    logger.debug("Starter started:)")
+    logger.debug("Starter worker started.")
 
 
 if __name__ == '__main__':

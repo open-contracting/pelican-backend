@@ -5,8 +5,7 @@ import sys
 
 from datetime import datetime
 from settings.settings import get_param
-from settings.settings import init
-from tools.logging_helper import init_logger
+from tools.logging_helper import get_logger
 from tools.db import commit
 from tools.db import get_cursor
 from tools.db import rollback
@@ -19,7 +18,7 @@ from core.state import get_processed_items_count
 from core.state import get_total_items_count
 from core.state import get_dataset
 from time_variance import processor
-
+from tools.bootstrap import bootstrap
 
 consume_routing_key = "_time_variance_checker"
 
@@ -55,10 +54,10 @@ def callback(channel, method, properties, body):
 
 
 def init_worker(environment):
-    init(environment)
+    bootstrap(environment, "finisher_worker")
 
     global logger
-    logger = init_logger("finisher_worker")
+    logger = get_logger()
 
     global cursor
     cursor = get_cursor()

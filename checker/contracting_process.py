@@ -5,10 +5,11 @@ import sys
 import click
 
 from core.state import phase, set_dataset_state, set_item_state, state
-from settings.settings import get_param, init
+from settings.settings import get_param
 from tools.db import commit, get_cursor, rollback
-from tools.logging_helper import init_logger
+from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
+from tools.bootstrap import bootstrap
 
 consume_routing_key = "_ocds_kingfisher_extractor"
 
@@ -90,10 +91,10 @@ def resend(dataset_id):
 
 
 def init_worker(environment):
-    init(environment)
+    bootstrap(environment, "contracting_process_checker")
 
     global logger
-    logger = init_logger("contracting_process_checker")
+    logger = get_logger()
 
     global cursor
     cursor = get_cursor()

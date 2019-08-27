@@ -1,5 +1,7 @@
 import logging
 
+environment = None
+
 config_data = {
     "development": {
         "log_level": logging.DEBUG,
@@ -41,13 +43,29 @@ config_data = {
         "kf_extractor_port": "5432",
         "kf_extractor_db": "ocdskingfisherprocess",
     },
+    "test": {
+        "log_level": logging.DEBUG,
+        "log_filename": "/tmp/dqt_test.log",
+        "host": "localhost",
+        "user": "dqt",
+        "password": "dqt",
+        "port": "5432",
+        "db": "dqt",
+        "schema": "development, postgis, public",
+    },
 }
 
 
-def init(environment):
-    global env
-    env = environment
-
-
 def get_param(param_name):
-    return config_data[env][param_name]
+    global environment
+    return config_data[environment][param_name]
+
+
+def set_environment(environment_name):
+    global environment
+    environment = environment_name
+
+
+def get_environment():
+    global environment
+    return environment

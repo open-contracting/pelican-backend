@@ -7,10 +7,11 @@ import click
 
 from core.state import (get_dataset, get_processed_items_count,
                         get_total_items_count, phase, set_dataset_state, state)
-from settings.settings import get_param, init
+from settings.settings import get_param
 from tools.db import commit, get_cursor, rollback
-from tools.logging_helper import init_logger
+from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
+from tools.bootstrap import bootstrap
 
 consume_routing_key = "_dataset_checker"
 
@@ -56,10 +57,10 @@ def callback(channel, method, properties, body):
 
 
 def init_worker(environment):
-    init(environment)
+    bootstrap(environment, "time_variance_checker")
 
     global logger
-    logger = init_logger("time_variance_checker")
+    logger = get_logger()
 
     global cursor
     cursor = get_cursor()
