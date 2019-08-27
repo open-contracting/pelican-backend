@@ -4,7 +4,6 @@ import sys
 
 import click
 
-from contracting_process import processor
 from core.state import phase, set_dataset_state, set_item_state, state
 from settings.settings import get_param, init
 from tools.db import commit, get_cursor, rollback
@@ -100,6 +99,8 @@ def init_worker(environment):
     cursor = get_cursor()
 
     logger.info("Contracting process checker initialised")
+
+    from contracting_process import processor
 
 
 if __name__ == '__main__':

@@ -3,7 +3,12 @@ from decimal import Decimal
 
 from tools.currency_converter import CurrencyConverter
 
-cc = CurrencyConverter()
+cc = CurrencyConverter(
+    environment='development',
+    interpolation_type='linear',
+    extrapolation_type='closest',
+    max_fallback_days=90
+)
 
 
 def currency_available(currency):

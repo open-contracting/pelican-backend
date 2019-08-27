@@ -4,8 +4,6 @@ import requests
 import psycopg2.extras
 from datetime import datetime, date, timedelta
 from tools.db import commit, get_cursor, rollback
-from tools.logging_helper import init_logger
-from settings.settings import init
 
 
 class EmptyExchangeRatesTable(Exception):
@@ -43,9 +41,7 @@ class CurrencyConverter():
         extrapolation_type='closest',
         max_fallback_days=7
     ):
-        # project dependent
-        init(environment)
-        self.logger = init_logger("CurrencyConverter")
+
         self.cursor = get_cursor()
 
         self.interpolation_type = interpolation_type
