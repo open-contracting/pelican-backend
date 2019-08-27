@@ -66,6 +66,7 @@ def init_worker(environment):
 
     logger.debug("Time variance checker started.")
 
+    global processor
     from time_variance import processor
 
 

@@ -92,6 +92,7 @@ def init_worker(environment):
 
     logger.debug("Dataset checker started.")
 
+    global processor
     from dataset import processor
 
 if __name__ == '__main__':

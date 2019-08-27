@@ -100,6 +100,7 @@ def init_worker(environment):
 
     logger.info("Contracting process checker initialised")
 
+    global processor
     from contracting_process import processor
 
 
