@@ -7,6 +7,7 @@ import click
 
 from core.state import (get_dataset, get_processed_items_count,
                         get_total_items_count, phase, set_dataset_state, state)
+from dataset import processor
 from settings.settings import get_param, init
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import init_logger
@@ -92,7 +93,6 @@ def init_worker(environment):
 
     logger.debug("Dataset checker started.")
 
-    from dataset import processor
 
 if __name__ == '__main__':
     start()
