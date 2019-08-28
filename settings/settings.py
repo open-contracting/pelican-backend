@@ -22,6 +22,12 @@ config_data = {
         "kf_extractor_password": "LJNBQvRT83QTi9og",
         "kf_extractor_port": "5432",
         "kf_extractor_db": "ocdskingfisherprocess",
+        "converter_data_source": "db",
+        "interpolation": "linear",
+        "extrapolation": "closest",
+        "interpolation_max_days_fallback": 90,
+        "extrapolation_max_days_fallback": 180,
+        "fixer_io_api_key": "c744ed8d097ea8f6d4daeb2fc56a0e44",
     },
     "production": {
         "log_level": logging.DEBUG,
@@ -42,6 +48,12 @@ config_data = {
         "kf_extractor_password": "LJNBQvRT83QTi9og",
         "kf_extractor_port": "5432",
         "kf_extractor_db": "ocdskingfisherprocess",
+        "converter_data_source": "db",
+        "interpolation": "linear",
+        "extrapolation": "closest",
+        "interpolation_max_days_fallback": 90,
+        "extrapolation_max_days_fallback": 180,
+        "fixer_io_api_key": "c744ed8d097ea8f6d4daeb2fc56a0e44",
     },
     "test": {
         "log_level": logging.DEBUG,
@@ -52,6 +64,12 @@ config_data = {
         "port": "5432",
         "db": "dqt",
         "schema": "development, postgis, public",
+        "converter_data_source": "db",
+        "interpolation": "linear",
+        "extrapolation": "closest",
+        "interpolation_max_days_fallback": 90,
+        "extrapolation_max_days_fallback": 180,
+        "fixer_io_api_key": "c744ed8d097ea8f6d4daeb2fc56a0e44",
     },
 }
 
