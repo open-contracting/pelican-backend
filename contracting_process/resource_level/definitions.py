@@ -11,7 +11,7 @@ from contracting_process.resource_level.coherent import (amendments_dates,
                                                          procurement_method_vs_number_of_tenderers,
                                                          tender_status,
                                                          milestone_status,
-                                                         value)
+                                                         value_realistic)
 from contracting_process.resource_level.consistent import (contracts_value,
                                                            number_of_tenderers,
                                                            tender_value,
@@ -96,5 +96,5 @@ definitions = {
     "coherent.milestone_status": [milestone_status.calculate],
     "coherent.amendments_dates": [amendments_dates.calculate],
     "coherent.documents_dates": [documents_dates.calculate],
-    "coherent.value_realistic": [value.value_realistic]
+    "coherent.value_realistic": [value_realistic.calculate]
 }

@@ -12,6 +12,8 @@ from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
 from tools.bootstrap import bootstrap
+from dataset import processor
+
 
 consume_routing_key = "_contracting_process_checker"
 
@@ -92,9 +94,6 @@ def init_worker(environment):
     cursor = get_cursor()
 
     logger.debug("Dataset checker started.")
-
-    global processor
-    from dataset import processor
 
 
 if __name__ == '__main__':

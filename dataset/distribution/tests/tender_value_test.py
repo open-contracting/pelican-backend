@@ -1,4 +1,8 @@
+
 from dataset.distribution import value
+from tools.bootstrap import bootstrap
+
+bootstrap('test', 'tender_value_test')
 tender_value = value.ModuleType("tender.value")
 
 
@@ -14,7 +18,7 @@ def test_empty():
 
 
 first = {
-    "date": "2011-03-28T16:47:36.860000-06:00",
+    "date": "2019-01-10T22:00:00+01:00",
     "tender":
         {
             "value": {
@@ -26,7 +30,7 @@ first = {
 
 
 second = {
-    "date": "2011-03-28T16:47:36.860000-06:00",
+    "date": "2019-01-10T22:00:00+01:00",
     "tender":
         {
             "value": {
@@ -67,14 +71,14 @@ def test_failed():
             "5_20": 15,
         },
         "sums": {
-            "0_1": 14032000,
+            "0_1": 11507000,
             "1_5": 4,
             "20_50": 30,
             "50_100": 50,
             "5_20": 15,
         },
         "shares": {
-            "0_1": 14032000 / result["meta"]["sum"],
+            "0_1": 11507000 / result["meta"]["sum"],
             "1_5": 4 / result["meta"]["sum"],
             "20_50": 30 / result["meta"]["sum"],
             "50_100": 50 / result["meta"]["sum"],
@@ -83,7 +87,7 @@ def test_failed():
         "examples": {
             "0_1": [
                 {
-                    "abs_amount": 14032000, "item_id": 1, "path": "tender.value", "value":
+                    "abs_amount": 11507000, "item_id": 1, "path": "tender.value", "value":
                         {"amount": 10000000, "currency": "EUR"}
                 }
             ],
@@ -164,7 +168,7 @@ def test_failed():
                     {"amount": 1, "currency": "USD"}},
             ],
         },
-        "sum": 14032099
+        "sum": 11507099
     }
 
 

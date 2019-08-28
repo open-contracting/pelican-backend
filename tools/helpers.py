@@ -1,26 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
 
-from currency_converter import CurrencyConverter, RateNotFoundError
-
-cc = CurrencyConverter("http://www.ecb.int/stats/eurofxref/eurofxref-hist.zip", fallback_on_wrong_date=True)
-
-
-def currency_available(currency):
-    if currency and currency.upper() in cc.currencies:
-        return True
-    return False
-
-
-def convert(amount, original_currency, target_currency, rel_date):
-    if original_currency in cc.currencies and target_currency in cc.currencies:
-        try:
-            return round(Decimal(cc.convert(float(amount), original_currency, target_currency, rel_date)), 4)
-        except RateNotFoundError:
-            return None
-
-    return None
-
 
 def parse_datetime(str_datetime):
     '''
@@ -37,16 +17,28 @@ def parse_datetime(str_datetime):
     except ValueError:
         pass
 
-    if len(str_datetime) != 25:
+    try:
+        return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%S.%fZ')
+    except ValueError:
+        pass
+
+    if len(str_datetime) < 25:
         return None
 
-    str_timezone = str_datetime[19:].replace(':', '')
-    str_datetime = str_datetime[:19] + str_timezone
+    str_timezone = str_datetime[-6:].replace(':', '')
+    str_datetime = str_datetime[:-6] + str_timezone
 
     try:
         return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%S%z')
     except ValueError:
-        return None
+        pass
+
+    try:
+        return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%S.%f%z')
+    except ValueError:
+        pass
+
+    return None
 
 
 def parse_date(str_date):

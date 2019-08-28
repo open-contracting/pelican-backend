@@ -1,12 +1,14 @@
-from contracting_process.resource_level.coherent.value import value_realistic
+from contracting_process.resource_level.coherent.value_realistic import calculate
 from tools.checks import get_empty_result_resource
+from tools.bootstrap import bootstrap
 
 version = 1.0
+bootstrap('test', 'value_realistic_test')
 
 """
 author: Iaroslav Kolodka
 
-The file contains tests for contracting_process.resource_level.coherent.value.value_realistic.
+The file contains tests for contracting_process.resource_level.coherent.value.calculate.
 
 - item_with_valid_value_in_USD
 - item_with_valid_value_in_EUR
@@ -17,6 +19,7 @@ The file contains tests for contracting_process.resource_level.coherent.value.va
 """
 
 item_with_valid_value_in_USD = {
+    "date": "2019-01-10T22:00:00+01:00",
     "tender": {
         "value": {
             "amount": "1000",
@@ -26,6 +29,7 @@ item_with_valid_value_in_USD = {
 }
 
 item_with_valid_value_in_EUR = {
+    "date": "2019-01-10T22:00:00+01:00",
     "tender": {
         "value": {
             "amount": "1000",
@@ -35,6 +39,7 @@ item_with_valid_value_in_EUR = {
 }
 
 item_with_invalid_value_in_USD = {
+    "date": "2019-01-10T22:00:00+01:00",
     "tender": {
         "value": {
             "amount": "9222333444555",
@@ -44,6 +49,7 @@ item_with_invalid_value_in_USD = {
 }
 
 item_with_invalid_value_in_HUF = {
+    "date": "2019-01-10T22:00:00+01:00",
     "tender": {
         "value": {
             "amount": "4999888000",
@@ -53,6 +59,7 @@ item_with_invalid_value_in_HUF = {
 }
 
 item_with_valid_value_in_non_eisting_currency = {
+    "date": "2019-01-10T22:00:00+01:00",
     "tender": {
         "value": {
             "amount": "3000",
@@ -88,11 +95,11 @@ def test():
         "path": "tender.value"
     })
     result5 = result_initialiser(version, None, 0, 0)
-    assert value_realistic(item_with_valid_value_in_USD) == result1
-    assert value_realistic(item_with_valid_value_in_EUR) == result2
-    assert value_realistic(item_with_invalid_value_in_USD) == result3
-    assert value_realistic(item_with_invalid_value_in_HUF) == result4
-    assert value_realistic(item_with_valid_value_in_non_eisting_currency) == result5
+    assert calculate(item_with_valid_value_in_USD) == result1
+    assert calculate(item_with_valid_value_in_EUR) == result2
+    assert calculate(item_with_invalid_value_in_USD) == result3
+    assert calculate(item_with_invalid_value_in_HUF) == result4
+    assert calculate(item_with_valid_value_in_non_eisting_currency) == result5
 
 
 def result_initialiser(version: float, res: bool, app_count: int, pass_count: int, meta=None) -> dict:

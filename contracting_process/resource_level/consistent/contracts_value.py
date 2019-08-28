@@ -1,6 +1,7 @@
 
 from tools.checks import get_empty_result_resource
-from tools.helpers import convert, currency_available, parse_datetime
+from tools.helpers import parse_datetime
+from tools.currency_converter import convert, currency_available
 
 version = 1.0
 
