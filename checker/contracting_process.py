@@ -10,6 +10,7 @@ from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
 from tools.bootstrap import bootstrap
+from contracting_process import processor
 
 consume_routing_key = "_ocds_kingfisher_extractor"
 
@@ -100,9 +101,6 @@ def init_worker(environment):
     cursor = get_cursor()
 
     logger.info("Contracting process checker initialised")
-
-    global processor
-    from contracting_process import processor
 
 
 if __name__ == '__main__':

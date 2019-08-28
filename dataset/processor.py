@@ -52,6 +52,9 @@ def do_work(dataset_id, logger):
         return
 
     for plugin_name, plugin in definitions.items():
+        logger.info(
+            "Getting result for {} dataset check.".format(plugin_name)
+        )
         result = plugin.get_result(scope[plugin_name])
         save_dataset_level_check(plugin_name, result, dataset_id)
 

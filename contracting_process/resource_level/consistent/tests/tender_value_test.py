@@ -1,5 +1,8 @@
-from contracting_process.resource_level.consistent.tender_value import \
-    calculate
+from contracting_process.resource_level.consistent.tender_value import calculate
+from tools.bootstrap import bootstrap
+
+bootstrap('test', 'tender_value_test')
+
 
 item_test_undefined1 = {
     "tender": {
@@ -111,7 +114,7 @@ item_test_currency_conversion = {
             }
         }
     },
-    "date": "1997-08-03T22:00:00+01:00"
+    "date": "2019-01-10T22:00:00+01:00"
 }
 
 

@@ -3,7 +3,7 @@ import json
 import requests
 from datetime import datetime, date, timedelta
 
-from tools.db import get_cursor
+from tools.db import get_cursor, commit, rollback
 from settings.settings import get_param
 
 
@@ -85,7 +85,6 @@ def update_from_fixer_io():
                 values ('{}', '{}');
                 """.format(date_str, json.dumps(data['rates']))
             )
-            commit()
 
         except psycopg2.Error:
             rollback()
@@ -93,6 +92,9 @@ def update_from_fixer_io():
 
         except:
             break
+
+        else:
+            commit()
 
         target_date += timedelta(days=1)
 

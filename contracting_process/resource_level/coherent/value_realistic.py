@@ -1,6 +1,7 @@
 from tools.getter import get_values
 from tools.checks import get_empty_result_resource
-from tools.helpers import convert
+from tools.helpers import parse_datetime
+from tools.currency_converter import convert
 from datetime import date
 from decimal import Decimal
 
@@ -14,7 +15,7 @@ version 1.0
 """
 
 
-def value_realistic(item):
+def calculate(item):
     """
     The function controls 'Value' object for a realistic value in it.
 
@@ -30,6 +31,9 @@ def value_realistic(item):
 
     """
     result = get_empty_result_resource(version)
+
+    values = get_values(item, 'date', value_only=True)
+    date = parse_datetime(values[0]) if values else None
 
     value_boxes = get_values(item, "tender.value")
     value_boxes += get_values(item, "tender.minValue")
@@ -61,7 +65,7 @@ def value_realistic(item):
                         value_amount_usd = convert(amount=value_amount_int,
                                                    original_currency=value_currency,
                                                    target_currency="USD",
-                                                   rel_date=date.today())
+                                                   rel_date=date)
                     else:
                         value_amount_usd = value_amount_int
                     if not value_amount_usd:

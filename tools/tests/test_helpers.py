@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from tools.bootstrap import bootstrap
-from tools.helpers import (convert, currency_available, parse_date,
-                           parse_datetime)
+from tools.helpers import parse_date, parse_datetime
 
 
 def test_parse_datetime():
@@ -21,19 +20,3 @@ def test_parse_date():
     assert parse_date("asdfasdf") is None
     assert parse_date("2014-10-21T09:30:00Z") == datetime(2014, 10, 21).date()
     assert parse_date("2014-10-21") == datetime(2014, 10, 21).date()
-
-
-def test_currency_available():
-    assert currency_available(None) is False
-    assert currency_available("") is False
-    assert currency_available("USD") is True
-    assert currency_available("USD1") is False
-    assert currency_available("CZK") is True
-    assert currency_available("cZk") is True
-
-
-def test_convert():
-    assert convert(1000, "USD", "USD", datetime(2014, 10, 21).date()) == 1000
-    assert convert(1000, "USD", "CZK", datetime(2014, 10, 21).date()) == Decimal("21636.8908")
-    assert convert(1000, "USDf", "CZK", datetime(2014, 10, 21).date()) is None
-    assert convert(1000, "USD", "CZK1", datetime(2014, 10, 21).date()) is None
