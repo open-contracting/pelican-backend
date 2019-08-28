@@ -7,7 +7,7 @@ tender_value_repetition = value_repetition.ModuleType('tender')
 
 def test_undefined():
     scope = {}
-    scope = tender_value_repetition.add_item(scope, {}, 1)
+    scope = tender_value_repetition.add_item(scope, {'ocid': '1'}, 1)
     result = tender_value_repetition.get_result(scope)
     assert result['result'] is None
     assert result['value'] is None
@@ -17,6 +17,7 @@ def test_undefined():
 
 items_test_passed_multiple = [
     {
+        'ocid': str(num),
         'tender': [
             {
                 'value': {'amount': num, 'currency': 'USD'}
@@ -44,11 +45,12 @@ def test_passed_multiple():
     assert result['value'] == 100 * (3 / 31)
     assert len(result['meta']['most_frequent']) == value_repetition.most_frequent_cap
     assert sum(
-        [len(el['examples_id']) for el in result['meta']['most_frequent']]
+        [len(el['examples']) for el in result['meta']['most_frequent']]
     ) == value_repetition.most_frequent_cap
 
 items_test_big_load = [
     {
+        'ocid': str(i),
         'tender': {
             'value': {
                 'amount': random.randint(1, 100),
@@ -56,7 +58,7 @@ items_test_big_load = [
             }
         }
     }
-    for _ in range(300000)
+    for i in range(300000)
 ]
 
 
@@ -78,5 +80,5 @@ def test_big_load():
     assert result['result'] is True
     assert len(result['meta']['most_frequent']) == value_repetition.most_frequent_cap
     assert sum(
-        [len(el['examples_id']) for el in result['meta']['most_frequent']]
+        [len(el['examples']) for el in result['meta']['most_frequent']]
     ) == 50

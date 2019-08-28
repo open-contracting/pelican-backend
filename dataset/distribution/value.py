@@ -21,10 +21,12 @@ def add_item(scope, item, item_id, path):
         scope["values"] = []
 
     if type(item) == dict:
+        ocid = get_values(item, "ocid", value_only=True)[0]
         values = get_values(item, path)
         if values:
             for value in values:
                 value["item_id"] = item_id
+                value["ocid"] = ocid
 
                 if "currency" not in value["value"] or value["value"]["currency"] is None or \
                         "amount" not in value["value"] or value["value"]["amount"] is None:

@@ -6,7 +6,7 @@ from tools.getter import get_values
 
 version = 1.0
 min_resources_num = 1000
-examples_id_cap = 20
+examples_cap = 20
 
 
 def add_item(scope, item, item_id):
@@ -37,11 +37,16 @@ def add_item(scope, item, item_id):
                 'scheme': buyer['scheme'],
                 'id': buyer['id'],
                 'ocid_set': set(),
-                'examples_id': []
+                'examples': []
             }
 
         scope['buyers'][key]['ocid_set'].add(ocid)
-        scope['buyers'][key]['examples_id'].append(item_id)
+        scope['buyers'][key]['examples'].append(
+            {
+                'item_id': item_id,
+                'ocid': ocid
+            }
+        )
 
     return scope
 
@@ -110,22 +115,22 @@ def get_result(scope):
         )
 
         # sampling item_ids from buyers appearing in items with one distinct ocid
-        single_ocid_examples_id = [
-            random.choice(scope['buyers'][buyer]['examples_id'])
+        single_ocid_examples = [
+            random.choice(scope['buyers'][buyer]['examples'])
             for buyer in random.sample(
                 ocid_histogram['1']['buyers'],
-                k=examples_id_cap
-                if examples_id_cap < len(ocid_histogram['1']['buyers'])
+                k=examples_cap
+                if examples_cap < len(ocid_histogram['1']['buyers'])
                 else len(ocid_histogram['1']['buyers'])
             )
         ]
 
         # sampling item_ids from buyer that appeard in items with the most distinct ocids
-        max_ocid_examples_id = random.sample(
-            scope['buyers'][max_buyer['buyer']]['examples_id'],
-            k=examples_id_cap
-            if examples_id_cap < len(scope['buyers'][max_buyer['buyer']]['examples_id'])
-            else len(scope['buyers'][max_buyer['buyer']]['examples_id'])
+        max_ocid_examples = random.sample(
+            scope['buyers'][max_buyer['buyer']]['examples'],
+            k=examples_cap
+            if examples_cap < len(scope['buyers'][max_buyer['buyer']]['examples'])
+            else len(scope['buyers'][max_buyer['buyer']]['examples'])
         )
 
         for value in ocid_histogram.values():
@@ -143,8 +148,8 @@ def get_result(scope):
             },
             'counts': ocid_histogram,
             'examples': {
-                'single_ocid_examples_id': single_ocid_examples_id,
-                'max_ocid_examples_id': max_ocid_examples_id
+                'single_ocid_examples': single_ocid_examples,
+                'max_ocid_examples': max_ocid_examples
             },
             'total_ocid_count': total_ocid_count,
             'total_buyer_count': total_buyer_count

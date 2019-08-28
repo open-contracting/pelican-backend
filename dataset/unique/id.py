@@ -8,6 +8,7 @@ version = 1.0
 
 def add_item(scope, item, item_id):
     if type(item) == dict:
+        ocid = get_values(item, 'ocid', value_only=True)[0]
         categories = get_values(item, "id", value_only=True)
         if categories:
             for category in categories:
@@ -18,7 +19,12 @@ def add_item(scope, item, item_id):
 
                 scope[category]["count"] = scope[category]["count"] + 1
                 if len(scope[category]["examples"]) < 100:
-                    scope[category]["examples"].append(item_id)
+                    scope[category]["examples"].append(
+                        {
+                            "item_id": item_id,
+                            "ocid": ocid
+                        }
+                    )
 
     return scope
 

@@ -4,18 +4,21 @@ import random
 from dataset.distribution import tender_status
 
 item_test_undefined1 = {
+    'ocid': '1',
     'tender': {
 
     }
 }
 
 item_test_undefined2 = {
+    'ocid': '2',
     'tender': {
         'status': None
     }
 }
 
 item_test_undefined3 = {
+    'ocid': '3',
     'tender': {
         'status': 'unknown'
     }
@@ -32,7 +35,7 @@ def test_undefined():
     }
 
     scope = {}
-    scope = tender_status.add_item(scope, {}, 0)
+    scope = tender_status.add_item(scope, {'ocid': '0'}, 0)
     result = tender_status.get_result(scope)
     assert result['result'] is None
     assert result['value'] is None
@@ -69,11 +72,13 @@ def test_undefined():
 
 items_test_passed = [
     {
+        'ocid': '0',
         'tender': {
             'status': 'active'
         }
     },
     {
+        'ocid': '1',
         'tender': {
             'status': 'planning'
         }
@@ -96,21 +101,23 @@ def test_passed():
     assert result['meta']['shares']['active'] == {
         'share': 0.5,
         'count': 1,
-        'examples_id': [0]
+        'examples': [{'item_id': 0, 'ocid': '0'}]
     }
     assert result['meta']['shares']['planning'] == {
         'share': 0.5,
         'count': 1,
-        'examples_id': [1]
+        'examples': [{'item_id': 1, 'ocid': '1'}]
     }
 
 items_test_failed = [
     {
+        'ocid': '0',        
         'tender': {
             'status': 'active'
         }
     },
     {
+        'ocid': '1',
         'tender': {
             'status': 'unknown'
         }
@@ -133,16 +140,17 @@ def test_failed():
     assert result['meta']['shares']['active'] == {
         'share': 1,
         'count': 1,
-        'examples_id': [0]
+        'examples': [{'item_id': 0, 'ocid': '0'}]
     }
 
 items_test_passed_big_load = [
     {
+        'ocid': str(i),
         'tender': {
             'status': random.choice(tender_status.possible_status)
         }
     }
-    for _ in range(100000)
+    for i in range(100000)
 ]
 
 
@@ -160,7 +168,7 @@ def test_passed_big_load():
     assert result['value'] == 100
     assert len(result['meta']['shares']) == len(tender_status.possible_status)
     assert sum(
-        [len(value['examples_id']) for _, value in result['meta']['shares'].items()]
+        [len(value['examples']) for _, value in result['meta']['shares'].items()]
     ) == tender_status.samples_num * len(tender_status.possible_status)
     assert all(
         [0 < value['share'] < 1 for _, value in result['meta']['shares'].items()]
