@@ -36,7 +36,7 @@ def callback(channel, method, properties, body):
         if "command" not in input_message:
             item_id = input_message["item_id"]
 
-            logger.info("Processing message for dataset {} and item {}".format(dataset_id, item_id))
+            logger.info("Processing message for dataset_id {} and item {}".format(dataset_id, item_id))
 
             # get item from storage
             cursor.execute("""
@@ -69,7 +69,7 @@ def callback(channel, method, properties, body):
 
 
 def resend(dataset_id):
-    logger.info("Resending messages for {} started".format(dataset_id))
+    logger.info("Resending messages for dataset_id {} started".format(dataset_id))
 
     # mark dataset as done
     set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS)
@@ -88,7 +88,7 @@ def resend(dataset_id):
 
         publish(message, get_param("exchange_name") + routing_key)
 
-    logger.info("Resending messages for {} completed".format(dataset_id))
+    logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
 
 
 def init_worker(environment):

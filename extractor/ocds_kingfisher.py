@@ -39,15 +39,13 @@ def callback(channel, method, properties, body):
     try:
         input_message = json.loads(body.decode('utf8'))
 
-        dataset_id = input_message["dataset_id"]
-
         if "command" not in input_message:
+            name = input_message["name"]
             collection_id = input_message["collection_id"]
 
-            logger.info(
-                "Reading kingfisher data started. Dataset: {} processing_id: {}".format(
-                    input_message["dataset_id"],
-                    dataset_id))
+            logger.info("Reading kingfisher data started. name: {} collection_id: {}".format(
+                name, collection_id
+            ))
 
             kf_connection = psycopg2.connect("host='{}' dbname='{}' user='{}' password='{}' port ='{}'".format(
                 get_param("kf_extractor_host"),
@@ -69,6 +67,19 @@ def callback(channel, method, properties, body):
                 """, (collection_id,))
 
             result = kf_cursor.fetchall()
+
+            # TODO: meta insertion
+            cursor.execute(
+                """
+                INSERT INTO dataset
+                (name, meta)
+                VALUES
+                (%s, %s) RETURNING id;
+                """, (name, json.dumps({}))
+            )
+            dataset_id = cursor.fetchone()[0]
+
+            commit()
 
             i = 0
             items_inserted = 0
@@ -109,8 +120,10 @@ def callback(channel, method, properties, body):
                     publish(message, get_param("exchange_name") + routing_key)
 
                 logger.info("Inserted page {} from {}".format(i, len(result)))
+
         else:
             # resend messages
+            dataset_id = input_message["dataset_id"]
             resend(dataset_id)
 
         channel.basic_ack(delivery_tag=method.delivery_tag)
@@ -121,7 +134,7 @@ def callback(channel, method, properties, body):
 
 
 def resend(dataset_id):
-    logger.info("Resending messages for {} started".format(dataset_id))
+    logger.info("Resending messages for dataset_id {} started".format(dataset_id))
     cursor.execute("""
             SELECT id FROM data_item
             WHERE dataset_id = %s
@@ -141,7 +154,7 @@ def resend(dataset_id):
 
         publish(message, get_param("exchange_name") + routing_key)
 
-    logger.info("Resending messages for {} completed".format(dataset_id))
+    logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
 
 
 def init_worker(environment):

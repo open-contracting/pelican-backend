@@ -37,14 +37,14 @@ def callback(channel, method, properties, body):
 
         # mark dataset as beeing processed
         set_dataset_state(dataset_id, state.IN_PROGRESS, phase.TIME_VARIANCE)
-        logger.info("Time variance level checks calculation started for {}".format(dataset_id))
+        logger.info("Time variance level checks calculation started for dataset_id {}".format(dataset_id))
 
         # do actual calculations
         processor.do_work(dataset_id)
 
         # all done, mark as completed
         set_dataset_state(dataset_id, state.OK, phase.TIME_VARIANCE)
-        logger.info("Time variance level checks calculated for {}".format(dataset_id))
+        logger.info("Time variance level checks calculated for dataset_id {}".format(dataset_id))
 
         # send messages into next phases
         message = """{{"dataset_id":"{}"}}""".format(dataset_id)

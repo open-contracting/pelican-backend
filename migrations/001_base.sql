@@ -4,9 +4,22 @@ CREATE SCHEMA development;
 
 SET search_path TO development;
 
+CREATE TABLE dataset (
+    id BIGSERIAL PRIMARY KEY,
+    name character varying(255),
+    meta jsonb,
+    created timestamp without time zone,
+    modified timestamp without time zone
+);
+
+CREATE INDEX dataset_name_idx ON dataset (name);
+CREATE INDEX dataset_meta_idx ON dataset USING gin (meta jsonb_path_ops);
+CREATE INDEX dataset_created_idx ON dataset (created);
+CREATE INDEX dataset_modified_idx ON dataset (modified);
+
 CREATE TABLE progress_monitor_dataset (
     id BIGSERIAL PRIMARY KEY,
-    dataset_id character varying(255),
+    dataset_id BIGINT,
     state character varying(255),
     phase character varying(255),
     size integer,
@@ -26,7 +39,7 @@ UNIQUE USING INDEX progress_monitor_dataset_dataset_id_idx;
 
 CREATE TABLE progress_monitor_item (
     id BIGSERIAL PRIMARY KEY,
-    dataset_id character varying(255),
+    dataset_id BIGINT,
     item_id character varying(255),
     state character varying(255),
     created timestamp without time zone,
@@ -47,7 +60,7 @@ UNIQUE USING INDEX unique_dataset_id_item_id;
 CREATE TABLE data_item (
     id BIGSERIAL PRIMARY KEY,
     data jsonb,
-    dataset_id character varying(255),
+    dataset_id BIGINT,
     created timestamp without time zone,
     modified timestamp without time zone
 );
@@ -63,7 +76,7 @@ CREATE TABLE field_level_check (
     result boolean,
     meta jsonb,
     data_item_id bigint,
-    dataset_id character varying(255),
+    dataset_id BIGINT,
     created timestamp without time zone,
     modified timestamp without time zone
 );
@@ -81,7 +94,7 @@ CREATE TABLE resource_level_check (
     application_count int,
     meta jsonb,
     data_item_id bigint,
-    dataset_id character varying(255),
+    dataset_id BIGINT,
     created timestamp without time zone,
     modified timestamp without time zone
 );
@@ -99,7 +112,7 @@ CREATE TABLE dataset_level_check (
     result boolean,
     value int,
     meta jsonb,
-    dataset_id character varying(255),
+    dataset_id BIGINT,
     created timestamp without time zone,
     modified timestamp without time zone
 );
