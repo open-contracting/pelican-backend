@@ -49,41 +49,41 @@ definitions = {
     ],
     "consistent.contracts_implementation_transactions_value": [contracts_implementation_transactions_value.calculate],
     "consistent.period_duration_in_days": [period_duration_in_days.calculate],
+    "consistent.supplier_name_in_parties": [
+        functools.partial(org_ref_name.calculate, path="awards.suppliers")
+    ],
+    "consistent.tenderer_name_in_parties": [
+        functools.partial(org_ref_name.calculate, path="tender.tenderers")
+    ],
+    "consistent.buyer_name_in_parties": [
+        functools.partial(org_ref_name.calculate, path="buyer")
+    ],
+    "consistent.procuring_entity_name_in_parties": [
+        functools.partial(org_ref_name.calculate, path="tender.procuringEntity")
+    ],
+    "consistent.payer_name_in_parties": [
+        functools.partial(org_ref_name.calculate, path="contracts.implementation.transactions.payer")
+    ],
+    "consistent.payee_name_in_parties": [
+        functools.partial(org_ref_name.calculate, path="contracts.implementation.transactions.payee")
+    ],
     "reference.supplier_in_parties": [
         functools.partial(parties.calculate_path, path="awards.suppliers")
-    ],
-    "reference.supplier_name_in_parties": [
-        functools.partial(org_ref_name.calculate, path="awards.suppliers")
     ],
     "reference.tenderer_in_parties": [
         functools.partial(parties.calculate_path, path="tender.tenderers")
     ],
-    "reference.tenderer_name_in_parties": [
-        functools.partial(org_ref_name.calculate, path="tender.tenderers")
-    ],
     "reference.buyer_in_parties": [
         functools.partial(parties.calculate_path, path="buyer")
-    ],
-    "reference.buyer_name_in_parties": [
-        functools.partial(org_ref_name.calculate, path="buyer")
     ],
     "reference.procuring_entity_in_parties": [
         functools.partial(parties.calculate_path, path="tender.procuringEntity")
     ],
-    "reference.procuring_entity_name_in_parties": [
-        functools.partial(org_ref_name.calculate, path="tender.procuringEntity")
-    ],
     "reference.payer_in_parties": [
         functools.partial(parties.calculate_path, path="contracts.implementation.transactions.payer")
     ],
-    "reference.payer_name_in_parties": [
-        functools.partial(org_ref_name.calculate, path="contracts.implementation.transactions.payer")
-    ],
     "reference.payee_in_parties": [
         functools.partial(parties.calculate_path, path="contracts.implementation.transactions.payee")
-    ],
-    "reference.payee_name_in_parties": [
-        functools.partial(org_ref_name.calculate, path="contracts.implementation.transactions.payee")
     ],
     "reference.contract_in_awards": [contract_in_awards.calculate],
     "coherent.procurement_method_vs_number_of_tenderers": [procurement_method_vs_number_of_tenderers.calculate],
