@@ -103,7 +103,7 @@ definitions = {
     "planning.milestones.dueDate": [exists, non_empty, date_realistic],
     "planning.milestones.dateMet": [exists, non_empty, date_realistic],
     "planning.milestones.dateModified": [exists, non_empty, date_realistic],
-    "planning.milestones.status": [exists, non_empty,
+    "planning.milestones.status": [exists, non_empty],
     "planning.milestones.documents": [exists, non_empty, document_format_codelist],
     "planning.milestones.documents.id": [exists, non_empty],
     "planning.milestones.documents.documentType": [
@@ -192,8 +192,8 @@ definitions = {
     "tender.enquiryPeriod.startDate": [exists, non_empty, date_realistic],
     "tender.enquiryPeriod.endDate": [exists, non_empty, date_realistic],
     "tender.enquiryPeriod.maxExtentDate": [exists, non_empty, date_realistic],
-    "tender.hasEnquiries": [exists, non_empty,
-    "tender.eligibilityCriteria": [exists, non_empty,
+    "tender.hasEnquiries": [exists, non_empty],
+    "tender.eligibilityCriteria": [exists, non_empty],
     "tender.awardPeriod": [exists, non_empty],
     "tender.awardPeriod.startDate": [exists, non_empty, date_realistic],
     "tender.awardPeriod.endDate": [exists, non_empty, date_realistic],
@@ -252,7 +252,7 @@ definitions = {
     "tender.milestones.dueDate": [exists, non_empty, date_realistic],
     "tender.milestones.dateMet": [exists, non_empty, date_realistic],
     "tender.milestones.dateModified": [exists, non_empty, date_realistic],
-    "tender.milestones.status": [exists, non_empty,
+    "tender.milestones.status": [exists, non_empty],
     "tender.milestones.documents": [exists, non_empty, document_format_codelist],
     "tender.milestones.documents.id": [exists, non_empty],
     "tender.milestones.documents.documentType": [
@@ -426,7 +426,7 @@ definitions = {
     "contracts.documents.dateModified": [exists, non_empty, date_realistic],
     "contracts.documents.format": [exists, non_empty],
     "contracts.documents.language": [exists, non_empty, language_code],
-    "contracts.documents.language": [exists, non_empty]
+    "contracts.documents.language": [exists, non_empty],
     "contracts.implementation": [exists, non_empty, description_length],
     "contracts.implementation.transactions.id": [exists, non_empty],
     "contracts.implementation.transactions.source": [exists, non_empty],
@@ -506,7 +506,7 @@ definitions = {
     "contracts.implementation.milestones.dueDate": [exists, non_empty, date_realistic],
     "contracts.implementation.milestones.dateMet": [exists, non_empty, date_realistic],
     "contracts.implementation.milestones.dateModified": [exists, non_empty, date_realistic],
-    "contracts.implementation.milestones.status": [exists, non_empty,
+    "contracts.implementation.milestones.status": [exists, non_empty],
     "contracts.implementation.milestones.documents": [exists, non_empty, document_format_codelist],
     "contracts.implementation.milestones.documents.id": [exists, non_empty],
     "contracts.implementation.milestones.documents.documentType": [
@@ -547,7 +547,7 @@ definitions = {
     "contracts.milestones.dueDate": [exists, non_empty, date_realistic],
     "contracts.milestones.dateMet": [exists, non_empty, date_realistic],
     "contracts.milestones.dateModified": [exists, non_empty, date_realistic],
-    "contracts.milestones.status": [exists, non_empty,
+    "contracts.milestones.status": [exists, non_empty],
     "contracts.milestones.documents": [exists, non_empty, document_format_codelist],
     "contracts.milestones.documents.id": [exists, non_empty],
     "contracts.milestones.documents.documentType": [
