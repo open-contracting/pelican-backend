@@ -187,7 +187,7 @@ definitions = {
     "tender.tenderPeriod.endDate": [exists, non_empty, date_realistic],
     "tender.tenderPeriod.maxExtentDate": [exists, non_empty, date_realistic],
     "tender.tenderPeriod.durationInDays": [exists, non_empty, positive_number],
-    "tender.enquiryPeriod": [exists, non_empty, positive_number],
+    "tender.enquiryPeriod": [exists, non_empty],
     "tender.enquiryPeriod.durationInDays": [exists, non_empty, positive_number],
     "tender.enquiryPeriod.startDate": [exists, non_empty, date_realistic],
     "tender.enquiryPeriod.endDate": [exists, non_empty, date_realistic],
