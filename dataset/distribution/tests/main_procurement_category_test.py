@@ -3,8 +3,8 @@ from dataset.distribution import main_procurement_category
 
 def test_empty():
     scope = {}
-    scope = main_procurement_category.add_item(scope, {}, 1)
-    scope = main_procurement_category.add_item(scope, {}, 2)
+    scope = main_procurement_category.add_item(scope, {"ocid": "1"}, 1)
+    scope = main_procurement_category.add_item(scope, {"ocid": "2"}, 2)
     result = main_procurement_category.get_result(scope)
     assert type(result) == dict
     assert result["result"] is None
@@ -13,24 +13,28 @@ def test_empty():
 
 
 first = {
+    "ocid": "1",
     "tender": {
         "mainProcurementCategory": "A"
     }
 }
 
 second = {
+    "ocid": "2",
     "tender": {
         "mainProcurementCategory": "B"
     }
 }
 
 third = {
+    "ocid": "3",
     "tender": {
         "mainProcurementCategory": "B"
     }
 }
 
 fourth = {
+    "ocid": "4",
     "tender": {
         "mainProcurementCategory": "B"
     }
@@ -51,12 +55,12 @@ def test_ok():
             "B": {
                 "share": 66,
                 "count": 2,
-                "examples_id": [2, 3]
+                "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]
             },
             "A": {
                 "share": 33,
                 "count": 1,
-                "examples_id": [1]
+                "examples": [{"item_id": 1, "ocid": "1"}]
             },
         }
     }
@@ -75,7 +79,7 @@ def test_failed():
             "B": {
                 "share": 100,
                 "count": 2,
-                "examples_id": [2, 3]
+                "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]
             },
         }
     }

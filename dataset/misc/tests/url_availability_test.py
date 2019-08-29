@@ -1,6 +1,7 @@
 from dataset.misc import url_availability
 
 item_test_undefined = {
+    'ocid': '0',
     'planning': {
         'documents': [{
             'url': 'https://www.google.com/'
@@ -11,7 +12,7 @@ item_test_undefined = {
 
 def test_undefined():
     scope = {}
-    scope = url_availability.add_item(scope, {}, 0)
+    scope = url_availability.add_item(scope, {'ocid': '0'}, 0)
     result = url_availability.get_result(scope)
     assert result['result'] is None
     assert result['value'] is None
@@ -31,6 +32,7 @@ def test_undefined():
     }
 
 item_test_passed = {
+    'ocid': '0',
     'planning': {
         'documents': [
             {
@@ -81,16 +83,18 @@ def test_passed():
 
 items_test_failed_multiple = [
     {
+        'ocid': str(num),
         'planning': {
             'documents': [{
                 'url': 'https://www.google.com/'
             }]
         }
     }
-    for _ in range(99)
+    for num in range(99)
 ]
 items_test_failed_multiple.append(
     {
+        'ocid': '99',
         'planning': {
             'documents': [{
                 'url': 'https://www.nonexistingurl.com/'

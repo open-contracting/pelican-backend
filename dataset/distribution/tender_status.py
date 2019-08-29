@@ -14,9 +14,11 @@ possible_status = [
 def add_item(scope, item, item_id):
     if not scope:
         scope = {
-            status: {'count': 0, 'examples_id': []}
+            status: {'count': 0, 'examples': []}
             for status in possible_status
         }
+
+    ocid = get_values(item, 'ocid', value_only=True)[0]
 
     values = [
         v for v in get_values(item, 'tender.status', value_only=True)
@@ -30,11 +32,19 @@ def add_item(scope, item, item_id):
 
     # reservoir sampling
     if scope[status]['count'] < samples_num:
-        scope[status]['examples_id'].append(item_id)
+        scope[status]['examples'].append(
+            {
+                'item_id': item_id,
+                'ocid': ocid
+            }
+        )
     else:
         r = random.randint(0, scope[status]['count'])
         if r < samples_num:
-            scope[status]['examples_id'][r] = item_id
+            scope[status]['examples'][r] = {
+                'item_id': item_id,
+                'ocid': ocid
+            }
 
     scope[status]['count'] += 1
 

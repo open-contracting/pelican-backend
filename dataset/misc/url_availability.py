@@ -20,6 +20,9 @@ def add_item(scope, item, item_id):
     if "index" not in scope or "samples" not in scope:
         scope["index"] = 0
         scope["samples"] = []
+
+    ocid = get_values(item, "ocid", value_only=True)[0]
+
     values = []
     for path in paths:
         pos_values = get_values(item, path)
@@ -28,6 +31,7 @@ def add_item(scope, item, item_id):
 
         for value in pos_values:
             value["item_id"] = item_id
+            value["ocid"] = ocid
             if value["value"] is not None:
                 values.append(value)
 

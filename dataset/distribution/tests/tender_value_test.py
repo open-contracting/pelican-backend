@@ -8,8 +8,8 @@ tender_value = value.ModuleType("tender.value")
 
 def test_empty():
     scope = {}
-    scope = tender_value.add_item(scope, {}, 1)
-    scope = tender_value.add_item(scope, {}, 2)
+    scope = tender_value.add_item(scope, {"ocid": "0"}, 1)
+    scope = tender_value.add_item(scope, {"ocid": "0"}, 2)
     result = tender_value.get_result(scope)
     assert type(result) == dict
     assert result["result"] is None
@@ -18,6 +18,7 @@ def test_empty():
 
 
 first = {
+    "ocid": "0",
     "date": "2019-01-10T22:00:00+01:00",
     "tender":
         {
@@ -30,6 +31,7 @@ first = {
 
 
 second = {
+    "ocid": "0",
     "date": "2019-01-10T22:00:00+01:00",
     "tender":
         {
@@ -87,84 +89,84 @@ def test_failed():
         "examples": {
             "0_1": [
                 {
-                    "abs_amount": 11507000, "item_id": 1, "path": "tender.value", "value":
+                    "abs_amount": 11507000, "item_id": 1, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 10000000, "currency": "EUR"}
                 }
             ],
             "1_5": [
-                {"abs_amount": 1, "item_id": 2, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 2, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 3, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 3, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 4, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 4, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 5, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 5, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
             ],
             "5_20": [
-                {"abs_amount": 1, "item_id": 6, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 6, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 7, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 7, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 8, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 8, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 9, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 9, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 10, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 10, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 11, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 11, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 12, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 12, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 13, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 13, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 14, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 14, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 15, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 15, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
             ],
             "20_50": [
-                {"abs_amount": 1, "item_id": 21, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 21, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 22, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 22, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 23, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 23, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 24, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 24, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 25, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 25, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 26, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 26, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 27, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 27, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 28, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 28, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 29, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 29, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 30, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 30, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
             ],
             "50_100": [
-                {"abs_amount": 1, "item_id": 51, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 51, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 52, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 52, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 53, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 53, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 54, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 54, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 55, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 55, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 56, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 56, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 57, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 57, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 58, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 58, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 59, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 59, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 60, "path": "tender.value", "value":
+                {"abs_amount": 1, "item_id": 60, "ocid": "0", "path": "tender.value", "value":
                     {"amount": 1, "currency": "USD"}},
             ],
         },
@@ -205,149 +207,149 @@ def test_ok():
         },
         "examples": {
             "0_1": [
-                {"abs_amount": 1, "item_id": 1, "path": "tender.value", "value": {"amount": 1, "currency": "USD"}}
+                {"abs_amount": 1, "item_id": 1, "ocid": "0", "path": "tender.value", "value": {"amount": 1, "currency": "USD"}}
             ],
             "1_5": [
                 {
-                    "abs_amount": 1, "item_id": 2, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 2, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 3, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 3, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 4, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 4, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 5, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 5, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
             ],
             "5_20": [
                 {
-                    "abs_amount": 1, "item_id": 6, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 6, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 7, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 7, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 8, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 8, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 9, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 9, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 10, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 10, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 11, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 11, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 12, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 12, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 13, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 13, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 14, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 14, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 15, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 15, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
             ],
             "20_50": [
                 {
-                    "abs_amount": 1, "item_id": 21, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 21, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 22, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 22, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 23, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 23, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 24, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 24, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 25, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 25, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 26, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 26, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 27, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 27, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 28, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 28, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 29, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 29, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 30, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 30, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
             ],
             "50_100": [
                 {
-                    "abs_amount": 1, "item_id": 51, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 51, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 52, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 52, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 53, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 53, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 54, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 54, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 55, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 55, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 56, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 56, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 57, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 57, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 58, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 58, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 59, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 59, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 60, "path": "tender.value", "value":
+                    "abs_amount": 1, "item_id": 60, "ocid": "0", "path": "tender.value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
             ],

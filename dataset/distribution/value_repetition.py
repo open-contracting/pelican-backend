@@ -21,6 +21,8 @@ def add_item(scope, item, item_id, path):
     if scope is None:
         scope = {}
 
+    ocid = get_values(item, 'ocid', value_only=True)[0]    
+
     values = get_values(item, '{}.value'.format(path), value_only=True)
     if not values:
         return scope
@@ -41,17 +43,26 @@ def add_item(scope, item, item_id, path):
             scope[key] = {
                 'amount': value['amount'],
                 'currency': value['currency'],
+                'value_str': '{} {}'.format(value['amount'], value['currency']),
                 'count': 0,
-                'examples_id': []
+                'examples': []
             }
 
         # reservoir sampling
         if scope[key]['count'] < examples_cap:
-            scope[key]['examples_id'].append(item_id)
+            scope[key]['examples'].append(
+                {
+                    'item_id': item_id,
+                    'ocid': ocid
+                }
+            )
         else:
             r = random.randint(0, scope[key]['count'])
             if r < examples_cap:
-                scope[key]['examples_id'][r] = item_id
+                scope[key]['examples'][r] = {
+                    'item_id': item_id,
+                    'ocid': ocid
+                }
 
         scope[key]['count'] += 1
 

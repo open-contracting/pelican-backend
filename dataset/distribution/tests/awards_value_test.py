@@ -2,14 +2,14 @@
 from dataset.distribution import value
 from tools.bootstrap import bootstrap
 
-bootstrap('test', 'awards_value_test')
+bootstrap("test", "awards_value_test")
 awards_value = value.ModuleType("awards.value")
 
 
 def test_empty():
     scope = {}
-    scope = awards_value.add_item(scope, {}, 1)
-    scope = awards_value.add_item(scope, {}, 2)
+    scope = awards_value.add_item(scope, {"ocid": "1"}, 1)
+    scope = awards_value.add_item(scope, {"ocid": "1"}, 2)
     result = awards_value.get_result(scope)
     assert type(result) == dict
     assert result["result"] is None
@@ -18,6 +18,7 @@ def test_empty():
 
 
 first = {
+    "ocid": "1",
     "date": "2019-01-10T22:00:00+01:00",
     "awards": [
         {
@@ -31,6 +32,7 @@ first = {
 
 
 second = {
+    "ocid": "1",
     "date": "2019-01-10T22:00:00+01:00",
     "awards": [
         {
@@ -88,84 +90,84 @@ def test_failed():
         "examples": {
             "0_1": [
                 {
-                    "abs_amount": 11507000, "item_id": 1, "path": "awards[0].value", "value":
+                    "abs_amount": 11507000, "item_id": 1, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 10000000, "currency": "EUR"}
                 }
             ],
             "1_5": [
-                {"abs_amount": 1, "item_id": 2, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 2, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 3, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 3, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 4, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 4, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 5, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 5, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
             ],
             "5_20": [
-                {"abs_amount": 1, "item_id": 6, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 6, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 7, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 7, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 8, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 8, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 9, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 9, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 10, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 10, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 11, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 11, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 12, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 12, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 13, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 13, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 14, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 14, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 15, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 15, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
             ],
             "20_50": [
-                {"abs_amount": 1, "item_id": 21, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 21, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 22, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 22, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 23, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 23, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 24, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 24, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 25, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 25, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 26, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 26, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 27, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 27, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 28, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 28, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 29, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 29, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 30, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 30, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
             ],
             "50_100": [
-                {"abs_amount": 1, "item_id": 51, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 51, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 52, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 52, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 53, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 53, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 54, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 54, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 55, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 55, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 56, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 56, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 57, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 57, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 58, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 58, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 59, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 59, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
-                {"abs_amount": 1, "item_id": 60, "path": "awards[0].value", "value":
+                {"abs_amount": 1, "item_id": 60, "ocid": "1", "path": "awards[0].value", "value":
                     {"amount": 1, "currency": "USD"}},
             ],
         },
@@ -206,149 +208,149 @@ def test_ok():
         },
         "examples": {
             "0_1": [
-                {"abs_amount": 1, "item_id": 1, "path": "awards[0].value", "value": {"amount": 1, "currency": "USD"}}
+                {"abs_amount": 1, "item_id": 1, "ocid": "1", "path": "awards[0].value", "value": {"amount": 1, "currency": "USD"}}
             ],
             "1_5": [
                 {
-                    "abs_amount": 1, "item_id": 2, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 2, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 3, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 3, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 4, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 4, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 5, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 5, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
             ],
             "5_20": [
                 {
-                    "abs_amount": 1, "item_id": 6, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 6, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 7, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 7, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 8, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 8, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 9, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 9, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 10, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 10, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 11, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 11, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 12, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 12, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 13, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 13, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 14, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 14, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 15, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 15, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
             ],
             "20_50": [
                 {
-                    "abs_amount": 1, "item_id": 21, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 21, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 22, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 22, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 23, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 23, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 24, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 24, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 25, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 25, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 26, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 26, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 27, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 27, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 28, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 28, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 29, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 29, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 30, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 30, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
             ],
             "50_100": [
                 {
-                    "abs_amount": 1, "item_id": 51, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 51, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 52, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 52, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 53, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 53, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 54, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 54, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 55, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 55, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 56, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 56, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 57, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 57, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 58, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 58, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 59, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 59, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
                 {
-                    "abs_amount": 1, "item_id": 60, "path": "awards[0].value", "value":
+                    "abs_amount": 1, "item_id": 60, "ocid": "1", "path": "awards[0].value", "value":
                         {"amount": 1, "currency": "USD"}
                 },
             ],

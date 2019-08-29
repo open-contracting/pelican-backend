@@ -3,8 +3,8 @@ from dataset.unique import id
 
 def test_empty():
     scope = {}
-    scope = id.add_item(scope, {}, 1)
-    scope = id.add_item(scope, {}, 2)
+    scope = id.add_item(scope, {"ocid": "1"}, 1)
+    scope = id.add_item(scope, {"ocid": "2"}, 2)
     result = id.get_result(scope)
     assert type(result) == dict
     assert result["result"] is None
@@ -12,11 +12,26 @@ def test_empty():
     assert result["meta"] is None
 
 
-first = {"id": "id_1"}
-second = {"id": "id_2"}
-third = {"id": "id_3"}
-fourth = {"id": "id_2"}
-fifth = {"id": "id_5"}
+first = {
+    "ocid": "1",
+    "id": "id_1"
+}
+second = {
+    "ocid": "2",
+    "id": "id_2"
+}
+third = {
+    "ocid": "3",
+    "id": "id_3"
+}
+fourth = {
+    "ocid": "4",
+    "id": "id_2"
+}
+fifth = {
+    "ocid": "5",
+    "id": "id_5"
+}
 
 
 def test_ok():
@@ -44,7 +59,7 @@ def test_failed():
         "failed": {
             "id_2": {
                 "count": 2,
-                "examples": [2, 4]
+                "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 4, "ocid": "4"}]
             },
         }
     }
