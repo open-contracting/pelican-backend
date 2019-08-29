@@ -8,6 +8,7 @@ from contracting_process.resource_level.definitions import \
     definitions as resource_level_definitions
 from tools.db import commit, get_cursor
 from tools.getter import get_values
+from tools.logging_helper import get_logger
 
 
 def do_work(data, item_id, dataset_id):
@@ -60,7 +61,14 @@ def field_level_checks(data, item_id, dataset_id):
 
                     # confront value with its checks
                     for check in checks:
-                        check_result = check(item, path_chunks[-1])
+                        try:
+                            check_result = check(item, path_chunks[-1])
+                        except Exception:
+                            get_logger().exception(
+                                "Something went wrong when computing checks in path '{}'".format(path)
+                            )
+                            raise Exception
+
                         if not check_result["result"]:
                             break
 
