@@ -109,6 +109,16 @@ def callback(channel, method, properties, body):
                     publish(message, get_param("exchange_name") + routing_key)
 
                 logger.info("Inserted page {} from {}".format(i, len(result)))
+            
+            # TODO: meta insertion
+            cursor.execute(
+                """
+                INSERT INTO dataset_metadata
+                (dataset_id, collection_id, meta)
+                VALUES
+                (%s, %d, %s);
+                """, (dataset_id, collection_id, json.dumps({}))
+            )
         else:
             # resend messages
             resend(dataset_id)

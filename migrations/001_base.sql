@@ -4,6 +4,20 @@ CREATE SCHEMA development;
 
 SET search_path TO development;
 
+CREATE TABLE dataset_metadata (
+    id BIGSERIAL PRIMARY KEY,
+    dataset_id character varying(255),
+    collection_id integer,
+    meta jsonb,
+    created timestamp without time zone,
+    modified timestamp without time zone
+);
+
+CREATE INDEX dataset_metadata_created_idx ON dataset_metadata (created);
+CREATE INDEX dataset_metadata_modified_idx ON dataset_metadata (modified);
+CREATE UNIQUE INDEX dataset_metadata_dataset_id_idx ON dataset_metadata (dataset_id);
+CREATE INDEX dataset_metadata_collection_id_idx ON dataset_metadata (collection_id);
+
 CREATE TABLE progress_monitor_dataset (
     id BIGSERIAL PRIMARY KEY,
     dataset_id character varying(255),
