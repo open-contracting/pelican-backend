@@ -75,8 +75,6 @@ def callback(channel, method, properties, body):
                 message = """{{"dataset_id":"{}"}}""".format(dataset_id)
                 publish(message, get_param("exchange_name") + routing_key)
 
-            elif dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:
-                logger.info("Checks has been already calculated for this dataset.")
             else:
                 # lets do nothing, calculations is already in progress
                 logger.info("Probably other worker already started with the job. Doing nothing.")
