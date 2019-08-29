@@ -35,6 +35,18 @@ def callback(channel, method, properties, body):
         # parse input message
         input_message = json.loads(body.decode('utf8'))
         dataset_id = input_message["dataset_id"]
+        dataset = get_dataset(dataset_id)
+
+        # optimization when resending
+        if dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:
+            logger.info("Checks has been already calculated for this dataset.")
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+            return
+        elif dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.DATASET:
+            # lets do nothing, calculations is already in progress
+            logger.info("Probably other worker already started with the job. Doing nothing.")
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+            return
 
         # check whether are all mitems alredy processed
         processed_count = get_processed_items_count(dataset_id)
@@ -45,9 +57,6 @@ def callback(channel, method, properties, body):
             logger.debug("There are {} remaining messages to be processed for {}".format(
                 total_count - processed_count, dataset_id))
         else:
-            # all messages done
-            dataset = get_dataset(dataset_id)
-
             # check, if there is not another worker already calculating checks
             if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.CONTRACTING_PROCESS:
                 # set state to processing
@@ -70,12 +79,6 @@ def callback(channel, method, properties, body):
                 # send message for a next phase
                 message = """{{"dataset_id":"{}"}}""".format(dataset_id)
                 publish(message, get_param("exchange_name") + routing_key)
-
-            elif dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:
-                logger.info("Checks has been already calculated for this dataset.")
-            else:
-                # lets do nothing, calculations is already in progress
-                logger.info("Probably other worker already started with the job. Doing nothing.")
 
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
