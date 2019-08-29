@@ -17,16 +17,14 @@ from tools.bootstrap import bootstrap
 
 @click.command()
 @click.argument("environment")
-@click.argument("dataset_id")
+@click.argument("name")
 @click.argument("collection_id")
-def start(environment, dataset_id, collection_id):
+def start(environment, name, collection_id):
     init_worker(environment)
 
     routing_key = "_ocds_kingfisher_extractor_init"
 
-    dataset_id = "{}_{}".format(dataset_id, datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
-
-    message = """{{"dataset_id":"{}", "collection_id":"{}"}}""".format(dataset_id, collection_id)
+    message = """{{"name":"{}", "collection_id":"{}"}}""".format(name, collection_id)
     publish(message, get_param("exchange_name") + routing_key)
 
     return

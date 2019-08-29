@@ -47,7 +47,7 @@ def do_work(dataset_id, logger):
 
     if no_item_processed:
         logger.info(
-            "No item with dataset_id = {} found. Skipping dataset checks computation.".format(dataset_id)
+            "No item with dataset_id {} found. Skipping dataset checks computation.".format(dataset_id)
         )
         return
 
