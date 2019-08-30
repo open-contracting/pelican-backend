@@ -1,4 +1,5 @@
 
+import copy
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
@@ -54,7 +55,7 @@ DATE_STR_FORMAT = '%b-%-y'
 
 def add_item(scope, item, item_id):
     if not scope:
-        scope = EMPTY_SCOPE
+        scope = copy.deepcopy(EMPTY_SCOPE)
 
     # compiled releases
     scope['compiled_releases']['_ocid_set'].add(item['ocid'])
@@ -67,7 +68,8 @@ def add_item(scope, item, item_id):
     scope['tender_lifecycle']['implementation'] += len(get_values(item, 'contracts.implementation'))
 
     # prices
-    rel_date = parse_datetime(item['data']).date()
+    rel_datetime = parse_datetime(item['date']) 
+    rel_date = rel_datetime.date() if rel_datetime else None
     values = get_values(item, 'contracts.value', value_only=True)
     for value in values:
         # check whether relevant field are set
@@ -100,10 +102,12 @@ def add_item(scope, item, item_id):
             scope['prices']['contracts_negative'] += 1
 
     # period
-    if rel_date not in scope['_period_dict']:
-        scope['_period_dict'][rel_date] = 1
-    else:
-        scope['_period_dict'][rel_date] += 1
+    if rel_date:
+        period = rel_date.replace(day=1)
+        if period not in scope['_period_dict']:
+            scope['_period_dict'][period] = 1
+        else:
+            scope['_period_dict'][period] += 1
 
     return scope
 
@@ -115,8 +119,11 @@ def get_meta_data(scope):
 
     # prices
     for key in scope['prices']['price_category_positive']:
-        scope['prices']['price_category_positive'][key]['share'] = \
-            scope['prices']['price_category_positive'][key]['volume'] / scope['prices']['total_volume_positive']
+        if scope['prices']['total_volume_positive'] == 0:
+            scope['prices']['price_category_positive'][key]['share'] = 0
+        else:
+            scope['prices']['price_category_positive'][key]['share'] = \
+                scope['prices']['price_category_positive'][key]['volume'] / scope['prices']['total_volume_positive']
 
     # period
     min_date = min(scope['_period_dict'])

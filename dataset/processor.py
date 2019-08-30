@@ -70,7 +70,7 @@ def do_work(dataset_id, logger):
     cursor.execute(
         """
         UPDATE dataset
-        SET meta || %s
+        SET meta = meta || %s
         WHERE id = %s;
         """, (json.dumps(meta_data), dataset_id)
     )
