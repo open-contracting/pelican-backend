@@ -28,6 +28,7 @@ pyparsing==2.4.2
 pyrsistent==0.15.2
 pytest==4.6.3
 pytest-cov==2.7.1
+python-dateutil==2.8.0
 py3dns==3.2.0
 requests==2.22.0
 simplejson==3.16.0
