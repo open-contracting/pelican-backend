@@ -18,9 +18,6 @@ from tools.getter import get_values
 import random
 
 version = 1.0
-"""
-    author: Iaroslav Kolodka
-"""
 
 
 def add_item(scope, item, item_id, path, important_values=[], samples_num=20):
@@ -41,53 +38,42 @@ def add_item(scope, item, item_id, path, important_values=[], samples_num=20):
                 filled scope
 
     """
-
-    ocids = get_values(item, "ocid", value_only=True)
-    if not ocids or ocids[0] is None:
-        return scope
-    ocid = ocids[0]
-    values = get_values(item, path, value_only=True)
+    values = [
+        v for v in get_values(item, path, value_only=True)
+    ]
 
     if not values:
+        print("Not found")
         return scope
-
-    if not scope:
-        scope = {
-            enum: {"count": 0, "examples": []}
-            for enum in important_values
-        }
 
     enum = values[0]
 
     if not enum and type(enum) != str:
+        print(None)
         return scope
+
+    if not scope:
+        scope = {}
 
     if enum not in scope:
         scope.update(
             {
                 enum: {
                     "count": 0,
-                    "examples": []
+                    "examples_id": []
                 }
             }
         )
 
     if scope[enum]["count"] < samples_num:
-        scope[enum]["examples"].append(
-            {
-                "item_id": item_id,
-                "ocid": ocid
-            }
-        )
+        scope[enum]["examples_id"].append(item_id)
     else:
         rand_int = random.randint(0, scope[enum]["count"])
         if rand_int < samples_num:
-            scope[enum]["examples"][rand_int] = {
-                "item_id": item_id,
-                "ocid": ocid
-            }
+            scope[enum]["examples_id"][rand_int] = item_id
 
     scope[enum]["count"] += 1
+    print(enum)
 
     return scope
 
@@ -136,4 +122,5 @@ def get_result(scope, important_values=[]):
     result["meta"] = {
         "shares": scope
     }
+
     return result
