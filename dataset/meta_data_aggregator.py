@@ -1,14 +1,16 @@
 
-<<<<<<< HEAD
 import copy
-=======
->>>>>>> 431a90e5be79fdf79ea1babc70be2c7db20e11cb
+import requests
+import simplejson as json
+import psycopg2.extras
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+from tools.db import get_cursor
 from tools.helpers import parse_datetime
 from tools.getter import get_values
 from tools.currency_converter import convert
+from settings.settings import get_param
 
 EMPTY_SCOPE = {
     'compiled_releases': {
@@ -115,7 +117,7 @@ def add_item(scope, item, item_id):
     return scope
 
 
-def get_meta_data(scope):
+def get_result(scope):
     # compiled releases
     scope['compiled_releases']['total_unique_ocids'] = len(scope['compiled_releases']['_ocid_set'])
     del scope['compiled_releases']['_ocid_set']
@@ -155,3 +157,164 @@ def get_meta_data(scope):
     del scope['_period_dict']
 
     return scope
+
+EMPTY_KINGFISHER_META_DATA = {
+    'kingfisher_metadata': {
+        'collection_id': None,
+        'processing_start': None,
+        'processing_end': None
+    },
+    'collection_metadata': {
+        'publisher': None,
+        'url': None,
+        'ocid_prefix': None,
+        'data_license': None,
+        'extensions': [],
+        'published_from': None,
+        'published_to': None
+    }
+}
+DATETIME_STR_FORMAT = '%Y-%m-%d %H.%M.%S'
+
+
+def get_kingfisher_meta_data(collection_id):
+    kf_connection = psycopg2.connect("host='{}' dbname='{}' user='{}' password='{}' port ='{}'".format(
+        get_param("kf_extractor_host"),
+        get_param("kf_extractor_db"),
+        get_param("kf_extractor_user"),
+        get_param("kf_extractor_password"),
+        get_param("kf_extractor_port")))
+
+    kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    meta_data = copy.deepcopy(EMPTY_KINGFISHER_META_DATA)
+
+    #######################
+    # kingfisher metadata #
+    #######################
+    meta_data['kingfisher_metadata'] = {}
+    kf_cursor.execute(
+        """
+        SELECT b.id, b.store_start_at, b.store_end_at
+        FROM collection AS a
+        INNER JOIN collection AS b ON a.transform_from_collection_id = b.id
+        AND a.id = %s
+        LIMIT 1;
+        """, (collection_id,)
+    )
+    result = kf_cursor.fetchone()
+
+    if result is None:
+        return meta_data
+
+    meta_data['kingfisher_metadata']['collection_id'] = collection_id
+    meta_data['kingfisher_metadata']['processing_start'] = result[1].strftime(DATETIME_STR_FORMAT)
+    meta_data['kingfisher_metadata']['processing_end'] = result[2].strftime(DATETIME_STR_FORMAT)
+
+    ##########################################
+    # retrieving additional database entries #
+    ##########################################
+    proprietary_id = result[0]
+    with_collection = None
+    package_data = None
+
+    # with collection
+    kf_cursor.execute(
+        """
+        SELECT *
+        FROM release_with_collection
+        WHERE collection_id = %s
+        LIMIT 1;
+        """, (proprietary_id,)
+    )
+    result = kf_cursor.fetchone()
+    if result is None:
+        kf_cursor.execute(
+            """
+            SELECT *
+            FROM record_with_collection
+            WHERE collection_id = %s
+            LIMIT 1;
+            """, (proprietary_id,)
+        )
+        result = kf_cursor.fetchone()
+
+    if result is None:
+        return meta_data
+
+    with_collection = result
+
+    # package data
+    kf_cursor.execute(
+        """
+        SELECT *
+        FROM package_data
+        WHERE id = %s
+        LIMIT 1;
+        """, (with_collection['package_data_id'],)
+    )
+    package_data = kf_cursor.fetchone()
+    package_data = package_data if package_data else {}
+
+    #######################
+    # collection metadata #
+    #######################
+
+    # publisher
+    values = get_values(package_data, 'data.publisher.name', value_only=True)
+    if values:
+        meta_data['collection_metadata']['publisher'] = values[0]
+
+    # url
+    meta_data['collection_metadata']['url'] = 'The URL where the data can be downloaded isn\'t presently available.'
+
+    # ocid prefix
+    values = get_values(with_collection, 'ocid', value_only=True)
+    if values and type(values[0]) == str:
+        meta_data['collection_metadata']['ocid_prefix'] = values[0][:11]
+
+    # data license
+    values = get_values(package_data, 'data.license', value_only=True)
+    if values:
+        meta_data['collection_metadata']['data_license'] = values[0]
+
+    # extensions
+    extensions = get_values(package_data, 'data.extensions', value_only=True)
+    for extension in extensions:
+        try:
+            request = requests.get(extension, timeout=30)
+            if request.status_code != 200:
+                continue
+
+            meta_data['collection_metadata']['extensions'].append(request.json())
+
+        except:
+            pass
+
+    # published from, published to
+    kf_cursor.execute(
+        """
+        SELECT MIN(data->>'date'), MAX(data->>'date')
+        FROM data
+        WHERE id = %s
+        LIMIT 1;
+        """, (with_collection['data_id'],)
+    )
+    result = kf_cursor.fetchone()
+    meta_data['collection_metadata']['published_from'] = \
+        parse_datetime(result[0]).strftime(DATETIME_STR_FORMAT) if result is not None else None
+    meta_data['collection_metadata']['published_to'] = \
+        parse_datetime(result[1]).strftime(DATETIME_STR_FORMAT) if result is not None else None
+
+    return meta_data
+
+
+def update_meta_data(meta_data, dataset_id):
+    cursor = get_cursor()
+    cursor.execute(
+        """
+        UPDATE dataset
+        SET meta = meta || %s
+        WHERE id = %s;
+        """, (json.dumps(meta_data), dataset_id)
+    )

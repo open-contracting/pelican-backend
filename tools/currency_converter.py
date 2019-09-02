@@ -170,6 +170,12 @@ def convert(amount, original_currency, target_currency, rel_date):
         except:
             return None
 
+    if type(amount) != float:
+        try:
+            amount = float(amount)
+        except:
+            return None
+
     # original currency
     original_currency_rate = None
     if rel_date in rates and original_currency in rates[rel_date]:

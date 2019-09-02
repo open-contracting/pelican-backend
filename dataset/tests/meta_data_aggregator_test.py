@@ -1,5 +1,5 @@
 
-from dataset.meta_data_aggregator import add_item, get_meta_data
+from dataset.meta_data_aggregator import add_item, get_result
 from tools.bootstrap import bootstrap
 
 bootstrap('test', 'meta_data_aggregator_test')
@@ -25,13 +25,13 @@ def test_compiled_releases():
     scope = {}
     for id in range(len(items_test_compiled_releases)):
         scope = add_item(scope, items_test_compiled_releases[id], id)
-    meta_data = get_meta_data(scope)
+    result = get_result(scope)
 
-    assert meta_data['compiled_releases']['total_unique_ocids'] == 2
+    assert result['compiled_releases']['total_unique_ocids'] == 2
     assert sum(
-        [value for value in meta_data['tender_lifecycle'].values()]
+        [value for value in result['tender_lifecycle'].values()]
     ) == 0
-    assert meta_data['period'] == [{'date_str': 'Jan-19', 'count': 3}]
+    assert result['period'] == [{'date_str': 'Jan-19', 'count': 3}]
 
 items_test_tender_lifecycle = [
     {
@@ -71,17 +71,17 @@ def test_tender_lifecycle():
     scope = {}
     for id in range(len(items_test_tender_lifecycle)):
         scope = add_item(scope, items_test_tender_lifecycle[id], id)
-    meta_data = get_meta_data(scope)
+    result = get_result(scope)
 
-    assert meta_data['compiled_releases']['total_unique_ocids'] == 1
-    assert meta_data['tender_lifecycle'] == {
+    assert result['compiled_releases']['total_unique_ocids'] == 1
+    assert result['tender_lifecycle'] == {
         'planning': 1,
         'tender': 2,
         'award': 3,
         'contract': 4,
         'implementation': 1
     }
-    assert meta_data['period'] == [{'date_str': 'Jan-19', 'count': 5}]
+    assert result['period'] == [{'date_str': 'Jan-19', 'count': 5}]
 
 items_test_prices = [
     {
@@ -166,10 +166,10 @@ def test_prices():
     scope = {}
     for id in range(len(items_test_prices)):
         scope = add_item(scope, items_test_prices[id], id)
-    meta_data = get_meta_data(scope)
+    result = get_result(scope)
 
-    assert meta_data['compiled_releases']['total_unique_ocids'] == 1
-    assert meta_data['tender_lifecycle'] == {
+    assert result['compiled_releases']['total_unique_ocids'] == 1
+    assert result['tender_lifecycle'] == {
         'planning': 0,
         'tender': 0,
         'award': 0,
@@ -177,7 +177,7 @@ def test_prices():
         'implementation': 0
     }
     total_volume_positive = 3 * (2000 + 20000 + 200000 + 2000000)
-    assert meta_data['prices'] == {
+    assert result['prices'] == {
         'total_volume_positive': total_volume_positive,
         'contracts_positive': 12,
         'total_volume_negative': -3,
@@ -205,7 +205,7 @@ def test_prices():
             }
         }
     }
-    assert meta_data['period'] == [{'date_str': 'Jan-19', 'count': 5}]
+    assert result['period'] == [{'date_str': 'Jan-19', 'count': 5}]
 
 items_test_period = [
     {
@@ -231,13 +231,13 @@ def test_prices():
     scope = {}
     for id in range(len(items_test_period)):
         scope = add_item(scope, items_test_period[id], id)
-    meta_data = get_meta_data(scope)
+    result = get_result(scope)
 
-    assert meta_data['compiled_releases']['total_unique_ocids'] == 1
+    assert result['compiled_releases']['total_unique_ocids'] == 1
     assert sum(
-        [value for value in meta_data['tender_lifecycle'].values()]
+        [value for value in result['tender_lifecycle'].values()]
     ) == 0
-    assert meta_data['period'] == [
+    assert result['period'] == [
         {'date_str': 'Dec-18', 'count': 1},
         {'date_str': 'Jan-19', 'count': 2},
         {'date_str': 'Feb-19', 'count': 0},

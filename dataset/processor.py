@@ -65,15 +65,8 @@ def do_work(dataset_id, logger):
         save_dataset_level_check(plugin_name, result, dataset_id)
 
     logger.info("Saving meta data for dataset_id {}".format(dataset_id))
-    meta_data = meta_data_aggregator.get_meta_data(meta_data_aggregator_scope)
-    cursor = get_cursor()
-    cursor.execute(
-        """
-        UPDATE dataset
-        SET meta = meta || %s
-        WHERE id = %s;
-        """, (json.dumps(meta_data), dataset_id)
-    )
+    meta_data = meta_data_aggregator.get_result(meta_data_aggregator_scope)
+    meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
     return
 
