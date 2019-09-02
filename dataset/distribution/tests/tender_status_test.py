@@ -70,6 +70,7 @@ def test_undefined():
         'reason': 'there is not a single tender with valid status'
     }
 
+
 items_test_passed = [
     {
         'ocid': '0',
@@ -109,9 +110,10 @@ def test_passed():
         'examples': [{'item_id': 1, 'ocid': '1'}]
     }
 
+
 items_test_failed = [
     {
-        'ocid': '0',        
+        'ocid': '0',
         'tender': {
             'status': 'active'
         }
@@ -143,6 +145,7 @@ def test_failed():
         'examples': [{'item_id': 0, 'ocid': '0'}]
     }
 
+
 items_test_passed_big_load = [
     {
         'ocid': str(i),
@@ -168,7 +171,8 @@ def test_passed_big_load():
     assert result['value'] == 100
     assert len(result['meta']['shares']) == len(tender_status.possible_status)
     assert sum(
-        [len(value['examples']) for _, value in result['meta']['shares'].items()]
+        [len(value['examples'])
+         for _, value in result['meta']['shares'].items()]
     ) == tender_status.samples_num * len(tender_status.possible_status)
     assert all(
         [0 < value['share'] < 1 for _, value in result['meta']['shares'].items()]

@@ -3,7 +3,8 @@ from dataset.distribution import (
     main_procurement_category,
     tender_status,
     value_repetition,
-    value
+    value,
+    tender_procurement_method
 )
 
 from dataset.misc import (
@@ -33,6 +34,8 @@ definitions = {
     "distribution.awards_value_repetition": value_repetition.ModuleType("awards"),
     "distribution.contracts_value_repetition": value_repetition.ModuleType("contracts"),
     "distribution.tender_status": tender_status,
+    "distribution.tender_status": tender_procurement_method
+    .TenderProcurementMethodPathClass("tender.procurementMethod"),
     "misc.url_availability": url_availability,
     "consistent.related_process_title": related_process_title,
     "reference.related_process_identifier": related_process_identifier
