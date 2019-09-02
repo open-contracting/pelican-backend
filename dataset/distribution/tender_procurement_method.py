@@ -1,5 +1,5 @@
 
-from dataset.distribution.temp_tools import add_item, get_result
+from dataset.distribution.distribution_tools import add_item, get_result
 
 
 global_values_for_check = [
