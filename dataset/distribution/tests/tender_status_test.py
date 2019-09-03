@@ -26,6 +26,9 @@ item_test_undefined2 = {
 
 
 def test_undefined():
+    tender_status.important_enums = [
+        "planning", "active"
+    ]
     scope = {}
     result = tender_status.get_result(scope)
     assert result["result"] is None
@@ -60,7 +63,6 @@ def test_undefined():
     assert result["meta"] == {
         "reason": "there is not a single tender with valid enumeration item"
     }
-
 
 
 items_test_passed = [
@@ -145,6 +147,11 @@ def test_failed():
         "count": 0,
         "examples": []
     }
+    assert result['meta']['shares']['planning'] == {
+        'share': 0,
+        'count': 0,
+        'examples': []
+    }
 
 
 items_test_passed_big_load = [
@@ -160,6 +167,10 @@ items_test_passed_big_load = [
 
 # following test will pass with high probability
 def test_passed_big_load():
+    tender_status.important_enums = [
+        "planning", "active"
+    ]
+
     scope = {}
 
     id = 0
