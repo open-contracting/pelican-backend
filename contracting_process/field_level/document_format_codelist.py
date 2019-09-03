@@ -13,7 +13,7 @@ import csv
 global_format_codelist = []
 
 
-def document_format_codelist(data, key: str) -> dict:
+def document_format_codelist(data, key):
     """ The check function for document format.
 
         The function uses format_list.csv whisch is stored in 'global_format_codelist'
@@ -34,41 +34,24 @@ def document_format_codelist(data, key: str) -> dict:
                     "value": file_format,
                     "reason": "wrong file format"
                 }
-            -   {
-                    "result": False,
-                    "value": file_format,
-                    "reason": "wrong file format"
-                }
 
     """
-    documents = data[key]
-    file_format = None
-    for document in documents:
-        if "format" in document:
-            file_format = document["format"]
-            if file_format and type(file_format) is str:
-
-                if not global_format_codelist:
-                    initialise_global_format_codelist()
-
-                if file_format in global_format_codelist:
-                    continue
-                if file_format == "offline/print":
-                    continue
-
+    file_format = data[key]
+    if file_format and type(file_format) is str:
+        if not global_format_codelist:
+            initialise_global_format_codelist()
+        if file_format in global_format_codelist:
             return {
-                "result": False,
-                "value": file_format,
-                "reason": "wrong file format"
+                "result": True
             }
-        else:
+        if file_format == "offline/print":
             return {
-                "result": None,
-                "value": None,
-                "reason": "Document has no format"
+                "result": True
             }
     return {
-        "result": True
+        "result": False,
+        "value": file_format,
+        "reason": "wrong file format"
     }
 
 
@@ -79,11 +62,11 @@ def initialise_global_format_codelist():
 
         Parameters
         ----------
-        None
+            None
 
         Returns
         ----------
-        None
+            None
 
     """
     path = 'contracting_process/field_level/format_codelist.csv'
