@@ -1,35 +1,45 @@
 
-from contracting_process.field_level.document_type import document_type_coherent
+from contracting_process.field_level.document_type import calculate_section
+from tools.helpers import is_subset_dict
 
 
 def test_passed():
-    result = document_type_coherent(
+    result = calculate_section(
         {'documentType': 'physicalProgressReport'},
         'documentType',
         'implementation'
     )
-    assert result == {'result': True}
+    assert is_subset_dict(
+        {'result': True},
+        result
+    )
 
 
 def test_failed():
-    result = document_type_coherent(
+    result = calculate_section(
         {'documentType': 'unknown'},
         'documentType',
         'contract'
     )
-    assert result == {
-        'result': False,
-        'value': 'unknown',
-        'reason': 'unknown documentType code'
-    }
+    assert is_subset_dict(
+        {
+            'result': False,
+            'value': 'unknown',
+            'reason': 'unknown documentType code'
+        },
+        result
+    )
 
-    result = document_type_coherent(
+    result = calculate_section(
         {'documentType': 'contractNotice'},
         'documentType',
         'award'
     )
-    assert result == {
-        'result': False,
-        'value': 'contractNotice',
-        'reason': 'unsupported combination code-section for documentType'
-    }
+    assert is_subset_dict(
+        {
+            'result': False,
+            'value': 'contractNotice',
+            'reason': 'unsupported combination code-section for documentType'
+        },
+        result
+    )

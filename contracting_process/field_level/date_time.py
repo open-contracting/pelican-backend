@@ -1,28 +1,36 @@
 from datetime import datetime
 
 from tools.helpers import parse_date
+from tools.checks import get_empty_result_field
 
 lower_bound_date = datetime(1970, 1, 1).date()
 upper_bound_date = datetime(2050, 1, 1).date()
 
+name = "date_time"
 
-def date_realistic(data, key):
+
+def calculate(data, key):
+    result = get_empty_result_field(name)
+
     value = data[key]
     if type(value) != str:
-        return {
-            "result": False,
-            "value": value,
-            "reason": "incorrect date format"
-        }
+        result["result"] = False
+        result["value"] = value
+        result["reason"] = "incorrect date format"
+        return result
+
     date = parse_date(value)
     if not date:
-        return {
-            "result": False,
-            "value": value,
-            "reason": "incorrect date format"
-        }
+        result["result"] = False
+        result["value"] = value
+        result["reason"] = "incorrect date format"
+        return result
+
     if date > upper_bound_date or date < lower_bound_date:
-        return {"result": False,
-                "value": value,
-                "reason": "date is out of range"}
-    return {"result": True}
+        result["result"] = False
+        result["value"] = value
+        result["reason"] = "date is out of range"
+        return result
+
+    result["result"] = True
+    return result

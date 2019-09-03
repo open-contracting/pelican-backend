@@ -1,47 +1,77 @@
-from contracting_process.field_level.number_checks import positive_number
+
+from contracting_process.field_level.number_checks import calculate
+from tools.helpers import is_subset_dict
 
 
 def test_ok():
-    assert positive_number({"number": 10}, "number") == {"result": True}
-    assert positive_number({"number": 10.0}, "number") == {"result": True}
+    assert is_subset_dict(
+        {"result": True},
+        calculate({"number": 10}, "number")
+    )
+    assert is_subset_dict(
+        {"result": True},
+        calculate({"number": 10.0}, "number")
+    )
 
 
 def test_failed():
-    assert positive_number({}, "number") == {
-        "result": False,
-        "value": None,
-        "reason": "missing key"
-    }
-    assert positive_number({"name_of_value": 10}, "number") == {
-        "result": False,
-        "value": None,
-        "reason": "missing key"
-    }
-    assert positive_number({"name_of_value": "value"}, "number") == {
-        "result": False,
-        "value": None,
-        "reason": "missing key"
-    }
-    assert positive_number({"number": "value"}, "number") == {
-        "result": False,
-        "value": "value",
-        "reason": "not a number"
-    }
-    assert positive_number({"number": 10j}, "number") == {
-        "result": False,
-        "value": 10j,
-        "reason": "not a number"
-    }
-    assert positive_number({"number": 0}, "number") == {
-        "result": True,
-    }
-    assert positive_number({"number": -1}, "number") == {
-        "result": False,
-        "value": -1,
-        "reason": "number is not positive"
-    }
-    assert positive_number({"number": -1.0}, "number") == {
-        "result": False,
-        "value": -1.0,
-        "reason": "number is not positive"
-    }
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": None,
+            "reason": "missing key"
+        },
+        calculate({}, "number")
+    )
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": None,
+            "reason": "missing key"
+        },
+        calculate({"name_of_value": 10}, "number")
+    )
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": None,
+            "reason": "missing key"
+        },
+        calculate({"name_of_value": "value"}, "number")
+    )
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": "value",
+            "reason": "not a number"
+        },
+        calculate({"number": "value"}, "number")
+    )
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": 10j,
+            "reason": "not a number"
+        },
+        calculate({"number": 10j}, "number")
+    )
+    assert is_subset_dict(
+        {"result": True},
+        calculate({"number": 0}, "number")
+    )
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": -1,
+            "reason": "number is not positive"
+        },
+        calculate({"number": -1}, "number")
+    )
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": -1.0,
+            "reason": "number is not positive"
+        },
+        calculate({"number": -1.0}, "number")
+    )

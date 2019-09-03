@@ -1,4 +1,6 @@
-from contracting_process.field_level.identifier_scheme import identifier_scheme_codelist_checker
+
+from contracting_process.field_level.identifier_scheme import calculate
+from tools.helpers import is_subset_dict
 
 """
 author: Iarosav Kolodka
@@ -21,8 +23,10 @@ def test_valid_value():
             "scheme": "XI-PB"
         }
     }
-    expected_result = {"result": True}
-    assert identifier_scheme_codelist_checker(item, "identifier") == expected_result
+    assert is_subset_dict(
+        {"result": True},
+        calculate(item, "identifier")
+    )
 
 
 def test_invalid_values():
@@ -39,12 +43,28 @@ def test_invalid_values():
             "scheme": "XI-PB-WWW"
         }
     }
-    expected_result = {
-        "result": False,
-        "value": None,
-        "reason": "Value is not from org-id.guide"
-    }
-    assert identifier_scheme_codelist_checker(item_without_properties, "identifier") == expected_result
-    assert identifier_scheme_codelist_checker(item_without_scheme, "identifier") == expected_result
-    expected_result["value"] = "XI-PB-WWW"
-    assert identifier_scheme_codelist_checker(item_with_invalid_scheme_value, "identifier") == expected_result
+
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": None,
+            "reason": "Value is not from org-id.guide"
+        },
+        calculate(item_without_properties, "identifier")
+    )
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": None,
+            "reason": "Value is not from org-id.guide"
+        },
+        calculate(item_without_scheme, "identifier")
+    )
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": "XI-PB-WWW",
+            "reason": "Value is not from org-id.guide"
+        },
+        calculate(item_with_invalid_scheme_value, "identifier")
+    )
