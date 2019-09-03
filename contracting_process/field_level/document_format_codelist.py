@@ -1,5 +1,6 @@
 
 import csv
+from tools.checks import get_empty_result_field
 
 """
     author: Iaroslav Kolodka
@@ -11,9 +12,10 @@ import csv
 """
 
 global_format_codelist = []
+name = "document_format_codelist"
 
 
-def document_format_codelist(data, key: str) -> dict:
+def calculate(data, key: str) -> dict:
     """ The check function for document format.
 
         The function uses format_list.csv whisch is stored in 'global_format_codelist'
@@ -41,6 +43,8 @@ def document_format_codelist(data, key: str) -> dict:
                 }
 
     """
+    result = get_empty_result_field(name)
+
     documents = data[key]
     file_format = None
     for document in documents:
@@ -56,20 +60,19 @@ def document_format_codelist(data, key: str) -> dict:
                 if file_format == "offline/print":
                     continue
 
-            return {
-                "result": False,
-                "value": file_format,
-                "reason": "wrong file format"
-            }
+            result["result"] = False
+            result["value"] = file_format
+            result["reason"] = "wrong file format"
+            return result
+
         else:
-            return {
-                "result": None,
-                "value": None,
-                "reason": "Document has no format"
-            }
-    return {
-        "result": True
-    }
+            result["result"] = None
+            result["value"] = None
+            result["reason"] = "Document has no format"
+            return result
+
+    result["result"] = True
+    return result
 
 
 def initialise_global_format_codelist():

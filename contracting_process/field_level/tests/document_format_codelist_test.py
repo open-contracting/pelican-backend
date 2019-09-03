@@ -1,4 +1,6 @@
-from contracting_process.field_level.document_format_codelist import document_format_codelist
+
+from contracting_process.field_level.document_format_codelist import calculate
+from tools.helpers import is_subset_dict
 
 """
 author: Iaroslav Kolodka
@@ -26,22 +28,43 @@ def test_ocid_prefix_ok():
             }
         ]
     }
-    assert document_format_codelist(item1, "documents") == {"result": True}
-    assert document_format_codelist(item2, "documents") == {"result": True}
+
+    assert is_subset_dict(
+        {"result": True},
+        calculate(item1, "documents")
+    )
+    assert is_subset_dict(
+        {"result": True},
+        calculate(item2, "documents")
+    )
 
 
 def test_ocid_prefix_failed():
-    fail_result = {
-        "result": False,
-        "value": None,
-        "reason": "wrong file format"
-    }
     not_found_result = {
         "result": None,
         "value": None,
         "reason": "Document has no format",
     }
-    assert document_format_codelist({"documents": [{}]}, "documents") == not_found_result
-    assert document_format_codelist({"documents": [{"format": None}]}, "documents") == fail_result
-    fail_result["value"] = "lalala"
-    assert document_format_codelist({"documents": [{"format": "lalala"}]}, "documents") == fail_result
+    fail_result1 = {
+        "result": False,
+        "value": None,
+        "reason": "wrong file format"
+    }
+    fail_result2 = {
+        "result": False,
+        "value": "lalala",
+        "reason": "wrong file format"
+    }
+
+    assert is_subset_dict(
+        not_found_result,
+        calculate({"documents": [{}]}, "documents")
+    )
+    assert is_subset_dict(
+        fail_result1,
+        calculate({"documents": [{"format": None}]}, "documents")
+    )
+    assert is_subset_dict(
+        fail_result2,
+        calculate({"documents": [{"format": "lalala"}]}, "documents")
+    )

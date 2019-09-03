@@ -3,7 +3,7 @@ import time
 import simplejson as json
 
 from contracting_process.field_level.definitions import \
-    definitions as field_level_definitions
+    definitions as field_level_definitions, coverage_checks
 from contracting_process.resource_level.definitions import \
     definitions as resource_level_definitions
 from tools.db import commit, get_cursor
@@ -59,7 +59,10 @@ def field_level_checks(data, item_id, dataset_id):
                 for item in value["value"]:
                     check_result = {}
 
-                    # confront value with its checks
+                    # coverage checks
+
+
+                    # quality checks
                     for check in checks:
                         try:
                             check_result = check(item, path_chunks[-1])

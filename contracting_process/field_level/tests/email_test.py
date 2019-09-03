@@ -1,4 +1,6 @@
-from contracting_process.field_level.email import email_format
+
+from contracting_process.field_level.email import calculate
+from tools.helpers import is_subset_dict
 
 """
 author: Iaroslav Kolodka
@@ -21,18 +23,20 @@ item_with_invalid_email = {
 
 
 def test_with_correct_email():
-    expected_result = {
-        "result": True
-    }
-    result = email_format(item_with_valid_email, "email")
-    assert result == expected_result
+    result = calculate(item_with_valid_email, "email")
+    assert is_subset_dict(
+        {"result": True},
+        result
+    )
 
 
 def test_with_incorrect_email():
-    expected_result = {
-        "result": False,
-        "value": "invalid#email.com",
-        "reason": "Incorrect email format"
-    }
-    result = email_format(item_with_invalid_email, "email")
-    assert result == expected_result
+    result = calculate(item_with_invalid_email, "email")
+    assert is_subset_dict(
+        {
+            "result": False,
+            "value": "invalid#email.com",
+            "reason": "Incorrect email format"
+        },
+        result
+    )

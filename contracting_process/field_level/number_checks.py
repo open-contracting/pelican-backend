@@ -1,26 +1,33 @@
 
+from tools.checks import get_empty_result_field
 
-def positive_number(data, key):
+name = "number_checks"
+
+
+def calculate(data, key):
+    result = get_empty_result_field(name)
+
     if key not in data:
-        return {
-            "result": False,
-            "value": None,
-            "reason": "missing key"
-        }
+        result["result"] = False
+        result["value"] = None
+        result["reason"] = "missing key"
+        return result
+
     value = data[key]
     if not is_number(value):
-        return {
-            "result": False,
-            "value": value,
-            "reason": "not a number"
-        }
+        result["result"] = False
+        result["value"] = value
+        result["reason"] = "not a number"
+        return result
+
     if float(value) < 0:
-        return {
-            "result": False,
-            "value": value,
-            "reason": "number is not positive"
-        }
-    return {"result": True}
+        result["result"] = False
+        result["value"] = value
+        result["reason"] = "number is not positive"
+        return result
+
+    result["result"] = True
+    return result
 
 
 def is_number(value):
@@ -30,4 +37,5 @@ def is_number(value):
         float(value)
     except ValueError:
         return False
+
     return True
