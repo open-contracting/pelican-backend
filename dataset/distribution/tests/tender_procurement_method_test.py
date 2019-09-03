@@ -2,7 +2,7 @@ import random
 
 from dataset.distribution import tender_procurement_method
 
-tender_procurement_method = tender_procurement_method.TenderProcurementMethodPathClass("tender.procurementMethod")
+tender_procurement_method = tender_procurement_method.TenderProcurementMethodPathClass()
 
 
 item_test_undefined1 = {
@@ -19,6 +19,7 @@ item_test_undefined2 = {
 
 
 def test_undefined():
+    tender_procurement_method.important_enums = ["open"]
     scope = {}
     result = tender_procurement_method.get_result(scope)
     assert result["result"] is None
@@ -57,19 +58,34 @@ def test_undefined():
 
 items_test_passed = [
     {
+        "ocid": "1",
         "tender": {
             "procurementMethod": "a"
         }
     },
     {
+        "ocid": "1",
         "tender": {
             "procurementMethod": "b"
+        }
+    },
+    {
+        "ocid": "1",
+        "tender": {
+            "procurementMethod": "c"
+        }
+    },
+    {
+        "ocid": "1",
+        "tender": {
+            "procurementMethod": "open"
         }
     }
 ]
 
 
 def test_passed():
+    tender_procurement_method.important_enums = ["open"]
     scope = {}
 
     id = 0
@@ -80,20 +96,22 @@ def test_passed():
     result = tender_procurement_method.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
-    assert len(result["meta"]["shares"]) == 2
-    assert result["meta"]["shares"]["a"] == {
-        "share": 0.5,
+    assert len(result["meta"]["shares"]) == len(tender_procurement_method.important_enums) + 3
+    assert result["meta"]["shares"]["open"] == {
+        "share": 1/(len(tender_procurement_method.important_enums) + 3),
         "count": 1,
-        "examples_id": [0]
+        "examples": [
+            {
+                "item_id": 3,
+                "ocid": "1"
+            }
+        ]
     }
-    assert result["meta"]["shares"]["b"] == {
-        "share": 0.5,
-        "count": 1,
-        "examples_id": [1]
-    }
+
 
 items_test_failed = [
     {
+        "ocid": "1",
         "tender": {
             "procurementMethod": "open"
         }
@@ -102,6 +120,7 @@ items_test_failed = [
 
 
 def test_failed():
+    tender_procurement_method.important_enums = ["open"]
     scope = {}
 
     id = 0
@@ -112,19 +131,28 @@ def test_failed():
     result = tender_procurement_method.get_result(scope)
     assert result["result"] is False
     assert result["value"] == 0
-    assert len(result["meta"]["shares"]) == 1
+    assert len(result["meta"]["shares"]) == len(tender_procurement_method.important_enums)
     assert result["meta"]["shares"]["open"] == {
         "share": 1,
         "count": 1,
-        "examples_id": [0]
+        "examples": [
+            {
+                "item_id": 0,
+                "ocid": "1"
+            }
+        ]
     }
 
+
 possible_status = [
-    "open", "b", "c", "d", "e", "f"
+    "b", "c", "d", "e", "f"
 ]
+
+possible_status += tender_procurement_method.important_enums
 
 items_test_passed_big_load = [
     {
+        "ocid": "1",
         "tender": {
             "procurementMethod": random.choice(possible_status)
         }
@@ -135,6 +163,7 @@ items_test_passed_big_load = [
 
 # following test will pass with high probability
 def test_passed_big_load():
+    tender_procurement_method.important_enums = ["open"]
     scope = {}
 
     id = 0
@@ -145,10 +174,10 @@ def test_passed_big_load():
     result = tender_procurement_method.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
-    assert len(result["meta"]["shares"]) == 6
+    assert len(result["meta"]["shares"]) == len(possible_status)
     assert sum(
-        [len(value["examples_id"]) for _, value in result["meta"]["shares"].items()]
-    ) == 20 * 6
+        [len(value["examples"]) for _, value in result["meta"]["shares"].items()]
+    ) == tender_procurement_method.samples_number * len(possible_status)
     assert all(
         [0 < value["share"] < 1 for _, value in result["meta"]["shares"].items()]
     )
