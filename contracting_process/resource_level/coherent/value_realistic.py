@@ -52,9 +52,11 @@ def calculate(item):
             value = None
             if "value" in value_box and value_box["value"]:
                 value_amount = get_values(value_box["value"], "amount", True)
-                if not value_amount:
+                if not value_amount:  # check on empty list
                     continue
                 value_amount = value_amount[0]
+                if value_amount is None:
+                    continue
                 try:
                     value_amount_int = int(float(value_amount))
                     value_currency = get_values(value_box["value"], "currency", True)
@@ -68,7 +70,7 @@ def calculate(item):
                                                    rel_date=date)
                     else:
                         value_amount_usd = value_amount_int
-                    if not value_amount_usd:
+                    if value_amount_usd is None:
                         continue
                     application_count += 1
 

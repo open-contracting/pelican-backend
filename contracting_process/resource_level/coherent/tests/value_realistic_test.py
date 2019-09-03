@@ -69,7 +69,7 @@ item_with_valid_value_in_non_eisting_currency = {
 }
 
 
-def test():
+def test_rule_based():
     result1 = result_initialiser(version, True, 1, 1, {
         "result": True,
         "amount": "1000",
@@ -102,27 +102,58 @@ def test():
     assert calculate(item_with_valid_value_in_non_eisting_currency) == result5
 
 
-def result_initialiser(version: float, res: bool, app_count: int, pass_count: int, meta=None) -> dict:
-    """
-    Function create empty result and intialise it by parametres.
+item_with_none_value = {
+    "date": "2019-01-10T22:00:00+01:00",
+    "tender": {
+        "value": {
+            "amount": None,
+            "currency": "USD"
+        }
+    }
+}
 
-    Parameters
-    ----------
-    version : float
-        Version of empty result
-    res : bool
-        if all tests were successed
-    app_count : int
-        application count
-    pass_count : int
-        pass count
-    meta : dict or list of dicts
-        metadata
 
-    Returns
-    -------
-    dict
-        Filled result
+def test_None():
+    result = result_initialiser(version, None, 0, 0)
+    assert calculate(item_with_none_value) == result
+
+
+item_with_string = {
+    "date": "2019-01-10T22:00:00+01:00",
+    "tender": {
+        "value": {
+            "amount": "something",
+            "currency": "USD"
+        }
+    }
+}
+
+
+def test_not_a_number():
+    result = result_initialiser(version, None, 0, 0)
+    assert calculate(item_with_string) == result
+
+
+def result_initialiser(version, res, app_count, pass_count, meta=None):
+    """Function create empty result and intialise it by parametres.
+
+        Parameters
+        ----------
+            version : float
+                Version of empty result
+            res : bool
+                if all tests were successed
+            app_count : int
+                application count
+            pass_count : int
+                pass count
+            meta : dict or list of dicts
+                metadata
+
+        Returns
+        -------
+            dict
+                Filled result
 
     """
     result = get_empty_result_resource(version)
