@@ -101,9 +101,9 @@ def callback(channel, method, properties, body):
                 for data_item in data:
                     cursor.execute("""
                         INSERT INTO data_item
-                        (data, dataset_id, created, modified)
+                        (data, dataset_id)
                         VALUES
-                        (%s, %s, now(), now()) RETURNING id
+                        (%s, %s) RETURNING id
                     """, (json.dumps(data_item[0]), dataset_id))
 
                     inserted_id = cursor.fetchone()[0]

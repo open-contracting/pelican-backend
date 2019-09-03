@@ -72,9 +72,9 @@ def save_dataset_level_check(check_name, result, dataset_id):
 
     cursor.execute("""
         INSERT INTO dataset_level_check
-        (check_name, result, value, meta, dataset_id, created, modified)
+        (check_name, result, value, meta, dataset_id)
         VALUES
-        (%s, %s, %s, %s, %s, now(), now())
+        (%s, %s, %s, %s, %s)
         """, (
         check_name,
         result["result"],
