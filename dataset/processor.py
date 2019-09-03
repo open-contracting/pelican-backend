@@ -4,6 +4,7 @@ import time
 import simplejson as json
 
 from dataset.definitions import definitions
+import dataset.meta_data_aggregator as meta_data_aggregator
 from tools.db import commit, get_cursor
 
 page_size = 1000
@@ -15,6 +16,7 @@ def do_work(dataset_id, logger):
     no_item_processed = True
     pager = 0
     scope = {}
+    meta_data_aggregator_scope = {}
 
     while processed_count == page_size:
         processed_count = 0
@@ -41,6 +43,10 @@ def do_work(dataset_id, logger):
             id = item["id"]
             no_item_processed = False
 
+            meta_data_aggregator_scope = meta_data_aggregator.add_item(
+                meta_data_aggregator_scope, item["data"], item["id"]
+            )
+
         pager = pager + 1
 
         logger.info("Processed page {}".format(pager))
@@ -57,6 +63,10 @@ def do_work(dataset_id, logger):
         )
         result = plugin.get_result(scope[plugin_name])
         save_dataset_level_check(plugin_name, result, dataset_id)
+
+    logger.info("Saving meta data for dataset_id {}".format(dataset_id))
+    meta_data = meta_data_aggregator.get_result(meta_data_aggregator_scope)
+    meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
     return
 

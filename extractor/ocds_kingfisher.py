@@ -12,6 +12,7 @@ from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
 from tools.bootstrap import bootstrap
+import dataset.meta_data_aggregator as meta_data_aggregator
 
 
 consume_routing_key = "_ocds_kingfisher_extractor_init"
@@ -68,7 +69,7 @@ def callback(channel, method, properties, body):
 
             result = kf_cursor.fetchall()
 
-            # TODO: meta insertion
+            logger.info("Creating row in dataset table for incoming collection")
             cursor.execute(
                 """
                 INSERT INTO dataset
@@ -78,8 +79,11 @@ def callback(channel, method, properties, body):
                 """, (name, json.dumps({}))
             )
             dataset_id = cursor.fetchone()[0]
-
             commit()
+
+            logger.info("Saving meta data for dataset_id {}".format(dataset_id))
+            meta_data = meta_data_aggregator.get_kingfisher_meta_data(collection_id)
+            meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
             i = 0
             items_inserted = 0
