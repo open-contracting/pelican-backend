@@ -14,10 +14,10 @@ class TenderProcurementMethodPathClass:
 
     """
 
-    def __init__(self, path, number_of_samples=20):
+    def __init__(self, number_of_samples=20):
         """ Default PathClass constructor
         """
-        self.path = path
+        self.path = "tender.procurementMethod"
         self.important_enums = global_values_for_check
         self.samples_number = number_of_samples
 

@@ -33,7 +33,7 @@ definitions = {
     "distribution.tender_value_repetition": value_repetition.ModuleType("tender"),
     "distribution.awards_value_repetition": value_repetition.ModuleType("awards"),
     "distribution.contracts_value_repetition": value_repetition.ModuleType("contracts"),
-    "distribution.tender_status": tender_status,
+    "distribution.tender_status": tender_procurement_method.TenderProcurementMethodPathClass()
     "distribution.tender_status": tender_procurement_method
     .TenderProcurementMethodPathClass("tender.procurementMethod"),
     "misc.url_availability": url_availability,
