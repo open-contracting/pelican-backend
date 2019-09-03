@@ -86,10 +86,7 @@ def field_level_checks(data, item_id, dataset_id):
                     counter = counter + 1
 
                     # coverage checks
-
-
-                    # quality checks
-                    for check in checks:
+                    for check in coverage_checks:
                         try:
                             check_result = check(item, path_chunks[-1])
                         except Exception:
