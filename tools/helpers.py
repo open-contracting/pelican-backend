@@ -52,3 +52,7 @@ def parse_date(str_date):
         return datetime.strptime(str_date[:10], '%Y-%m-%d').date()
     except ValueError:
         return None
+
+
+def is_subset_dict(subset, superset):
+    return subset.items() <= superset.items()
