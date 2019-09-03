@@ -2,6 +2,9 @@
 from contracting_process.field_level.document_format_codelist import calculate
 from tools.helpers import is_subset_dict
 
+from contracting_process.field_level.document_format_codelist import calculate
+from tools.helpers import is_subset_dict
+
 """ The file contains tests for contracting_process.field_level.document_format_codelist.document_format_codelist .
 
     author: Iaroslav Kolodka
