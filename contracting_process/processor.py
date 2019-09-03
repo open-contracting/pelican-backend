@@ -31,6 +31,8 @@ def resource_level_checks(data, item_id, dataset_id):
 
 
 def field_level_checks(data, item_id, dataset_id):
+    result = {}
+
     # perform field level checks
     for path, checks in field_level_definitions.items():
         # get the parent/parents
@@ -45,6 +47,9 @@ def field_level_checks(data, item_id, dataset_id):
             values = [{"path": "", "value": data}]
 
         if values:
+            # adding path to result
+            result[path] = []
+
             # iterate over parents and perform checks
             for value in values:
                 list_result = True
@@ -57,13 +62,31 @@ def field_level_checks(data, item_id, dataset_id):
                 # iterate over all returned values and check those
                 counter = 0
                 for item in value["value"]:
-                    check_result = {}
+                    field_result = {
+                        "path": None,
+                        "coverage": {
+                            "result": None,
+                            "failed_check_meta": None
+                        },
+                        "quality": {
+                            "result": None,
+                            "failed_check_meta": None
+                        }
+                    }
+
+                    # construct path based on "is the parent a list?"
+                    if list_result:
+                        field_result["path"] = "{}[{}].{}".format(value["path"], counter, path_chunks[-1])
+                    else:
+                        if value["path"]:
+                            field_result["path"] = "{}.{}".format(value["path"], path_chunks[-1])
+                        else:
+                            field_result["path"] = path_chunks[-1]
+
+                    counter = counter + 1
 
                     # coverage checks
-
-
-                    # quality checks
-                    for check in checks:
+                    for check in coverage_checks:
                         try:
                             check_result = check(item, path_chunks[-1])
                         except Exception:
@@ -72,43 +95,46 @@ def field_level_checks(data, item_id, dataset_id):
                             )
                             raise Exception
 
-                        if not check_result["result"]:
+                        if check_result["result"]:
+                            field_result["coverage"]["result"] = True
+                        else:
+                            field_result["coverage"]["result"] = False
+                            field_result["coverage"]["failed_check_meta"] = check_result
                             break
 
-                    # construct path based on "is the parent a list?"
-                    if list_result:
-                        check_result["path"] = "{}[{}].{}".format(value["path"], counter, path_chunks[-1])
-                    else:
-                        if value["path"]:
-                            check_result["path"] = "{}.{}".format(value["path"], path_chunks[-1])
-                        else:
-                            check_result["path"] = path_chunks[-1]
+                    # quality checks
+                    if field_result["coverage"]["result"]:
+                        for check in checks:
+                            try:
+                                check_result = check(item, path_chunks[-1])
+                            except Exception:
+                                get_logger().exception(
+                                    "Something went wrong when computing checks in path '{}'".format(path)
+                                )
+                                raise Exception
 
-                    counter = counter + 1
+                            if check_result["result"]:
+                                field_result["quality"]["result"] = True
+                            else:
+                                field_result["quality"]["result"] = False
+                                field_result["quality"]["failed_check_meta"] = check_result
+                                break
 
-                    # save result
-                    save_field_level_check(path, check_result, item_id, dataset_id)
+                    result[path].append(field_result)
+
+    # save result
+    save_field_level_check(result, item_id, dataset_id)
 
 
-def save_field_level_check(path, result, item_id, dataset_id):
+def save_field_level_check(result, item_id, dataset_id):
     cursor = get_cursor()
-
-    if "reason" in result:
-        meta = json.dumps({"reason": result["reason"], "value": result["value"], "path": result["path"]})
-    else:
-        meta = None
 
     cursor.execute("""
         INSERT INTO field_level_check
-        (path, result, meta, data_item_id, dataset_id, created, modified)
+        (result, data_item_id, dataset_id)
         VALUES
-        (%s, %s, %s, %s, %s, now(), now())
-        """, (
-        path,
-        result["result"],
-        meta,
-        item_id,
-        dataset_id)
+        (%s, %s, %s);
+        """, (json.dumps(result), item_id, dataset_id)
     )
 
 
@@ -123,9 +149,9 @@ def save_resource_level_check(check_name, result, item_id, dataset_id):
 
     cursor.execute("""
         INSERT INTO resource_level_check
-        (check_name, result, pass_count, application_count, meta, data_item_id, dataset_id, created, modified)
+        (check_name, result, pass_count, application_count, meta, data_item_id, dataset_id)
         VALUES
-        (%s, %s, %s, %s, %s, %s, %s, now(), now())
+        (%s, %s, %s, %s, %s, %s, %s)
         """, (
         check_name,
         result["result"],
