@@ -50,13 +50,14 @@ def add_item(scope, item, item_id, path, important_values=[], samples_num=20):
         v for v in get_values(item, path, value_only=True)
     ]
 
+    if not values:
+        return scope
+
     if not scope:
         scope = {
             enum: {"count": 0, "examples": []}
             for enum in important_values
         }
-    if not values:
-        return scope
 
     enum = values[0]
 
@@ -137,5 +138,5 @@ def get_result(scope, important_values=[]):
     result["meta"] = {
         "shares": scope
     }
-
+    print(passed)
     return result
