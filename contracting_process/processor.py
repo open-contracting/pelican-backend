@@ -65,12 +65,12 @@ def field_level_checks(data, item_id, dataset_id):
                     field_result = {
                         "path": None,
                         "coverage": {
-                            "result": None,
-                            "failed_check_meta": None
+                            "overall_result": None,
+                            "check_results": None
                         },
                         "quality": {
-                            "result": None,
-                            "failed_check_meta": None
+                            "overall_result": None,
+                            "check_results": None
                         }
                     }
 
@@ -87,6 +87,9 @@ def field_level_checks(data, item_id, dataset_id):
 
                     # coverage checks
                     for check in coverage_checks:
+                        if field_result["coverage"]["check_results"] is None:
+                            field_result["coverage"]["check_results"] = []
+
                         try:
                             check_result = check(item, path_chunks[-1])
                         except Exception:
@@ -95,16 +98,18 @@ def field_level_checks(data, item_id, dataset_id):
                             )
                             raise Exception
 
-                        if check_result["result"]:
-                            field_result["coverage"]["result"] = True
-                        else:
-                            field_result["coverage"]["result"] = False
-                            field_result["coverage"]["failed_check_meta"] = check_result
+                        field_result["coverage"]["check_results"].append(check_result)
+                        field_result["coverage"]["overall_result"] = check_result["result"]
+
+                        if check_result["result"] is False:
                             break
 
                     # quality checks
-                    if field_result["coverage"]["result"]:
+                    if field_result["coverage"]["overall_result"]:
                         for check in checks:
+                            if field_result["quality"]["check_results"] is None:
+                                field_result["quality"]["check_results"] = []
+
                             try:
                                 check_result = check(item, path_chunks[-1])
                             except Exception:
@@ -113,11 +118,10 @@ def field_level_checks(data, item_id, dataset_id):
                                 )
                                 raise Exception
 
-                            if check_result["result"]:
-                                field_result["quality"]["result"] = True
-                            else:
-                                field_result["quality"]["result"] = False
-                                field_result["quality"]["failed_check_meta"] = check_result
+                            field_result["quality"]["check_results"].append(check_result)
+                            field_result["quality"]["overall_result"] = check_result["result"]
+
+                            if check_result["result"] is False:
                                 break
 
                     result[path].append(field_result)
