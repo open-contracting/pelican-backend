@@ -15,7 +15,7 @@ class TenderSubmissionMethodPathClass:
     def __init__(self, number_of_samples=20):
         """ Default PathClass constructor
         """
-        self.path = "tender.status"
+        self.path = "tender.submissionMethod.distribution"
         self.important_enums = global_values_for_check
         self.samples_number = number_of_samples
 
