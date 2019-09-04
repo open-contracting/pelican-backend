@@ -1,5 +1,5 @@
 
-from contracting_process.field_level.document_description_length import calculate
+from contracting_process.field_level.checks.document_description_length import calculate
 from tools.helpers import is_subset_dict
 
 

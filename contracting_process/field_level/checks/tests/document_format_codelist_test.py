@@ -1,5 +1,5 @@
 
-from contracting_process.field_level.document_format_codelist import calculate
+from contracting_process.field_level.checks.document_format_codelist import calculate
 from tools.helpers import is_subset_dict
 
 """

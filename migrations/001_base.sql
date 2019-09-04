@@ -17,6 +17,20 @@ CREATE INDEX dataset_meta_idx ON dataset USING gin (meta jsonb_path_ops);
 CREATE INDEX dataset_created_idx ON dataset (created);
 CREATE INDEX dataset_modified_idx ON dataset (modified);
 
+CREATE TYPE report_type AS ENUM ('field_level_check', 'resource_level_check', 'dataset_level_check');
+CREATE TABLE report (
+    id BIGSERIAL PRIMARY KEY,
+    dataset_id BIGINT,
+    type report_type,
+    data jsonb,
+    created timestamp without time zone default current_timestamp,
+    modified timestamp without time zone default current_timestamp
+);
+CREATE UNIQUE INDEX report_dataset_id_idx ON report (dataset_id);
+CREATE INDEX type_report_idx ON report (type);
+CREATE INDEX report_data_idx ON report USING gin (data jsonb_path_ops);
+CREATE INDEX report_modified_idx ON report (modified);
+
 CREATE TABLE progress_monitor_dataset (
     id BIGSERIAL PRIMARY KEY,
     dataset_id BIGINT,

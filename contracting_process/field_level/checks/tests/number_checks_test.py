@@ -1,5 +1,5 @@
 
-from contracting_process.field_level.number_checks import calculate
+from contracting_process.field_level.checks.number_checks import calculate
 from tools.helpers import is_subset_dict
 
 

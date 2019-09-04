@@ -38,7 +38,7 @@ def calculate(data, key):
 
 
 def initialise_global_OCIDs():
-    path = 'contracting_process/field_level/OCID_prefixes.csv'
+    path = 'contracting_process/field_level/checks/OCID_prefixes.csv'
 
     OCIDs_file = open(path, "r")
     reader = csv.reader(OCIDs_file)
