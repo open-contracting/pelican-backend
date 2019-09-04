@@ -26,9 +26,6 @@ item_test_undefined2 = {
 
 
 def test_undefined():
-    tender_status.important_enums = [
-        "planning", "active"
-    ]
     scope = {}
     result = tender_status.get_result(scope)
     assert result['result'] is None
@@ -162,10 +159,6 @@ items_test_passed_big_load = [
 
 # following test will pass with high probability
 def test_passed_big_load():
-    tender_status.important_enums = [
-        "planning", "active"
-    ]
-
     scope = {}
 
     id = 0
