@@ -10,7 +10,7 @@ author: Iaroslav Kolodka
 """
 
 """
-A global list containing 'contracting_process/field_level/identifier_scheme_codelist.csv' .
+A global list containing 'contracting_process/field_level/checks/identifier_scheme_codelist.csv' .
 
 """
 global_identifier_scheme_codelist = []
@@ -74,7 +74,7 @@ def initialise_global_identifier_scheme_codelist():
     None
 
     """
-    path = "contracting_process/field_level/identifier_scheme_codelist.csv"
+    path = "contracting_process/field_level/checks/identifier_scheme_codelist.csv"
 
     first = 0  # means 'first colun'
     file = open(path, "r")

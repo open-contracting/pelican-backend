@@ -8,7 +8,7 @@ from tools.checks import get_empty_result_field
 """
 
 """
-    The list contains list of codes from: 'contracting_process/field_level/format_codelist.csv'.
+    The list contains list of codes from: 'contracting_process/field_level/checks/format_codelist.csv'.
 """
 
 global_format_codelist = []
@@ -84,7 +84,7 @@ def initialise_global_format_codelist():
             None
 
     """
-    path = 'contracting_process/field_level/format_codelist.csv'
+    path = 'contracting_process/field_level/checks/format_codelist.csv'
 
     file = open(path, "r")
     reader = csv.reader(file)

@@ -86,7 +86,7 @@ def field_level_checks(data, item_id, dataset_id):
                     counter = counter + 1
 
                     # coverage checks
-                    for check in coverage_checks:
+                    for check, _ in coverage_checks:
                         if field_result["coverage"]["check_results"] is None:
                             field_result["coverage"]["check_results"] = []
 
@@ -106,7 +106,7 @@ def field_level_checks(data, item_id, dataset_id):
 
                     # quality checks
                     if field_result["coverage"]["overall_result"]:
-                        for check in checks:
+                        for check, _ in checks:
                             if field_result["quality"]["check_results"] is None:
                                 field_result["quality"]["check_results"] = []
 

@@ -1,5 +1,5 @@
 
-from contracting_process.field_level.identifier_scheme import calculate
+from contracting_process.field_level.checks.identifier_scheme import calculate
 from tools.helpers import is_subset_dict
 
 """

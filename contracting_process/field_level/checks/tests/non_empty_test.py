@@ -1,5 +1,5 @@
 
-from contracting_process.field_level.non_empty import calculate
+from contracting_process.field_level.checks.non_empty import calculate
 from tools.helpers import is_subset_dict
 
 

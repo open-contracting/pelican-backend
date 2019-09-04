@@ -11,6 +11,7 @@ from tools.helpers import parse_datetime
 from tools.getter import get_values
 from tools.currency_converter import convert
 from settings.settings import get_param
+from contracting_process.field_level.definitions import coverage_checks, definitions
 
 EMPTY_SCOPE = {
     'compiled_releases': {

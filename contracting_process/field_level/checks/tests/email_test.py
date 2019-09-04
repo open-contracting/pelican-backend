@@ -1,5 +1,5 @@
 
-from contracting_process.field_level.email import calculate
+from contracting_process.field_level.checks.email import calculate
 from tools.helpers import is_subset_dict
 
 """
