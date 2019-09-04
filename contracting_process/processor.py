@@ -31,7 +31,15 @@ def resource_level_checks(data, item_id, dataset_id):
 
 
 def field_level_checks(data, item_id, dataset_id):
-    result = {}
+    result = {
+        "meta": {
+            "ocid": data["ocid"],
+            "item_id": item_id
+        },
+        "checks": {
+
+        }
+    }
 
     # perform field level checks
     for path, checks in field_level_definitions.items():
@@ -48,7 +56,7 @@ def field_level_checks(data, item_id, dataset_id):
 
         if values:
             # adding path to result
-            result[path] = []
+            result["checks"][path] = []
 
             # iterate over parents and perform checks
             for value in values:
@@ -124,7 +132,7 @@ def field_level_checks(data, item_id, dataset_id):
                             if check_result["result"] is False:
                                 break
 
-                    result[path].append(field_result)
+                    result["checks"][path].append(field_result)
 
     # save result
     save_field_level_check(result, item_id, dataset_id)

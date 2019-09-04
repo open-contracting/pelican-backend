@@ -1,7 +1,9 @@
+
+import pytest
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from tools.bootstrap import bootstrap
-from tools.helpers import parse_date, parse_datetime
+
+from tools.helpers import parse_date, parse_datetime, is_subset_dict, ReservoirSampler
 
 
 def test_parse_datetime():
@@ -20,3 +22,40 @@ def test_parse_date():
     assert parse_date("asdfasdf") is None
     assert parse_date("2014-10-21T09:30:00Z") == datetime(2014, 10, 21).date()
     assert parse_date("2014-10-21") == datetime(2014, 10, 21).date()
+
+
+def test_is_subset_dict():
+    assert is_subset_dict({}, {'a': 1}) is True
+    assert is_subset_dict({'a': 1}, {'a': 1}) is True
+    assert is_subset_dict({'a': 1}, {'a': 1, 'b': 2}) is True
+    assert is_subset_dict({'a': 0}, {'a': 1}) is False
+    assert is_subset_dict({'a': 1, 'b': 2}, {'a': 1}) is False
+
+
+def test_reservoir_sampler():
+    with pytest.raises(ValueError):
+        sampler = ReservoirSampler(-1)
+
+    with pytest.raises(ValueError):
+        sampler = ReservoirSampler(0)
+
+    sampler = ReservoirSampler(5)
+    for i in range(3):
+        sampler.process(i)
+    samples = sampler.retrieve_samples()
+    assert len(samples) == 3
+    assert all([i in samples for i in range(3)])
+
+    sampler = ReservoirSampler(5)
+    for i in range(5):
+        sampler.process(i)
+    samples = sampler.retrieve_samples()
+    assert len(samples) == 5
+    assert all([i in samples for i in range(5)])
+
+    sampler = ReservoirSampler(5)
+    for i in range(10):
+        sampler.process(i)
+    samples = sampler.retrieve_samples()
+    assert len(samples) == 5
+    assert all([s in range(10) for s in samples])
