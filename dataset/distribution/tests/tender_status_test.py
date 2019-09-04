@@ -144,10 +144,10 @@ def test_failed():
         "count": 0,
         "examples": []
     }
-    assert result['meta']['shares']['planning'] == {
-        'share': 0,
-        'count': 0,
-        'examples': []
+    assert result["meta"]["shares"]["planning"] == {
+        "share": 0,
+        "count": 0,
+        "examples": []
     }
 
 
