@@ -10,16 +10,16 @@ possible_enums = [
 
 
 item_test_undefined1 = {
-    'ocid': '1',
-    'tender': {
+    "ocid": "1",
+    "tender": {
 
     }
 }
 
 item_test_undefined2 = {
-    'ocid': '2',
-    'tender': {
-        'awardCriteria': None
+    "ocid": "2",
+    "tender": {
+        "awardCriteria": None
     }
 }
 
@@ -27,51 +27,51 @@ item_test_undefined2 = {
 def test_undefined():
     scope = {}
     result = tender_award_criteria.get_result(scope)
-    assert result['result'] is None
-    assert result['value'] is None
-    assert result['meta'] == {
-        'reason': 'no data items were processed'
+    assert result["result"] is None
+    assert result["value"] is None
+    assert result["meta"] == {
+        "reason": "no data items were processed"
     }
 
     scope = {}
-    scope = tender_award_criteria.add_item(scope, {'ocid': '0'}, 0)
+    scope = tender_award_criteria.add_item(scope, {"ocid": "0"}, 0)
     result = tender_award_criteria.get_result(scope)
-    assert result['result'] is None
-    assert result['value'] is None
-    assert result['meta'] == {
-        'reason': 'no data items were processed'
+    assert result["result"] is None
+    assert result["value"] is None
+    assert result["meta"] == {
+        "reason": "no data items were processed"
     }
 
     scope = {}
     scope = tender_award_criteria.add_item(scope, item_test_undefined1, 0)
     result = tender_award_criteria.get_result(scope)
-    assert result['result'] is None
-    assert result['value'] is None
-    assert result['meta'] == {
-        'reason': 'no data items were processed'
+    assert result["result"] is None
+    assert result["value"] is None
+    assert result["meta"] == {
+        "reason": "no data items were processed"
     }
 
     scope = {}
     scope = tender_award_criteria.add_item(scope, item_test_undefined2, 0)
     result = tender_award_criteria.get_result(scope)
-    assert result['result'] is None
-    assert result['value'] is None
-    assert result['meta'] == {
-        'reason': 'no data items were processed'
+    assert result["result"] is None
+    assert result["value"] is None
+    assert result["meta"] == {
+        "reason": "no data items were processed"
     }
 
 
 items_test_passed = [
     {
-        'ocid': '0',
-        'tender': {
-            'awardCriteria': 'a'
+        "ocid": "0",
+        "tender": {
+            "awardCriteria": "a"
         }
     },
     {
-        'ocid': '1',
-        'tender': {
-            'awardCriteria': 'b'
+        "ocid": "1",
+        "tender": {
+            "awardCriteria": "b"
         }
     }
 ]
@@ -86,26 +86,26 @@ def test_passed():
         id += 1
 
     result = tender_award_criteria.get_result(scope)
-    assert result['result'] is True
-    assert result['value'] == 100
-    assert len(result['meta']['shares']) == len(items_test_passed)
-    assert result['meta']['shares']['a'] == {
-        'share': 0.5,
-        'count': 1,
-        'examples': [{'item_id': 0, 'ocid': '0'}]
+    assert result["result"] is True
+    assert result["value"] == 100
+    assert len(result["meta"]["shares"]) == len(items_test_passed)
+    assert result["meta"]["shares"]["a"] == {
+        "share": 0.5,
+        "count": 1,
+        "examples": [{"item_id": 0, "ocid": "0"}]
     }
-    assert result['meta']['shares']['b'] == {
-        'share': 0.5,
-        'count': 1,
-        'examples': [{'item_id': 1, 'ocid': '1'}]
+    assert result["meta"]["shares"]["b"] == {
+        "share": 0.5,
+        "count": 1,
+        "examples": [{"item_id": 1, "ocid": "1"}]
     }
 
 
 items_test_passed_big_load = [
     {
-        'ocid': str(i),
-        'tender': {
-            'awardCriteria': random.choice(possible_enums)
+        "ocid": str(i),
+        "tender": {
+            "awardCriteria": random.choice(possible_enums)
         }
     }
     for i in range(1000)
@@ -122,13 +122,13 @@ def test_passed_big_load():
         id += 1
 
     result = tender_award_criteria.get_result(scope)
-    assert result['result'] is True
-    assert result['value'] == 100
-    assert len(result['meta']['shares']) == len(possible_enums)
+    assert result["result"] is True
+    assert result["value"] == 100
+    assert len(result["meta"]["shares"]) == len(possible_enums)
     assert sum(
-        [len(value['examples'])
-         for _, value in result['meta']['shares'].items()]
+        [len(value["examples"])
+         for _, value in result["meta"]["shares"].items()]
     ) == tender_award_criteria.samples_number * len(possible_enums)
     assert all(
-        [0 < value['share'] < 1 for _, value in result['meta']['shares'].items()]
+        [0 < value["share"] < 1 for _, value in result["meta"]["shares"].items()]
     )
