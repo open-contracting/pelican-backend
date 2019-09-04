@@ -18,9 +18,7 @@ def create(dataset_id):
     for path, quality_checks in definitions.items():
         report[path] = {
             'coverage': {
-                'checks': [
-
-                ],
+                'checks': {},
                 'passed_count': 0,
                 'failed_count': 0,
                 'total_count': 0,
@@ -28,9 +26,7 @@ def create(dataset_id):
                 'failed_examples': []
             },
             'quality': {
-                'checks': [
-
-                ],
+                'checks': {},
                 'passed_count': 0,
                 'failed_count': 0,
                 'total_count': 0,
@@ -39,177 +35,134 @@ def create(dataset_id):
             }
         }
 
-        ############
-        # coverage #
-        ############
-
-        # total counts
-        cursor.execute(
-            """
-            select distinct (sub.path->'coverage'->>'overall_result')::boolean, count(*)
-            from (
-                select jsonb_array_elements(d.value) as path
-                from field_level_check, jsonb_each(result->'checks') d
-                where dataset_id = '{dataset_id}' and d.key = '{path}'
-            ) as sub
-            where sub.path->'coverage'->>'overall_result' is not null
-            group by sub.path->'coverage'->>'overall_result';
-            """.format(dataset_id=dataset_id, path=path)
-        )
-        for row in cursor.fetchall():
-            if row[0] is True:
-                report[path]['coverage']['passed_count'] = row[1]
-            elif row[0] is False:
-                report[path]['coverage']['failed_count'] = row[1]
-            else:
-                raise ValueError(bool)
-
-            report[path]['coverage']['total_count'] += row[1]
-
-        # checks
-        coverage_passed_examples_sampler = ReservoirSampler(check_examples_cap)
-        coverage_failed_examples_sampler = ReservoirSampler(check_examples_cap)
-        for check, check_name in coverage_checks:
-            check_meta = {
+        for _, check_name in coverage_checks:
+            report[path]['coverage']['checks'][check_name] = {
                 'passed_count': 0,
                 'failed_count': 0,
                 'total_count': 0,
                 'passed_examples': [],
                 'failed_examples': []
             }
-            check_passed_examples_sampler = ReservoirSampler(check_examples_cap)
-            check_failed_examples_sampler = ReservoirSampler(check_examples_cap)
 
-            cursor.execute(
-                """
-                select sub1.meta, sub1.path, sub1.check
-                from (
-                    select sub2.meta,
-                           sub2.path->>'path' as path,
-                           jsonb_array_elements(sub2.path->'coverage'->'check_results') as check
-                    from (
-                        select result->'meta' as meta, jsonb_array_elements(d.value) as path
-                        from field_level_check, jsonb_each(result->'checks') d
-                        where dataset_id = '{dataset_id}' and d.key = '{path}'
-                    ) as sub2
-                    where sub2.path->'coverage'->>'check_results' is not null
-                ) as sub1
-                where sub1.check->>'name' = '{check_name}';
-                """.format(dataset_id=dataset_id, path=path, check_name=check_name)
-            )
-
-            for row in cursor.fetchall():
-                example = {
-                    'meta': row['meta'],
-                    'result': row['check']
-                }
-                example['meta']['path'] = row['path']
-
-                if row['check']['result']:
-                    coverage_passed_examples_sampler.process(example)
-                    check_passed_examples_sampler.process(example)
-
-                    check_meta['passed_count'] += 1
-                else:
-                    coverage_failed_examples_sampler.process(example)
-                    check_failed_examples_sampler.process(example)
-
-                    check_meta['failed_count'] += 1
-
-                check_meta['total_count'] += 1
-
-            check_meta['passed_examples'] = check_passed_examples_sampler.retrieve_samples()
-            check_meta['failed_examples'] = check_failed_examples_sampler.retrieve_samples()
-            report[path]['coverage']['checks'].append(check_meta)
-
-        report[path]['coverage']['passed_examples'] = coverage_passed_examples_sampler.retrieve_samples()
-        report[path]['coverage']['failed_examples'] = coverage_failed_examples_sampler.retrieve_samples()
-
-        ###########
-        # quality #
-        ###########
-
-        # total counts
-        cursor.execute(
-            """
-            select distinct (sub.path->'quality'->>'overall_result')::boolean, count(*)
-            from (
-                select jsonb_array_elements(d.value) as path
-                from field_level_check, jsonb_each(result->'checks') d
-                where dataset_id = '{dataset_id}' and d.key = '{path}'
-            ) as sub
-            where sub.path->'quality'->>'overall_result' is not null
-            group by sub.path->'quality'->>'overall_result';
-            """.format(dataset_id=dataset_id, path=path)
-        )
-        for row in cursor.fetchall():
-            if row[0] is True:
-                report[path]['quality']['passed_count'] = row[1]
-            elif row[0] is False:
-                report[path]['quality']['failed_count'] = row[1]
-            else:
-                raise ValueError(bool)
-
-            report[path]['quality']['total_count'] += row[1]
-
-        # checks
-        quality_passed_examples_sampler = ReservoirSampler(check_examples_cap)
-        quality_failed_examples_sampler = ReservoirSampler(check_examples_cap)
-        for check, check_name in quality_checks:
-            check_meta = {
+        for _, check_name in quality_checks:
+            report[path]['quality']['checks'][check_name] = {
                 'passed_count': 0,
                 'failed_count': 0,
                 'total_count': 0,
                 'passed_examples': [],
                 'failed_examples': []
             }
-            check_passed_examples_sampler = ReservoirSampler(check_examples_cap)
-            check_failed_examples_sampler = ReservoirSampler(check_examples_cap)
+    ################
+    # total counts #
+    ################
 
-            cursor.execute(
-                """
-                select sub1.meta, sub1.path, sub1.check
-                from (
-                    select sub2.meta,
-                           sub2.path->>'path' as path,
-                           jsonb_array_elements(sub2.path->'quality'->'check_results') as check
-                    from (
-                        select result->'meta' as meta, jsonb_array_elements(d.value) as path
-                        from field_level_check, jsonb_each(result->'checks') d
-                        where dataset_id = '{dataset_id}' and d.key = '{path}'
-                    ) as sub2
-                    where sub2.path->'quality'->>'check_results' is not null
-                ) as sub1
-                where sub1.check->>'name' = '{check_name}';
-                """.format(dataset_id=dataset_id, path=path, check_name=check_name)
-            )
+    # coverage
+    cursor.execute(
+        """
+        select sub.path,
+               (sub.path_checks->'coverage'->>'overall_result')::boolean as overall_result,
+               count(*) as count
+        from (
+            select d.key as path, jsonb_array_elements(d.value) as path_checks
+            from field_level_check, jsonb_each(result->'checks') d
+            where dataset_id = '{dataset_id}'
+        ) as sub
+        where sub.path_checks->'coverage'->>'overall_result' is not null
+        group by sub.path, sub.path_checks->'coverage'->>'overall_result';
+        """.format(dataset_id=dataset_id)
+    )
+    for row in cursor.fetchall():
+        if row['overall_result'] is True:
+            report[row['path']]['coverage']['passed_count'] = row['count']
+        elif row['overall_result'] is False:
+            report[row['path']]['coverage']['failed_count'] = row['count']
+        else:
+            raise ValueError(bool)
 
-            for row in cursor.fetchall():
-                example = {
-                    'meta': row['meta'],
-                    'result': row['check']
-                }
-                example['meta']['path'] = row['path']
+        report[row['path']]['coverage']['total_count'] += row['count']
 
-                if row['check']['result']:
-                    quality_passed_examples_sampler.process(example)
-                    check_passed_examples_sampler.process(example)
+    # quality
+    cursor.execute(
+        """
+        select sub.path,
+               (sub.path_checks->'quality'->>'overall_result')::boolean as overall_result,
+               count(*) as count
+        from (
+            select d.key as path, jsonb_array_elements(d.value) as path_checks
+            from field_level_check, jsonb_each(result->'checks') d
+            where dataset_id = '{dataset_id}'
+        ) as sub
+        where sub.path_checks->'quality'->>'overall_result' is not null
+        group by sub.path, sub.path_checks->'quality'->>'overall_result';
+        """.format(dataset_id=dataset_id)
+    )
+    for row in cursor.fetchall():
+        if row['overall_result'] is True:
+            report[row['path']]['quality']['passed_count'] = row['count']
+        elif row['overall_result'] is False:
+            report[row['path']]['quality']['failed_count'] = row['count']
+        else:
+            raise ValueError(bool)
 
-                    check_meta['passed_count'] += 1
-                else:
-                    quality_failed_examples_sampler.process(example)
-                    check_failed_examples_sampler.process(example)
+        report[row['path']]['quality']['total_count'] += row['count']
 
-                    check_meta['failed_count'] += 1
+    ##########
+    # checks #
+    ##########
 
-                check_meta['total_count'] += 1
+    # coverage
+    cursor.execute(
+        """
+        select sub1.path, sub1.check->>'name' as name, (sub1.check->>'result')::boolean as result, count(*) as count
+        from (
+            select sub2.path,
+                    jsonb_array_elements(sub2.path_checks->'coverage'->'check_results') as check
+            from (
+                select jsonb_array_elements(d.value) as path_checks, d.key as path
+                from field_level_check, jsonb_each(result->'checks') d
+                where dataset_id = '{dataset_id}'
+            ) as sub2
+            where sub2.path_checks->'coverage'->>'check_results' is not null
+        ) as sub1
+        group by sub1.path, sub1.check->>'name', sub1.check->>'result';
+        """.format(dataset_id=dataset_id)
+    )
+    for row in cursor.fetchall():
+        if row['result'] is True:
+            report[row['path']]['coverage']['checks'][row['name']]['passed_count'] = row['count']
+        elif row['result'] is False:
+            report[row['path']]['coverage']['checks'][row['name']]['failed_count'] = row['count']
+        else:
+            raise ValueError(bool)
 
-            check_meta['passed_examples'] = check_passed_examples_sampler.retrieve_samples()
-            check_meta['failed_examples'] = check_failed_examples_sampler.retrieve_samples()
-            report[path]['quality']['checks'].append(check_meta)
+        report[row['path']]['coverage']['checks'][row['name']]['total_count'] += row['count']
 
-        report[path]['quality']['passed_examples'] = quality_passed_examples_sampler.retrieve_samples()
-        report[path]['quality']['failed_examples'] = quality_failed_examples_sampler.retrieve_samples()
+    # quality
+    cursor.execute(
+        """
+        select sub1.path, sub1.check->>'name' as name, (sub1.check->>'result')::boolean as result, count(*) as count
+        from (
+            select sub2.path,
+                    jsonb_array_elements(sub2.path_checks->'quality'->'check_results') as check
+            from (
+                select jsonb_array_elements(d.value) as path_checks, d.key as path
+                from field_level_check, jsonb_each(result->'checks') d
+                where dataset_id = '{dataset_id}'
+            ) as sub2
+            where sub2.path_checks->'quality'->>'check_results' is not null
+        ) as sub1
+        group by sub1.path, sub1.check->>'name', sub1.check->>'result';
+        """.format(dataset_id=dataset_id)
+    )
+    for row in cursor.fetchall():
+        if row['result'] is True:
+            report[row['path']]['quality']['checks'][row['name']]['passed_count'] = row['count']
+        elif row['result'] is False:
+            report[row['path']]['quality']['checks'][row['name']]['failed_count'] = row['count']
+        else:
+            raise ValueError(bool)
+
+        report[row['path']]['quality']['checks'][row['name']]['total_count'] += row['count']
 
     ######################
     # storing the report #
