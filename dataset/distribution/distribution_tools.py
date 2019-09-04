@@ -138,5 +138,4 @@ def get_result(scope, important_values=[]):
     result["meta"] = {
         "shares": scope
     }
-    print(passed)
     return result
