@@ -5,7 +5,7 @@ from dataset.distribution import tender_status
 
 tender_status = tender_status.TenderStatusPathClass()
 
-possible_status = [
+possible_enums = [
     "b", "c", "d", "e", "f", "planning", "active"
 ]
 
@@ -26,9 +26,6 @@ item_test_undefined2 = {
 
 
 def test_undefined():
-    tender_status.important_enums = [
-        "planning", "active"
-    ]
     scope = {}
     result = tender_status.get_result(scope)
     assert result['result'] is None
@@ -125,9 +122,6 @@ items_test_failed = [
 
 
 def test_failed():
-    tender_status.important_enums = [
-        "planning", "active"
-    ]
 
     scope = {}
 
@@ -156,19 +150,15 @@ items_test_passed_big_load = [
     {
         'ocid': str(i),
         'tender': {
-            'status': random.choice(possible_status)
+            'status': random.choice(possible_enums)
         }
     }
-    for i in range(100000)
+    for i in range(1000)
 ]
 
 
 # following test will pass with high probability
 def test_passed_big_load():
-    tender_status.important_enums = [
-        "planning", "active"
-    ]
-
     scope = {}
 
     id = 0
@@ -179,11 +169,11 @@ def test_passed_big_load():
     result = tender_status.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 100
-    assert len(result['meta']['shares']) == len(possible_status)
+    assert len(result['meta']['shares']) == len(possible_enums)
     assert sum(
         [len(value['examples'])
          for _, value in result['meta']['shares'].items()]
-    ) == tender_status.samples_number * len(possible_status)
+    ) == tender_status.samples_number * len(possible_enums)
     assert all(
         [0 < value['share'] < 1 for _, value in result['meta']['shares'].items()]
     )
