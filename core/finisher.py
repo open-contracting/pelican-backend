@@ -19,6 +19,7 @@ from core.state import get_total_items_count
 from core.state import get_dataset
 from time_variance import processor
 from tools.bootstrap import bootstrap
+import contracting_process.field_level.report as field_level_report
 
 consume_routing_key = "_time_variance_checker"
 
@@ -38,6 +39,10 @@ def callback(channel, method, properties, body):
         # read and parse message
         input_message = json.loads(body.decode('utf8'))
         dataset_id = input_message["dataset_id"]
+
+        # creating reports
+        field_level_report.create(dataset_id)
+        logger.info("Field level checks report for dataset_id {} saved".format(dataset_id))
 
         # mark dataset as beeing finished
         set_dataset_state(dataset_id, state.OK, phase.CHECKED)
