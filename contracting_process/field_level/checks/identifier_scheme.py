@@ -1,18 +1,23 @@
-from tools.getter import get_values
+
 import csv
+
+from tools.checks import get_empty_result_field
+from tools.getter import get_values
+
 """
 author: Iaroslav Kolodka
 
 """
 
 """
-A global list containing 'contracting_process/field_level/identifier_scheme_codelist.csv' .
+A global list containing 'contracting_process/field_level/checks/identifier_scheme_codelist.csv' .
 
 """
 global_identifier_scheme_codelist = []
+name = "identifier_scheme"
 
 
-def identifier_scheme_codelist_checker(item, key: str) -> dict:
+def calculate(item, key: str) -> dict:
     """ The fumction checks 'schema' in '$ref: "#/definitions/Identifier"' object from 'OCDS schema'.
 
     The value must be from 'org-id.guide'. The codelist is placed under the name: 'identifier_scheme_codelist.csv'
@@ -36,6 +41,8 @@ def identifier_scheme_codelist_checker(item, key: str) -> dict:
         }
 
     """
+    result = get_empty_result_field(name)
+
     scheme_type = None
     identifier = item[key]
     if identifier and "scheme" in identifier:
@@ -44,14 +51,13 @@ def identifier_scheme_codelist_checker(item, key: str) -> dict:
                 if not global_identifier_scheme_codelist:
                     initialise_global_identifier_scheme_codelist()
                 if scheme_type in global_identifier_scheme_codelist:
-                    return {
-                        "result": True
-                    }
-    return{
-        "result": False,
-        "value": scheme_type,
-        "reason": "Value is not from org-id.guide"
-    }
+                    result["result"] = True
+                    return result
+
+    result["result"] = False
+    result["value"] = scheme_type
+    result["reason"] = "Value is not from org-id.guide"
+    return result
 
 
 def initialise_global_identifier_scheme_codelist():
@@ -68,7 +74,7 @@ def initialise_global_identifier_scheme_codelist():
     None
 
     """
-    path = "contracting_process/field_level/identifier_scheme_codelist.csv"
+    path = "contracting_process/field_level/checks/identifier_scheme_codelist.csv"
 
     first = 0  # means 'first colun'
     file = open(path, "r")

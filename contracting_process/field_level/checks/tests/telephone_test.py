@@ -1,4 +1,6 @@
-from contracting_process.field_level.telephone import telephone_number_format
+
+from contracting_process.field_level.checks.telephone import calculate
+from tools.helpers import is_subset_dict
 
 
 """
@@ -33,8 +35,11 @@ def test_with_correct_number():
     expected_result = {
         "result": True
     }
-    result1 = telephone_number_format(item_with_valid_number1, "telephone")
-    assert result1 == expected_result
+    result1 = calculate(item_with_valid_number1, "telephone")
+    assert is_subset_dict(
+        expected_result,
+        result1
+    )
 
 
 def test_with_incorrect_number():
@@ -53,9 +58,18 @@ def test_with_incorrect_number():
         "value": "+999777555333",  # the region shuld not exist
         "reason": "Telephone number is formatted incorrectly."
     }
-    result1 = telephone_number_format(item_with_invalid_number1, "telephone")
-    result2 = telephone_number_format(item_with_invalid_number2, "telephone")
-    result3 = telephone_number_format(item_with_invalid_number3, "telephone")
-    assert result1 == expected_result1
-    assert result2 == expected_result2
-    assert result3 == expected_result3
+    result1 = calculate(item_with_invalid_number1, "telephone")
+    result2 = calculate(item_with_invalid_number2, "telephone")
+    result3 = calculate(item_with_invalid_number3, "telephone")
+    assert is_subset_dict(
+        expected_result1,
+        result1
+    )
+    assert is_subset_dict(
+        expected_result2,
+        result2
+    )
+    assert is_subset_dict(
+        expected_result3,
+        result3
+    )

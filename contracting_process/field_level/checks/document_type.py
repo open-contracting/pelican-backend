@@ -1,22 +1,27 @@
 
-def document_type_coherent(data, key, section):
-    value = data[key]
+from tools.checks import get_empty_result_field
 
+name = 'document_type'
+
+
+def calculate_section(data, key, section):
+    result = get_empty_result_field(name)
+
+    value = data[key]
     if value not in code_to_section_mapping:
-        return {
-            'result': False,
-            'value': value,
-            'reason': 'unknown documentType code'
-        }
+        result['result'] = False
+        result['value'] = value
+        result['reason'] = 'unknown documentType code'
+        return result
 
     if section in code_to_section_mapping[value]:
-        return {'result': True}
-    else:
-        return {
-            'result': False,
-            'value': value,
-            'reason': 'unsupported combination code-section for documentType'
-        }
+        result['result'] = True
+        return result
+
+    result['result'] = False
+    result['value'] = value
+    result['reason'] = 'unsupported combination code-section for documentType'
+    return result
 
 code_to_section_mapping = {
     'contractGuarantees': ['tender', 'contract'],

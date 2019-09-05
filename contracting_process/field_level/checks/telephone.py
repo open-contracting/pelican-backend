@@ -1,13 +1,16 @@
-from tools.getter import get_values
+
 import phonenumbers
+from tools.getter import get_values
+from tools.checks import get_empty_result_field
 
 """
 author: Iaroslav Kolodka
 
 """
+name = "telephone"
 
 
-def telephone_number_format(item, key):
+def calculate(item, key):
     """
     The method is designed to check the telephone number for the correct formatting
 
@@ -19,6 +22,8 @@ def telephone_number_format(item, key):
             path to tуlephone number
 
     """
+    result = get_empty_result_field(name)
+
     number = item[key]
     value = None
     if number:
@@ -27,13 +32,13 @@ def telephone_number_format(item, key):
             parsed_number = phonenumbers.parse(value, None)
             is_valid = phonenumbers.is_possible_number(parsed_number)
             if is_valid:
-                return {
-                    "result": True
-                }
+                result["result"] = True
+                return result
+
         except phonenumbers.NumberParseException:
             pass
-    return{
-        "result": False,
-        "value": value,
-        "reason": "Telephone number is formatted incorrectly."
-    }
+
+    result["result"] = False
+    result["value"] = value
+    result["reason"] = "Telephone number is formatted incorrectly."
+    return result

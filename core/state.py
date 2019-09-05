@@ -30,18 +30,18 @@ def set_dataset_state(dataset_id, state, phase, size=None):
     if size:
         cursor.execute("""
                        INSERT INTO progress_monitor_dataset
-                       (dataset_id, state, phase, size, created, modified)
+                       (dataset_id, state, phase, size)
                        VALUES
-                       (%s, %s, %s, %s, now(), now())
+                       (%s, %s, %s, %s)
                        ON CONFLICT ON CONSTRAINT unique_dataset_id
                        DO UPDATE SET state = %s, phase = %s, size = %s, modified = now();
                        """, (dataset_id, state, phase, size, state, phase, size))
     else:
         cursor.execute("""
                        INSERT INTO progress_monitor_dataset
-                       (dataset_id, state, phase, size, created, modified)
+                       (dataset_id, state, phase, size)
                        VALUES
-                       (%s, %s, %s, %s, now(), now())
+                       (%s, %s, %s, %s)
                        ON CONFLICT ON CONSTRAINT unique_dataset_id
                        DO UPDATE SET state = %s, phase = %s, modified = now();
                        """, (dataset_id, state, phase, size, state, phase))
@@ -58,9 +58,9 @@ def set_item_state(dataset_id, item_id, state):
     cursor = get_cursor()
     cursor.execute("""
                        INSERT INTO progress_monitor_item
-                       (dataset_id, item_id, state, created, modified)
+                       (dataset_id, item_id, state)
                        VALUES
-                       (%s, %s, %s, now(), now())
+                       (%s, %s, %s)
                        ON CONFLICT ON CONSTRAINT unique_dataset_id_item_id
                        DO UPDATE SET state = %s, modified = now();
                        """, (dataset_id, item_id, state, state))
