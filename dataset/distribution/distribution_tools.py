@@ -46,9 +46,7 @@ def add_item(scope, item, item_id, path, important_values=[], samples_num=20):
     if not ocids or ocids[0] is None:
         return scope
     ocid = ocids[0]
-    values = [
-        v for v in get_values(item, path, value_only=True)
-    ]
+    values = get_values(item, path, value_only=True)
 
     if not values:
         return scope
