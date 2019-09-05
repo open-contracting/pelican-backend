@@ -7,8 +7,6 @@ from tools.db import get_cursor
 from tools.helpers import ReservoirSampler
 from contracting_process.field_level.definitions import coverage_checks, definitions
 
-check_examples_cap = 10
-
 
 def create(dataset_id):
     cursor = get_cursor()
@@ -17,6 +15,7 @@ def create(dataset_id):
 
     for path, quality_checks in definitions.items():
         report[path] = {
+            'examples_filled': False,
             'coverage': {
                 'checks': {},
                 'passed_count': 0,
