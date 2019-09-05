@@ -8,14 +8,14 @@ from tools.checks import get_empty_result_field
 """
 
 """
-    The list contains list of codes from: 'contracting_process/field_level/format_codelist.csv'.
+    The list contains list of codes from: 'contracting_process/field_level/checks/format_codelist.csv'.
 """
 
 global_format_codelist = []
 name = "document_format_codelist"
 
 
-def calculate(data, key):
+def calculate(data, key: str) -> dict:
     """ The check function for document format.
 
         The function uses format_list.csv whisch is stored in 'global_format_codelist'
@@ -36,25 +36,42 @@ def calculate(data, key):
                     "value": file_format,
                     "reason": "wrong file format"
                 }
+            -   {
+                    "result": False,
+                    "value": file_format,
+                    "reason": "wrong file format"
+                }
 
     """
     result = get_empty_result_field(name)
 
-    file_format = data[key]
-    if file_format and type(file_format) is str:
-        if not global_format_codelist:
-            initialise_global_format_codelist()
-        if file_format in global_format_codelist:
-            result["result"] = True
+    documents = data[key]
+    file_format = None
+    for document in documents:
+        if "format" in document:
+            file_format = document["format"]
+            if file_format and type(file_format) is str:
+
+                if not global_format_codelist:
+                    initialise_global_format_codelist()
+
+                if file_format in global_format_codelist:
+                    continue
+                if file_format == "offline/print":
+                    continue
+
+            result["result"] = False
+            result["value"] = file_format
+            result["reason"] = "wrong file format"
             return result
-            
-        if file_format == "offline/print":
-            result["result"] = True
+
+        else:
+            result["result"] = None
+            result["value"] = None
+            result["reason"] = "Document has no format"
             return result
-            
-    result["result"] = False
-    result["value"] = file_format
-    result["reason"] = "wrong file format"
+
+    result["result"] = True
     return result
 
 
@@ -65,11 +82,11 @@ def initialise_global_format_codelist():
 
         Parameters
         ----------
-            None
+        None
 
         Returns
         ----------
-            None
+        None
 
     """
     path = 'contracting_process/field_level/checks/format_codelist.csv'

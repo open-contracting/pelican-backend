@@ -2,36 +2,49 @@
 from contracting_process.field_level.checks.document_format_codelist import calculate
 from tools.helpers import is_subset_dict
 
-""" The file contains tests for contracting_process.field_level.document_format_codelist.document_format_codelist .
+"""
+author: Iaroslav Kolodka
 
-    author: Iaroslav Kolodka
+The file contains tests for contracting_process.field_level.document_format_codelist.document_format_codelist .
 
-    'test_ocid_prefix_ok' tests valid formas and exception (offline/print)
-    'test_ocid_prefix_failed' function checks cases with empty value and cases with incorrect format
+'test_ocid_prefix_ok' tests valid formas and exception (offline/print)
+'test_ocid_prefix_failed' function checks cases with empty value and cases with incorrect format
 
 """
 
 
 def test_ocid_prefix_ok():
     item1 = {
-        "format": "application/AML"
+        "documents": [
+            {
+                "format": "application/AML"
+            }
+        ]
     }
     item2 = {
-
-        "format": "offline/print"
+        "documents": [
+            {
+                "format": "offline/print"
+            }
+        ]
     }
 
     assert is_subset_dict(
         {"result": True},
-        calculate(item1, "format")
+        calculate(item1, "documents")
     )
     assert is_subset_dict(
         {"result": True},
-        calculate(item2, "format")
+        calculate(item2, "documents")
     )
 
 
 def test_ocid_prefix_failed():
+    not_found_result = {
+        "result": None,
+        "value": None,
+        "reason": "Document has no format",
+    }
     fail_result1 = {
         "result": False,
         "value": None,
@@ -44,10 +57,14 @@ def test_ocid_prefix_failed():
     }
 
     assert is_subset_dict(
+        not_found_result,
+        calculate({"documents": [{}]}, "documents")
+    )
+    assert is_subset_dict(
         fail_result1,
-        calculate({"format": None}, "format")
+        calculate({"documents": [{"format": None}]}, "documents")
     )
     assert is_subset_dict(
         fail_result2,
-        calculate({"format": "lalala"}, "format")
+        calculate({"documents": [{"format": "lalala"}]}, "documents")
     )
