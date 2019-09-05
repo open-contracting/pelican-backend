@@ -94,8 +94,7 @@ def get_values(item, str_path, value_only=False):
                 if values:
                     for list_item in values:
                         if value_only:
-                            if list_item is not None:
-                                result.append(list_item)
+                            result.append(list_item)
                         else:
                             if list_item and "path" in list_item:
                                 list_item["path"] = "{}[{}].{}".format(key, index_counter, list_item["path"])
@@ -133,8 +132,7 @@ def get_values(item, str_path, value_only=False):
             if values:
                 for list_item in values:
                     if value_only:
-                        if list_item is not None:
-                            result.append(list_item)
+                        result.append(list_item)
                     else:
                         if list_item and "path" in list_item:
                             list_item["path"] = "{}[{}].{}".format(field, index, list_item["path"])

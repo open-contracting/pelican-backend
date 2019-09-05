@@ -20,6 +20,11 @@ item = {
                 "inner_list": [{"aaa": "ddd"}, {"aaa": "eee"}]
             },
         ],
+        "milestones": [
+            {
+                "status": None
+            }
+        ]
     },
     "contracts": [
         {
@@ -234,3 +239,32 @@ def test_indexing():
         item["contracts"][0]["documents"][0],
         item["contracts"][0]["documents"][1]
     ]
+
+
+def test_none_value():
+    result = get_values(item, "tender.milestones.status")
+    assert type(result) is list
+    assert len(result) == 1
+    assert result == [
+        {
+            "path": "tender.milestones[0].status",
+            "value": item["tender"]["milestones"][0]["status"]
+        }
+    ]
+
+    result = get_values(item, "tender.milestones.status", value_only=True)
+    assert type(result) is list
+    assert len(result) == 1
+    assert result == [item["tender"]["milestones"][0]["status"]]
+
+
+
+
+
+
+
+
+
+
+
+
