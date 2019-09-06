@@ -39,46 +39,62 @@ def callback(channel, method, properties, body):
 
         # optimization when resending
         if dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:
-            logger.info("Checks has been already calculated for this dataset.")
+            logger.info("Checks have been already calculated for this dataset.")
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
         elif dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.DATASET:
             # lets do nothing, calculations is already in progress
-            logger.info("Probably other worker already started with the job. Doing nothing.")
+            logger.info("Other worker probably already started with the job. Doing nothing.")
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+            return
+
+        processed_count = get_processed_items_count(dataset_id)
+        total_count = get_total_items_count(dataset_id)
+        if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.CONTRACTING_PROCESS:
+            # contracting process is not done yet
+            logger.debug("There are {} remaining messages to be processed for dataset_id {}".format(
+                total_count - processed_count, dataset_id))
+
+            logger.info("Not all messages have been processed by contracting process.")
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
 
         # check whether are all mitems alredy processed
-        processed_count = get_processed_items_count(dataset_id)
-        total_count = get_total_items_count(dataset_id)
-
-        if not processed_count or not total_count or (processed_count < total_count):
-            # we have to wait for a while
+        elif processed_count < total_count:
+            # contracting process is not done yet
             logger.debug("There are {} remaining messages to be processed for dataset_id {}".format(
                 total_count - processed_count, dataset_id))
+
+            logger.info("Not all messages have been processed by contracting process.")
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+            return
+
+        if dataset["state"] == state.OK and dataset["phase"] == phase.CONTRACTING_PROCESS and processed_count == total_count:
+            # set state to processing
+            logger.info("All messages for dataset_id {} processed, starting to calculate dataset level checks".format(
+                dataset_id))
+            set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
+
+            commit()
+
+            # calculate all the stuff
+            processor.do_work(dataset_id, logger)
+
+            # mark dataset as done
+            set_dataset_state(dataset_id, state.OK, phase.DATASET)
+
+            commit()
+
+            logger.info("Dataset level checks calculated for dataset_id {}.".format(dataset_id))
+
+            # send message for a next phase
+            message = """{{"dataset_id":"{}"}}""".format(dataset_id)
+            publish(message, get_param("exchange_name") + routing_key)
+
         else:
-            # check, if there is not another worker already calculating checks
-            if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.CONTRACTING_PROCESS:
-                # set state to processing
-                logger.info("All messages for dataset_id {} processed, starting to calculate dataset level checks".format(
-                    dataset_id))
-                set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
-
-                commit()
-
-                # calculate all the stuff
-                processor.do_work(dataset_id, logger)
-
-                # mark dataset as done
-                set_dataset_state(dataset_id, state.OK, phase.DATASET)
-
-                commit()
-
-                logger.info("Dataset level checks calculated for dataset_id {}.".format(dataset_id))
-
-                # send message for a next phase
-                message = """{{"dataset_id":"{}"}}""".format(dataset_id)
-                publish(message, get_param("exchange_name") + routing_key)
+            logger.exception("Dataset processing for dataset_id {} is in weird state. \
+                Dataset state {}. Dataset phase {}.".format(dataset_id, dataset["state"], dataset["phase"]))
+            sys.exit()
 
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:

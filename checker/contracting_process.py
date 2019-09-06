@@ -34,30 +34,29 @@ def callback(channel, method, properties, body):
         dataset_id = input_message["dataset_id"]
 
         if "command" not in input_message:
-            item_id = input_message["item_id"]
+            item_ids = input_message["item_ids"]
 
-            logger.info("Processing message for dataset_id {} and item {}".format(dataset_id, item_id))
+            logger.info("Processing message for dataset_id {} and items {}".format(dataset_id, item_ids))
 
             # get item from storage
             cursor.execute("""
-                SELECT data
+                SELECT id, data
                 FROM data_item
-                WHERE id = %s;
-                """, (int(item_id),))
+                WHERE id IN %s;
+                """, (tuple(item_ids),))
 
-            item_data = cursor.fetchone()[0]
+            for row in cursor.fetchall():
+                # perform actual action with the item
+                processor.do_work(row[1], row[0], dataset_id)
 
-            # perform actual action with the item
-            processor.do_work(item_data, item_id, dataset_id)
-
-            # set state of processed item
-            set_item_state(dataset_id, item_id, state.OK)
+                # set state of processed item
+                set_item_state(dataset_id, row[0], state.OK)
 
             commit()
 
             # send message to next phase
-            message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(item_id, dataset_id)
-            publish(message, get_param("exchange_name") + routing_key)
+            message = {"dataset_id": dataset_id}
+            publish(json.dumps(message), get_param("exchange_name") + routing_key)
         else:
             resend(dataset_id)
         # acknowledge message processing
@@ -72,21 +71,12 @@ def resend(dataset_id):
     logger.info("Resending messages for dataset_id {} started".format(dataset_id))
 
     # mark dataset as done
-    set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS)
+    set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
 
     commit()
 
-    cursor.execute("""
-            SELECT id FROM data_item
-            WHERE dataset_id = %s
-        """, (dataset_id,))
-
-    ids = cursor.fetchall()
-
-    for entry in ids:
-        message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(entry[0], dataset_id)
-
-        publish(message, get_param("exchange_name") + routing_key)
+    message = {"dataset_id": dataset_id}
+    publish(json.dumps(message), get_param("exchange_name") + routing_key)
 
     logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
 

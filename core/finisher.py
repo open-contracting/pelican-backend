@@ -41,8 +41,8 @@ def callback(channel, method, properties, body):
         dataset_id = input_message["dataset_id"]
 
         # creating reports
+        logger.info("Field level checks report for dataset_id {} is being calculated".format(dataset_id))
         field_level_report.create(dataset_id)
-        logger.info("Field level checks report for dataset_id {} saved".format(dataset_id))
 
         # mark dataset as beeing finished
         set_dataset_state(dataset_id, state.OK, phase.CHECKED)

@@ -10,6 +10,13 @@ from contracting_process.field_level.definitions import coverage_checks, definit
 
 def create(dataset_id):
     cursor = get_cursor()
+    cursor.execute(
+        """
+        delete
+        from report
+        where dataset_id = '{}' and type = '{}';
+        """.format(dataset_id, 'field_level_check')
+    )
 
     report = {}
 

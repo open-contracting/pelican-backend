@@ -6,7 +6,7 @@ from contracting_process.field_level.definitions import \
     definitions as field_level_definitions, coverage_checks
 from contracting_process.resource_level.definitions import \
     definitions as resource_level_definitions
-from tools.db import commit, get_cursor
+from tools.db import get_cursor
 from tools.getter import get_values
 from tools.logging_helper import get_logger
 
@@ -15,8 +15,6 @@ def do_work(data, item_id, dataset_id):
     field_level_checks(data, item_id, dataset_id)
 
     resource_level_checks(data, item_id, dataset_id)
-
-    commit()
 
     return None
 

@@ -85,9 +85,16 @@ def callback(channel, method, properties, body):
             meta_data = meta_data_aggregator.get_kingfisher_meta_data(collection_id)
             meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
+            # batch initialization
+            max_batch_size = get_param("extractor_max_batch_size")
+            batch_size = 0
+            batch = []
+
             i = 0
             items_inserted = 0
-            while i * page_size < len(result):
+            items_count = len(result)
+            items_count = 5000
+            while i * page_size < items_count:
                 ids = []
                 for item in result[i * page_size:(i + 1) * page_size]:
                     ids.append(item[0])
@@ -118,10 +125,22 @@ def callback(channel, method, properties, body):
 
                     set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=items_inserted)
 
+                    if items_inserted == items_count:
+                        set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
+
                     commit()
 
-                    message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(inserted_id, dataset_id)
-                    publish(message, get_param("exchange_name") + routing_key)
+                    batch_size += 1
+                    batch.append(inserted_id)
+                    if batch_size >= max_batch_size or items_inserted == items_count:
+                        message = {
+                            "item_ids": batch,
+                            "dataset_id": dataset_id
+                        }
+                        publish(json.dumps(message), get_param("exchange_name") + routing_key)
+
+                        batch_size = 0
+                        batch.clear()
 
                 logger.info("Inserted page {} from {}".format(i, len(result)))
 
@@ -131,6 +150,12 @@ def callback(channel, method, properties, body):
             resend(dataset_id)
 
         channel.basic_ack(delivery_tag=method.delivery_tag)
+
+    except KeyboardInterrupt:
+        set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
+        commit()
+        sys.exit()
+
     except Exception:
         logger.exception(
             "Something went wrong when processing {}".format(body))
@@ -146,17 +171,34 @@ def resend(dataset_id):
 
     ids = cursor.fetchall()
 
-    items_inserted = 0
-    for entry in ids:
-        message = """{{"item_id": "{}", "dataset_id":"{}"}}""".format(entry[0], dataset_id)
+    set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=len(ids))
 
+    # batch initialization
+    max_batch_size = get_param("extractor_max_batch_size")
+    batch_size = 0
+    batch = []
+
+    items_inserted = 0
+    items_count = len(ids)
+    for entry in ids:
         set_item_state(dataset_id, entry[0], state.IN_PROGRESS)
         items_inserted = items_inserted + 1
-        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=len(ids))
+        if items_inserted == items_count:
+            set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
 
         commit()
 
-        publish(message, get_param("exchange_name") + routing_key)
+        batch_size += 1
+        batch.append(entry[0])
+        if batch_size >= max_batch_size or items_inserted == items_count:
+            message = {
+                "item_ids": batch,
+                "dataset_id": dataset_id
+            }
+            publish(json.dumps(message), get_param("exchange_name") + routing_key)
+
+            batch_size = 0
+            batch.clear()
 
     logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
 
