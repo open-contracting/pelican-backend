@@ -93,7 +93,6 @@ def callback(channel, method, properties, body):
             i = 0
             items_inserted = 0
             items_count = len(result)
-            items_count = 5000
             while i * page_size < items_count:
                 ids = []
                 for item in result[i * page_size:(i + 1) * page_size]:
