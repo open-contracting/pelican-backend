@@ -26,7 +26,7 @@ CREATE TABLE report (
     created timestamp without time zone default current_timestamp,
     modified timestamp without time zone default current_timestamp
 );
-CREATE UNIQUE INDEX report_dataset_id_idx ON report (dataset_id);
+CREATE INDEX report_dataset_id_idx ON report (dataset_id);
 CREATE INDEX type_report_idx ON report (type);
 CREATE INDEX report_data_idx ON report USING gin (data jsonb_path_ops);
 CREATE INDEX report_modified_idx ON report (modified);
