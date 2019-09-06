@@ -44,7 +44,7 @@ definitions = {
     "distribution.contracts_value_repetition": value_repetition.ModuleType("contracts"),
     "distribution.tender_procurement_method": tender_procurement_method.TenderProcurementMethodPathClass(),
     "distribution.tender_status": tender_status.TenderStatusPathClass(),
-    "distribution.tender_award_criteria": tender_award_criteria.TenderAwardCriteriaPathClass()
+    "distribution.tender_award_criteria": tender_award_criteria.TenderAwardCriteriaPathClass(),
     "distribution.tender_submission_method": tender_submission_method.TenderSubmissionMethodPathClass(),
     "distribution.awards_status": awards_status.AwardsStatusPathClass(),
     "distribution.contracts_status": contracts_status.ContractsStatusPathClass(),
