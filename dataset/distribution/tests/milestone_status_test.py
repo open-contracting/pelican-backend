@@ -62,7 +62,7 @@ def test_undefined():
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
-        "reason": "no data items were processed"
+        "reason": "there is not a single tender with valid enumeration item"
     }
 
 
