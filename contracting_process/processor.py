@@ -1,6 +1,7 @@
 import sys
 import time
 import simplejson as json
+from psycopg2.extras import execute_values
 
 from contracting_process.field_level.definitions import \
     definitions as field_level_definitions, coverage_checks
@@ -9,12 +10,23 @@ from contracting_process.resource_level.definitions import \
 from tools.db import get_cursor
 from tools.getter import get_values
 from tools.logging_helper import get_logger
+from core.state import set_item_state, state
 
 
-def do_work(data, item_id, dataset_id):
-    field_level_checks(data, item_id, dataset_id)
+# item: (data, item_id, dataset_id)
+def do_work(items):
+    field_level_check_results = []
+    resource_level_check_results = []
 
-    resource_level_checks(data, item_id, dataset_id)
+    for item in items:
+        field_level_check_results.append(field_level_checks(*item))
+
+        resource_level_check_results.append(resource_level_checks(*item))
+
+        set_item_state(item[2], item[1], state.OK)
+
+    save_field_level_checks(field_level_check_results)
+    save_resource_level_check(resource_level_check_results)
 
     return None
 
@@ -34,7 +46,8 @@ def resource_level_checks(data, item_id, dataset_id):
     for check_name, check in resource_level_definitions.items():
         result["checks"][check_name] = check(data)
 
-    save_resource_level_check(result, item_id, dataset_id)
+    # return result
+    return (json.dumps(result), item_id, dataset_id)
 
 
 def field_level_checks(data, item_id, dataset_id):
@@ -141,29 +154,33 @@ def field_level_checks(data, item_id, dataset_id):
 
                     result["checks"][path].append(field_result)
 
-    # save result
-    save_field_level_check(result, item_id, dataset_id)
+    # return result
+    return (json.dumps(result), item_id, dataset_id)
 
 
-def save_field_level_check(result, item_id, dataset_id):
+# result_item: (result, item_id, dataset_id)
+def save_field_level_checks(result_items):
     cursor = get_cursor()
 
-    cursor.execute("""
+    sql = """
         INSERT INTO field_level_check
         (result, data_item_id, dataset_id)
         VALUES
-        (%s, %s, %s);
-        """, (json.dumps(result), item_id, dataset_id)
-    )
+        %s;
+    """
+
+    execute_values(cursor, sql, result_items)
 
 
-def save_resource_level_check(result, item_id, dataset_id):
+# result_item: (result, item_id, dataset_id)
+def save_resource_level_check(result_items):
     cursor = get_cursor()
 
-    cursor.execute("""
+    sql = """
         INSERT INTO resource_level_check
         (result, data_item_id, dataset_id)
         VALUES
-        (%s, %s, %s);
-        """, (json.dumps(result), item_id, dataset_id)
-    )
+        %s;
+    """
+
+    execute_values(cursor, sql, result_items)
