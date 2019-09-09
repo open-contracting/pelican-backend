@@ -1,9 +1,16 @@
 
 import random
 
-from dataset.distribution import milestone_type
+from dataset.distribution import code_distribution
 
-milestone_type = milestone_type.MilestoneTypePathClass()
+code_distribution = code_distribution.CodeDistribution(
+    [
+        "planning.milestones.type",
+        "tender.milestones.type",
+        "contracts.milestones.type",
+        "contracts.implementation.milestones.type"
+    ]
+)
 
 possible_enums = [
     "b", "c", "d", "e", "f"
@@ -31,7 +38,7 @@ item_test_undefined2 = {
 
 def test_undefined():
     scope = {}
-    result = milestone_type.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -39,8 +46,8 @@ def test_undefined():
     }
 
     scope = {}
-    scope = milestone_type.add_item(scope, {"ocid": "0"}, 0)
-    result = milestone_type.get_result(scope)
+    scope = code_distribution.add_item(scope, {"ocid": "0"}, 0)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -48,8 +55,8 @@ def test_undefined():
     }
 
     scope = {}
-    scope = milestone_type.add_item(scope, item_test_undefined1, 0)
-    result = milestone_type.get_result(scope)
+    scope = code_distribution.add_item(scope, item_test_undefined1, 0)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -57,8 +64,8 @@ def test_undefined():
     }
 
     scope = {}
-    scope = milestone_type.add_item(scope, item_test_undefined2, 0)
-    result = milestone_type.get_result(scope)
+    scope = code_distribution.add_item(scope, item_test_undefined2, 0)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -90,13 +97,13 @@ def test_passed():
 
     id = 0
     for item in items_test_passed:
-        scope = milestone_type.add_item(scope, item, id)
+        scope = code_distribution.add_item(scope, item, id)
         id += 1
 
-    result = milestone_type.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
-    assert len(result["meta"]["shares"]) == len(milestone_type.important_enums) + 1
+    assert len(result["meta"]["shares"]) == len(code_distribution.important_enums) + 1
     assert result["meta"]["shares"]["a"] == {
         "share": 1.0,
         "count": 1,
@@ -115,7 +122,7 @@ items_test_passed_big_load = [
             ]
         }
     }
-    for i in range(1000)
+    for i in range(10000)
 ]
 
 
@@ -125,17 +132,17 @@ def test_passed_big_load():
 
     id = 0
     for item in items_test_passed_big_load:
-        scope = milestone_type.add_item(scope, item, id)
+        scope = code_distribution.add_item(scope, item, id)
         id += 1
 
-    result = milestone_type.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
     assert len(result["meta"]["shares"]) == len(possible_enums)
     assert sum(
         [len(value["examples"])
          for _, value in result["meta"]["shares"].items()]
-    ) == milestone_type.samples_number * len(possible_enums)
+    ) == code_distribution.samples_number * len(possible_enums)
     assert all(
         [0 < value["share"] < 1 for _, value in result["meta"]["shares"].items()]
     )

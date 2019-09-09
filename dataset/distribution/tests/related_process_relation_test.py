@@ -1,8 +1,12 @@
 import random
 
-from dataset.distribution import related_process_relation
+from dataset.distribution import code_distribution
 
-related_process_relation = related_process_relation.RelatedProcessRelationPathClass()
+code_distribution = code_distribution.CodeDistribution(
+    [
+        "relatedProcess.relationship"
+    ]
+)
 
 possible_enums = [
     "b", "c", "d", "e", "f"
@@ -26,7 +30,7 @@ item_test_undefined2 = {
 
 def test_undefined():
     scope = {}
-    result = related_process_relation.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -34,8 +38,8 @@ def test_undefined():
     }
 
     scope = {}
-    scope = related_process_relation.add_item(scope, {"ocid": "0"}, 0)
-    result = related_process_relation.get_result(scope)
+    scope = code_distribution.add_item(scope, {"ocid": "0"}, 0)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -43,8 +47,8 @@ def test_undefined():
     }
 
     scope = {}
-    scope = related_process_relation.add_item(scope, item_test_undefined1, 0)
-    result = related_process_relation.get_result(scope)
+    scope = code_distribution.add_item(scope, item_test_undefined1, 0)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -52,8 +56,8 @@ def test_undefined():
     }
 
     scope = {}
-    scope = related_process_relation.add_item(scope, item_test_undefined2, 0)
-    result = related_process_relation.get_result(scope)
+    scope = code_distribution.add_item(scope, item_test_undefined2, 0)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -82,10 +86,10 @@ def test_passed():
 
     id = 0
     for item in items_test_passed:
-        scope = related_process_relation.add_item(scope, item, id)
+        scope = code_distribution.add_item(scope, item, id)
         id += 1
 
-    result = related_process_relation.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
     assert len(result["meta"]["shares"]) == len(items_test_passed)
@@ -108,7 +112,7 @@ items_test_passed_big_load = [
             "relationship": random.choice(possible_enums)
         }
     }
-    for i in range(1000)
+    for i in range(10000)
 ]
 
 
@@ -118,17 +122,17 @@ def test_passed_big_load():
 
     id = 0
     for item in items_test_passed_big_load:
-        scope = related_process_relation.add_item(scope, item, id)
+        scope = code_distribution.add_item(scope, item, id)
         id += 1
 
-    result = related_process_relation.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
     assert len(result["meta"]["shares"]) == len(possible_enums)
     assert sum(
         [len(value["examples"])
          for _, value in result["meta"]["shares"].items()]
-    ) == related_process_relation.samples_number * len(possible_enums)
+    ) == code_distribution.samples_number * len(possible_enums)
     assert all(
         [0 < value["share"] < 1 for _, value in result["meta"]["shares"].items()]
     )

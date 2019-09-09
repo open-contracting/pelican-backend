@@ -1,9 +1,17 @@
 
 import random
 
-from dataset.distribution import contracts_status
+from dataset.distribution import code_distribution
 
-contracts_status = contracts_status.ContractsStatusPathClass()
+code_distribution = code_distribution.CodeDistribution(
+    [
+        "contracts.status"
+    ],
+    [
+        "active",
+        "terminated"
+    ]
+)
 
 possible_enums = [
     "b", "c", "d", "e", "f", "active", "terminated"
@@ -27,7 +35,7 @@ item_test_undefined2 = {
 
 def test_undefined():
     scope = {}
-    result = contracts_status.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -35,8 +43,8 @@ def test_undefined():
     }
 
     scope = {}
-    scope = contracts_status.add_item(scope, {"ocid": "0"}, 0)
-    result = contracts_status.get_result(scope)
+    scope = code_distribution.add_item(scope, {"ocid": "0"}, 0)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -44,8 +52,8 @@ def test_undefined():
     }
 
     scope = {}
-    scope = contracts_status.add_item(scope, item_test_undefined1, 0)
-    result = contracts_status.get_result(scope)
+    scope = code_distribution.add_item(scope, item_test_undefined1, 0)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -53,8 +61,8 @@ def test_undefined():
     }
 
     scope = {}
-    scope = contracts_status.add_item(scope, item_test_undefined2, 0)
-    result = contracts_status.get_result(scope)
+    scope = code_distribution.add_item(scope, item_test_undefined2, 0)
+    result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
@@ -83,13 +91,13 @@ def test_passed():
 
     id = 0
     for item in items_test_passed:
-        scope = contracts_status.add_item(scope, item, id)
+        scope = code_distribution.add_item(scope, item, id)
         id += 1
 
-    result = contracts_status.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
-    assert len(result["meta"]["shares"]) == len(contracts_status.important_enums)
+    assert len(result["meta"]["shares"]) == len(code_distribution.important_enums)
     assert result["meta"]["shares"]["active"] == {
         "share": 0.5,
         "count": 1,
@@ -118,13 +126,13 @@ def test_failed():
 
     id = 0
     for item in items_test_failed:
-        scope = contracts_status.add_item(scope, item, id)
+        scope = code_distribution.add_item(scope, item, id)
         id += 1
 
-    result = contracts_status.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is False
     assert result["value"] == 0
-    assert len(result["meta"]["shares"]) == len(contracts_status.important_enums) + 1
+    assert len(result["meta"]["shares"]) == len(code_distribution.important_enums) + 1
     assert result["meta"]["shares"]["a"] == {
         "share": 1.0,
         "count": 1,
@@ -139,7 +147,7 @@ items_test_passed_big_load = [
             "status": random.choice(possible_enums)
         }
     }
-    for i in range(1000)
+    for i in range(10000)
 ]
 
 
@@ -149,17 +157,17 @@ def test_passed_big_load():
 
     id = 0
     for item in items_test_passed_big_load:
-        scope = contracts_status.add_item(scope, item, id)
+        scope = code_distribution.add_item(scope, item, id)
         id += 1
 
-    result = contracts_status.get_result(scope)
+    result = code_distribution.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
     assert len(result["meta"]["shares"]) == len(possible_enums)
     assert sum(
         [len(value["examples"])
          for _, value in result["meta"]["shares"].items()]
-    ) == contracts_status.samples_number * len(possible_enums)
+    ) == code_distribution.samples_number * len(possible_enums)
     assert all(
         [0 < value["share"] < 1 for _, value in result["meta"]["shares"].items()]
     )
