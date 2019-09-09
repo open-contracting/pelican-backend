@@ -49,8 +49,8 @@ def callback(channel, method, properties, body):
         commit()
 
         # send messages into next phases
-        message = """{{"dataset_id":"{}"}}""".format(dataset_id)
-        publish(message, get_param("exchange_name") + routing_key)
+        message = {"dataset_id": dataset_id}
+        publish(json.dumps(message), get_param("exchange_name") + routing_key)
 
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:

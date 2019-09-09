@@ -19,13 +19,18 @@ from tools.bootstrap import bootstrap
 @click.argument("environment")
 @click.argument("name")
 @click.argument("collection_id")
-def start(environment, name, collection_id):
+@click.argument("max_items", required=False)
+def start(environment, name, collection_id, max_items=None):
     init_worker(environment)
 
     routing_key = "_ocds_kingfisher_extractor_init"
 
-    message = """{{"name":"{}", "collection_id":"{}"}}""".format(name, collection_id)
-    publish(message, get_param("exchange_name") + routing_key)
+    message = {
+        "name": name,
+        "collection_id": collection_id,
+        "max_items": max_items
+    }
+    publish(json.dumps(message), get_param("exchange_name") + routing_key)
 
     return
 
