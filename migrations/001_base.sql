@@ -26,7 +26,7 @@ CREATE TABLE report (
     created timestamp without time zone default current_timestamp,
     modified timestamp without time zone default current_timestamp
 );
-CREATE UNIQUE INDEX report_dataset_id_idx ON report (dataset_id);
+CREATE INDEX report_dataset_id_idx ON report (dataset_id);
 CREATE INDEX type_report_idx ON report (type);
 CREATE INDEX report_data_idx ON report USING gin (data jsonb_path_ops);
 CREATE INDEX report_modified_idx ON report (modified);
@@ -98,26 +98,19 @@ CREATE INDEX field_level_check_data_item_id_idx ON field_level_check (data_item_
 CREATE INDEX field_level_check_dataset_id_idx ON field_level_check (dataset_id);
 CREATE INDEX field_level_check_modified_idx ON field_level_check (modified);
 
-
 CREATE TABLE resource_level_check (
     id BIGSERIAL PRIMARY KEY,
-    check_name character varying,
-    result boolean,
-    pass_count int,
-    application_count int,
-    meta jsonb,
-    data_item_id bigint,
+    data_item_id bigint,    
     dataset_id BIGINT,
+    result jsonb,
     created timestamp without time zone default current_timestamp,
     modified timestamp without time zone default current_timestamp
 );
 
+CREATE INDEX resource_level_check_result_idx ON resource_level_check USING gin (result jsonb_path_ops);
 CREATE INDEX resource_level_check_data_item_id_idx ON resource_level_check (data_item_id);
 CREATE INDEX resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
 CREATE INDEX resource_level_check_modified_idx ON resource_level_check (modified);
-CREATE INDEX resource_level_check_name_idx ON resource_level_check (check_name);
-CREATE INDEX resource_level_check_result_idx ON resource_level_check (result);
-CREATE INDEX resource_level_check_result_check_name_id_idx ON resource_level_check (result, check_name, id);
 
 CREATE TABLE dataset_level_check (
     id BIGSERIAL PRIMARY KEY,

@@ -20,12 +20,21 @@ def do_work(data, item_id, dataset_id):
 
 
 def resource_level_checks(data, item_id, dataset_id):
+    result = {
+        "meta": {
+            "ocid": data["ocid"],
+            "item_id": item_id
+        },
+        "checks": {
+
+        }
+    }
+
     # perform resource level checks
-    for check_name, checks in resource_level_definitions.items():
-        # confront value with its checks
-        for check in checks:
-            check_result = check(data)
-            save_resource_level_check(check_name, check_result, item_id, dataset_id)
+    for check_name, check in resource_level_definitions.items():
+        result["checks"][check_name] = check(data)
+
+    save_resource_level_check(result, item_id, dataset_id)
 
 
 def field_level_checks(data, item_id, dataset_id):
@@ -148,26 +157,13 @@ def save_field_level_check(result, item_id, dataset_id):
     )
 
 
-def save_resource_level_check(check_name, result, item_id, dataset_id):
+def save_resource_level_check(result, item_id, dataset_id):
     cursor = get_cursor()
-
-    if "meta" not in result or not result["meta"]:
-        result["meta"] = {}
-
-    result["meta"]["version"] = result["version"]
-    meta = json.dumps(result["meta"])
 
     cursor.execute("""
         INSERT INTO resource_level_check
-        (check_name, result, pass_count, application_count, meta, data_item_id, dataset_id)
+        (result, data_item_id, dataset_id)
         VALUES
-        (%s, %s, %s, %s, %s, %s, %s)
-        """, (
-        check_name,
-        result["result"],
-        result["pass_count"],
-        result["application_count"],
-        meta,
-        item_id,
-        dataset_id)
+        (%s, %s, %s);
+        """, (json.dumps(result), item_id, dataset_id)
     )
