@@ -1,5 +1,12 @@
 import logging
 
+
+# custom log levels
+class CustomLogLevels:
+    MESSAGE_TRACE = 9
+    CHECK_TRACE = 8
+    STATE_TRACE = 7
+
 environment = None
 
 config_data = {

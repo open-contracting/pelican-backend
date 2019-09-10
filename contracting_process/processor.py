@@ -11,6 +11,7 @@ from tools.db import get_cursor
 from tools.getter import get_values
 from tools.logging_helper import get_logger
 from core.state import set_item_state, state
+from settings.settings import CustomLogLevels
 
 
 # item: (data, item_id, dataset_id)
@@ -37,7 +38,10 @@ def do_work(items):
 
 
 def resource_level_checks(data, item_id, dataset_id):
-    get_logger().debug("Computing resource level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id))
+    get_logger().log(
+        CustomLogLevels.CHECK_TRACE,
+        "Computing resource level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id)
+    )
 
     result = {
         "meta": {
@@ -51,6 +55,7 @@ def resource_level_checks(data, item_id, dataset_id):
 
     # perform resource level checks
     for check_name, check in resource_level_definitions.items():
+        get_logger().log(CustomLogLevels.CHECK_TRACE, "Computing {} check.".format(check_name))
         try:
             result["checks"][check_name] = check(data)
         except Exception:
@@ -62,7 +67,10 @@ def resource_level_checks(data, item_id, dataset_id):
 
 
 def field_level_checks(data, item_id, dataset_id):
-    get_logger().debug("Computing field level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id))
+    get_logger().log(
+        CustomLogLevels.CHECK_TRACE,
+        "Computing field level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id)
+    )
 
     result = {
         "meta": {
@@ -127,7 +135,9 @@ def field_level_checks(data, item_id, dataset_id):
                     counter = counter + 1
 
                     # coverage checks
-                    for check, _ in coverage_checks:
+                    for check, check_name in coverage_checks:
+                        get_logger().log(CustomLogLevels.CHECK_TRACE, "Computing {} check in {} path.".format(check_name, path))
+
                         if field_result["coverage"]["check_results"] is None:
                             field_result["coverage"]["check_results"] = []
 
@@ -147,7 +157,11 @@ def field_level_checks(data, item_id, dataset_id):
 
                     # quality checks
                     if field_result["coverage"]["overall_result"]:
-                        for check, _ in checks:
+                        for check, check_name in checks:
+                            get_logger().log(
+                                CustomLogLevels.CHECK_TRACE, "Computing {} check in {} path.".format(check_name, path)
+                            )
+
                             if field_result["quality"]["check_results"] is None:
                                 field_result["quality"]["check_results"] = []
 
