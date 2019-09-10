@@ -43,6 +43,7 @@ def callback(channel, method, properties, body):
         if "command" not in input_message:
             name = input_message["name"]
             collection_id = input_message["collection_id"]
+            max_items = int(input_message["max_items"])
 
             logger.info("Reading kingfisher data started. name: {} collection_id: {}".format(
                 name, collection_id
@@ -93,6 +94,9 @@ def callback(channel, method, properties, body):
             i = 0
             items_inserted = 0
             items_count = len(result)
+            if max_items and max_items < items_count:
+                items_count = max_items
+
             while i * page_size < items_count:
                 ids = []
                 for item in result[i * page_size:(i + 1) * page_size]:
@@ -106,17 +110,18 @@ def callback(channel, method, properties, body):
                     WHERE data.id IN %s;
                     """, (tuple(ids),))
 
-                data = kf_cursor.fetchall()
+                data_items = [(json.dumps(row[0]), dataset_id) for row in kf_cursor.fetchall()]
+                sql = """
+                    INSERT INTO data_item
+                    (data, dataset_id)
+                    VALUES %s
+                    RETURNING id;
+                """
+                psycopg2.extras.execute_values(cursor, sql, data_items, page_size=page_size)
+                commit()
 
-                for data_item in data:
-                    cursor.execute("""
-                        INSERT INTO data_item
-                        (data, dataset_id)
-                        VALUES
-                        (%s, %s) RETURNING id
-                    """, (json.dumps(data_item[0]), dataset_id))
-
-                    inserted_id = cursor.fetchone()[0]
+                for row in cursor.fetchall():
+                    inserted_id = row[0]
 
                     items_inserted = items_inserted + 1
 
@@ -141,7 +146,9 @@ def callback(channel, method, properties, body):
                         batch_size = 0
                         batch.clear()
 
-                logger.info("Inserted page {} from {}".format(i, len(result)))
+                logger.info("Inserted page {} from {}. {} items out of {} downloaded".format(
+                    i, len(result), items_inserted, items_count)
+                )
 
         else:
             # resend messages
@@ -149,11 +156,6 @@ def callback(channel, method, properties, body):
             resend(dataset_id)
 
         channel.basic_ack(delivery_tag=method.delivery_tag)
-
-    except KeyboardInterrupt:
-        set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
-        commit()
-        sys.exit()
 
     except Exception:
         logger.exception(

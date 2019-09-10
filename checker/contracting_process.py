@@ -40,17 +40,13 @@ def callback(channel, method, properties, body):
 
             # get item from storage
             cursor.execute("""
-                SELECT id, data
+                SELECT data, id, dataset_id
                 FROM data_item
                 WHERE id IN %s;
                 """, (tuple(item_ids),))
 
-            for row in cursor.fetchall():
-                # perform actual action with the item
-                processor.do_work(row[1], row[0], dataset_id)
-
-                # set state of processed item
-                set_item_state(dataset_id, row[0], state.OK)
+            # perform actual action with items
+            processor.do_work(cursor.fetchall())
 
             commit()
 
