@@ -1,44 +1,32 @@
-
 import random
 
 from dataset.distribution import code_distribution
 
 code_distribution = code_distribution.CodeDistribution(
     [
-        "tender.status"
+        "tender.procurementMethod"
     ],
     [
-        "planning",
-        "planned",
-        "active",
-        "cancelled",
-        "unsuccessful",
-        "complete",
-        "withdrawn"
+        "open"
     ]
 )
 
-possible_enums = [
-    "b", "c", "d", "e", "f", "planning", "active"
-]
-
 
 item_test_undefined1 = {
-    "ocid": "1",
     "tender": {
 
     }
 }
 
 item_test_undefined2 = {
-    "ocid": "2",
     "tender": {
-        "status": None
+        "procurementMethod": None
     }
 }
 
 
 def test_undefined():
+    code_distribution.important_enums = ["open"]
     scope = {}
     result = code_distribution.get_result(scope)
     assert result["result"] is None
@@ -48,7 +36,7 @@ def test_undefined():
     }
 
     scope = {}
-    scope = code_distribution.add_item(scope, {"ocid": "0"}, 0)
+    scope = code_distribution.add_item(scope, {}, 0)
     result = code_distribution.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
@@ -71,30 +59,40 @@ def test_undefined():
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {
-        "reason": "there is not a single tender with valid enumeration item"
+        "reason": "no data items were processed"
     }
 
 
 items_test_passed = [
     {
-        "ocid": "0",
+        "ocid": "1",
         "tender": {
-            "status": "active"
+            "procurementMethod": "a"
         }
     },
     {
         "ocid": "1",
         "tender": {
-            "status": "planning"
+            "procurementMethod": "b"
+        }
+    },
+    {
+        "ocid": "1",
+        "tender": {
+            "procurementMethod": "c"
+        }
+    },
+    {
+        "ocid": "1",
+        "tender": {
+            "procurementMethod": "open"
         }
     }
 ]
 
 
 def test_passed():
-    code_distribution.important_enums = {
-        "active", "planning"
-    }
+    code_distribution.important_enums = ["open"]
     scope = {}
 
     id = 0
@@ -105,37 +103,31 @@ def test_passed():
     result = code_distribution.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
-    assert len(result["meta"]["shares"]) == len(code_distribution.important_enums)
-    assert result["meta"]["shares"]["active"] == {
-        "share": 0.5,
+    assert len(result["meta"]["shares"]) == len(code_distribution.important_enums) + 3
+    assert result["meta"]["shares"]["open"] == {
+        "share": 1/(len(code_distribution.important_enums) + 3),
         "count": 1,
-        "examples": [{"item_id": 0, "ocid": "0"}]
-    }
-    assert result["meta"]["shares"]["planning"] == {
-        "share": 0.5,
-        "count": 1,
-        "examples": [{"item_id": 1, "ocid": "1"}]
+        "examples": [
+            {
+                "item_id": 3,
+                "ocid": "1"
+            }
+        ]
     }
 
 
 items_test_failed = [
     {
-        "ocid": "0",
-        "tender": {
-            "status": "active"
-        }
-    },
-    {
         "ocid": "1",
         "tender": {
-            "status": "unknown"
+            "procurementMethod": "open"
         }
     }
 ]
 
 
 def test_failed():
-
+    code_distribution.important_enums = ["open"]
     scope = {}
 
     id = 0
@@ -146,37 +138,39 @@ def test_failed():
     result = code_distribution.get_result(scope)
     assert result["result"] is False
     assert result["value"] == 0
-    assert len(result["meta"]["shares"]) == len(code_distribution.important_enums) + 1
-    assert result["meta"]["shares"]["active"] == {
-        "share": 0.5,
+    assert len(result["meta"]["shares"]) == len(code_distribution.important_enums)
+    assert result["meta"]["shares"]["open"] == {
+        "share": 1,
         "count": 1,
-        "examples": [{"item_id": 0, "ocid": "0"}]
-    }
-    assert result["meta"]["shares"]["planning"] == {
-        "share": 0,
-        "count": 0,
-        "examples": []
-    }
-    assert result["meta"]["shares"]["planning"] == {
-        "share": 0,
-        "count": 0,
-        "examples": []
+        "examples": [
+            {
+                "item_id": 0,
+                "ocid": "1"
+            }
+        ]
     }
 
+
+possible_status = [
+    "b", "c", "d", "e", "f"
+]
+
+possible_status += code_distribution.important_enums
 
 items_test_passed_big_load = [
     {
-        "ocid": str(i),
+        "ocid": "1",
         "tender": {
-            "status": random.choice(possible_enums)
+            "procurementMethod": random.choice(possible_status)
         }
     }
-    for i in range(10000)
+    for _ in range(10000)
 ]
 
 
 # following test will pass with high probability
 def test_passed_big_load():
+    code_distribution.important_enums = ["open"]
     scope = {}
 
     id = 0
@@ -187,11 +181,10 @@ def test_passed_big_load():
     result = code_distribution.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
-    assert len(result["meta"]["shares"]) == len(possible_enums)
+    assert len(result["meta"]["shares"]) == len(possible_status)
     assert sum(
-        [len(value["examples"])
-         for _, value in result["meta"]["shares"].items()]
-    ) == code_distribution.samples_number * len(possible_enums)
+        [len(value["examples"]) for _, value in result["meta"]["shares"].items()]
+    ) == code_distribution.samples_number * len(possible_status)
     assert all(
         [0 < value["share"] < 1 for _, value in result["meta"]["shares"].items()]
     )

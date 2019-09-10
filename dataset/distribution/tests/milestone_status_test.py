@@ -5,35 +5,36 @@ from dataset.distribution import code_distribution
 
 code_distribution = code_distribution.CodeDistribution(
     [
-        "tender.status"
+        "planning.milestones.status",
+        "tender.milestones.status",
+        "contracts.milestones.status",
+        "contracts.implementation.milestones.status"
     ],
     [
-        "planning",
-        "planned",
-        "active",
-        "cancelled",
-        "unsuccessful",
-        "complete",
-        "withdrawn"
+        "met"
     ]
 )
 
 possible_enums = [
-    "b", "c", "d", "e", "f", "planning", "active"
+    "b", "c", "d", "e", "f", "met"
 ]
 
 
 item_test_undefined1 = {
     "ocid": "1",
-    "tender": {
-
+    "planning": {
+        "milestones": []
     }
 }
 
 item_test_undefined2 = {
     "ocid": "2",
     "tender": {
-        "status": None
+        "milestones": [
+            {
+                "status": None
+            }
+        ]
     }
 }
 
@@ -78,23 +79,36 @@ def test_undefined():
 items_test_passed = [
     {
         "ocid": "0",
-        "tender": {
-            "status": "active"
-        }
+        "contracts":
+        [
+            {
+                "milestones": [
+                    {
+                        "status": "met"
+                    }
+                ]
+            }
+        ]
     },
     {
         "ocid": "1",
-        "tender": {
-            "status": "planning"
-        }
+        "contracts":
+        [
+            {
+                "implementation": {
+                    "milestones": [
+                        {
+                            "status": "a"
+                        }
+                    ]
+                }
+            }
+        ]
     }
 ]
 
 
 def test_passed():
-    code_distribution.important_enums = {
-        "active", "planning"
-    }
     scope = {}
 
     id = 0
@@ -105,13 +119,13 @@ def test_passed():
     result = code_distribution.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100
-    assert len(result["meta"]["shares"]) == len(code_distribution.important_enums)
-    assert result["meta"]["shares"]["active"] == {
+    assert len(result["meta"]["shares"]) == len(code_distribution.important_enums) + 1
+    assert result["meta"]["shares"]["met"] == {
         "share": 0.5,
         "count": 1,
         "examples": [{"item_id": 0, "ocid": "0"}]
     }
-    assert result["meta"]["shares"]["planning"] == {
+    assert result["meta"]["shares"]["a"] == {
         "share": 0.5,
         "count": 1,
         "examples": [{"item_id": 1, "ocid": "1"}]
@@ -120,15 +134,13 @@ def test_passed():
 
 items_test_failed = [
     {
-        "ocid": "0",
-        "tender": {
-            "status": "active"
-        }
-    },
-    {
         "ocid": "1",
-        "tender": {
-            "status": "unknown"
+        "planning": {
+            "milestones": [
+                {
+                    "status": "a"
+                }
+            ]
         }
     }
 ]
@@ -147,20 +159,10 @@ def test_failed():
     assert result["result"] is False
     assert result["value"] == 0
     assert len(result["meta"]["shares"]) == len(code_distribution.important_enums) + 1
-    assert result["meta"]["shares"]["active"] == {
-        "share": 0.5,
+    assert result["meta"]["shares"]["a"] == {
+        "share": 1.0,
         "count": 1,
-        "examples": [{"item_id": 0, "ocid": "0"}]
-    }
-    assert result["meta"]["shares"]["planning"] == {
-        "share": 0,
-        "count": 0,
-        "examples": []
-    }
-    assert result["meta"]["shares"]["planning"] == {
-        "share": 0,
-        "count": 0,
-        "examples": []
+        "examples": [{"item_id": 0, "ocid": "1"}]
     }
 
 
@@ -168,7 +170,11 @@ items_test_passed_big_load = [
     {
         "ocid": str(i),
         "tender": {
-            "status": random.choice(possible_enums)
+            "milestones": [
+                {
+                    "status": random.choice(possible_enums)
+                }
+            ]
         }
     }
     for i in range(10000)
