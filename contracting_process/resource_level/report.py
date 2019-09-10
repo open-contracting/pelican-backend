@@ -21,6 +21,7 @@ def create(dataset_id):
 
     for check_name in definitions:
         report[check_name] = {
+            'name': check_name,
             'examples_filled': False,
             'passed_count': 0,
             'failed_count': 0,
