@@ -3,6 +3,7 @@ import random
 
 from tools.checks import get_empty_result_dataset
 from tools.getter import get_values
+from tools.helpers import ReservoirSampler
 
 version = 1.0
 min_resources_num = 1000
@@ -14,39 +15,33 @@ def add_item(scope, item, item_id):
     if not scope:
         scope = {
             'buyers': {},
-            'resources_num': 0
+            'total_ocid_count': 0
         }
 
     # filtering values containing required fields
     values = get_values(item, 'buyer.identifier', value_only=True)
-    buyers = [
-        v for v in values
-        if (
-            'scheme' in v and 'id' in v and
-            v['scheme'] is not None and v['id'] is not None
-        )
-    ]
+    if not values:
+        return scope
+
+    buyer_identifier = values[0]
+    if 'scheme' not in buyer_identifier or 'id' not in buyer_identifier or \
+            buyer_identifier['scheme'] is None or buyer_identifier['id'] is None:
+        return scope
 
     ocid = get_values(item, 'ocid', value_only=True)[0]
-    for buyer in buyers:
-        scope['resources_num'] += 1
-        key = (buyer['scheme'], buyer['id'])
+    scope['total_ocid_count'] += 1
+    key = (buyer_identifier['scheme'], buyer_identifier['id'])
 
-        if key not in scope['buyers']:
-            scope['buyers'][key] = {
-                'scheme': buyer['scheme'],
-                'id': buyer['id'],
-                'ocid_set': set(),
-                'examples': []
-            }
-
-        scope['buyers'][key]['ocid_set'].add(ocid)
-        scope['buyers'][key]['examples'].append(
-            {
+    if key not in scope['buyers']:
+        scope['buyers'][key] = {
+            'total_ocid_count': 1,
+            'example': {
                 'item_id': item_id,
                 'ocid': ocid
             }
-        )
+        }
+    else:
+        scope['buyers'][key]['total_ocid_count'] += 1
 
     return scope
 
@@ -55,7 +50,7 @@ def get_result(scope):
     result = get_empty_result_dataset(version)
 
     if scope:
-        if scope['resources_num'] < min_resources_num:
+        if scope['total_ocid_count'] < min_resources_num:
             result['meta'] = {
                 'reason': 'there are not enough resources with check-specific properties'
             }
@@ -63,96 +58,38 @@ def get_result(scope):
 
         # initializing histogram
         ocid_histogram = {
-            '1': {'buyers': [], 'ocid_set': set()},
-            '2_20': {'buyers': [], 'ocid_set': set()},
-            '21_50': {'buyers': [], 'ocid_set': set()},
-            '51_100': {'buyers': [], 'ocid_set': set()},
-            '100+': {'buyers': [], 'ocid_set': set()}
+            '1': 0,
+            '2_20': 0,
+            '21_50': 0,
+            '51_100': 0,
+            '100+': 0
         }
+
+        buyer_with_one_ocid_sampler = ReservoirSampler(examples_cap)
 
         # filling in the histogram
         max_buyer = {'buyer': None, 'ocid_count': -1}
-        for buyer, value in scope['buyers'].items():
-            ocid_count = len(value['ocid_set'])
-            if ocid_count == 1:
-                ocid_histogram['1']['buyers'].append(buyer)
-                ocid_histogram['1']['ocid_set'].update(value['ocid_set'])
-            elif 2 <= ocid_count <= 20:
-                ocid_histogram['2_20']['buyers'].append(buyer)
-                ocid_histogram['2_20']['ocid_set'].update(value['ocid_set'])
-            elif 21 <= ocid_count <= 50:
-                ocid_histogram['21_50']['buyers'].append(buyer)
-                ocid_histogram['21_50']['ocid_set'].update(value['ocid_set'])
-            elif 51 <= ocid_count <= 100:
-                ocid_histogram['51_100']['buyers'].append(buyer)
-                ocid_histogram['51_100']['ocid_set'].update(value['ocid_set'])
+        for value in scope['buyers'].values():
+            if value['total_ocid_count'] == 1:
+                ocid_histogram['1'] += value['total_ocid_count']
+                buyer_with_one_ocid_sampler.process(value['example'])
+            elif 2 <= value['total_ocid_count'] <= 20:
+                ocid_histogram['2_20'] += value['total_ocid_count']
+            elif 21 <= value['total_ocid_count'] <= 50:
+                ocid_histogram['21_50'] += value['total_ocid_count']
+            elif 51 <= value['total_ocid_count'] <= 100:
+                ocid_histogram['51_100'] += value['total_ocid_count']
             else:
-                ocid_histogram['100+']['buyers'].append(buyer)
-                ocid_histogram['100+']['ocid_set'].update(value['ocid_set'])
+                ocid_histogram['100+'] += value['total_ocid_count']
 
-            if ocid_count > max_buyer['ocid_count']:
-                max_buyer['buyer'] = buyer
-                max_buyer['ocid_count'] = ocid_count
-
-        total_ocid_count = 0
-        total_buyer_count = 0
-        for value in ocid_histogram.values():
-            value['ocid_count'] = len(value['ocid_set'])
-            value['buyer_count'] = len(value['buyers'])
-
-            total_ocid_count += len(value['ocid_set'])
-            total_buyer_count += len(value['buyers'])
-
-            value.pop('ocid_set', None)
-
-        # checking whether the check passed or not
-        max_ocid_count = max_buyer['ocid_count']
-        single_ocid_count = ocid_histogram['1']['ocid_count']
-        passed = (
-            max_ocid_count > 0.01 * total_ocid_count and
-            max_ocid_count < 0.5 * total_ocid_count and
-            single_ocid_count < 0.5 * total_ocid_count
-        )
-
-        # sampling item_ids from buyers appearing in items with one distinct ocid
-        single_ocid_examples = [
-            random.choice(scope['buyers'][buyer]['examples'])
-            for buyer in random.sample(
-                ocid_histogram['1']['buyers'],
-                k=examples_cap
-                if examples_cap < len(ocid_histogram['1']['buyers'])
-                else len(ocid_histogram['1']['buyers'])
-            )
-        ]
-
-        # sampling item_ids from buyer that appeard in items with the most distinct ocids
-        max_ocid_examples = random.sample(
-            scope['buyers'][max_buyer['buyer']]['examples'],
-            k=examples_cap
-            if examples_cap < len(scope['buyers'][max_buyer['buyer']]['examples'])
-            else len(scope['buyers'][max_buyer['buyer']]['examples'])
-        )
-
-        for value in ocid_histogram.values():
-            value.pop('buyers', None)
+        passed = ocid_histogram['1'] < 0.5 * scope['total_ocid_count']
 
         result['result'] = passed
         result['value'] = 100 if passed else 0
         result['meta'] = {
-            'shares': {
-                key: {
-                    'ocid_share': value['ocid_count'] / total_ocid_count,
-                    'buyer_share': value['buyer_count'] / total_buyer_count
-                }
-                for key, value in ocid_histogram.items()
-            },
             'counts': ocid_histogram,
-            'examples': {
-                'single_ocid_examples': single_ocid_examples,
-                'max_ocid_examples': max_ocid_examples
-            },
-            'total_ocid_count': total_ocid_count,
-            'total_buyer_count': total_buyer_count
+            'total_ocid_count': scope['total_ocid_count'],
+            'examples': buyer_with_one_ocid_sampler.retrieve_samples()
         }
     else:
         result['meta'] = {
