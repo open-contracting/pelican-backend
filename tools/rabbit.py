@@ -15,8 +15,11 @@ def publish(message, routing_key):
                           body=message,
                           properties=pika.BasicProperties(delivery_mode=2))
 
-    logger.debug("Published message to exchange {} with routing key {}".format(
-        get_param("exchange_name"), routing_key))
+    logger.debug(
+        "Published message to exchange {} with routing key {}. Message: {}".format(
+            get_param("exchange_name"), routing_key, message
+        )
+    )
 
 
 def connect():

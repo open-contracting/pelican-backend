@@ -31,10 +31,14 @@ def do_work(items):
     save_field_level_checks(field_level_check_results, items_count)
     save_resource_level_check(resource_level_check_results, items_count)
 
+    get_logger().debug("Work done.")
+
     return None
 
 
 def resource_level_checks(data, item_id, dataset_id):
+    get_logger().debug("Computing resource level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id))
+
     result = {
         "meta": {
             "ocid": data["ocid"],
@@ -47,13 +51,19 @@ def resource_level_checks(data, item_id, dataset_id):
 
     # perform resource level checks
     for check_name, check in resource_level_definitions.items():
-        result["checks"][check_name] = check(data)
+        try:
+            result["checks"][check_name] = check(data)
+        except Exception:
+            get_logger().exception("Something went wrong when computing {} resource level check.".format(check_name))
+            raise Exception
 
     # return result
     return (json.dumps(result), item_id, dataset_id)
 
 
 def field_level_checks(data, item_id, dataset_id):
+    get_logger().debug("Computing field level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id))
+
     result = {
         "meta": {
             "ocid": data["ocid"],
@@ -174,6 +184,8 @@ def save_field_level_checks(result_items, items_count):
 
     execute_values(cursor, sql, result_items, page_size=items_count)
 
+    get_logger().debug("Field level checks saved.")
+
 
 # result_item: (result, item_id, dataset_id)
 def save_resource_level_check(result_items, items_count):
@@ -187,3 +199,5 @@ def save_resource_level_check(result_items, items_count):
     """
 
     execute_values(cursor, sql, result_items, page_size=items_count)
+
+    get_logger().debug("Resource level checks saved.")
