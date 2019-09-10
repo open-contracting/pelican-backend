@@ -45,7 +45,7 @@ config_data = {
         "rabbit_port": "5672",
         "rabbit_username": "rabbit",
         "rabbit_password": "rabbit",
-        "extractor_batch_size": 100,
+        "extractor_max_batch_size": 100,
         "kf_extractor_host": "scrape.kingfisher.open-contracting.org",
         "kf_extractor_user": "ocdskfpreadonly",
         "kf_extractor_password": "LJNBQvRT83QTi9og",
