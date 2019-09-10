@@ -43,7 +43,7 @@ def callback(channel, method, properties, body):
         if "command" not in input_message:
             name = input_message["name"]
             collection_id = input_message["collection_id"]
-            max_items = int(input_message["max_items"])
+            max_items = int(input_message["max_items"]) if input_message["max_items"] else None
 
             logger.info("Reading kingfisher data started. name: {} collection_id: {}".format(
                 name, collection_id
