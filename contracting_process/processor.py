@@ -58,9 +58,13 @@ def resource_level_checks(data, item_id, dataset_id):
         get_logger().log(CustomLogLevels.CHECK_TRACE, "Computing {} check.".format(check_name))
         try:
             result["checks"][check_name] = check(data)
-        except Exception:
-            get_logger().exception("Something went wrong when computing {} resource level check.".format(check_name))
-            raise Exception
+        except:
+            get_logger().error(
+                "Something went wrong when computing resource level check: "
+                "check = {}, item_id = {}, dataset_id = {}."
+                "".format(check_name, item_id, dataset_id)
+            )
+            raise
 
     # return result
     return (json.dumps(result), item_id, dataset_id)
@@ -143,11 +147,13 @@ def field_level_checks(data, item_id, dataset_id):
 
                         try:
                             check_result = check(item, path_chunks[-1])
-                        except Exception:
-                            get_logger().exception(
-                                "Something went wrong when computing checks in path '{}'".format(path)
+                        except:
+                            get_logger().error(
+                                "Something went wrong when computing field level check: "
+                                "check = {}, path = {}, item_id = {}, dataset_id = {}."
+                                "".format(check_name, path, item_id, dataset_id)
                             )
-                            raise Exception
+                            raise
 
                         field_result["coverage"]["check_results"].append(check_result)
                         field_result["coverage"]["overall_result"] = check_result["result"]
@@ -167,11 +173,13 @@ def field_level_checks(data, item_id, dataset_id):
 
                             try:
                                 check_result = check(item, path_chunks[-1])
-                            except Exception:
-                                get_logger().exception(
-                                    "Something went wrong when computing checks in path '{}'".format(path)
+                            except:
+                                get_logger().error(
+                                    "Something went wrong when computing field level check: "
+                                    "check = {}, path = {}, item_id = {}, dataset_id = {}."
+                                    "".format(check_name, path, item_id, dataset_id)
                                 )
-                                raise Exception
+                                raise
 
                             field_result["quality"]["check_results"].append(check_result)
                             field_result["quality"]["overall_result"] = check_result["result"]
