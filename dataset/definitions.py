@@ -1,5 +1,6 @@
 from dataset.distribution import (
     buyer,
+    buyer_repetition,
     main_procurement_category,
     value_repetition,
     value,
@@ -27,7 +28,9 @@ definitions = {
     "distribution.contracts_value": value.ModuleType("contracts.value"),
     "distribution.awards_value": value.ModuleType("awards.value"),
     "distribution.tender_value": value.ModuleType("tender.value"),
-    "distribution.buyer": buyer, "distribution.tender_value_repetition": value_repetition.ModuleType("tender"),
+    "distribution.buyer": buyer,
+    "distribution.buyer_repetition": buyer_repetition,
+    "distribution.tender_value_repetition": value_repetition.ModuleType("tender"),
     "distribution.awards_value_repetition": value_repetition.ModuleType("awards"),
     "distribution.contracts_value_repetition": value_repetition.ModuleType("contracts"),
     "distribution.tender_procurement_method": code_distribution.CodeDistribution(
