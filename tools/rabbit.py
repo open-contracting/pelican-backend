@@ -1,6 +1,6 @@
 import pika
 
-from settings.settings import get_param
+from settings.settings import get_param, CustomLogLevels
 from tools.logging_helper import get_logger
 
 global connected
@@ -15,8 +15,12 @@ def publish(message, routing_key):
                           body=message,
                           properties=pika.BasicProperties(delivery_mode=2))
 
-    logger.debug("Published message to exchange {} with routing key {}".format(
-        get_param("exchange_name"), routing_key))
+    logger.log(
+        CustomLogLevels.MESSAGE_TRACE,
+        "Published message to exchange {} with routing key {}. Message: {}".format(
+            get_param("exchange_name"), routing_key, message
+        )
+    )
 
 
 def connect():

@@ -1,5 +1,6 @@
 from tools.db import commit, get_cursor, rollback
-from tools.logging_helper import init_logger
+from tools.logging_helper import get_logger
+from settings.settings import CustomLogLevels
 
 
 class state():
@@ -36,6 +37,11 @@ def set_dataset_state(dataset_id, state, phase, size=None):
                        ON CONFLICT ON CONSTRAINT unique_dataset_id
                        DO UPDATE SET state = %s, phase = %s, size = %s, modified = now();
                        """, (dataset_id, state, phase, size, state, phase, size))
+        get_logger().log(
+            CustomLogLevels.STATE_TRACE,
+            "Dataset state set to: state = {}, phase = {}, size = {}.".format(state, phase, size)
+        )
+
     else:
         cursor.execute("""
                        INSERT INTO progress_monitor_dataset
@@ -45,6 +51,7 @@ def set_dataset_state(dataset_id, state, phase, size=None):
                        ON CONFLICT ON CONSTRAINT unique_dataset_id
                        DO UPDATE SET state = %s, phase = %s, modified = now();
                        """, (dataset_id, state, phase, size, state, phase))
+        get_logger().log(CustomLogLevels.STATE_TRACE, "Dataset state set to: state = {}, phase = {}.".format(state, phase))
 
 
 def set_item_state(dataset_id, item_id, state):
@@ -64,6 +71,8 @@ def set_item_state(dataset_id, item_id, state):
                        ON CONFLICT ON CONSTRAINT unique_dataset_id_item_id
                        DO UPDATE SET state = %s, modified = now();
                        """, (dataset_id, item_id, state, state))
+
+    get_logger().log(CustomLogLevels.STATE_TRACE, "Item state set to: state = {}.".format(state))
 
 
 def get_processed_items_count(dataset_id):

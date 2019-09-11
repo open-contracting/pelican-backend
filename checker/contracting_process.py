@@ -62,6 +62,8 @@ def callback(channel, method, properties, body):
             "Something went wrong when processing {}".format(body))
         sys.exit()
 
+    logger.info("Processing completed.")
+
 
 def resend(dataset_id):
     logger.info("Resending messages for dataset_id {} started".format(dataset_id))

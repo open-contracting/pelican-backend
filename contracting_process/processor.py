@@ -11,6 +11,7 @@ from tools.db import get_cursor
 from tools.getter import get_values
 from tools.logging_helper import get_logger
 from core.state import set_item_state, state
+from settings.settings import CustomLogLevels
 
 
 # item: (data, item_id, dataset_id)
@@ -31,10 +32,17 @@ def do_work(items):
     save_field_level_checks(field_level_check_results, items_count)
     save_resource_level_check(resource_level_check_results, items_count)
 
+    get_logger().debug("Work done.")
+
     return None
 
 
 def resource_level_checks(data, item_id, dataset_id):
+    get_logger().log(
+        CustomLogLevels.CHECK_TRACE,
+        "Computing resource level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id)
+    )
+
     result = {
         "meta": {
             "ocid": data["ocid"],
@@ -47,13 +55,27 @@ def resource_level_checks(data, item_id, dataset_id):
 
     # perform resource level checks
     for check_name, check in resource_level_definitions.items():
-        result["checks"][check_name] = check(data)
+        get_logger().log(CustomLogLevels.CHECK_TRACE, "Computing {} check.".format(check_name))
+        try:
+            result["checks"][check_name] = check(data)
+        except:
+            get_logger().error(
+                "Something went wrong when computing resource level check: "
+                "check = {}, item_id = {}, dataset_id = {}."
+                "".format(check_name, item_id, dataset_id)
+            )
+            raise
 
     # return result
     return (json.dumps(result), item_id, dataset_id)
 
 
 def field_level_checks(data, item_id, dataset_id):
+    get_logger().log(
+        CustomLogLevels.CHECK_TRACE,
+        "Computing field level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id)
+    )
+
     result = {
         "meta": {
             "ocid": data["ocid"],
@@ -117,17 +139,21 @@ def field_level_checks(data, item_id, dataset_id):
                     counter = counter + 1
 
                     # coverage checks
-                    for check, _ in coverage_checks:
+                    for check, check_name in coverage_checks:
+                        get_logger().log(CustomLogLevels.CHECK_TRACE, "Computing {} check in {} path.".format(check_name, path))
+
                         if field_result["coverage"]["check_results"] is None:
                             field_result["coverage"]["check_results"] = []
 
                         try:
                             check_result = check(item, path_chunks[-1])
-                        except Exception:
-                            get_logger().exception(
-                                "Something went wrong when computing checks in path '{}'".format(path)
+                        except:
+                            get_logger().error(
+                                "Something went wrong when computing field level check: "
+                                "check = {}, path = {}, item_id = {}, dataset_id = {}."
+                                "".format(check_name, path, item_id, dataset_id)
                             )
-                            raise Exception
+                            raise
 
                         field_result["coverage"]["check_results"].append(check_result)
                         field_result["coverage"]["overall_result"] = check_result["result"]
@@ -137,17 +163,23 @@ def field_level_checks(data, item_id, dataset_id):
 
                     # quality checks
                     if field_result["coverage"]["overall_result"]:
-                        for check, _ in checks:
+                        for check, check_name in checks:
+                            get_logger().log(
+                                CustomLogLevels.CHECK_TRACE, "Computing {} check in {} path.".format(check_name, path)
+                            )
+
                             if field_result["quality"]["check_results"] is None:
                                 field_result["quality"]["check_results"] = []
 
                             try:
                                 check_result = check(item, path_chunks[-1])
-                            except Exception:
-                                get_logger().exception(
-                                    "Something went wrong when computing checks in path '{}'".format(path)
+                            except:
+                                get_logger().error(
+                                    "Something went wrong when computing field level check: "
+                                    "check = {}, path = {}, item_id = {}, dataset_id = {}."
+                                    "".format(check_name, path, item_id, dataset_id)
                                 )
-                                raise Exception
+                                raise
 
                             field_result["quality"]["check_results"].append(check_result)
                             field_result["quality"]["overall_result"] = check_result["result"]
@@ -174,6 +206,8 @@ def save_field_level_checks(result_items, items_count):
 
     execute_values(cursor, sql, result_items, page_size=items_count)
 
+    get_logger().debug("Field level checks saved.")
+
 
 # result_item: (result, item_id, dataset_id)
 def save_resource_level_check(result_items, items_count):
@@ -187,3 +221,5 @@ def save_resource_level_check(result_items, items_count):
     """
 
     execute_values(cursor, sql, result_items, page_size=items_count)
+
+    get_logger().debug("Resource level checks saved.")

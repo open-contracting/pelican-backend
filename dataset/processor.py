@@ -6,6 +6,7 @@ import simplejson as json
 from dataset.definitions import definitions
 import dataset.meta_data_aggregator as meta_data_aggregator
 from tools.db import commit, get_cursor
+from settings.settings import CustomLogLevels
 
 page_size = 1000
 
@@ -35,9 +36,20 @@ def do_work(dataset_id, logger):
 
         for item in items:
             for plugin_name, plugin in definitions.items():
+                logger.log(CustomLogLevels.CHECK_TRACE, "Computing {} check for item_id {}.".format(plugin_name, item["id"]))
+
                 if plugin_name not in scope:
                     scope[plugin_name] = {}
-                scope[plugin_name] = plugin.add_item(scope[plugin_name], item["data"], item["id"])
+
+                try:
+                    scope[plugin_name] = plugin.add_item(scope[plugin_name], item["data"], item["id"])
+                except:
+                    logger.error(
+                        "Something went wrong when computing dataset level check: "
+                        "check = {}, item_id = {}, dataset_id = {}."
+                        "".format(plugin_name, item["id"], dataset_id)
+                    )
+                    raise
 
             processed_count = processed_count + 1
             id = item["id"]
