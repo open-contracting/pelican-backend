@@ -113,11 +113,11 @@ def test_undefined_multiple():
 
 items_test_failed1 = [
     {
-        'ocid': num,
+        'ocid': '0',
         'buyer': {
             'identifier': {
                 'scheme': 'ICO',
-                'id': 0
+                'id': num
             }
         }
     }
@@ -134,8 +134,22 @@ items_test_failed2 = [
             }
         }
     }
-    for num in range(buyer.min_resources_num)
+    for num in range(int(0.6 * buyer.min_resources_num))
 ]
+items_test_failed2.extend(
+    [
+        {
+            'ocid': '0',
+            'buyer': {
+                'identifier': {
+                    'scheme': 'ICO',
+                    'id': -1
+                }
+            }
+        }
+        for _ in range(int(0.4 * buyer.min_resources_num))
+    ]
+)
 
 
 def test_failed():
@@ -150,12 +164,8 @@ def test_failed():
     assert result['result'] is False
     assert result['value'] == 0
     assert result['meta']['total_ocid_count'] == buyer.min_resources_num
-    assert result['meta']['counts']['100+'] == {
-        'buyer_count': 1,
-        'ocid_count': 1000
-    }
-    assert len(result['meta']['examples']['single_ocid_examples']) == 0
-    assert len(result['meta']['examples']['max_ocid_examples']) == buyer.examples_cap
+    assert result['meta']['counts']['1'] == buyer.min_resources_num
+    assert len(result['meta']['examples']) == buyer.examples_cap
 
     scope = {}
 
@@ -167,13 +177,10 @@ def test_failed():
     result = buyer.get_result(scope)
     assert result['result'] is False
     assert result['value'] == 0
-    assert result['meta']['total_ocid_count'] == 1
-    assert result['meta']['counts']['1'] == {
-        'buyer_count': 1000,
-        'ocid_count': 1
-    }
-    assert len(result['meta']['examples']['single_ocid_examples']) == buyer.examples_cap
-    assert len(result['meta']['examples']['max_ocid_examples']) == 1
+    assert result['meta']['total_ocid_count'] == buyer.min_resources_num
+    assert result['meta']['counts']['1'] == 0.6 * buyer.min_resources_num
+    assert result['meta']['counts']['100+'] == 0.4 * buyer.min_resources_num
+    assert len(result['meta']['examples']) == buyer.examples_cap
 
 items_test_passed_multiple = []
 items_test_passed_multiple.extend(
@@ -183,86 +190,71 @@ items_test_passed_multiple.extend(
             'buyer': {
                 'identifier': {
                     'scheme': 'ICO',
-                    'id': num
+                    'id': id
                 }
             }
         }
-        for num in range(200)
+        for id in range(100)
     ]
 )
 items_test_passed_multiple.extend(
     [
         {
-            'ocid': str(num2),
+            'ocid': '0',
             'buyer': {
                 'identifier': {
                     'scheme': 'ICO',
-                    'id': num1
+                    'id': id
                 }
             }
         }
-        for num1 in range(200, 400) for num2 in range(10, 20)
+        for _ in range(1, 3) for id in range(100, 200)
     ]
 )
 items_test_passed_multiple.extend(
     [
         {
-            'ocid': str(num2),
+            'ocid': '0',
             'buyer': {
                 'identifier': {
                     'scheme': 'ICO',
-                    'id': num1
+                    'id': id
                 }
             }
         }
-        for num1 in range(400, 600) for num2 in range(20, 50)
+        for _ in range(3, 24) for id in range(200, 300)
     ]
 )
 items_test_passed_multiple.extend(
     [
         {
-            'ocid': str(num2),
+            'ocid': '0',
             'buyer': {
                 'identifier': {
                     'scheme': 'ICO',
-                    'id': num1
+                    'id': id
                 }
             }
         }
-        for num1 in range(600, 800) for num2 in range(50, 110)
+        for _ in range(24, 75) for id in range(300, 400)
     ]
 )
 items_test_passed_multiple.extend(
     [
         {
-            'ocid': str(num2),
+            'ocid': '0',
             'buyer': {
                 'identifier': {
                     'scheme': 'ICO',
-                    'id': num1
+                    'id': id
                 }
             }
         }
-        for num1 in range(800, 1000) for num2 in range(110, 211)
-    ]
-)
-items_test_passed_multiple.extend(
-    [
-        {
-            'ocid': str(num),
-            'buyer': {
-                'identifier': {
-                    'scheme': 'ICO',
-                    'id': 1000
-                }
-            }
-        }
-        for num in range(211, 313)
+        for _ in range(75, 176) for id in range(400, 500)
     ]
 )
 
 
-# working when min_resources_num is set to 1000
 def test_passed_multiple():
     scope = {}
 
@@ -274,39 +266,10 @@ def test_passed_multiple():
     result = buyer.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 100
-    assert result['meta']['total_ocid_count'] == 313 - 9
-    assert result['meta']['counts'] == {
-        '1': {'ocid_count': 1, 'buyer_count': 200},
-        '2_20': {'ocid_count': 10, 'buyer_count': 200},
-        '21_50': {'ocid_count': 30, 'buyer_count': 200},
-        '51_100': {'ocid_count': 60, 'buyer_count': 200},
-        '100+': {'ocid_count': 313 - 110, 'buyer_count': 201}
-    }
-    assert result['meta']['shares'] == {
-        '1': {
-            'ocid_share': 1 / result['meta']['total_ocid_count'],
-            'buyer_share': 200 / result['meta']['total_buyer_count']
-        },
-        '2_20': {
-            'ocid_share': 10 / result['meta']['total_ocid_count'],
-            'buyer_share': 200 / result['meta']['total_buyer_count']
-        },
-        '21_50': {
-            'ocid_share': 30 / result['meta']['total_ocid_count'],
-            'buyer_share': 200 / result['meta']['total_buyer_count']
-        },
-        '51_100': {
-            'ocid_share': 60 / result['meta']['total_ocid_count'],
-            'buyer_share': 200 / result['meta']['total_buyer_count']
-        },
-        '100+': {
-            'ocid_share': (313 - 110) / result['meta']['total_ocid_count'],
-            'buyer_share': 201 / result['meta']['total_buyer_count']
-        }
-    }
-    assert len(result['meta']['examples']['single_ocid_examples']) == buyer.examples_cap
-    assert len(result['meta']['examples']['max_ocid_examples']) == buyer.examples_cap
-    assert sum([value['ocid_count'] for value in result['meta']['counts'].values()]) == \
-        result['meta']['total_ocid_count']
-    assert sum([value['buyer_count'] for value in result['meta']['counts'].values()]) == \
-        result['meta']['total_buyer_count']
+    assert result['meta']['total_ocid_count'] == 100 * 176
+    assert result['meta']['counts']['1'] == 100 * 1
+    assert result['meta']['counts']['2_20'] == 100 * 2
+    assert result['meta']['counts']['21_50'] == 100 * 21
+    assert result['meta']['counts']['51_100'] == 100 * 51
+    assert result['meta']['counts']['100+'] == 100 * 101
+    assert len(result['meta']['examples']) == buyer.examples_cap
