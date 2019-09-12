@@ -42,9 +42,15 @@ def callback(channel, method, properties, body):
             logger.info("Checks have been already calculated for this dataset.")
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
-        elif dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.DATASET:
+        
+        if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.DATASET:
             # lets do nothing, calculations is already in progress
             logger.info("Other worker probably already started with the job. Doing nothing.")
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+            return
+
+        if dataset["phase"] == phase.TIME_VARIANCE or dataset["phase"] == phase.CHECKED:
+            logger.info("Checks have been already calculated for this dataset.")
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
 
@@ -59,8 +65,8 @@ def callback(channel, method, properties, body):
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
 
-        # check whether are all mitems alredy processed
-        elif processed_count < total_count:
+        # check whether are all items alredy processed
+        if processed_count < total_count:
             # contracting process is not done yet
             logger.debug("There are {} remaining messages to be processed for dataset_id {}".format(
                 total_count - processed_count, dataset_id))
@@ -71,8 +77,11 @@ def callback(channel, method, properties, body):
 
         if dataset["state"] == state.OK and dataset["phase"] == phase.CONTRACTING_PROCESS and processed_count == total_count:
             # set state to processing
-            logger.info("All messages for dataset_id {} processed, starting to calculate dataset level checks".format(
-                dataset_id))
+            logger.info(
+                "All messages for dataset_id {} with {} items processed, starting to calculate dataset level checks".format(
+                    dataset_id, processed_count
+                )
+            )
             set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
 
             commit()
