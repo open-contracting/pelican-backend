@@ -60,14 +60,25 @@ def callback(channel, method, properties, body):
             kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
             logger.info("King fisher DB connection established")
 
-            kf_cursor.execute("""
-                SELECT compiled_release.data_id
-                FROM collection
-                INNER JOIN collection_file ON collection_file.collection_id = collection.id
-                INNER JOIN collection_file_item ON collection_file_item.collection_file_id = collection_file.id
-                INNER JOIN compiled_release ON compiled_release.collection_file_item_id = collection_file_item.id
-                WHERE collection.id = %s;
-                """, (collection_id,))
+            if max_items is None:
+                kf_cursor.execute("""
+                    SELECT compiled_release.data_id
+                    FROM collection
+                    INNER JOIN collection_file ON collection_file.collection_id = collection.id
+                    INNER JOIN collection_file_item ON collection_file_item.collection_file_id = collection_file.id
+                    INNER JOIN compiled_release ON compiled_release.collection_file_item_id = collection_file_item.id
+                    WHERE collection.id = %s;
+                    """, (collection_id,))
+            else:
+                kf_cursor.execute("""
+                    SELECT compiled_release.data_id
+                    FROM collection
+                    INNER JOIN collection_file ON collection_file.collection_id = collection.id
+                    INNER JOIN collection_file_item ON collection_file_item.collection_file_id = collection_file.id
+                    INNER JOIN compiled_release ON compiled_release.collection_file_item_id = collection_file_item.id
+                    WHERE collection.id = %s
+                    LIMIT %s;
+                    """, (collection_id, max_items))
 
             result = kf_cursor.fetchall()
 
@@ -95,9 +106,6 @@ def callback(channel, method, properties, body):
             i = 0
             items_inserted = 0
             items_count = len(result)
-            if max_items and max_items < items_count:
-                items_count = max_items
-
             while i * page_size < items_count:
                 ids = []
                 for item in result[i * page_size:(i + 1) * page_size]:

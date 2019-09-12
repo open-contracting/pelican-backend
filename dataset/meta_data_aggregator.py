@@ -309,6 +309,33 @@ def get_kingfisher_meta_data(collection_id):
 
     return meta_data
 
+EMPTY_DQT_META_DATA = {
+    'data_quality_tool_metadata': {
+        'processing_start': None,
+        'processing_end': None
+    }
+}
+
+
+def get_dqt_meta_data(dataset_id):
+    cursor = get_cursor()
+
+    meta_data = copy.deepcopy(EMPTY_DQT_META_DATA)
+
+    cursor.execute(
+        """
+        SELECT created, now()
+        FROM dataset
+        WHERE id = %s;
+        """, (dataset_id,)
+    )
+
+    row = cursor.fetchone()
+    meta_data['data_quality_tool_metadata']['processing_start'] = row[0].strftime(DATETIME_STR_FORMAT)
+    meta_data['data_quality_tool_metadata']['processing_end'] = row[1].strftime(DATETIME_STR_FORMAT)
+
+    return meta_data
+
 
 def update_meta_data(meta_data, dataset_id):
     cursor = get_cursor()

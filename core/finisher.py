@@ -2,8 +2,9 @@
 import click
 import simplejson as json
 import sys
-
 from datetime import datetime
+
+from dataset import meta_data_aggregator
 from settings.settings import get_param
 from tools.logging_helper import get_logger
 from tools.db import commit
@@ -47,6 +48,11 @@ def callback(channel, method, properties, body):
 
         logger.info("Resource level checks report for dataset_id {} is being calculated".format(dataset_id))
         resource_level_report.create(dataset_id)
+
+        # adding final meta data for current dataset
+        logger.info("Saving processing info to dataset table.")
+        meta_data = meta_data_aggregator.get_dqt_meta_data(dataset_id)
+        meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
         # mark dataset as beeing finished
         set_dataset_state(dataset_id, state.OK, phase.CHECKED)
