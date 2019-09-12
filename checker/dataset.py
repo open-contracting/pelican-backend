@@ -42,7 +42,7 @@ def callback(channel, method, properties, body):
             logger.info("Checks have been already calculated for this dataset.")
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
-        
+
         if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.DATASET:
             # lets do nothing, calculations is already in progress
             logger.info("Other worker probably already started with the job. Doing nothing.")
@@ -54,16 +54,14 @@ def callback(channel, method, properties, body):
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
 
-        processed_count = get_processed_items_count(dataset_id)
-        total_count = get_total_items_count(dataset_id)
         if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.CONTRACTING_PROCESS:
             # contracting process is not done yet
-            logger.debug("There are {} remaining messages to be processed for dataset_id {}".format(
-                total_count - processed_count, dataset_id))
-
             logger.info("Not all messages have been processed by contracting process.")
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
+
+        processed_count = get_processed_items_count(dataset_id)
+        total_count = get_total_items_count(dataset_id)
 
         # check whether are all items alredy processed
         if processed_count < total_count:

@@ -2,6 +2,7 @@
 import simplejson as json
 import sys
 from datetime import datetime
+from math import ceil
 
 import click
 import psycopg2.extras
@@ -147,7 +148,7 @@ def callback(channel, method, properties, body):
                         batch.clear()
 
                 logger.info("Inserted page {} from {}. {} items out of {} downloaded".format(
-                    i, len(result), items_inserted, items_count)
+                    i, ceil(float(items_count) / float(page_size)), items_inserted, items_count)
                 )
 
         else:
