@@ -58,11 +58,26 @@ def get_result(scope):
 
         # initializing histogram
         ocid_histogram = {
-            '1': 0,
-            '2_20': 0,
-            '21_50': 0,
-            '51_100': 0,
-            '100+': 0
+            '1': {
+                'total_ocid_count': 0,
+                'total_buyer_count': 0
+            },
+            '2_20': {
+                'total_ocid_count': 0,
+                'total_buyer_count': 0
+            },
+            '21_50': {
+                'total_ocid_count': 0,
+                'total_buyer_count': 0
+            },
+            '51_100': {
+                'total_ocid_count': 0,
+                'total_buyer_count': 0
+            },
+            '100+': {
+                'total_ocid_count': 0,
+                'total_buyer_count': 0
+            }
         }
 
         buyer_with_one_ocid_sampler = ReservoirSampler(examples_cap)
@@ -71,24 +86,34 @@ def get_result(scope):
         max_buyer = {'buyer': None, 'ocid_count': -1}
         for value in scope['buyers'].values():
             if value['total_ocid_count'] == 1:
-                ocid_histogram['1'] += value['total_ocid_count']
+                ocid_histogram['1']['total_ocid_count'] += value['total_ocid_count']
+                ocid_histogram['1']['total_buyer_count'] += 1
                 buyer_with_one_ocid_sampler.process(value['example'])
-            elif 2 <= value['total_ocid_count'] <= 20:
-                ocid_histogram['2_20'] += value['total_ocid_count']
-            elif 21 <= value['total_ocid_count'] <= 50:
-                ocid_histogram['21_50'] += value['total_ocid_count']
-            elif 51 <= value['total_ocid_count'] <= 100:
-                ocid_histogram['51_100'] += value['total_ocid_count']
-            else:
-                ocid_histogram['100+'] += value['total_ocid_count']
 
-        passed = ocid_histogram['1'] < 0.5 * scope['total_ocid_count']
+            elif 2 <= value['total_ocid_count'] <= 20:
+                ocid_histogram['2_20']['total_ocid_count'] += value['total_ocid_count']
+                ocid_histogram['2_20']['total_buyer_count'] += 1
+
+            elif 21 <= value['total_ocid_count'] <= 50:
+                ocid_histogram['21_50']['total_ocid_count'] += value['total_ocid_count']
+                ocid_histogram['21_50']['total_buyer_count'] += 1
+
+            elif 51 <= value['total_ocid_count'] <= 100:
+                ocid_histogram['51_100']['total_ocid_count'] += value['total_ocid_count']
+                ocid_histogram['51_100']['total_buyer_count'] += 1
+
+            else:
+                ocid_histogram['100+']['total_ocid_count'] += value['total_ocid_count']
+                ocid_histogram['100+']['total_buyer_count'] += 1
+
+        passed = ocid_histogram['1']['total_buyer_count'] < 0.5 * len(scope['buyers'])
 
         result['result'] = passed
         result['value'] = 100 if passed else 0
         result['meta'] = {
             'counts': ocid_histogram,
             'total_ocid_count': scope['total_ocid_count'],
+            'total_buyer_count': len(scope['buyers']),
             'examples': buyer_with_one_ocid_sampler.retrieve_samples()
         }
     else:

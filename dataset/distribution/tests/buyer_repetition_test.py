@@ -93,13 +93,15 @@ def test_passed():
     result = buyer_repetition.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 100
-    assert result['meta']['total_ocid_count'] == 1000
-    assert result['meta']['biggest_buyer'] == {
-        'total_ocid_count': 20,
-        'buyer.identifier.id': -1,
-        'buyer.identifier.scheme': 'ICO',
+    assert result['meta'] == {
+        'total_ocid_count': 1000,
+        'ocid_count': 20,
         'ocid_share': 20 / 1000,
-        'examples': [{'ocid': '0', 'item_id': id} for id in range(20)]
+        'examples': [{'ocid': '0', 'item_id': id} for id in range(20)],
+        'specifics': {
+            'buyer.identifier.id': -1,
+            'buyer.identifier.scheme': 'ICO'
+        }
     }
 
     scope = {}
@@ -112,15 +114,17 @@ def test_passed():
     result = buyer_repetition.get_result(scope)
     assert result['result'] is True
     assert result['value'] == 100
-    assert result['meta']['total_ocid_count'] == 1000
     assert is_subset_dict(
         {
-            'total_ocid_count': 490,
-            'buyer.identifier.id': -1,
-            'buyer.identifier.scheme': 'ICO',
-            'ocid_share': 490 / 1000
+            'total_ocid_count': 1000,
+            'ocid_count': 490,
+            'ocid_share': 490 / 1000,
+            'specifics': {
+                'buyer.identifier.id': -1,
+                'buyer.identifier.scheme': 'ICO'
+            }
         },
-        result['meta']['biggest_buyer']
+        result['meta']
     )
 
 items_test_failed1 = []
@@ -195,13 +199,15 @@ def test_failed():
     result = buyer_repetition.get_result(scope)
     assert result['result'] is False
     assert result['value'] == 0
-    assert result['meta']['total_ocid_count'] == 1000
-    assert result['meta']['biggest_buyer'] == {
-        'total_ocid_count': 10,
-        'buyer.identifier.id': -1,
-        'buyer.identifier.scheme': 'ICO',
+    assert result['meta'] == {
+        'total_ocid_count': 1000,
+        'ocid_count': 10,
         'ocid_share': 10 / 1000,
-        'examples': [{'ocid': '0', 'item_id': id} for id in range(10)]
+        'examples': [{'ocid': '0', 'item_id': id} for id in range(10)],
+        'specifics': {
+            'buyer.identifier.id': -1,
+            'buyer.identifier.scheme': 'ICO'
+        },
     }
 
     scope = {}
@@ -214,13 +220,15 @@ def test_failed():
     result = buyer_repetition.get_result(scope)
     assert result['result'] is False
     assert result['value'] == 0
-    assert result['meta']['total_ocid_count'] == 1000
     assert is_subset_dict(
         {
-            'total_ocid_count': 500,
-            'buyer.identifier.id': -1,
-            'buyer.identifier.scheme': 'ICO',
-            'ocid_share': 500 / 1000
+            'total_ocid_count': 1000,
+            'ocid_count': 500,
+            'ocid_share': 500 / 1000,
+            'specifics': {
+                'buyer.identifier.id': -1,
+                'buyer.identifier.scheme': 'ICO'
+            }
         },
-        result['meta']['biggest_buyer']
+        result['meta']
     )

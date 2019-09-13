@@ -69,12 +69,12 @@ def get_result(scope):
         result['value'] = 100 if passed else 0
         result['meta'] = {
             'total_ocid_count': scope['total_ocid_count'],
-            'biggest_buyer': {
-                'total_ocid_count': biggest_buyer['total_ocid_count'],
+            'ocid_count': biggest_buyer['total_ocid_count'],
+            'ocid_share': biggest_buyer['total_ocid_count'] / scope['total_ocid_count'],
+            'examples': biggest_buyer['sampler'].retrieve_samples(),
+            'specifics': {
                 'buyer.identifier.id': biggest_buyer_id,
-                'buyer.identifier.scheme': biggest_buyer_scheme,
-                'ocid_share': biggest_buyer['total_ocid_count'] / scope['total_ocid_count'],
-                'examples': biggest_buyer['sampler'].retrieve_samples()
+                'buyer.identifier.scheme': biggest_buyer_scheme
             }
         }
 

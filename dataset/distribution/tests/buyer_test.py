@@ -134,7 +134,7 @@ items_test_failed2 = [
             }
         }
     }
-    for num in range(int(0.6 * buyer.min_resources_num))
+    for num in range(buyer.min_resources_num)
 ]
 items_test_failed2.extend(
     [
@@ -147,7 +147,7 @@ items_test_failed2.extend(
                 }
             }
         }
-        for _ in range(int(0.4 * buyer.min_resources_num))
+        for _ in range(buyer.min_resources_num)
     ]
 )
 
@@ -164,7 +164,9 @@ def test_failed():
     assert result['result'] is False
     assert result['value'] == 0
     assert result['meta']['total_ocid_count'] == buyer.min_resources_num
-    assert result['meta']['counts']['1'] == buyer.min_resources_num
+    assert result['meta']['total_buyer_count'] == buyer.min_resources_num
+    assert result['meta']['counts']['1']['total_ocid_count'] == buyer.min_resources_num
+    assert result['meta']['counts']['1']['total_buyer_count'] == buyer.min_resources_num
     assert len(result['meta']['examples']) == buyer.examples_cap
 
     scope = {}
@@ -177,9 +179,12 @@ def test_failed():
     result = buyer.get_result(scope)
     assert result['result'] is False
     assert result['value'] == 0
-    assert result['meta']['total_ocid_count'] == buyer.min_resources_num
-    assert result['meta']['counts']['1'] == 0.6 * buyer.min_resources_num
-    assert result['meta']['counts']['100+'] == 0.4 * buyer.min_resources_num
+    assert result['meta']['total_ocid_count'] == 2 * buyer.min_resources_num
+    assert result['meta']['total_buyer_count'] == buyer.min_resources_num +1
+    assert result['meta']['counts']['1']['total_ocid_count'] == buyer.min_resources_num
+    assert result['meta']['counts']['1']['total_buyer_count'] == buyer.min_resources_num
+    assert result['meta']['counts']['100+']['total_ocid_count'] == buyer.min_resources_num
+    assert result['meta']['counts']['100+']['total_buyer_count'] == 1
     assert len(result['meta']['examples']) == buyer.examples_cap
 
 items_test_passed_multiple = []
@@ -267,9 +272,9 @@ def test_passed_multiple():
     assert result['result'] is True
     assert result['value'] == 100
     assert result['meta']['total_ocid_count'] == 100 * 176
-    assert result['meta']['counts']['1'] == 100 * 1
-    assert result['meta']['counts']['2_20'] == 100 * 2
-    assert result['meta']['counts']['21_50'] == 100 * 21
-    assert result['meta']['counts']['51_100'] == 100 * 51
-    assert result['meta']['counts']['100+'] == 100 * 101
+    assert result['meta']['counts']['1']['total_ocid_count'] == 100 * 1
+    assert result['meta']['counts']['2_20']['total_ocid_count'] == 100 * 2
+    assert result['meta']['counts']['21_50']['total_ocid_count'] == 100 * 21
+    assert result['meta']['counts']['51_100']['total_ocid_count'] == 100 * 51
+    assert result['meta']['counts']['100+']['total_ocid_count'] == 100 * 101
     assert len(result['meta']['examples']) == buyer.examples_cap
