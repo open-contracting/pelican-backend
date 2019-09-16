@@ -86,7 +86,7 @@ CREATE INDEX data_item_dataset_id_idx ON data_item (dataset_id);
 
 CREATE TABLE field_level_check (
     id BIGSERIAL PRIMARY KEY,
-    data_item_id bigint,    
+    data_item_id bigint,
     dataset_id BIGINT,
     result jsonb,
     created timestamp without time zone default current_timestamp,
@@ -100,7 +100,7 @@ CREATE INDEX field_level_check_modified_idx ON field_level_check (modified);
 
 CREATE TABLE resource_level_check (
     id BIGSERIAL PRIMARY KEY,
-    data_item_id bigint,    
+    data_item_id bigint,
     dataset_id BIGINT,
     result jsonb,
     created timestamp without time zone default current_timestamp,
