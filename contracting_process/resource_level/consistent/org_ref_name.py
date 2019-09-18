@@ -75,10 +75,19 @@ def calculate(item, path: str) -> dict:
                         break
                 if not parties_values:
                     continue
+
+                if not "name" in value["value"]:
+                    continue
                 expected_name = str(value["value"]["name"])
-                passed = (
-                    expected_name == referenced_part["value"]["name"]
-                )
+
+                passed = True
+                if not "name" in referenced_part["value"]:
+                    passed = False
+                else:
+                    passed = (
+                        expected_name == referenced_part["value"]["name"]
+                    )
+
                 application_count += 1
                 pass_count = pass_count + 1 if passed else pass_count
 
