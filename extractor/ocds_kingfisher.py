@@ -45,6 +45,7 @@ def callback(channel, method, properties, body):
             name = input_message["name"]
             collection_id = input_message["collection_id"]
             max_items = int(input_message["max_items"]) if input_message["max_items"] else None
+            ancestor_id = int(input_message["ancestor_id"]) if input_message["ancestor_id"] else None
 
             logger.info("Reading kingfisher data started. name: {} collection_id: {}".format(
                 name, collection_id
@@ -86,10 +87,10 @@ def callback(channel, method, properties, body):
             cursor.execute(
                 """
                 INSERT INTO dataset
-                (name, meta)
+                (name, meta, ancestor_id)
                 VALUES
-                (%s, %s) RETURNING id;
-                """, (name, json.dumps({}))
+                (%s, %s, %s) RETURNING id;
+                """, (name, json.dumps({}), ancestor_id)
             )
             dataset_id = cursor.fetchone()[0]
             commit()

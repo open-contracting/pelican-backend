@@ -19,8 +19,9 @@ from tools.bootstrap import bootstrap
 @click.argument("environment")
 @click.argument("name")
 @click.argument("collection_id")
-@click.argument("max_items", required=False)
-def start(environment, name, collection_id, max_items=None):
+@click.option('--ancestor_id', default=None, help='Id of already calculated dataset. Used for time variance checks.')
+@click.option("--max_items", default=None, help="Number of items to be downloaded. USefull for testing and debug.")
+def start(environment, name, collection_id, ancestor_id, max_items):
     init_worker(environment)
 
     routing_key = "_ocds_kingfisher_extractor_init"
@@ -28,7 +29,8 @@ def start(environment, name, collection_id, max_items=None):
     message = {
         "name": name,
         "collection_id": collection_id,
-        "max_items": max_items
+        "ancestor_id": ancestor_id,
+        "max_items": max_items,
     }
     publish(json.dumps(message), get_param("exchange_name") + routing_key)
 

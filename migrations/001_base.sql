@@ -8,6 +8,7 @@ CREATE TABLE dataset (
     id BIGSERIAL PRIMARY KEY,
     name character varying(255),
     meta jsonb,
+    ancestor_id BIGINT,
     created timestamp without time zone default current_timestamp,
     modified timestamp without time zone default current_timestamp
 );
@@ -82,7 +83,7 @@ CREATE TABLE data_item (
 CREATE INDEX data_item_data_idx ON data_item USING gin (data jsonb_path_ops);
 CREATE INDEX data_item_modified_idx ON data_item (modified);
 CREATE INDEX data_item_dataset_id_idx ON data_item (dataset_id);
-
+CREATE INDEX data_item_ocid_idx ON data_item ((data->>'ocid'));
 
 CREATE TABLE field_level_check (
     id BIGSERIAL PRIMARY KEY,
@@ -125,6 +126,23 @@ CREATE TABLE dataset_level_check (
 
 CREATE INDEX dataset_level_check_dataset_id_idx ON dataset_level_check (dataset_id);
 CREATE INDEX dataset_level_check_modified_idx ON dataset_level_check (modified);
+
+
+CREATE TABLE time_variance_level_check (
+    id BIGSERIAL PRIMARY KEY,
+    check_name character varying,
+    coverage_result boolean,
+    coverage_value int,
+    check_result boolean,
+    check_value int,
+    meta jsonb,
+    dataset_id BIGINT,
+    created timestamp without time zone default current_timestamp,
+    modified timestamp without time zone default current_timestamp
+);
+
+CREATE INDEX time_variance_level_check_dataset_id_idx ON time_variance_level_check (dataset_id);
+CREATE INDEX time_variance_level_check_modified_idx ON time_variance_level_check (modified);
 
 
 CREATE TABLE exchange_rates (
