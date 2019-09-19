@@ -20,9 +20,12 @@ def create(dataset_id):
 
     report = {}
 
-    for path, quality_checks in definitions.items():
+    for order, definition in enumerate(definitions.items()):
+        path, quality_checks = definition
+
         report[path] = {
             'examples_filled': False,
+            'processing_order': order,
             'coverage': {
                 'checks': {},
                 'passed_count': 0,
