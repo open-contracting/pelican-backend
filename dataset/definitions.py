@@ -61,7 +61,7 @@ definitions = {
          "contracts.milestones.documents.documentType"]),
     "distribution.value_currency": code_distribution.CodeDistribution(
         ["tender.value.currency", "tender.minValue.currency", "awards.value.currency", "contracts.value.currency",
-         "planning.budget.value.currency", "contracts.implementation.transactions.value"]),
+         "planning.budget.value.currency", "contracts.implementation.transactions.value.currency"]),
     "distribution.related_process_relation": code_distribution.CodeDistribution(["relatedProcess.relationship"]),
     "misc.url_availability": url_availability, "consistent.related_process_title": related_process_title,
     "reference.related_process_identifier": related_process_identifier}

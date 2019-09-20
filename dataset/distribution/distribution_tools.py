@@ -59,6 +59,8 @@ def add_item(scope, item, item_id, path, important_values=[], samples_num=20):
 
     enum = values[0]
 
+    if type(enum) is dict:
+        print("fsdfdsf")
     if not enum and type(enum) != str:
         return scope
 

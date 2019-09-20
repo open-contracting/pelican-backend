@@ -34,13 +34,13 @@ def add_item(scope, item, item_id, path):
 
                 if currency_available(value["value"]["currency"]):
                     if value["value"]["currency"] != "USD":
-                        if item["date"]:
+                        if "date" in item and item["date"]:
                             rel_date = parse_date(item["date"])
                             value["abs_amount"] = convert(
                                 value["value"]["amount"],
                                 value["value"]["currency"],
                                 "USD", rel_date)
-                        if value["abs_amount"] is not None:
+                        if "abs_amount" in value and value["abs_amount"]:
                             scope["values"].append(value)
                     else:
                         value["abs_amount"] = value["value"]["amount"]

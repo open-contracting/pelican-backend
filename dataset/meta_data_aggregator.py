@@ -74,8 +74,10 @@ def add_item(scope, item, item_id):
     scope['tender_lifecycle']['implementation'] += len(get_values(item, 'contracts.implementation'))
 
     # prices
-    rel_datetime = parse_datetime(item['date']) 
-    rel_date = rel_datetime.date() if rel_datetime else None
+    rel_date = None
+    if "date" in item:
+        rel_datetime = parse_datetime(item['date'])
+        rel_date = rel_datetime.date() if rel_datetime else None
     values = get_values(item, 'contracts.value', value_only=True)
     for value in values:
         # check whether relevant field are set
@@ -158,6 +160,7 @@ def get_result(scope):
     del scope['_period_dict']
 
     return scope
+
 
 EMPTY_KINGFISHER_META_DATA = {
     'kingfisher_metadata': {
@@ -308,6 +311,7 @@ def get_kingfisher_meta_data(collection_id):
         parse_datetime(result[1]).strftime(DATETIME_STR_FORMAT) if result is not None else None
 
     return meta_data
+
 
 EMPTY_DQT_META_DATA = {
     'data_quality_tool_metadata': {

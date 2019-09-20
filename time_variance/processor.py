@@ -97,7 +97,8 @@ def do_work(dataset_id):
                                         {
                                             "item_id": ancestor_item_id,
                                             "new_item_id": new_item_id,
-                                            "ocid": ancestor_item["ocid"]
+                                            "ocid": ancestor_item["ocid"],
+                                            "new_item_ocid": new_item_id["ocid"],
                                         }
                                     )
                                 else:
@@ -106,7 +107,8 @@ def do_work(dataset_id):
                                         scope[plugin_name]["examples"][rand_int] = {
                                             "item_id": ancestor_item_id,
                                             "new_item_id": new_item_id,
-                                            "ocid": ancestor_item["ocid"]
+                                            "ocid": ancestor_item["ocid"],
+                                            "new_item_ocid": new_item_id["ocid"],
                                         }
 
                 except:
