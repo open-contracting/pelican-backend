@@ -98,7 +98,7 @@ def do_work(dataset_id):
                                             "item_id": ancestor_item_id,
                                             "new_item_id": new_item_id,
                                             "ocid": ancestor_item["ocid"],
-                                            "new_item_ocid": new_item_id["ocid"],
+                                            "new_item_ocid": new_item["ocid"],
                                         }
                                     )
                                 else:
@@ -108,7 +108,7 @@ def do_work(dataset_id):
                                             "item_id": ancestor_item_id,
                                             "new_item_id": new_item_id,
                                             "ocid": ancestor_item["ocid"],
-                                            "new_item_ocid": new_item_id["ocid"],
+                                            "new_item_ocid": new_item["ocid"],
                                         }
 
                 except:

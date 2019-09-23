@@ -212,8 +212,10 @@ def get_kingfisher_meta_data(collection_id):
         return meta_data
 
     meta_data['kingfisher_metadata']['collection_id'] = collection_id
-    meta_data['kingfisher_metadata']['processing_start'] = result[1].strftime(DATETIME_STR_FORMAT)
-    meta_data['kingfisher_metadata']['processing_end'] = result[2].strftime(DATETIME_STR_FORMAT)
+    if result[1]:
+        meta_data['kingfisher_metadata']['processing_start'] = result[1].strftime(DATETIME_STR_FORMAT)
+    if result[2]:
+        meta_data['kingfisher_metadata']['processing_end'] = result[2].strftime(DATETIME_STR_FORMAT)
 
     ##########################################
     # retrieving additional database entries #
