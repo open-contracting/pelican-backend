@@ -53,12 +53,12 @@ def test_ok():
     assert result["meta"] == {
         "shares": {
             "B": {
-                "share": 66,
+                "share": 2/3,
                 "count": 2,
                 "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]
             },
             "A": {
-                "share": 33,
+                "share": 1/3,
                 "count": 1,
                 "examples": [{"item_id": 1, "ocid": "1"}]
             },
@@ -77,7 +77,7 @@ def test_failed():
     assert result["meta"] == {
         "shares": {
             "B": {
-                "share": 100,
+                "share": 1.0,
                 "count": 2,
                 "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]
             },
