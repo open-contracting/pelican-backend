@@ -99,6 +99,20 @@ CREATE INDEX field_level_check_data_item_id_idx ON field_level_check (data_item_
 CREATE INDEX field_level_check_dataset_id_idx ON field_level_check (dataset_id);
 CREATE INDEX field_level_check_modified_idx ON field_level_check (modified);
 
+CREATE TABLE field_level_check_examples (
+    id BIGSERIAL PRIMARY KEY,
+    dataset_id BIGINT,
+    data jsonb,
+    path VARCHAR,
+    created timestamp without time zone default current_timestamp,
+    modified timestamp without time zone default current_timestamp
+);
+
+CREATE INDEX field_level_check_examples_data_idx ON field_level_check_examples USING gin (data jsonb_path_ops);
+CREATE INDEX field_level_check_examples_dataset_id_idx ON field_level_check_examples (dataset_id);
+CREATE INDEX field_level_check_examples_path_idx ON field_level_check_examples (path);
+CREATE INDEX field_level_check_examples_modified_idx ON field_level_check_examples (modified);
+
 CREATE TABLE resource_level_check (
     id BIGSERIAL PRIMARY KEY,
     data_item_id bigint,
@@ -112,6 +126,20 @@ CREATE INDEX resource_level_check_result_idx ON resource_level_check USING gin (
 CREATE INDEX resource_level_check_data_item_id_idx ON resource_level_check (data_item_id);
 CREATE INDEX resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
 CREATE INDEX resource_level_check_modified_idx ON resource_level_check (modified);
+
+CREATE TABLE resource_level_check_examples (
+    id BIGSERIAL PRIMARY KEY,
+    dataset_id BIGINT,
+    data jsonb,
+    check_name VARCHAR,
+    created timestamp without time zone default current_timestamp,
+    modified timestamp without time zone default current_timestamp
+);
+
+CREATE INDEX resource_level_check_examples_data_idx ON resource_level_check_examples USING gin (data jsonb_path_ops);
+CREATE INDEX resource_level_check_examples_dataset_id_idx ON resource_level_check_examples (dataset_id);
+CREATE INDEX resource_level_check_examples_check_name_idx ON resource_level_check_examples (check_name);
+CREATE INDEX resource_level_check_examples_modified_idx ON resource_level_check_examples (modified);
 
 CREATE TABLE dataset_level_check (
     id BIGSERIAL PRIMARY KEY,
