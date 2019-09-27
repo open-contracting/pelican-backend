@@ -7,7 +7,7 @@ from tools.helpers import ReservoirSampler
 from contracting_process.field_level.definitions import coverage_checks, definitions
 
 examples_cap = 20
-page_size = 1000
+page_size = 2000
 
 
 def create(dataset_id):
@@ -109,7 +109,9 @@ def create(dataset_id):
             }
 
     # processing field level checks
-    processed_count = 1000
+    logger.info("Starting processing pages.")
+
+    processed_count = page_size
     id = -1
     pager = 0
 
@@ -132,7 +134,7 @@ def create(dataset_id):
             result = row['result']
             meta = result['meta']
 
-            for path, path_checks in result.items():
+            for path, path_checks in result['checks'].items():
                 for path_check in path_checks:
                     exact_path = path_check['path']
 
@@ -163,7 +165,7 @@ def create(dataset_id):
 
                         report[path]['coverage']['checks'][check['name']]['total_count'] += 1
 
-                    if not path_check['coverage']['overall_result']:
+                    if not path_check['coverage']['overall_result'] or not path_check['quality']['check_results']:
                         continue
 
                     # quality

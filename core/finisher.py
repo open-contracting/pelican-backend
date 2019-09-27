@@ -57,11 +57,6 @@ def callback(channel, method, properties, body):
             examples are being picked".format(dataset_id))
         field_level_report_examples.create(dataset_id)
 
-        # logger.info("Field level checks report for dataset_id {} is being calculated".format(dataset_id))
-        # field_level_report.create(dataset_id)
-        # logger.info("Field level checks examples for dataset_id {} are being picked".format(dataset_id))
-        # field_level_examples.create(dataset_id)
-
         # adding final meta data for current dataset
         logger.info("Saving processing info to dataset table.")
         meta_data = meta_data_aggregator.get_dqt_meta_data(dataset_id)
