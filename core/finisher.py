@@ -20,9 +20,7 @@ from core.state import get_total_items_count
 from core.state import get_dataset
 from time_variance import processor
 from tools.bootstrap import bootstrap
-import contracting_process.field_level.report as field_level_report
 import contracting_process.resource_level.report as resource_level_report
-import contracting_process.field_level.examples as field_level_examples
 import contracting_process.resource_level.examples as resource_level_examples
 
 import contracting_process.field_level.report_examples as field_level_report_examples

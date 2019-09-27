@@ -348,7 +348,7 @@ def update_meta_data(meta_data, dataset_id):
     cursor.execute(
         """
         UPDATE dataset
-        SET meta = meta || %s
+        SET meta = meta || %s, modified = now()
         WHERE id = %s;
         """, (json.dumps(meta_data), dataset_id)
     )
