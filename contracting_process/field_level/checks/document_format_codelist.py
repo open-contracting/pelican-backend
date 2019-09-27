@@ -66,7 +66,7 @@ def calculate(data, key: str) -> dict:
             return result
 
         else:
-            result["result"] = None
+            result["result"] = False
             result["value"] = None
             result["reason"] = "Document has no format"
             return result
