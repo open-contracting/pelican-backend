@@ -38,7 +38,7 @@ definitions = {
         ["open"]),
     "distribution.tender_status": code_distribution.CodeDistribution(
         ["tender.status"],
-        ["planning", "planned", "active", "cancelled", "unsuccessful", "complete", "withdrawn"]),
+        ["active", "complete"]),
     "distribution.tender_award_criteria": code_distribution.CodeDistribution(["tender.awardCriteria"]),
     "distribution.tender_submission_method": code_distribution.CodeDistribution(
         ["tender.submissionMethod.distribution"]),

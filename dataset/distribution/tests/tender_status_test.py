@@ -8,18 +8,13 @@ code_distribution = code_distribution.CodeDistribution(
         "tender.status"
     ],
     [
-        "planning",
-        "planned",
         "active",
-        "cancelled",
-        "unsuccessful",
         "complete",
-        "withdrawn"
     ]
 )
 
 possible_enums = [
-    "b", "c", "d", "e", "f", "planning", "active"
+    "b", "c", "d", "e", "f", "complete", "active"
 ]
 
 
@@ -85,7 +80,7 @@ items_test_passed = [
     {
         "ocid": "1",
         "tender": {
-            "status": "planning"
+            "status": "complete"
         }
     }
 ]
@@ -93,7 +88,7 @@ items_test_passed = [
 
 def test_passed():
     code_distribution.important_enums = {
-        "active", "planning"
+        "active", "complete"
     }
     scope = {}
 
@@ -111,7 +106,7 @@ def test_passed():
         "count": 1,
         "examples": [{"item_id": 0, "ocid": "0"}]
     }
-    assert result["meta"]["shares"]["planning"] == {
+    assert result["meta"]["shares"]["complete"] == {
         "share": 0.5,
         "count": 1,
         "examples": [{"item_id": 1, "ocid": "1"}]
@@ -152,17 +147,11 @@ def test_failed():
         "count": 1,
         "examples": [{"item_id": 0, "ocid": "0"}]
     }
-    assert result["meta"]["shares"]["planning"] == {
+    assert result["meta"]["shares"]["complete"] == {
         "share": 0,
         "count": 0,
         "examples": []
     }
-    assert result["meta"]["shares"]["planning"] == {
-        "share": 0,
-        "count": 0,
-        "examples": []
-    }
-
 
 items_test_passed_big_load = [
     {
