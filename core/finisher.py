@@ -25,6 +25,8 @@ import contracting_process.resource_level.report as resource_level_report
 import contracting_process.field_level.examples as field_level_examples
 import contracting_process.resource_level.examples as resource_level_examples
 
+import contracting_process.field_level.report_examples as field_level_report_examples
+
 consume_routing_key = "_time_variance_checker"
 
 
@@ -44,19 +46,21 @@ def callback(channel, method, properties, body):
         input_message = json.loads(body.decode('utf8'))
         dataset_id = input_message["dataset_id"]
 
-        # creating reports
-        logger.info("Field level checks report for dataset_id {} is being calculated".format(dataset_id))
-        field_level_report.create(dataset_id)
-
+        # creating reports and examples
         logger.info("Resource level checks report for dataset_id {} is being calculated".format(dataset_id))
         resource_level_report.create(dataset_id)
 
-        # creating examples
-        logger.info("Field level checks examples for dataset_id {} are being picked".format(dataset_id))
-        field_level_examples.create(dataset_id)
-
         logger.info("Resource level checks examples for dataset_id {} are being picked".format(dataset_id))
         resource_level_examples.create(dataset_id)
+
+        logger.info("Field level checks report for dataset_id {} is being calculated and \
+            examples are being picked".format(dataset_id))
+        field_level_report_examples.create(dataset_id)
+
+        # logger.info("Field level checks report for dataset_id {} is being calculated".format(dataset_id))
+        # field_level_report.create(dataset_id)
+        # logger.info("Field level checks examples for dataset_id {} are being picked".format(dataset_id))
+        # field_level_examples.create(dataset_id)
 
         # adding final meta data for current dataset
         logger.info("Saving processing info to dataset table.")
