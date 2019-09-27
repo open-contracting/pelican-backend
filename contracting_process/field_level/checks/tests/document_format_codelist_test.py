@@ -41,7 +41,7 @@ def test_ocid_prefix_ok():
 
 def test_ocid_prefix_failed():
     not_found_result = {
-        "result": None,
+        "result": False,
         "value": None,
         "reason": "Document has no format",
     }
