@@ -20,15 +20,15 @@ def create(dataset_id):
         """
         delete
         from report
-        where dataset_id = '{}' and type = '{}';
-        """.format(dataset_id, 'field_level_check')
+        where dataset_id = %s and type = %s;
+        """, [dataset_id, 'field_level_check']
     )
     cursor.execute(
         """
         delete
         from field_level_check_examples
-        where dataset_id = '{}';
-        """.format(dataset_id)
+        where dataset_id = %s;
+        """, [dataset_id,]
     )
 
     # creating report and examples
@@ -208,8 +208,8 @@ def create(dataset_id):
         insert into report
         (dataset_id, type, data)
         values
-        ('{}', 'field_level_check', '{}');
-        """.format(dataset_id, json.dumps(report))
+        (%s, 'field_level_check', %s);
+        """, [dataset_id, json.dumps(report)]
     )
     commit()
 
@@ -245,7 +245,7 @@ def create(dataset_id):
             insert into field_level_check_examples
             (dataset_id, path, data)
             values
-            ('{}', '{}', '{}');
-            """.format(dataset_id, path, json.dumps(path_checks))
+            (%s, %s, %s);
+            """, [dataset_id, path, json.dumps(path_checks)]
         )
     commit()

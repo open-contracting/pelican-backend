@@ -82,8 +82,8 @@ def update_from_fixer_io():
             cursor.execute(
                 """
                 insert into exchange_rates (valid_on, rates)
-                values ('{}', '{}');
-                """.format(date_str, json.dumps(data['rates']))
+                values (%s, %s);
+                """, [date_str, json.dumps(data['rates'])]
             )
 
         except psycopg2.Error:

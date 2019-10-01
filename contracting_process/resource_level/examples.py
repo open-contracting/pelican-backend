@@ -15,8 +15,8 @@ def create(dataset_id):
         """
         delete
         from resource_level_check_examples
-        where dataset_id = '{}';
-        """.format(dataset_id)
+        where dataset_id = %s;
+        """, [dataset_id]
     )
 
     check_samplers = {
@@ -68,7 +68,7 @@ def create(dataset_id):
             insert into resource_level_check_examples
             (dataset_id, check_name, data)
             values
-            ('{}', '{}', '{}');
-            """.format(dataset_id, check_name, json.dumps(data))
+            (%s, %s, %s);
+            """, [dataset_id, check_name, json.dumps(data)]
         )
     commit()

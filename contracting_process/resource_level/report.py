@@ -13,8 +13,8 @@ def create(dataset_id):
         """
         delete
         from report
-        where dataset_id = '{}' and type = '{}';
-        """.format(dataset_id, 'resource_level_check')
+        where dataset_id = %s and type = %s;
+        """, [dataset_id, 'resource_level_check']
     )
 
     report = {}
@@ -46,10 +46,10 @@ def create(dataset_id):
                     end
                 ) as result
             from resource_level_check, jsonb_each(result->'checks') d
-            where dataset_id = '{dataset_id}'
+            where dataset_id = %s
         ) as sub
         group by sub.check_name, sub.result;
-        """.format(dataset_id=dataset_id)
+        """, [dataset_id]
     )
 
     for row in cursor.fetchall():
@@ -70,7 +70,7 @@ def create(dataset_id):
         insert into report
         (dataset_id, type, data)
         values
-        ('{}', 'resource_level_check', '{}');
-        """.format(dataset_id, json.dumps(report))
+        (%s, 'resource_level_check', %s);
+        """, [dataset_id, json.dumps(report)]
     )
     commit()
