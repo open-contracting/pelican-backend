@@ -85,9 +85,11 @@ def add_item(scope, item, item_id):
                 value['amount'] is None or value['currency'] is None:
             continue
 
-        amount_usd = int(convert(value['amount'], value['currency'], 'USD', rel_date))
+        amount_usd = convert(value['amount'], value['currency'], 'USD', rel_date)
         if amount_usd is None:
             continue
+
+        amount_usd = int(amount_usd)
 
         if amount_usd >= 0:
             scope['prices']['total_volume_positive'] += amount_usd
