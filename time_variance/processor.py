@@ -26,6 +26,8 @@ def do_work(dataset_id):
     cursor = get_cursor()
     ancestor_id = get_ancestor_id(dataset_id, cursor)
 
+    cursor.execute("ANALYZE data_item")
+
     if not ancestor_id:
         logger.info("No ancestor dataset available. Skipping time variance checks.")
         return
