@@ -84,6 +84,8 @@ CREATE INDEX data_item_data_idx ON data_item USING gin (data jsonb_path_ops);
 CREATE INDEX data_item_modified_idx ON data_item (modified);
 CREATE INDEX data_item_dataset_id_idx ON data_item (dataset_id);
 CREATE INDEX data_item_ocid_idx ON data_item ((data->>'ocid'));
+ALTER INDEX data_item_ocid_idx ALTER COLUMN expr SET STATISTICS 10000;
+ALTER TABLE data_item ALTER COLUMN dataset_id SET STATISTICS 10000;
 
 CREATE TABLE field_level_check (
     id BIGSERIAL PRIMARY KEY,
