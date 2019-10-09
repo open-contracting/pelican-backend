@@ -149,6 +149,7 @@ def save_time_variance_level_check(check_name, result, dataset_id):
         result["meta"] = {}
 
     result["meta"]["version"] = result["version"]
+    result["meta"]["examples"] = result["examples"]
     meta = json.dumps(result["meta"])
 
     cursor.execute("""
