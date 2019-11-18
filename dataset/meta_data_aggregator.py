@@ -201,10 +201,11 @@ def get_kingfisher_meta_data(collection_id):
     meta_data['kingfisher_metadata'] = {}
     kf_cursor.execute(
         """
-        SELECT b.id, b.store_start_at, b.store_end_at
+        SELECT c.id, c.store_start_at, a.store_end_at
         FROM collection AS a
         INNER JOIN collection AS b ON a.transform_from_collection_id = b.id
-        AND a.id = %s
+        INNER JOIN collection AS c ON b.transform_from_collection_id = c.id
+        AND a.id = %s;
         LIMIT 1;
         """, (collection_id,)
     )
