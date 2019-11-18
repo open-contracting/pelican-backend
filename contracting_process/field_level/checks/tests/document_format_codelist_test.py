@@ -15,56 +15,32 @@ The file contains tests for contracting_process.field_level.document_format_code
 
 def test_ocid_prefix_ok():
     item1 = {
-        "documents": [
-            {
-                "format": "application/AML"
-            }
-        ]
+        "format": "application/AML"
+
     }
     item2 = {
-        "documents": [
-            {
-                "format": "offline/print"
-            }
-        ]
+        "format": "offline/print"
+
     }
 
     assert is_subset_dict(
         {"result": True},
-        calculate(item1, "documents")
+        calculate(item1, "format")
     )
     assert is_subset_dict(
         {"result": True},
-        calculate(item2, "documents")
+        calculate(item2, "format")
     )
 
 
 def test_ocid_prefix_failed():
-    not_found_result = {
-        "result": False,
-        "value": None,
-        "reason": "Document has no format",
-    }
-    fail_result1 = {
-        "result": False,
-        "value": None,
-        "reason": "wrong file format"
-    }
-    fail_result2 = {
+    fail_result = {
         "result": False,
         "value": "lalala",
         "reason": "wrong file format"
     }
 
     assert is_subset_dict(
-        not_found_result,
-        calculate({"documents": [{}]}, "documents")
-    )
-    assert is_subset_dict(
-        fail_result1,
-        calculate({"documents": [{"format": None}]}, "documents")
-    )
-    assert is_subset_dict(
-        fail_result2,
-        calculate({"documents": [{"format": "lalala"}]}, "documents")
+        fail_result,
+        calculate({"format": "lalala"}, "format")
     )
