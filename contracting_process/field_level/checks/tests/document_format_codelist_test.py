@@ -1,19 +1,8 @@
-
 from contracting_process.field_level.checks.document_format_codelist import calculate
 from tools.helpers import is_subset_dict
 
-"""
-author: Iaroslav Kolodka
 
-The file contains tests for contracting_process.field_level.document_format_codelist.document_format_codelist .
-
-'test_ocid_prefix_ok' tests valid formas and exception (offline/print)
-'test_ocid_prefix_failed' function checks cases with empty value and cases with incorrect format
-
-"""
-
-
-def test_ocid_prefix_ok():
+def test_format_ok():
     item1 = {
         "format": "application/AML"
 
@@ -33,7 +22,7 @@ def test_ocid_prefix_ok():
     )
 
 
-def test_ocid_prefix_failed():
+def test_format_failed():
     fail_result = {
         "result": False,
         "value": "lalala",

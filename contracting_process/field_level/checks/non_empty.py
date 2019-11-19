@@ -1,4 +1,3 @@
-
 from tools.checks import get_empty_result_field
 
 name = "non_empty"

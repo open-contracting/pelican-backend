@@ -1,4 +1,3 @@
-
 from contracting_process.field_level.checks.document_type import calculate_section
 from tools.helpers import is_subset_dict
 

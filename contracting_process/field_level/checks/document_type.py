@@ -1,4 +1,3 @@
-
 from tools.checks import get_empty_result_field
 
 name = 'document_type'
@@ -22,6 +21,7 @@ def calculate_section(data, key, section):
     result['value'] = value
     result['reason'] = 'unsupported combination code-section for documentType'
     return result
+
 
 code_to_section_mapping = {
     'contractGuarantees': ['tender', 'contract'],
