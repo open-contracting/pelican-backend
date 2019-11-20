@@ -27,6 +27,9 @@ def create(dataset_id):
             'failed_count': 0,
             'undefined_count': 0,
             'total_count': 0,
+            'individual_passed_count': 0,
+            'individual_failed_count': 0,
+            'individual_application_count': 0,
             'passed_examples': [],
             'failed_examples': [],
             'undefined_examples': []
@@ -63,6 +66,36 @@ def create(dataset_id):
             raise ValueError()
 
         report[row['check_name']]['total_count'] += row['count']
+
+    # individual counts
+    cursor.execute(
+        """
+        select sub.check_name,
+               sum(sub.pass_count) as pass_count,
+               sum(sub.application_count) as application_count
+        from (
+            select
+                d.key as check_name,
+                (d.value->>'pass_count')::int as pass_count,
+                (d.value->>'application_count')::int as application_count
+            from resource_level_check, jsonb_each(result->'checks') d
+            where dataset_id = %s and
+                  (
+                    case
+                        when d.value->'result' is null then null
+                        else (d.value->>'result')::boolean
+                    end
+                  ) is not null
+        ) as sub
+        group by sub.check_name;
+        """, [dataset_id]
+    )
+
+    for row in cursor.fetchall():
+        report[row['check_name']]['individual_passed_count'] = row['pass_count']
+        report[row['check_name']]['individual_failed_count'] = row['application_count'] - row['pass_count']
+        report[row['check_name']]['individual_application_count'] = row['application_count']
+
 
     # storing the report
     cursor.execute(

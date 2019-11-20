@@ -8,6 +8,8 @@ version = 1.0
 
 def calculate(item):
     result = get_empty_result_resource(version)
+    result['application_count'] = 0
+    result['pass_count'] = 0
 
     contracts = item['contracts'] if 'contracts' in item else None
     if not contracts:
@@ -19,36 +21,31 @@ def calculate(item):
         result['meta'] = {'reason': 'there are no awards'}
         return result
 
+    non_applicable_award_ids = set()
     for contract in contracts:
-        matching_awards = [a for a in awards if contract['awardID'] == a['id']]
+        matching_awards = [a for a in awards if str(contract['awardID']) == str(a['id'])]
 
         # matching award can be only one
         if len(matching_awards) != 1:
-            result['meta'] = {'reason': 'multiple awards with the same id'}
-            return result
+            non_applicable_award_ids.update([str(a['id']) for a in matching_awards])
+            continue
 
         matching_award = matching_awards[0]
 
         # checking whether amout or curreny fields are set
-        if 'value' not in contract or 'value' not in matching_award or \
-                'currency' not in contract['value'] or \
-                'amount' not in contract['value'] or \
-                'currency' not in matching_award['value'] or \
-                'amount' not in matching_award['value'] or \
-                contract['value']['currency'] is None or \
-                contract['value']['amount'] is None or \
-                matching_award['value']['currency'] is None or \
-                matching_award['value']['amount'] is None:
-
-            result['meta'] = {'reason': 'amount or currency is not set'}
-            return result
-
-        # checking for non-existing currencies
-        if not currency_available(contract['value']['currency']) or \
-                not currency_available(matching_award['value']['currency']):
-
-            result['meta'] = {'reason': 'non-existing currencies'}
-            return result
+        if (
+            'value' not in contract or 'value' not in matching_award or
+            'currency' not in contract['value'] or
+            'amount' not in contract['value'] or
+            'currency' not in matching_award['value'] or
+            'amount' not in matching_award['value'] or
+            contract['value']['currency'] is None or
+            contract['value']['amount'] is None or
+            matching_award['value']['currency'] is None or
+            matching_award['value']['amount'] is None
+        ):
+            non_applicable_award_ids.add(str(matching_award['id']))
+            continue
 
         # converting values if necessary
         contract_value_amount = None
@@ -71,26 +68,26 @@ def calculate(item):
 
         # checking for non-convertible values
         if contract_value_amount is None or award_value_amount is None:
-            result['meta'] = {'reason': 'non-convertible values'}
-            return result
+            non_applicable_award_ids.add(str(matching_award['id']))
+            continue
 
         # amount is equal to zero
         if contract_value_amount == 0 or award_value_amount == 0:
-            result['meta'] = {'reason': 'value.amount equal to zero'}
-            return result
+            non_applicable_award_ids.add(str(matching_award['id']))
+            continue
 
         # different signs
         if (contract_value_amount > 0 and award_value_amount < 0) or \
                 (contract_value_amount < 0 and award_value_amount > 0):
-            result['meta'] = {'reason': 'different signs for value.amount(s)'}
-            return result
+            non_applicable_award_ids.add(str(matching_award['id']))
+            continue
 
-    application_count = 0
-    pass_count = 0
-    result_result = True
     for award in awards:
+        if str(award['id']) in non_applicable_award_ids:
+            continue
+
         matching_contracts = [
-            c for c in contracts if c['awardID'] == award['id']
+            c for c in contracts if str(c['awardID']) == str(award['id'])
         ]
 
         # no matching contracts
@@ -99,8 +96,10 @@ def calculate(item):
 
         award_value_amount = None
         contracts_value_amount_sum = None
-        if all([award['value']['currency'] == c['value']['currency']
-                for c in matching_contracts]):
+        if all([
+            award['value']['currency'] == c['value']['currency']
+            for c in matching_contracts
+        ]):
             award_value_amount = award['value']['amount']
             contracts_value_amount_sum = sum(
                 [c['value']['amount'] for c in matching_contracts]
@@ -124,11 +123,9 @@ def calculate(item):
             / abs(award_value_amount)
         passed = ratio <= 0.5
 
-        application_count += 1
+        result['application_count'] += 1
         if passed:
-            pass_count += 1
-
-        result_result = result_result and passed
+            result['pass_count'] += 1
 
         if result['meta'] is None:
             result['meta'] = {'awards': []}
@@ -141,7 +138,10 @@ def calculate(item):
             }
         )
 
-    result['application_count'] = application_count
-    result['pass_count'] = pass_count
-    result['result'] = result_result
+    if result['application_count'] > 0:
+        result['result'] = result['application_count'] == result['pass_count']
+    else:
+        result['result'] = None
+        result['meta'] = {'reason': 'rule could not be applied for any award - contracts group'}
+
     return result

@@ -35,13 +35,6 @@ def calculate(item):
         result["meta"] = {"reason": "amount or currency is null"}
         return result
 
-    # unsupported currencies
-    if not currency_available(tender_value["currency"]) or not currency_available(planning_budget_amount["currency"]):
-        result["meta"] = {
-            "reason": "unsupported currency", "tender.value": tender_value,
-            "planning.budget.amount": planning_budget_amount}
-        return result
-
     # currency conversion if necessary
     if tender_value["currency"] == planning_budget_amount["currency"]:
         tender_value_amount = tender_value["amount"]
@@ -49,8 +42,17 @@ def calculate(item):
     else:
         ref_date = parse_date(get_values(item, "date", value_only=True)[0])
         tender_value_amount = convert(tender_value["amount"], tender_value["currency"], "USD", ref_date)
-        planning_budget_amount_amount = convert(planning_budget_amount["amount"], planning_budget_amount["currency"],
-                                                "USD", ref_date)
+        planning_budget_amount_amount = convert(
+            planning_budget_amount["amount"], planning_budget_amount["currency"], "USD", ref_date
+        )
+
+    # non-convertible values
+    if tender_value_amount is None or planning_budget_amount_amount is None:
+        result["meta"] = {
+            "reason": "values are not convertible",
+            "tender.value": tender_value, "planning.budget.amount": planning_budget_amount
+        }
+        return result
 
     # amount is equal to zero
     if tender_value_amount == 0 or planning_budget_amount_amount == 0:
@@ -63,8 +65,10 @@ def calculate(item):
     if (tender_value_amount > 0 and planning_budget_amount_amount < 0) or \
        (tender_value_amount < 0 and planning_budget_amount_amount > 0):
 
-        result["meta"] = {"reason": "amounts have different signs",
-                          "tender.value": tender_value, "planning.budget.amount": planning_budget_amount}
+        result["meta"] = {
+            "reason": "amounts have different signs",
+            "tender.value": tender_value, "planning.budget.amount": planning_budget_amount
+        }
         return result
 
     ratio = abs(tender_value_amount - planning_budget_amount_amount) / abs(tender_value_amount)

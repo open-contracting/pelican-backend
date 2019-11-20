@@ -83,7 +83,8 @@ item_test_unsupported_currencies = \
                     "currency": "USD"
                 }
             }
-        }
+        },
+        "date": "2019-01-10T22:00:00+01:00"
     }
 
 
@@ -93,7 +94,7 @@ def test_unsupported_currencies():
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {
-        "reason": "unsupported currency",
+        "reason": "values are not convertible",
         "tender.value": item_test_unsupported_currencies["tender"]["value"],
         "planning.budget.amount": item_test_unsupported_currencies["planning"]["budget"]["amount"]
     }

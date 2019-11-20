@@ -7,90 +7,65 @@ from decimal import Decimal
 
 version = 1.0
 
-"""
-author: Iaroslav Kolodka
-
-version 1.0
-
-"""
+value_paths = [
+    'tender.value',
+    'tender.minValue',
+    'awards.value',
+    'contracts.value',
+    'planning.budget.value',
+    'contracts.implementation.transactions.value'
+]
 
 
 def calculate(item):
-    """
-    The function controls 'Value' object for a realistic value in it.
-
-    Parameters
-    ----------
-    version : item
-        tested JSON
-
-    Returns
-    -------
-    dict
-        tests results
-
-    """
     result = get_empty_result_resource(version)
+    parsed_date = parse_datetime(get_values(item, 'date', value_only=True)[0])
 
-    values = get_values(item, 'date', value_only=True)
-    date = parse_datetime(values[0]) if values else None
+    value_fields = []
+    for path in value_paths:
+        value_fields.extend(get_values(item, path))
 
-    value_boxes = get_values(item, "tender.value")
-    value_boxes += get_values(item, "tender.minValue")
-    value_boxes += get_values(item, "awards.value")
-    value_boxes += get_values(item, "contracts.value")
-    value_boxes += get_values(item, "planning.budget.value")
-    value_boxes += get_values(item, "contracts.implementation.transactions.value")
+    result['application_count'] = 0
+    result['pass_count'] = 0
 
-    application_count = 0
-    pass_count = 0
-    if value_boxes:
-        lower_bound = Decimal(-5000000000)
-        upper_bound = Decimal(5000000000)
-        for value_box in value_boxes:
-            passed = None
-            value = None
-            if "value" in value_box and value_box["value"]:
-                value_amount = get_values(value_box["value"], "amount", True)
-                if not value_amount:  # check on empty list
-                    continue
-                value_amount = value_amount[0]
-                if value_amount is None:
-                    continue
-                try:
-                    value_amount_int = int(float(value_amount))
-                    value_currency = get_values(value_box["value"], "currency", True)
-                    if not value_currency:
-                        continue
-                    value_currency = value_currency[0]
-                    if value_currency is not "USD":
-                        value_amount_usd = convert(amount=value_amount_int,
-                                                   original_currency=value_currency,
-                                                   target_currency="USD",
-                                                   rel_date=date)
-                    else:
-                        value_amount_usd = value_amount_int
-                    if value_amount_usd is None:
-                        continue
-                    application_count += 1
+    for value_field in value_fields:
+        if 'amount' not in value_field['value'] or 'currency' not in value_field['value']:
+            continue
 
-                    passed = value_amount_usd >= lower_bound and value_amount_usd <= upper_bound
-                    pass_count = pass_count + 1 if passed else pass_count
-                    if not result["meta"]:
-                        result["meta"] = {"references": []}
-                    result["meta"]["references"].append(
-                        {
-                            "result": passed,
-                            "amount": value_amount,
-                            "currency": value_currency,
-                            "path": value_box["path"]
-                        }
-                    )
-                except ValueError:
-                    continue
-        if application_count > 0:  # else: None
-            result["result"] = application_count == pass_count
+        if value_field['value']['amount'] is None or value_field['value']['currency'] is None:
+            continue
 
-    result["application_count"] = application_count
-    result["pass_count"] = pass_count
+        usd_amount = None
+        if value_field['value']['currency'] == 'USD':
+            usd_amount = value_field['value']['amount']
+        else:
+            usd_amount = convert(value_field['value']['amount'], value_field['value']['currency'], 'USD', parsed_date)
+
+        if usd_amount is None:
+            continue
+
+        passed = -5.0e9 <= float(usd_amount) <= 5.0e9
+
+        result['application_count'] += 1
+        if passed:
+            result['pass_count'] += 1
+
+        if result['meta'] is None:
+            result['meta'] = {'references': []}
+
+        result['meta']['references'].append(
+            {
+                'result': passed,
+                'amount': value_field['value']['amount'],
+                'currency': value_field['value']['currency'],
+                'path': value_field['path']
+            }
+        )
+
+    if result['application_count'] > 0:
+        result['result'] = result['application_count'] == result['pass_count']
+    else:
+        result['result'] = None
+        result['meta'] = {'reason': 'rule could not be applied for any value'}
+
     return result
