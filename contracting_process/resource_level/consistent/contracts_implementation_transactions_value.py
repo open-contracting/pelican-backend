@@ -11,7 +11,6 @@ def calculate(item):
     result = get_empty_result_resource(version)
 
     contracts = get_values(item, 'contracts')
-    awards_id = [str(id) for id in get_values(item, 'awards.id', value_only=True)]
 
     result['application_count'] = 0
     result['pass_count'] = 0
@@ -19,10 +18,6 @@ def calculate(item):
     for contract in contracts:
         transactions = get_values(contract['value'], 'implementation.transactions', value_only=True)
         if not transactions:
-            continue
-
-        # checking if referenced award exists and is the only one
-        if awards_id.count(str(contract['value']['awardID'])) != 1:
             continue
 
         # checking whether all check-specific fields are set

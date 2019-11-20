@@ -119,7 +119,7 @@ item_test_passed2 = {
     'date': '2019-01-01T16:47:36.860000Z',
     'awards': [
         {
-            'id': 0
+            'id': 1
         }
     ],
     'contracts': [
@@ -157,20 +157,20 @@ item_test_passed2 = {
 
 
 def test_passed():
-    # result = calculate(item_test_passed1)
-    # assert result['result'] is True
-    # assert result['application_count'] == 1
-    # assert result['pass_count'] == 1
-    # assert result['meta'] == {
-    #     'contracts': [
-    #         {
-    #             'path': 'contracts[0]',
-    #             'contract_amount': 300,
-    #             'transactions_amount_sum': 300,
-    #             'currency': 'CZK'
-    #         }
-    #     ]
-    # }
+    result = calculate(item_test_passed1)
+    assert result['result'] is True
+    assert result['application_count'] == 1
+    assert result['pass_count'] == 1
+    assert result['meta'] == {
+        'contracts': [
+            {
+                'path': 'contracts[0]',
+                'contract_amount': 300,
+                'transactions_amount_sum': 300,
+                'currency': 'CZK'
+            }
+        ]
+    }
 
     result = calculate(item_test_passed2)
     assert result['result'] is True

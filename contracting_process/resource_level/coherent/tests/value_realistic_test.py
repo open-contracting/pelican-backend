@@ -5,162 +5,173 @@ from tools.bootstrap import bootstrap
 version = 1.0
 bootstrap('test', 'value_realistic_test')
 
-"""
-author: Iaroslav Kolodka
-
-The file contains tests for contracting_process.resource_level.coherent.value.calculate.
-
-- item_with_valid_value_in_USD
-- item_with_valid_value_in_EUR
-- item_with_invalid_value_in_USD
-- item_with_invalid_value_in_HUF
-- vitem_with_valid_value_in_non_eisting_currency
-
-"""
-
-item_with_valid_value_in_USD = {
-    "date": "2019-01-10T22:00:00+01:00",
-    "tender": {
-        "value": {
-            "amount": "1000",
-            "currency": "USD"
-        }
-    }
+item_undefined1 = {
+    'tender': {},
+    'date': '2019-01-10T22:00:00+01:00'
 }
 
-item_with_valid_value_in_EUR = {
-    "date": "2019-01-10T22:00:00+01:00",
-    "tender": {
-        "value": {
-            "amount": "1000",
-            "currency": "EUR"
-        }
-    }
+item_undefined2 = {
+    'tender': {
+        'value': {}
+    },
+    'date': '2019-01-10T22:00:00+01:00'
 }
 
-item_with_invalid_value_in_USD = {
-    "date": "2019-01-10T22:00:00+01:00",
-    "tender": {
-        "value": {
-            "amount": "9222333444555",
-            "currency": "EUR"
+item_undefined3 = {
+    'tender': {
+        'value': {
+            'amount': None,
+            'currency': 'USD'
         }
-    }
+    },
+    'date': '2019-01-10T22:00:00+01:00'
 }
 
-item_with_invalid_value_in_HUF = {
-    "date": "2019-01-10T22:00:00+01:00",
-    "tender": {
-        "value": {
-            "amount": "4999888000",
-            "currency": "GBP"
+item_undefined4 = {
+    'tender': {
+        'value': {
+            'amount': 100,
+            'currency': 'unknown'
         }
-    }
-}
-
-item_with_valid_value_in_non_eisting_currency = {
-    "date": "2019-01-10T22:00:00+01:00",
-    "tender": {
-        "value": {
-            "amount": "3000",
-            "currency": "WWW"
-        }
-    }
+    },
+    'date': '2019-01-10T22:00:00+01:00'
 }
 
 
-def test_rule_based():
-    result1 = result_initialiser(version, True, 1, 1, {
-        "result": True,
-        "amount": "1000",
-        "currency": "USD",
-        "path": "tender.value"
-    })
-    result2 = result_initialiser(version, True, 1, 1, {
-        "result": True,
-        "amount": "1000",
-        "currency": "EUR",
-        "path": "tender.value"
-    })
-    result3 = result_initialiser(version, False, 1, 0, {
-        "result": False,
-        "amount": "9222333444555",
-        "currency": "EUR",
-        "path": "tender.value"
-    })
-    result4 = result_initialiser(version, False, 1, 0, {
-        "result": False,
-        "amount": "4999888000",
-        "currency": "GBP",
-        "path": "tender.value"
-    })
-    result5 = result_initialiser(version, None, 0, 0)
-    assert calculate(item_with_valid_value_in_USD) == result1
-    assert calculate(item_with_valid_value_in_EUR) == result2
-    assert calculate(item_with_invalid_value_in_USD) == result3
-    assert calculate(item_with_invalid_value_in_HUF) == result4
-    assert calculate(item_with_valid_value_in_non_eisting_currency) == result5
+def test_undefined():
+    empty_result = calculate({'date': '2019-01-10T22:00:00+01:00'})
+    assert empty_result['result'] is None
+    assert empty_result['application_count'] == 0
+    assert empty_result['pass_count'] == 0
+    assert empty_result['meta'] == {'reason': 'rule could not be applied for any value'}
+
+    result = calculate(item_undefined1)
+    assert result['result'] is None
+    assert result['application_count'] == 0
+    assert result['pass_count'] == 0
+    assert result['meta'] == {'reason': 'rule could not be applied for any value'}
+
+    result = calculate(item_undefined2)
+    assert result['result'] is None
+    assert result['application_count'] == 0
+    assert result['pass_count'] == 0
+    assert result['meta'] == {'reason': 'rule could not be applied for any value'}
+
+    result = calculate(item_undefined3)
+    assert result['result'] is None
+    assert result['application_count'] == 0
+    assert result['pass_count'] == 0
+    assert result['meta'] == {'reason': 'rule could not be applied for any value'}
+
+    result = calculate(item_undefined4)
+    assert result['result'] is None
+    assert result['application_count'] == 0
+    assert result['pass_count'] == 0
+    assert result['meta'] == {'reason': 'rule could not be applied for any value'}
 
 
-item_with_none_value = {
-    "date": "2019-01-10T22:00:00+01:00",
-    "tender": {
-        "value": {
-            "amount": None,
-            "currency": "USD"
+item_passed = {
+    'tender': {
+        'value': {
+            'amount': -5.0e9,
+            'currency': 'USD'
+        },
+        'minValue': {
+            'amount': 5.0e9,
+            'currency': 'USD'
         }
-    }
+    },
+    'awards': [
+        {
+            'value': {
+                'amount': 0,
+                'currency': 'USD'
+            },
+        },
+        {
+            'value': {
+                'amount': 100,
+            },
+        }
+    ],
+    'date': '2019-01-10T22:00:00+01:00'
 }
 
 
-def test_None():
-    result = result_initialiser(version, None, 0, 0)
-    assert calculate(item_with_none_value) == result
-
-
-item_with_string = {
-    "date": "2019-01-10T22:00:00+01:00",
-    "tender": {
-        "value": {
-            "amount": "something",
-            "currency": "USD"
-        }
+def test_passed():
+    result = calculate(item_passed)
+    assert result['result'] is True
+    assert result['application_count'] == 3
+    assert result['pass_count'] == 3
+    assert result['meta'] == {
+        'references': [
+            {
+                'result': True,
+                'amount': -5.0e9,
+                'currency': 'USD',
+                'path': 'tender.value'
+            },
+            {
+                'result': True,
+                'amount': 5.0e9,
+                'currency': 'USD',
+                'path': 'tender.minValue'
+            },
+            {
+                'result': True,
+                'amount': 0,
+                'currency': 'USD',
+                'path': 'awards[0].value'
+            }
+        ]
     }
+
+
+item_failed = {
+    'contracts': [
+        {
+            'value': {
+                'amount': 500,
+                'currency': 'CZK'
+            }
+        },
+        {
+            'value': {
+                'amount': 5.0e10,
+                'currency': 'USD'
+            }
+        }
+    ],
+    'planning': {
+        'budget': {
+            'value': {
+                'amount': 0,
+                'currency': 'unknown'
+            }
+        }
+    },
+    'date': '2019-01-10T22:00:00+01:00'
 }
 
 
-def test_not_a_number():
-    result = result_initialiser(version, None, 0, 0)
-    assert calculate(item_with_string) == result
-
-
-def result_initialiser(version, res, app_count, pass_count, meta=None):
-    """Function create empty result and intialise it by parametres.
-
-        Parameters
-        ----------
-            version : float
-                Version of empty result
-            res : bool
-                if all tests were successed
-            app_count : int
-                application count
-            pass_count : int
-                pass count
-            meta : dict or list of dicts
-                metadata
-
-        Returns
-        -------
-            dict
-                Filled result
-
-    """
-    result = get_empty_result_resource(version)
-    result["result"] = res
-    result["application_count"] = app_count
-    result["pass_count"] = pass_count
-    if meta:
-        result["meta"] = {"references": []}
-        result["meta"]["references"].append(meta)
-    return result
+def test_failed():
+    result = calculate(item_failed)
+    assert result['result'] is False
+    assert result['application_count'] == 2
+    assert result['pass_count'] == 1
+    assert result['meta'] == {
+        'references': [
+            {
+                'result': True,
+                'amount': 500,
+                'currency': 'CZK',
+                'path': 'contracts[0].value'
+            },
+            {
+                'result': False,
+                'amount': 5.0e10,
+                'currency': 'USD',
+                'path': 'contracts[1].value'
+            }
+        ]
+    }
