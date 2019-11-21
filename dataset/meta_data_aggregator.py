@@ -205,7 +205,7 @@ def get_kingfisher_meta_data(collection_id):
         FROM collection AS a
         INNER JOIN collection AS b ON a.transform_from_collection_id = b.id
         INNER JOIN collection AS c ON b.transform_from_collection_id = c.id
-        AND a.id = %s;
+        AND a.id = %s
         LIMIT 1;
         """, (collection_id,)
     )
