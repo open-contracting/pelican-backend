@@ -19,7 +19,6 @@ value_paths = [
 
 def calculate(item):
     result = get_empty_result_resource(version)
-    parsed_date = parse_datetime(get_values(item, 'date', value_only=True)[0])
 
     value_fields = []
     for path in value_paths:
@@ -39,7 +38,12 @@ def calculate(item):
         if value_field['value']['currency'] == 'USD':
             usd_amount = value_field['value']['amount']
         else:
-            usd_amount = convert(value_field['value']['amount'], value_field['value']['currency'], 'USD', parsed_date)
+            if 'date' not in item:
+                continue
+
+            usd_amount = convert(
+                value_field['value']['amount'], value_field['value']['currency'], 'USD', parse_datetime(item['date'])
+            )
 
         if usd_amount is None:
             continue
