@@ -12,7 +12,8 @@ paths = [
     "planning.documents.url",
     "tender.documents.url",
     "awards.documents.url",
-    "contracts.documents.url"
+    "contracts.documents.url",
+    "contracts.implementation.documents.url"
 ]
 
 
