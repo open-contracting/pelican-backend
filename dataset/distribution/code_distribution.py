@@ -1,34 +1,53 @@
-from dataset.distribution.distribution_tools import add_item, get_result
+
+from tools.checks import get_empty_result_dataset
+from tools.getter import get_values
+from tools.helpers import ReservoirSampler
 
 
 class CodeDistribution:
-    """ Code distribution check class
-
-        This class stores path information and list of input values for test objects.
-
-        paths : list
-            list of paths in which enum can be
-        input_values : list
-            list of input values that are important to us
-        samples_number : int
-            desired amount of samples in result["meta"]["shares"][eum (1)]["examples"]
-            1 - any found enum
-    """
-
-    def __init__(self, paths_param, input_values=[], samples_number=20):
-        """ Default constructor
-
-        """
-        self.paths = paths_param
-        self.important_enums = input_values
-        self.samples_number = samples_number
+    def __init__(self, paths, test_values=[], samples_cap=20):
+        self.paths = paths
+        self.test_values = set(test_values)
+        self.samples_cap = samples_cap
 
     def add_item(self, scope, item, item_id):
-        result = scope
-        for current_path in self.paths:
-            result = add_item(result, item, item_id,
-                              path=current_path, important_values=self.important_enums, samples_num=self.samples_number)
-        return result
+        if not scope:
+            scope = {}
+
+        ocid = get_values(item, 'ocid', value_only=True)[0]
+
+        values = []
+        for path in self.paths:
+            values.extend(get_values(item, path, value_only=True))
+
+        for value in values:
+            if value is None:
+                continue
+
+            if value not in scope:
+                scope[value] = {'count': 0, 'sampler': ReservoirSampler(self.samples_cap)}
+
+            scope[value]['count'] += 1
+            scope[value]['sampler'].process({'item_id': item_id, 'ocid': ocid})
+
+        return scope
 
     def get_result(self, scope):
-        return get_result(scope, important_values=self.important_enums)
+        result = get_empty_result_dataset()
+
+        total_count = sum([value['count'] for value in scope.values()])
+
+        passed = True
+        for key, value in scope.items():
+            value['share'] = value['count'] / total_count
+            value['examples'] = value['sampler'].retrieve_samples()
+            del value['sampler']
+
+            if key in self.test_values:
+                passed = passed and (0.001 <= value['share'] <= 0.99)
+
+        result['result'] = passed
+        result['value'] = 100 if result['result'] else 0
+        result['meta'] = {'shares': scope}
+
+        return result

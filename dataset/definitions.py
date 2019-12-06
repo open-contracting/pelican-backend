@@ -41,7 +41,7 @@ definitions = {
         ["active", "complete"]),
     "distribution.tender_award_criteria": code_distribution.CodeDistribution(["tender.awardCriteria"]),
     "distribution.tender_submission_method": code_distribution.CodeDistribution(
-        ["tender.submissionMethod.distribution"]),
+        ["tender.submissionMethod"]),
     "distribution.awards_status": code_distribution.CodeDistribution(
         ["awards.status"],
         ["active"]),
@@ -56,9 +56,8 @@ definitions = {
         ["planning.milestones.type", "tender.milestones.type", "contracts.milestones.type",
          "contracts.implementation.milestones.type"]),
     "distribution.document_document_type": code_distribution.CodeDistribution(
-        ["planning.documents.documentType", "tender.documents.documentType", "tender.documents.documentType",
-         "contracts.documents.documentType", "contracts.implementation.documents.documentType",
-         "contracts.milestones.documents.documentType"]),
+        ["planning.documents.documentType", "tender.documents.documentType",
+         "contracts.documents.documentType", "contracts.implementation.documents.documentType"]),
     "distribution.value_currency": code_distribution.CodeDistribution(
         ["tender.value.currency", "tender.minValue.currency", "awards.value.currency", "contracts.value.currency",
          "planning.budget.value.currency", "contracts.implementation.transactions.value.currency"]),
