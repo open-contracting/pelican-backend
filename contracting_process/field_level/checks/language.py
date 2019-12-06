@@ -1,4 +1,3 @@
-
 import pycountry
 
 from tools.checks import get_empty_result_field

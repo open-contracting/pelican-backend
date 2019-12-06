@@ -1,4 +1,3 @@
-
 from contracting_process.field_level.checks.ocid_prefix_check import calculate
 from tools.helpers import is_subset_dict
 
