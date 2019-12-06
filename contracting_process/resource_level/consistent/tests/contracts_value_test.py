@@ -5,12 +5,14 @@ bootstrap('test', 'contracts_value_test')
 
 
 item_test_undefined_no_contracts = {
+    "date": "2019-01-10T22:00:00+01:00",
     'contracts': [
 
     ]
 }
 
 item_test_undefined_no_awards = {
+    "date": "2019-01-10T22:00:00+01:00",
     'contracts': [
         {
             'awardID': 0
@@ -22,6 +24,7 @@ item_test_undefined_no_awards = {
 }
 
 item_test_undefined_same_id = {
+    "date": "2019-01-10T22:00:00+01:00",
     'contracts': [
         {
             'awardID': 0
@@ -38,6 +41,7 @@ item_test_undefined_same_id = {
 }
 
 item_test_undefined_missing_fields = {
+    "date": "2019-01-10T22:00:00+01:00",
     'contracts': [
         {
             'awardID': 0
@@ -51,6 +55,7 @@ item_test_undefined_missing_fields = {
 }
 
 item_test_undefined_bad_currency = {
+    "date": "2019-01-10T22:00:00+01:00",
     'contracts': [
         {
             'awardID': 0,

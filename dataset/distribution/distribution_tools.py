@@ -130,7 +130,7 @@ def get_result(scope, important_values=[]):
         ratio = value["count"] / enumes_amount
         value["share"] = ratio
         if enum in important_values:
-            if 0.01 > ratio or ratio > 0.99:
+            if 0.001 > ratio or ratio > 0.99:
                 passed = False
 
     result["result"] = passed

@@ -113,7 +113,7 @@ def test_passed():
     }
 
 
-items_test_failed = [
+items_test_failed1 = [
     {
         "ocid": "0",
         "tender": {
@@ -127,14 +127,29 @@ items_test_failed = [
         }
     }
 ]
+items_test_failed2 = [
+    {
+        "ocid": "0",
+        "tender": {
+            "status": "complete"
+        }
+    }
+]
+items_test_failed2.extend([
+    {
+        "ocid": "0",
+        "tender": {
+            "status": "active"
+        }
+    } for i in range(999)
+])
 
 
 def test_failed():
-
     scope = {}
 
     id = 0
-    for item in items_test_failed:
+    for item in items_test_failed1:
         scope = code_distribution.add_item(scope, item, id)
         id += 1
 
@@ -152,6 +167,26 @@ def test_failed():
         "count": 0,
         "examples": []
     }
+
+    scope = {}
+
+    id = 0
+    for item in items_test_failed2:
+        scope = code_distribution.add_item(scope, item, id)
+        id += 1
+
+    result = code_distribution.get_result(scope)
+    assert result["result"] is False
+    assert result["value"] == 0
+    assert len(result["meta"]["shares"]) == 2
+    assert result["meta"]["shares"]["complete"] == {
+        "share": 0.001,
+        "count": 1,
+        "examples": [{"item_id": 0, "ocid": "0"}]
+    }
+    assert result["meta"]["shares"]["active"]["share"] == 0.999
+    assert result["meta"]["shares"]["active"]["count"] == 999
+
 
 items_test_passed_big_load = [
     {
