@@ -30,7 +30,7 @@ def add_item(scope, item, item_id, path):
 
                 if "currency" not in value["value"] or value["value"]["currency"] is None or \
                         "amount" not in value["value"] or value["value"]["amount"] is None or \
-                        value["value"]["amount"] < 0:
+                        float(value["value"]["amount"]) < 0:
                     continue
 
                 if currency_available(value["value"]["currency"]):
