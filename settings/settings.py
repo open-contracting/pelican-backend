@@ -69,7 +69,7 @@ config_data = {
     },
     "test": {
         "log_level": logging.DEBUG,
-        "log_filename": "/tmp/dqt_test.log",
+        "log_filename": "/tmp/dqt_test1.log",
         "host": "localhost",
         "user": "dqt",
         "password": "dqt",

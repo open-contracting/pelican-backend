@@ -33,7 +33,7 @@ def test_undefined():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "non-evaulated tender status"}
+    assert empty_result["meta"] == {"reason": "non-evaluated tender status"}
 
 
 item_ok_1 = {

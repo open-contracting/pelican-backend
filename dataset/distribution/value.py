@@ -29,7 +29,8 @@ def add_item(scope, item, item_id, path):
                 value["ocid"] = ocid
 
                 if "currency" not in value["value"] or value["value"]["currency"] is None or \
-                        "amount" not in value["value"] or value["value"]["amount"] is None:
+                        "amount" not in value["value"] or value["value"]["amount"] is None or \
+                        value["value"]["amount"] < 0:
                     continue
 
                 if currency_available(value["value"]["currency"]):
@@ -40,7 +41,7 @@ def add_item(scope, item, item_id, path):
                                 value["value"]["amount"],
                                 value["value"]["currency"],
                                 "USD", rel_date)
-                        if "abs_amount" in value and value["abs_amount"]:
+                        if "abs_amount" in value and value["abs_amount"] is not None:
                             scope["values"].append(value)
                     else:
                         value["abs_amount"] = value["value"]["amount"]

@@ -29,7 +29,6 @@ first = {
         },
 }
 
-
 second = {
     "ocid": "0",
     "date": "2019-01-10T22:00:00+01:00",
@@ -42,6 +41,50 @@ second = {
         },
 
 }
+
+third = {
+    "ocid": "0",
+    "date": "2019-01-10T22:00:00+01:00",
+    "tender":
+        {
+            "value": {
+                "amount": 0,
+                "currency": "USD",
+            },
+        },
+}
+
+fourth = {
+    "ocid": "0",
+    "date": "2019-01-10T22:00:00+01:00",
+    "tender":
+        {
+            "value": {
+                "amount": 0,
+                "currency": "CZK",
+            },
+        },
+}
+
+fifth = {
+    "ocid": "0",
+    "date": "2019-01-10T22:00:00+01:00",
+    "tender":
+        {
+            "value": {
+                "amount": -10,
+                "currency": "USD",
+            },
+        },
+}
+
+
+def test_non_positive():
+    scope = {}
+    scope = tender_value.add_item(scope, third, 1)
+    scope = tender_value.add_item(scope, fourth, 2)
+    scope = tender_value.add_item(scope, fifth, 3)
+    assert len(scope["values"]) == 2
 
 
 def test_undefined():

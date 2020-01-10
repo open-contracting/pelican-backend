@@ -24,7 +24,8 @@ from dataset.reference import (
 )
 
 definitions = {
-    "distribution.main_procurement_category": main_procurement_category, "unique.id": id,
+    "distribution.main_procurement_category": main_procurement_category,
+    "unique.id": id,
     "distribution.contracts_value": value.ModuleType("contracts.value"),
     "distribution.awards_value": value.ModuleType("awards.value"),
     "distribution.tender_value": value.ModuleType("tender.value"),
@@ -61,6 +62,9 @@ definitions = {
     "distribution.value_currency": code_distribution.CodeDistribution(
         ["tender.value.currency", "tender.minValue.currency", "awards.value.currency", "contracts.value.currency",
          "planning.budget.value.currency", "contracts.implementation.transactions.value.currency"]),
-    "distribution.related_process_relation": code_distribution.CodeDistribution(["relatedProcess.relationship"]),
-    "misc.url_availability": url_availability, "consistent.related_process_title": related_process_title,
+    "distribution.related_process_relation": code_distribution.CodeDistribution(
+        ["relatedProcesses.relationship", "contracts.relatedProcesses.relationship"]
+    ),
+    "misc.url_availability": url_availability,
+    "consistent.related_process_title": related_process_title,
     "reference.related_process_identifier": related_process_identifier}

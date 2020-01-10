@@ -49,5 +49,5 @@ def calculate(item):
 
     # unable to compare, undefined
     result["result"] = None
-    result["meta"] = {"reason": "non-evaulated tender status"}
+    result["meta"] = {"reason": "non-evaluated tender status"}
     return result
