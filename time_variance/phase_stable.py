@@ -12,7 +12,7 @@ def filter(scope, item, item_id, new_item, new_item_id):
         return True
 
 
-def evaulate(scope, item, item_id, new_item, new_item_id):
+def evaluate(scope, item, item_id, new_item, new_item_id):
     result = True
 
     ancestor_values = get_values(item, "tender", value_only=True)

@@ -16,12 +16,12 @@ new_item = {
 }
 
 
-def test_evaulate():
+def test_evaluate():
     scope = get_empty_result_time_variance_scope()
-    scope, result = tender_title.evaulate(scope, ancestor, 1, None, None)
+    scope, result = tender_title.evaluate(scope, ancestor, 1, None, None)
     assert result == False
 
-    scope, result = tender_title.evaulate(scope, ancestor, 1, new_item, 3)
+    scope, result = tender_title.evaluate(scope, ancestor, 1, new_item, 3)
     assert result == True
 
 

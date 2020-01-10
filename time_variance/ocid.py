@@ -14,7 +14,7 @@ def filter(scope, item, item_id, new_item, new_item_id):
     return False
 
 
-def evaulate(scope, item, item_id, new_item, new_item_id):
+def evaluate(scope, item, item_id, new_item, new_item_id):
     if item and new_item:
         return scope, True
 

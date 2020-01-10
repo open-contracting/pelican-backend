@@ -82,14 +82,14 @@ def do_work(dataset_id):
 
                         if item[2]:
                             scope[plugin_name]["coverage_count"] += 1
-                            scope[plugin_name], evaulation_result = plugin.evaulate(
+                            scope[plugin_name], evaluation_result = plugin.evaluate(
                                 scope[plugin_name],
                                 ancestor_item,
                                 ancestor_item_id,
                                 new_item,
                                 new_item_id)
 
-                            if evaulation_result:
+                            if evaluation_result:
                                 scope[plugin_name]["ok_count"] += 1
                             else:
                                 scope[plugin_name]["failed_count"] += 1

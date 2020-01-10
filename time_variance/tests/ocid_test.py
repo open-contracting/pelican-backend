@@ -24,10 +24,10 @@ ok_ancestor = {
 }
 
 
-def test_evaulate():
+def test_evaluate():
     scope = get_empty_result_time_variance_scope()
-    scope, result = ocid.evaulate(scope, ancestor, 1, None, None)
+    scope, result = ocid.evaluate(scope, ancestor, 1, None, None)
     assert result == False
 
-    scope, result = ocid.evaulate(scope, ok_ancestor, 1, new_item, 12)
+    scope, result = ocid.evaluate(scope, ok_ancestor, 1, new_item, 12)
     assert result == True

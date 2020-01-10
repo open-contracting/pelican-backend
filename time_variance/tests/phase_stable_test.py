@@ -93,55 +93,55 @@ def test_filter():
     assert True == phase_stable.filter(scope, ancestor_planning, 1, None, None)
 
 
-def test_evaulate_tender():
+def test_evaluate_tender():
     scope = get_empty_result_time_variance_scope()
-    scope, result = phase_stable.evaulate(scope, ancestor_empty, 1, new_empty, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_empty, 1, new_empty, 2)
     assert result == True
 
-    scope, result = phase_stable.evaulate(scope, ancestor_tender, 1, new_empty, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_tender, 1, new_empty, 2)
     assert result == False
 
-    scope, result = phase_stable.evaulate(scope, ancestor_tender, 1, new_tender, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_tender, 1, new_tender, 2)
     assert result == True
 
 
-def test_evaulate_planning():
+def test_evaluate_planning():
     scope = get_empty_result_time_variance_scope()
-    scope, result = phase_stable.evaulate(scope, ancestor_empty, 1, new_empty, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_empty, 1, new_empty, 2)
     assert result == True
 
-    scope, result = phase_stable.evaulate(scope, ancestor_planning, 1, new_empty, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_planning, 1, new_empty, 2)
     assert result == False
 
-    scope, result = phase_stable.evaulate(scope, ancestor_planning, 1, new_planning, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_planning, 1, new_planning, 2)
     assert result == True
 
 
-def test_evaulate_awards():
+def test_evaluate_awards():
     scope = get_empty_result_time_variance_scope()
-    scope, result = phase_stable.evaulate(scope, ancestor_empty, 1, new_empty, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_empty, 1, new_empty, 2)
     assert result == True
 
-    scope, result = phase_stable.evaulate(scope, ancestor_awards, 1, new_empty, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_awards, 1, new_empty, 2)
     assert result == False
 
-    scope, result = phase_stable.evaulate(scope, ancestor_awards, 1, new_awards, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_awards, 1, new_awards, 2)
     assert result == True
 
-    scope, result = phase_stable.evaulate(scope, ancestor_awards_big, 1, new_awards, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_awards_big, 1, new_awards, 2)
     assert result == False
 
 
-def test_evaulate_contracts():
+def test_evaluate_contracts():
     scope = get_empty_result_time_variance_scope()
-    scope, result = phase_stable.evaulate(scope, ancestor_empty, 1, new_empty, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_empty, 1, new_empty, 2)
     assert result == True
 
-    scope, result = phase_stable.evaulate(scope, ancestor_contracts, 1, new_empty, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_contracts, 1, new_empty, 2)
     assert result == False
 
-    scope, result = phase_stable.evaulate(scope, ancestor_contracts, 1, new_contracts, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_contracts, 1, new_contracts, 2)
     assert result == True
 
-    scope, result = phase_stable.evaulate(scope, ancestor_contracts_big, 1, new_contracts, 2)
+    scope, result = phase_stable.evaluate(scope, ancestor_contracts_big, 1, new_contracts, 2)
     assert result == False

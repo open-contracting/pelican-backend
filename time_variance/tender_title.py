@@ -18,7 +18,7 @@ def filter(scope, item, item_id, new_item, new_item_id):
     return False
 
 
-def evaulate(scope, item, item_id, new_item, new_item_id):
+def evaluate(scope, item, item_id, new_item, new_item_id):
     values = get_values(item, "tender.title", value_only=True)
     if values:
         title = " ".join(values[0].lower().split())
