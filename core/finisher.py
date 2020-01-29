@@ -51,8 +51,7 @@ def callback(channel, method, properties, body):
         logger.info("Resource level checks examples for dataset_id {} are being picked".format(dataset_id))
         resource_level_examples.create(dataset_id)
 
-        logger.info("Field level checks report for dataset_id {} is being calculated and \
-            examples are being picked".format(dataset_id))
+        logger.info("Field level checks report for dataset_id {} is being calculated and examples are being picked".format(dataset_id))
         field_level_report_examples.create(dataset_id)
 
         # adding final meta data for current dataset

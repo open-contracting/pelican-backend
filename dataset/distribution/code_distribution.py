@@ -35,19 +35,25 @@ class CodeDistribution:
     def get_result(self, scope):
         result = get_empty_result_dataset()
 
-        total_count = sum([value['count'] for value in scope.values()])
+        if scope:
+            total_count = sum([value['count'] for value in scope.values()])
 
-        passed = True
-        for key, value in scope.items():
-            value['share'] = value['count'] / total_count
-            value['examples'] = value['sampler'].retrieve_samples()
-            del value['sampler']
+            passed = True
+            for key, value in scope.items():
+                value['share'] = value['count'] / total_count
+                value['examples'] = value['sampler'].retrieve_samples()
+                del value['sampler']
 
-            if key in self.test_values:
-                passed = passed and (0.001 <= value['share'] <= 0.99)
+                if key in self.test_values:
+                    passed = passed and (0.001 <= value['share'] <= 0.99)
 
-        result['result'] = passed
-        result['value'] = 100 if result['result'] else 0
-        result['meta'] = {'shares': scope}
+            result['result'] = passed
+            result['value'] = 100 if result['result'] else 0
+            result['meta'] = {'shares': scope}
+
+        else:
+            result['meta'] = {
+                'reason': 'no values in specified paths found'
+            }
 
         return result
