@@ -61,18 +61,6 @@ item_ok = {
                     }
                 ]
             }
-        },
-        {
-            'milestones': [
-                {
-                    'documents': [
-                        {
-                            'datePublished': '2014-12-31T00:00:00Z',
-                            'dateModified': '2015-12-31T00:00:00Z',
-                        }
-                    ]
-                }
-            ]
         }
     ]
 }
@@ -82,8 +70,8 @@ def test_ok():
     result = calculate(item_ok)
     assert type(result) == dict
     assert result['result'] is True
-    assert result['application_count'] == 21
-    assert result['pass_count'] == 21
+    assert result['application_count'] == 18
+    assert result['pass_count'] == 18
     assert result['meta'] is None
 
 
@@ -137,18 +125,6 @@ item_failed = {
                     }
                 ]
             }
-        },
-        {
-            'milestones': [
-                {
-                    'documents': [
-                        {
-                            'datePublished': '2030-12-31T00:00:00Z',
-                            'dateModified': '2020-12-31T00:00:00Z',
-                        }
-                    ]
-                }
-            ]
         }
     ]
 }
@@ -158,7 +134,7 @@ def test_failed():
     result = calculate(item_failed)
     assert type(result) == dict
     assert result['result'] is False
-    assert result['application_count'] == 21
+    assert result['application_count'] == 18
     assert result['pass_count'] == 0
     assert result['meta'] == {'failed_paths': [
         {
@@ -214,15 +190,6 @@ def test_failed():
             'value_1': '2030-12-31T00:00:00Z', 'value_2': '2010-12-31T00:00:00Z'
         }, {
             'path_1': 'contracts[1].implementation.documents[0].dateModified', 'path_2': 'date',
-            'value_1': '2020-12-31T00:00:00Z', 'value_2': '2010-12-31T00:00:00Z'
-        }, {
-            'path_1': 'contracts[2].milestones[0].documents[0].datePublished', 'path_2': 'contracts[2].milestones[0].documents[0].dateModified',
-            'value_1': '2030-12-31T00:00:00Z', 'value_2': '2020-12-31T00:00:00Z'
-        }, {
-            'path_1': 'contracts[2].milestones[0].documents[0].datePublished', 'path_2': 'date',
-            'value_1': '2030-12-31T00:00:00Z', 'value_2': '2010-12-31T00:00:00Z'
-        }, {
-            'path_1': 'contracts[2].milestones[0].documents[0].dateModified', 'path_2': 'date',
             'value_1': '2020-12-31T00:00:00Z', 'value_2': '2010-12-31T00:00:00Z'
         }
     ]}

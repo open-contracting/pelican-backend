@@ -18,8 +18,7 @@ def calculate(item):
         'tender.documents',
         'awards.documents',
         'contracts.documents',
-        'contracts.implementation.documents',
-        'contracts.milestones.documents'
+        'contracts.implementation.documents'
     ]
 
     documents = []
