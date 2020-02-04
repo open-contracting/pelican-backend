@@ -58,7 +58,8 @@ definitions = {
          "contracts.implementation.milestones.type"]),
     "distribution.document_document_type": code_distribution.CodeDistribution(
         ["planning.documents.documentType", "tender.documents.documentType",
-         "contracts.documents.documentType", "contracts.implementation.documents.documentType"]),
+         "contracts.documents.documentType", "contracts.implementation.documents.documentType",
+         "awards.documents.documentType"]),
     "distribution.value_currency": code_distribution.CodeDistribution(
         ["tender.value.currency", "tender.minValue.currency", "awards.value.currency", "contracts.value.currency",
          "planning.budget.value.currency", "contracts.implementation.transactions.value.currency"]),
