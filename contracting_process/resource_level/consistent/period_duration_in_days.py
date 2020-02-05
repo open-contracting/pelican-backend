@@ -28,9 +28,24 @@ def calculate(item):
     result['pass_count'] = 0
     result['meta'] = {'periods': []}
     for period in periods:
-        start_date = parse_datetime(period['value']['startDate']) if 'startDate' in period['value'] else None
-        end_date = parse_datetime(period['value']['endDate']) if 'endDate' in period['value'] else None
-        max_extent_day = parse_datetime(period['value']['maxExtentDate']) if 'maxExtentDate' in period['value'] else None
+        if 'startDate' in period['value']:
+            start_date = parse_datetime(period['value']['startDate'])
+            start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0) if start_date else None
+        else:
+            start_date = None
+
+        if 'endDate' in period['value']:
+            end_date = parse_datetime(period['value']['endDate'])
+            end_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0) if end_date else None
+        else:
+            end_date = None
+
+        if 'maxExtentDate' in period['value']:
+            max_extent_day = parse_datetime(period['value']['maxExtentDate'])
+            max_extent_day = max_extent_day.replace(hour=0, minute=0, second=0, microsecond=0) if max_extent_day else None
+        else:
+            max_extent_day = None
+
         duration_in_days = period['value']['durationInDays'] if 'durationInDays' in period['value'] else None
 
         # this check cannot be applied

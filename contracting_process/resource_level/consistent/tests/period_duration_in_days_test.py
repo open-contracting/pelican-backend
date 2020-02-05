@@ -28,7 +28,7 @@ def test_undefined():
     assert result['pass_count'] is None
     assert result['meta'] == {'reason': 'there are no values with check-specific properties'}
 
-item_test_passed = {
+item_test_passed1 = {
     'awards': [
         {
             'contractPeriod': {
@@ -57,9 +57,19 @@ item_test_passed = {
     ]
 }
 
+item_test_passed2 = {
+    'tender': {
+        'enquiryPeriod': {
+            'startDate': '2019-08-14T16:47:36+01:00',
+            'endDate': '2019-08-24T00:00:00+01:00',
+            'durationInDays': 10
+        }
+    }
+}
+
 
 def test_passed():
-    result = calculate(item_test_passed)
+    result = calculate(item_test_passed1)
     assert result['result'] is True
     assert result['application_count'] == 3
     assert result['pass_count'] == 3
@@ -75,6 +85,19 @@ def test_passed():
             },
             {
                 'path': 'contracts[1].period',
+                'result': True
+            }
+        ]
+    }
+
+    result = calculate(item_test_passed2)
+    assert result['result'] is True
+    assert result['application_count'] == 1
+    assert result['pass_count'] == 1
+    assert result['meta'] == {
+        'periods': [
+            {
+                'path': 'tender.enquiryPeriod',
                 'result': True
             }
         ]
