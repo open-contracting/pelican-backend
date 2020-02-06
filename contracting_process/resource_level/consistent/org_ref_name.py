@@ -1,75 +1,77 @@
+
+from collections import Counter
+
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
 
 
-version = "1.0"
+def calculate(item, path):
+    result = get_empty_result_resource()
+    result["application_count"] = 0
+    result["pass_count"] = 0
 
-
-def calculate(item, path: str) -> dict:
-    result = get_empty_result_resource(version)
-    parties = get_values(item, "parties")
-    parties_values = [
-        elem for elem in parties
-        if "id" in elem["value"] and elem["value"]["id"]
+    parties = [
+        party for party in get_values(item, "parties")
+        if (
+            "id" in party["value"] and
+            party["value"]["id"] and
+            "name" in party["value"] and
+            party["value"]["name"]
+        )
     ]
-    application_count = 0
-    pass_count = 0
+    party_id_counts = Counter([party["value"]["id"] for party in parties])
 
-    if parties_values:
-        parties_id = [
-            part["value"]["id"] for part in parties_values
-        ]
-        values = get_values(item, path)
-        values_to_check = [
-            value for value in values
-            if "id" in value["value"] and value["value"]["id"] and
-            parties_id.count(str(value["value"]["id"])) == 1
-        ]
+    parties_mapping = {}
+    for party_id in party_id_counts:
+        if party_id_counts[party_id] != 1:
+            continue
 
-        if values_to_check:
-            result["meta"] = {"references": []}
-            for value in values_to_check:
-                referenced_part = None
-                for part in parties_values:
-                    if str(part["value"]["id"]) == str(value["value"]["id"]):
-                        referenced_part = part
-                        break
+        parties_mapping[party_id] = next(party for party in parties if party["value"]["id"] == party_id)
 
-                if not referenced_part or not "name" in value["value"]:
-                    # unable to evaluate the check
-                    continue
+    if not parties_mapping:
+        result["meta"] = {"reason": "there are no parties with unique id and name set"}
+        return result
 
-                expected_name = str(value["value"]["name"])
-                passed = True
+    test_values = [
+        value
+        for value in get_values(item, path)
+        if (
+            "id" in value["value"] and
+            value["value"]["id"] and
+            "name" in value["value"] and
+            value["value"]["name"]
+        )
+    ]
 
-                if not "name" in referenced_part["value"]:
-                    passed = False
-                else:
-                    passed = (
-                        expected_name == referenced_part["value"]["name"]
-                    )
+    result["meta"] = {"references": []}
 
-                application_count += 1
-                pass_count = pass_count + 1 if passed else pass_count
+    for value in test_values:
+        if value["value"]["id"] not in parties_mapping:
+            continue
 
-                result["meta"]["references"].append({
-                    "organization_id": value["value"]["id"],
-                    "expected_name": expected_name,
-                    "referenced_party_path": referenced_part["path"],
-                    "resource_path": value["path"],
-                })
+        party = parties_mapping[value["value"]["id"]]
 
-                result["result"] = application_count == pass_count
-        else:
-            result["meta"] = {
-                "reason": "there are no values with check-specific properties"
-            }
+        passed = value["value"]["name"] == party["value"]["name"]
+        result["application_count"] += 1
+        result["pass_count"] = result["pass_count"] + 1 if passed else result["pass_count"]
+
+        result["meta"]["references"].append({
+            "party": {
+                "id": party["value"]["id"],
+                "name": party["value"]["name"],
+                "path": party["path"]
+            },
+            path: {
+                "id": value["value"]["id"],
+                "name": value["value"]["name"],
+                "path": value["path"]
+            },
+            "result": passed
+        })
+
+    if result['application_count'] > 0:
+        result["result"] = result["pass_count"] == result["application_count"]
     else:
-        result["meta"] = {
-            "reason": "there are no parties with id set"
-        }
-
-    result["application_count"] = application_count
-    result["pass_count"] = pass_count
+        result["meta"] = {"reason": "there are no values with check-specific properties"}
 
     return result
