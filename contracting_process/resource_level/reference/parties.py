@@ -1,65 +1,51 @@
+
+from collections import Counter
+
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
 
-version = 1.0
-
 
 def calculate_path(item, path):
-    """
-    Checks whether the item.{path} are all referenced in the item.parties array
+    result = get_empty_result_resource()
+    result['application_count'] = 0
+    result['pass_count'] = 0
 
-    Args:
-        path: path to be checked
-    """
-
-    result = get_empty_result_resource(version)
+    party_id_counts = Counter(get_values(item, 'parties.id', value_only=True))
 
     values = get_values(item, path)
     if not values:
-        result["meta"] = {"reason": "no values available"}
+        result['meta'] = {'reason': 'there are no values with check-specific properties'}
         return result
 
-    application_count = 0
-    pass_count = 0
+    result['meta'] = {'failed': []}
 
-    # get all ids from partied array
-    parties_ids = []
-    if "parties" in item:
-        for party in item["parties"]:
-            if "id" in party and party["id"]:
-                parties_ids.append(party["id"])
-
-    failed_paths = []
     for value in values:
-        if value["value"]:
-                application_count = application_count + 1
+        result['application_count'] += 1
 
-                current_path = value["path"]
-
-                if "parties" not in item or not item["parties"]:
-                    failed_paths.append(current_path)
-                    continue
-                if "id" not in value["value"]:
-                    failed_paths.append(current_path)
-                    continue
-                if value["value"]["id"] not in parties_ids:
-                    failed_paths.append(current_path)
-                    continue
-
-                pass_count = pass_count + 1
-
-    if application_count > 0:
-        if application_count == pass_count:
-            result["result"] = True
-            result["meta"] = {}
+        if 'id' not in value['value']:
+            result['meta']['failed'].append(
+                {
+                    'path': value['path'],
+                    'reason': 'id missing'
+                }
+            )
+        elif value['value']['id'] not in party_id_counts:
+            result['meta']['failed'].append(
+                {
+                    'path': value['path'],
+                    'reason': 'party with specified id is not present'
+                }
+            )
+        elif party_id_counts[value['value']['id']] > 1:
+            result['meta']['failed'].append(
+                {
+                    'path': value['path'],
+                    'reason': 'there are multiple parties with specified id'
+                }
+            )
         else:
-            result["result"] = False
-            result["meta"] = {"failed_paths": failed_paths}
+            result['pass_count'] += 1
 
-        result["application_count"] = application_count
-        result["pass_count"] = pass_count
-        return result
-    else:
-        result["result"] = None
-        result["meta"] = {"reason": "missing data"}
-        return result
+    result['result'] = result['pass_count'] == result['application_count']
+
+    return result
