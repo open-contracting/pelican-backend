@@ -63,21 +63,15 @@ def callback(channel, method, properties, body):
 
             if max_items is None:
                 kf_cursor.execute("""
-                    SELECT compiled_release.data_id
-                    FROM collection
-                    INNER JOIN collection_file ON collection_file.collection_id = collection.id
-                    INNER JOIN collection_file_item ON collection_file_item.collection_file_id = collection_file.id
-                    INNER JOIN compiled_release ON compiled_release.collection_file_item_id = collection_file_item.id
-                    WHERE collection.id = %s;
+                    SELECT data_id
+                    FROM compiled_release
+                    WHERE collection_id = %s;
                     """, (collection_id,))
             else:
                 kf_cursor.execute("""
-                    SELECT compiled_release.data_id
-                    FROM collection
-                    INNER JOIN collection_file ON collection_file.collection_id = collection.id
-                    INNER JOIN collection_file_item ON collection_file_item.collection_file_id = collection_file.id
-                    INNER JOIN compiled_release ON compiled_release.collection_file_item_id = collection_file_item.id
-                    WHERE collection.id = %s
+                    SELECT data_id
+                    FROM compiled_release
+                    WHERE collection_id = %s
                     LIMIT %s;
                     """, (collection_id, max_items))
 
@@ -159,6 +153,8 @@ def callback(channel, method, properties, body):
                 logger.info("Inserted page {} from {}. {} items out of {} downloaded".format(
                     i, ceil(float(items_count) / float(page_size)), items_inserted, items_count)
                 )
+
+            logger.info("All items with dataset_id {} have been downloaded".format(dataset_id))
 
         else:
             # resend messages

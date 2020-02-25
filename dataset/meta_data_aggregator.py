@@ -231,7 +231,7 @@ def get_kingfisher_meta_data(collection_id):
     kf_cursor.execute(
         """
         SELECT *
-        FROM release_with_collection
+        FROM release
         WHERE collection_id = %s
         LIMIT 1;
         """, (proprietary_id,)
@@ -241,7 +241,7 @@ def get_kingfisher_meta_data(collection_id):
         kf_cursor.execute(
             """
             SELECT *
-            FROM record_with_collection
+            FROM record
             WHERE collection_id = %s
             LIMIT 1;
             """, (proprietary_id,)
