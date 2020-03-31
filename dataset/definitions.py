@@ -12,7 +12,7 @@ from dataset.misc import (
 )
 
 from dataset.unique import (
-    id
+    tender_id
 )
 
 from dataset.consistent import (
@@ -25,7 +25,7 @@ from dataset.reference import (
 
 definitions = {
     "distribution.main_procurement_category": main_procurement_category,
-    "unique.id": id,
+    "unique.tender_id": tender_id,
     "distribution.contracts_value": value.ModuleType("contracts.value"),
     "distribution.awards_value": value.ModuleType("awards.value"),
     "distribution.tender_value": value.ModuleType("tender.value"),
