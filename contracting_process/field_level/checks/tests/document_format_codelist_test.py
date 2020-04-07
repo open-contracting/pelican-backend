@@ -1,35 +1,35 @@
-from contracting_process.field_level.checks.document_format_codelist import calculate
+
+import contracting_process.field_level.checks.document_format_codelist as document_format_codelist
 from tools.helpers import is_subset_dict
 
 
-def test_format_ok():
-    item1 = {
-        "format": "application/AML"
-
-    }
-    item2 = {
-        "format": "offline/print"
-
-    }
+def test_passed():
+    document_format_codelist.format_codelist = ['application/AML']
 
     assert is_subset_dict(
-        {"result": True},
-        calculate(item1, "format")
+        {'result': True},
+        document_format_codelist.calculate({'format': 'application/AML'}, 'format')
     )
     assert is_subset_dict(
-        {"result": True},
-        calculate(item2, "format")
+        {'result': True},
+        document_format_codelist.calculate({'format': 'offline/print'}, 'format')
     )
 
 
-def test_format_failed():
+def test_failed():
+    document_format_codelist.format_codelist = []
+
     fail_result = {
-        "result": False,
-        "value": "lalala",
-        "reason": "wrong file format"
+        'result': False,
+        'value': 'lalala',
+        'reason': 'wrong file format'
     }
 
     assert is_subset_dict(
-        fail_result,
-        calculate({"format": "lalala"}, "format")
+        {
+            'result': False,
+            'value': 'unknown',
+            'reason': 'wrong document format'
+        },
+        document_format_codelist.calculate({'format': 'unknown'}, 'format')
     )

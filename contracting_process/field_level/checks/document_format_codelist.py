@@ -1,34 +1,34 @@
+
 import csv
 from tools.checks import get_empty_result_field
 
-global_format_codelist = []
-name = "document_format_codelist"
+format_codelist = None
+name = 'document_format_codelist'
 
 
-def calculate(data, key):
+def calculate(item, key):
     result = get_empty_result_field(name)
-    result["result"] = False
+    result['result'] = False
 
-    if key in data:
-        file_format = data[key]
-        if file_format and type(file_format) is str:
-            if not global_format_codelist:
-                initialise_global_format_codelist()
+    if format_codelist is None:
+        initialise_format_codelist()
 
-            if file_format in global_format_codelist or file_format == "offline/print":
-                result["result"] = True
-            else:
-                result["result"] = False
-                result["value"] = file_format
-                result["reason"] = "wrong file format"
+    document_format = item[key]
+    if document_format in format_codelist or document_format == 'offline/print':
+        result['result'] = True
+    else:
+        result['result'] = False
+        result['value'] = document_format
+        result['reason'] = 'wrong document format'
 
     return result
 
 
-def initialise_global_format_codelist():
-    path = 'contracting_process/field_level/checks/format_codelist.csv'
+def initialise_format_codelist():
+    global format_codelist
+    format_codelist = []
 
-    file = open(path, "r")
-    reader = csv.reader(file)
-    for line in reader:
-        global_format_codelist.append(line[0])
+    with open('registry/format_codelist.csv', 'r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        for row in csv_reader:
+            format_codelist.append(row['Template'])

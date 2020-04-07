@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import simplejson as json
+import requests
 import sys
 from datetime import datetime
 
@@ -23,6 +24,21 @@ from tools.bootstrap import bootstrap
 @click.option("--max_items", default=None, help="Number of items to be downloaded. USefull for testing and debug.")
 def start(environment, name, collection_id, ancestor_id, max_items):
     init_worker(environment)
+
+    logger.info('Updating registries...')
+    with open('registry/origin.json', 'r') as json_file:
+        origin = json.load(json_file)
+
+    for path, url in origin.items():
+        response = requests.get(url)
+        if response.status_code != 200:
+            logger.info('%s file from %s could not be updated properly' % (path, url))
+            continue
+
+        with open(path, 'wb') as file:
+            file.write(response.content)
+
+        logger.info('%s file from %s has been updated.' % (path, url))
 
     routing_key = "_ocds_kingfisher_extractor_init"
 
