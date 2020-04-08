@@ -7,13 +7,7 @@ def calculate_section(data, key, section):
     result = get_empty_result_field(name)
 
     value = data[key]
-    if value not in code_to_section_mapping:
-        result['result'] = False
-        result['value'] = value
-        result['reason'] = 'unknown documentType code'
-        return result
-
-    if section in code_to_section_mapping[value]:
+    if value not in code_to_section_mapping or section in code_to_section_mapping[value]:
         result['result'] = True
         return result
 

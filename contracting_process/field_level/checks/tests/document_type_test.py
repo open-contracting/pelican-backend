@@ -1,12 +1,24 @@
-from contracting_process.field_level.checks.document_type import calculate_section
+
+import contracting_process.field_level.checks.document_type as document_type
 from tools.helpers import is_subset_dict
 
 
 def test_passed():
-    result = calculate_section(
-        {'documentType': 'physicalProgressReport'},
+    document_type.code_to_section_mapping = {'contractGuarantees': ['tender', 'contract']}
+
+    result = document_type.calculate_section(
+        {'documentType': 'contractGuarantees'},
         'documentType',
-        'implementation'
+        'tender'
+    )
+    assert is_subset_dict(
+        {'result': True},
+        result
+    )
+    result = document_type.calculate_section(
+        {'documentType': 'unknown'},
+        'documentType',
+        'tender'
     )
     assert is_subset_dict(
         {'result': True},
@@ -15,29 +27,17 @@ def test_passed():
 
 
 def test_failed():
-    result = calculate_section(
-        {'documentType': 'unknown'},
-        'documentType',
-        'contract'
-    )
-    assert is_subset_dict(
-        {
-            'result': False,
-            'value': 'unknown',
-            'reason': 'unknown documentType code'
-        },
-        result
-    )
+    document_type.code_to_section_mapping = {'contractGuarantees': ['tender', 'contract']}
 
-    result = calculate_section(
-        {'documentType': 'contractNotice'},
+    result = document_type.calculate_section(
+        {'documentType': 'contractGuarantees'},
         'documentType',
-        'award'
+        'planning'
     )
     assert is_subset_dict(
         {
             'result': False,
-            'value': 'contractNotice',
+            'value': 'contractGuarantees',
             'reason': 'unsupported combination code-section for documentType'
         },
         result
