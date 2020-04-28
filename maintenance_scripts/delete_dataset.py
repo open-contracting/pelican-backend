@@ -40,6 +40,9 @@ def run(environment, dataset_id):
         delete from dataset
         where id = %(dataset_id)s;
 
+        delete from dataset_filter
+        where dataset_id_filtered = %(dataset_id)s;
+
         delete from report
         where dataset_id = %(dataset_id)s;
 

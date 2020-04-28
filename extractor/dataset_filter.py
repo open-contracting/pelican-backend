@@ -85,14 +85,14 @@ def callback(channel, method, properties, body):
 
         query = sql.SQL("SELECT id FROM data_item WHERE dataset_id = ") + sql.Literal(dataset_id_original)
         if 'release_date_from' in filter_message:
-            expr = sql.SQL("data->>'date' <= ") + sql.Literal(filter_message['release_date_from'])
+            expr = sql.SQL("data->>'date' >= ") + sql.Literal(filter_message['release_date_from'])
             query += sql.SQL(' and ') + expr
         if 'release_date_to' in filter_message:
-            expr = sql.SQL("data->>'date' >= ") + sql.Literal(filter_message['release_date_to'])
+            expr = sql.SQL("data->>'date' <= ") + sql.Literal(filter_message['release_date_to'])
             query += sql.SQL(" and ") + expr
         if 'buyer' in filter_message:
             expr = sql.SQL(", ").join([
-                sql.Literal(buyer.lower())
+                sql.Literal(buyer)
                 for buyer in filter_message['buyer']
             ])
             expr = sql.SQL("data->'buyer'->>'name' in ") + sql.SQL("(") + expr + sql.SQL(")")
@@ -102,23 +102,21 @@ def callback(channel, method, properties, body):
             query += sql.SQL(" and ") + expr
         if 'procuring_entity' in filter_message:
             expr = sql.SQL(", ").join([
-                sql.Literal(procuring_entity.lower())
+                sql.Literal(procuring_entity)
                 for procuring_entity in filter_message['procuring_entity']
             ])
             expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' in ") + sql.SQL("(") + expr + sql.SQL(")")
             query += sql.SQL(" and ") + expr
         if 'procuring_entity_regex' in filter_message:
             expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' ~ ") \
-                + sql.Literal(filter_message['buyer_regprocuring_entity_regexex'])
+                + sql.Literal(filter_message['procuring_entity_regex'])
             query += sql.SQL(" and ") + expr
         if max_items is not None:
             query += sql.SQL(" LIMIT ") + sql.Literal(max_items)
         query += sql.SQL(';')
 
-        # print(query.as_string(connection))
-        # sys.exit()
-
-        ids = [row[0] for row in cursor.execute(query)]
+        cursor.execute(query)
+        ids = [row[0] for row in cursor.fetchall()]
 
         # batch initialization
         max_batch_size = get_param("extractor_max_batch_size")
@@ -141,13 +139,13 @@ def callback(channel, method, properties, body):
             )
             data_items = [(json.dumps(row[0]), dataset_id_filtered) for row in cursor.fetchall()]
 
-            sql = """
+            query = """
                 INSERT INTO data_item
                 (data, dataset_id)
                 VALUES %s
                 RETURNING id;
             """
-            psycopg2.extras.execute_values(cursor, sql, data_items, page_size=page_size)
+            psycopg2.extras.execute_values(cursor, query, data_items, page_size=page_size)
             commit()
 
             for row in cursor.fetchall():
