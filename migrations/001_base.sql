@@ -18,6 +18,21 @@ CREATE INDEX dataset_meta_idx ON dataset USING gin (meta jsonb_path_ops);
 CREATE INDEX dataset_created_idx ON dataset (created);
 CREATE INDEX dataset_modified_idx ON dataset (modified);
 
+CREATE TABLE dataset_filter (
+    id BIGSERIAL PRIMARY KEY,
+    dataset_id_original BIGINT,
+    dataset_id_filtered BIGINT,
+    filter_message jsonb,
+    created timestamp without time zone default current_timestamp,
+    modified timestamp without time zone default current_timestamp
+);
+
+CREATE INDEX dataset_filter_filter_message_idx ON dataset_filter USING gin (filter_message jsonb_path_ops);
+CREATE INDEX dataset_filter_dataset_id_original_idx ON dataset_filter (dataset_id_original);
+CREATE INDEX dataset_filter_dataset_id_filtered_idx ON dataset_filter (dataset_id_filtered);
+CREATE INDEX dataset_filter_created_idx ON dataset_filter (created);
+CREATE INDEX dataset_filter_modified_idx ON dataset_filter (modified);
+
 CREATE TYPE report_type AS ENUM ('field_level_check', 'resource_level_check', 'dataset_level_check');
 CREATE TABLE report (
     id BIGSERIAL PRIMARY KEY,

@@ -15,6 +15,14 @@ def get_cursor():
     return cursor
 
 
+def get_connection():
+    global logger
+    logger = get_logger()
+    if not connected:
+        connect()
+    return connection
+
+
 def connect():
     logger.debug("Connecting to db...")
     global connection

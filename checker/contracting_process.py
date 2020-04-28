@@ -12,7 +12,7 @@ from tools.rabbit import consume, publish
 from tools.bootstrap import bootstrap
 from contracting_process import processor
 
-consume_routing_key = "_ocds_kingfisher_extractor"
+consume_routing_key = "_extractor"
 
 routing_key = "_contracting_process_checker"
 
