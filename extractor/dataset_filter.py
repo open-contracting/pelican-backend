@@ -76,7 +76,7 @@ def callback(channel, method, properties, body):
                 SELECT 1
                 FROM progress_monitor_dataset
                 WHERE dataset_id = %(dataset_id)s
-                AND state = 'OK'
+                AND phase = 'CHECKED'
             );
             """, {'dataset_id': dataset_id_original}
         )
