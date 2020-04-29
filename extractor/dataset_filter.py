@@ -32,6 +32,8 @@ def start(environment):
 
     return
 
+
+# input message example
 # {
 #     "dataset_id_original": 2,
 #     "filter_message": {
@@ -40,7 +42,7 @@ def start(environment):
 #         "buyer": ["ministry_of_finance", "state"],
 #         "buyer_regex": "Development$",
 #         "procuring_entity": ["a", "b"],
-#         "procuring_entity_regex": "(a|b)casdf+" 
+#         "procuring_entity_regex": "(a|b)casdf+"
 
 #     },
 #     "max_items": 5000
@@ -48,12 +50,40 @@ def start(environment):
 def callback(channel, method, properties, body):
     try:
         input_message = json.loads(body.decode('utf8'))
+
+        # checking input_message correctness
+        if (
+            "dataset_id_original" not in input_message or not isinstance(input_message['dataset_id_original'], int)
+            or "filter_message" not in input_message or not isinstance(input_message['filter_message'], dict)
+        ):
+            logger.warning("Input message is malformed, will be dropped.")
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+            return
+
         dataset_id_original = input_message["dataset_id_original"]
         filter_message = input_message["filter_message"]
         max_items = int(input_message["max_items"]) if "max_items" in input_message else None
-        # ancestor_id = int(input_message["ancestor_id"]) if input_message["ancestor_id"] else None
 
-        # TODO: check if dataset_id_original exists, provide ancestor_id feature
+        logger.info("Checking whether dataset with dataset_id {} exists and can be filtered.".format(dataset_id_original))
+        cursor.execute(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM dataset
+                WHERE id = %(dataset_id)s
+            )
+            AND EXISTS (
+                SELECT 1
+                FROM progress_monitor_dataset
+                WHERE dataset_id = %(dataset_id)s
+                AND state = 'OK'
+            );
+            """, {'dataset_id': dataset_id_original}
+        )
+        if not cursor.fetchone()[0]:
+            logger.warning("Dataset with dataset_id {} does not exist or cannot be filtered.".format(dataset_id_original))
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+            return
 
         logger.info("Creating row in dataset table for filtered dataset")
         cursor.execute(
@@ -80,9 +110,7 @@ def callback(channel, method, properties, body):
         )
         commit()
 
-        # TODO: implement composed queries
         logger.info("Filtering dataset with dataset_id {} using received filter_message".format(dataset_id_original))
-
         query = sql.SQL("SELECT id FROM data_item WHERE dataset_id = ") + sql.Literal(dataset_id_original)
         if 'release_date_from' in filter_message:
             expr = sql.SQL("data->>'date' >= ") + sql.Literal(filter_message['release_date_from'])
