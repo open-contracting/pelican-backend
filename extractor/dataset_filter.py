@@ -55,6 +55,7 @@ def callback(channel, method, properties, body):
         if (
             "dataset_id_original" not in input_message or not isinstance(input_message['dataset_id_original'], int)
             or "filter_message" not in input_message or not isinstance(input_message['filter_message'], dict)
+            or len(input_message["filter_message"]) == 0
         ):
             logger.warning("Input message is malformed, will be dropped.")
             channel.basic_ack(delivery_tag=method.delivery_tag)
@@ -160,20 +161,14 @@ def callback(channel, method, properties, body):
 
             cursor.execute(
                 """
-                SELECT data
-                FROM data_item
-                WHERE id IN %s;
-                """, (tuple(ids), )
-            )
-            data_items = [(json.dumps(row[0]), dataset_id_filtered) for row in cursor.fetchall()]
-
-            query = """
                 INSERT INTO data_item
                 (data, dataset_id)
-                VALUES %s
+                SELECT data, %s
+                FROM data_item
+                WHERE id IN %s
                 RETURNING id;
-            """
-            psycopg2.extras.execute_values(cursor, query, data_items, page_size=page_size)
+                """, (dataset_id_filtered, tuple(page_ids))
+            )
             commit()
 
             for row in cursor.fetchall():
