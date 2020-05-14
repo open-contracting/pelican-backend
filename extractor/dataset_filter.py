@@ -127,7 +127,7 @@ def callback(channel, method, properties, body):
             expr = sql.SQL("data->'buyer'->>'name' in ") + sql.SQL("(") + expr + sql.SQL(")")
             query += sql.SQL(" and ") + expr
         if 'buyer_regex' in filter_message:
-            expr = sql.SQL("data->'buyer'->>'name' ~ ") + sql.Literal(filter_message['buyer_regex'])
+            expr = sql.SQL("data->'buyer'->>'name' like ") + sql.Literal(filter_message['buyer_regex'])
             query += sql.SQL(" and ") + expr
         if 'procuring_entity' in filter_message:
             expr = sql.SQL(", ").join([
@@ -137,12 +137,14 @@ def callback(channel, method, properties, body):
             expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' in ") + sql.SQL("(") + expr + sql.SQL(")")
             query += sql.SQL(" and ") + expr
         if 'procuring_entity_regex' in filter_message:
-            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' ~ ") \
+            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' like ") \
                 + sql.Literal(filter_message['procuring_entity_regex'])
             query += sql.SQL(" and ") + expr
         if max_items is not None:
             query += sql.SQL(" LIMIT ") + sql.Literal(max_items)
         query += sql.SQL(';')
+
+        logger.info(query.as_string(cursor))
 
         cursor.execute(query)
         ids = [row[0] for row in cursor.fetchall()]
@@ -175,7 +177,8 @@ def callback(channel, method, properties, body):
                 inserted_id = row[0]
                 items_inserted = items_inserted + 1
                 set_item_state(dataset_id_filtered, inserted_id, state.IN_PROGRESS)
-                set_dataset_state(dataset_id_filtered, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=items_inserted)
+                set_dataset_state(dataset_id_filtered, state.IN_PROGRESS,
+                                  phase.CONTRACTING_PROCESS, size=items_inserted)
                 if items_inserted == items_count:
                     set_dataset_state(dataset_id_filtered, state.OK, phase.CONTRACTING_PROCESS)
                 commit()
