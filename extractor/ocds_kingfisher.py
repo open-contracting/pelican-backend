@@ -63,17 +63,23 @@ def callback(channel, method, properties, body):
 
             if max_items is None:
                 kf_cursor.execute("""
-                    SELECT data_id
+                    SELECT compiled_release.data_id
                     FROM compiled_release
-                    WHERE collection_id = %s;
-                    """, (collection_id,))
+                    JOIN data
+                    ON compiled_release.data_id = data.id
+                    WHERE compiled_release.collection_id = %s
+                    AND pg_column_size(data.data) < %s;
+                    """, (collection_id, get_param("kf_extractor_max_size")))
             else:
                 kf_cursor.execute("""
-                    SELECT data_id
+                    SELECT compiled_release.data_id
                     FROM compiled_release
-                    WHERE collection_id = %s
+                    JOIN data
+                    ON compiled_release.data_id = data.id
+                    WHERE compiled_release.collection_id = %s
+                    AND pg_column_size(data.data) < %s
                     LIMIT %s;
-                    """, (collection_id, max_items))
+                    """, (collection_id, get_param("kf_extractor_max_size"), max_items))
 
             result = kf_cursor.fetchall()
 

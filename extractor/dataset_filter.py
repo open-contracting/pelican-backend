@@ -127,7 +127,7 @@ def callback(channel, method, properties, body):
             expr = sql.SQL("data->'buyer'->>'name' in ") + sql.SQL("(") + expr + sql.SQL(")")
             query += sql.SQL(" and ") + expr
         if 'buyer_regex' in filter_message:
-            expr = sql.SQL("data->'buyer'->>'name' like ") + sql.Literal(filter_message['buyer_regex'])
+            expr = sql.SQL("data->'buyer'->>'name' ilike ") + sql.Literal(filter_message['buyer_regex'])
             query += sql.SQL(" and ") + expr
         if 'procuring_entity' in filter_message:
             expr = sql.SQL(", ").join([
@@ -137,7 +137,7 @@ def callback(channel, method, properties, body):
             expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' in ") + sql.SQL("(") + expr + sql.SQL(")")
             query += sql.SQL(" and ") + expr
         if 'procuring_entity_regex' in filter_message:
-            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' like ") \
+            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' ilike ") \
                 + sql.Literal(filter_message['procuring_entity_regex'])
             query += sql.SQL(" and ") + expr
         if max_items is not None:
