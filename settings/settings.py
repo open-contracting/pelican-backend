@@ -39,6 +39,7 @@ config_data = {
         "currency_converter_extrapolation_max_days_fallback": 180,
         "fixer_io_api_key": "c744ed8d097ea8f6d4daeb2fc56a0e44",
         "fixer_io_update": False,
+        "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
     },
     "production": {
         "log_level": logging.DEBUG,
@@ -68,6 +69,7 @@ config_data = {
         "currency_converter_extrapolation_max_days_fallback": 180,
         "fixer_io_api_key": "c744ed8d097ea8f6d4daeb2fc56a0e44",
         "fixer_io_update": False,
+        "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
     },
     "test": {
         "log_level": logging.DEBUG,
@@ -85,6 +87,7 @@ config_data = {
         "currency_converter_extrapolation_max_days_fallback": 180,
         "fixer_io_api_key": "c744ed8d097ea8f6d4daeb2fc56a0e44",
         "fixer_io_update": False,
+        "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
     },
     "kuba_development": {
         "log_level": logging.DEBUG,
@@ -114,6 +117,7 @@ config_data = {
         "currency_converter_extrapolation_max_days_fallback": 180,
         "fixer_io_api_key": "c744ed8d097ea8f6d4daeb2fc56a0e44",
         "fixer_io_update": False,
+        "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
     },
     "mirek_development": {
         "log_level": logging.DEBUG,
@@ -143,6 +147,7 @@ config_data = {
         "currency_converter_extrapolation_max_days_fallback": 180,
         "fixer_io_api_key": "c744ed8d097ea8f6d4daeb2fc56a0e44",
         "fixer_io_update": False,
+        "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
     },
 }
 

@@ -67,6 +67,16 @@ item_test_passed2 = {
     }
 }
 
+item_test_passed3 = {
+    'tender': {
+        'enquiryPeriod': {
+            'startDate': '2019-08-14T16:47:36+01:00',
+            'endDate': '2019-08-24T00:00:00+01:00',
+            'durationInDays': 9
+        }
+    }
+}
+
 
 def test_passed():
     result = calculate(item_test_passed1)

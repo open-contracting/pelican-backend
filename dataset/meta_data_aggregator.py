@@ -288,14 +288,16 @@ def get_kingfisher_meta_data(collection_id):
         meta_data['collection_metadata']['data_license'] = values[0]
 
     # extensions
-    extensions = get_values(package_data, 'data.extensions', value_only=True)
-    for extension in extensions:
+    repository_urls = get_values(package_data, 'data.extensions', value_only=True)
+    for repository_url in repository_urls:
         try:
-            request = requests.get(extension, timeout=30)
+            request = requests.get(repository_url, timeout=30)
             if request.status_code != 200:
                 continue
 
-            meta_data['collection_metadata']['extensions'].append(request.json())
+            extension = request.json()
+            extension['repositoryUrl'] = repository_url
+            meta_data['collection_metadata']['extensions'].append(extension)
 
         except:
             pass

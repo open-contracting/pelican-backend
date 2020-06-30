@@ -79,7 +79,7 @@ def add_item(scope, item, item_id):
                 )
                 del scope['related_processes'][key]
             else:
-                scope['original_ocid'][rscope['related_processes'][key]['related_ocid']]['pending_related_processes'].append(key)
+                scope['original_ocid'][scope['related_processes'][key]['related_ocid']]['pending_related_processes'].append(key)
 
         else:
             scope['original_ocid'][scope['related_processes'][key]['related_ocid']] = {
