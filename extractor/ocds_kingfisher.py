@@ -13,6 +13,7 @@ from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
 from tools.bootstrap import bootstrap
+from tools import exchange_rates_db
 import dataset.meta_data_aggregator as meta_data_aggregator
 
 
@@ -32,12 +33,20 @@ cursor = None
 def start(environment):
     init_worker(environment)
 
+    # fixer io update
+    if get_param('fixer_io_update'):
+        exchange_rates_db.update_from_fixer_io()
+
     consume(callback, get_param("exchange_name") + consume_routing_key)
 
     return
 
 
 def callback(channel, method, properties, body):
+    # fixer io update
+    if get_param('fixer_io_update'):
+        exchange_rates_db.update_from_fixer_io()
+
     try:
         input_message = json.loads(body.decode('utf8'))
 
