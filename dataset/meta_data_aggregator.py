@@ -175,6 +175,7 @@ EMPTY_KINGFISHER_META_DATA = {
         'url': None,
         'ocid_prefix': None,
         'data_license': None,
+        'publication_policy': None,
         'extensions': [],
         'published_from': None,
         'published_to': None
@@ -286,6 +287,11 @@ def get_kingfisher_meta_data(collection_id):
     values = get_values(package_data, 'data.license', value_only=True)
     if values:
         meta_data['collection_metadata']['data_license'] = values[0]
+
+    # publication policy
+    values = get_values(package_data, 'data.publicationPolicy', value_only=True)
+    if values:
+        meta_data['collection_metadata']['publication_policy'] = values[0]
 
     # extensions
     repository_urls = get_values(package_data, 'data.extensions', value_only=True)
