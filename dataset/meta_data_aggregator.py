@@ -305,11 +305,13 @@ def get_kingfisher_meta_data(collection_id):
     # published from, published to
     kf_cursor.execute(
         """
-        SELECT MIN(data->>'date'), MAX(data->>'date')
-        FROM data
-        WHERE id = %s
+        SELECT MIN(data.data->>'date'), MAX(data.data->>'date')
+        FROM compiled_release
+        JOIN data
+        ON compiled_release.data_id = data.id
+        WHERE compiled_release.collection_id = %s
         LIMIT 1;
-        """, (with_collection['data_id'],)
+        """, (collection_id,)
     )
     result = kf_cursor.fetchone()
     meta_data['collection_metadata']['published_from'] = \
