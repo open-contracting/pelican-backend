@@ -113,6 +113,20 @@ def test_passed():
         ]
     }
 
+    result = calculate(item_test_passed3)
+    assert result['result'] is True
+    assert result['application_count'] == 1
+    assert result['pass_count'] == 1
+    assert result['meta'] == {
+        'periods': [
+            {
+                'path': 'tender.enquiryPeriod',
+                'result': True
+            }
+        ]
+    }
+
+
 item_test_failed = {
     'awards': [
         {
