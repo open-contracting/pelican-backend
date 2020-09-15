@@ -25,7 +25,9 @@ def test_passed():
 
     assert result['result'] is True
     assert result['value'] == 100.0
-    assert result['meta'] == {'failed_examples': []}
+    assert result['meta']['failed_examples'] == []
+    assert result['meta']['total_passed'] == 2
+    assert result['meta']['total_failed'] == 0
 
 
 def test_failed():
@@ -42,6 +44,8 @@ def test_failed():
     assert len(result['meta']['failed_examples']) == 1
     assert result['meta']['failed_examples'][0]['tender_id'] == '1'
     assert len(result['meta']['failed_examples'][0]['ocids']) == 2
+    assert result['meta']['total_passed'] == 2
+    assert result['meta']['total_failed'] == 2
 
     scope = {}
     for i in range(101):
@@ -53,3 +57,5 @@ def test_failed():
     assert len(result['meta']['failed_examples']) == 1
     assert result['meta']['failed_examples'][0]['tender_id'] == '1'
     assert len(result['meta']['failed_examples'][0]['ocids']) == 100
+    assert result['meta']['total_passed'] == 0
+    assert result['meta']['total_failed'] == 101
