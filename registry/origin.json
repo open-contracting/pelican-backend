@@ -1,5 +1,16 @@
 {
-    "registry/ocid_prefixes.csv": "https://docs.google.com/spreadsheets/d/1Am3gq0B77xN034-8hDjhb45wOuq-8qW6kGOdp40rN4M/pub?gid=506986894&single=true&output=csv",
-    "registry/identifier_scheme_codelist.csv": "http://org-id.guide/download.csv",
-    "registry/format_codelist.csv": "https://www.iana.org/assignments/media-types/application.csv"
+    "registry/ocid_prefixes.csv": ["https://docs.google.com/spreadsheets/d/1Am3gq0B77xN034-8hDjhb45wOuq-8qW6kGOdp40rN4M/pub?gid=506986894&single=true&output=csv"],
+    "registry/identifier_scheme_codelist.csv": ["http://org-id.guide/download.csv"],
+    "registry/format_codelist.csv": [
+        "https://www.iana.org/assignments/media-types/application.csv",
+        "https://www.iana.org/assignments/media-types/audio.csv",
+        "https://www.iana.org/assignments/media-types/font.csv",
+        "https://www.iana.org/assignments/media-types/example.csv",
+        "https://www.iana.org/assignments/media-types/image.csv",
+        "https://www.iana.org/assignments/media-types/message.csv",
+        "https://www.iana.org/assignments/media-types/model.csv",
+        "https://www.iana.org/assignments/media-types/multipart.csv",
+        "https://www.iana.org/assignments/media-types/text.csv",
+        "https://www.iana.org/assignments/media-types/video.csv"
+    ]
 }

@@ -1,7 +1,13 @@
 #!/usr/bin/env python
-import simplejson as json
-import requests
+import os
 import sys
+import csv
+import time
+import shutil
+import shortuuid
+import requests
+import tempfile
+import simplejson as json
 from datetime import datetime
 
 import click
@@ -29,16 +35,9 @@ def start(environment, name, collection_id, ancestor_id, max_items):
     with open('registry/origin.json', 'r') as json_file:
         origin = json.load(json_file)
 
-    for path, url in origin.items():
-        response = requests.get(url)
-        if response.status_code != 200:
-            logger.info('%s file from %s could not be updated properly' % (path, url))
-            continue
-
-        with open(path, 'wb') as file:
-            file.write(response.content)
-
-        logger.info('%s file from %s has been updated.' % (path, url))
+    for path, urls in origin.items():
+        logger.info('Updating registry on path %s' % path)
+        update_registry(path, urls)
 
     routing_key = "_ocds_kingfisher_extractor_init"
 
@@ -64,6 +63,35 @@ def init_worker(environment):
 
     logger.debug("Starter worker started.")
 
+
+def update_registry(path, urls, file_format='csv'):
+    tempdir = tempfile.mkdtemp()
+    for url in urls:
+        response = requests.get(url)
+        if response.status_code != 200:
+            logger.warning('File at %s could not be downloaded' % url)
+            continue
+
+        with open(os.path.join(tempdir, shortuuid.uuid()), 'wb') as file:
+            file.write(response.content)
+
+        logger.info('File at %s was successfully downloaded; sleeping for 2 seconds' % url)
+        time.sleep(2)
+
+    logger.info('Joining all the files...')
+    if file_format == 'csv':
+        with open(path, 'w') as registry_file:
+            for index, file_name in enumerate(os.listdir(tempdir)):
+                with open(os.path.join(tempdir, file_name), 'r') as file:
+                    if index != 0:
+                        file.__next__()
+                    for line in file:
+                        registry_file.write(line)
+    else:
+        shutil.rmtree(tempdir)
+        raise ValueError('File format \'%s\' is not supported' % file_format)
+
+    shutil.rmtree(tempdir)
 
 if __name__ == '__main__':
     start()
