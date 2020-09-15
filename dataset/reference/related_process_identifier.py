@@ -4,7 +4,7 @@ import random
 from tools.checks import get_empty_result_dataset
 from tools.getter import get_values
 
-version = 1.0
+version = 2.0
 examples_cap = 100
 
 
@@ -52,6 +52,7 @@ def add_item(scope, item, item_id):
 
         key = (ocid, related_process['value']['identifier'])
         scope['related_processes'][key] = {
+            'item_id': item_id,
             'ocid': ocid,
             'related_ocid': related_process['value']['identifier'],
             'related_path': related_process['path']
@@ -93,6 +94,8 @@ def get_result(scope):
 
 def pick_examples(scope, related_process_key, result):
     example = {
+        'item_id': scope['related_processes'][related_process_key]['item_id'],
+        'ocid': scope['related_processes'][related_process_key]['ocid'],
         'related_process': scope['related_processes'][related_process_key],
         'result': result
     }

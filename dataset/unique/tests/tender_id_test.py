@@ -25,7 +25,22 @@ def test_passed():
 
     assert result['result'] is True
     assert result['value'] == 100.0
+    assert result['meta']['passed_examples'] == [
+        {
+            'tender_id': '1',
+            'item_id': 1,
+            'ocid': '1',
+            'all_items': [{'ocid': '1', 'item_id': 1}],
+        },
+        {
+            'tender_id': '2',
+            'item_id': 2,
+            'ocid': '2',
+            'all_items': [{'ocid': '2', 'item_id': 2}],
+        },
+    ]
     assert result['meta']['failed_examples'] == []
+    assert result['meta']['total_processed'] == 2
     assert result['meta']['total_passed'] == 2
     assert result['meta']['total_failed'] == 0
 
@@ -43,7 +58,8 @@ def test_failed():
     assert result['value'] == 50.0
     assert len(result['meta']['failed_examples']) == 1
     assert result['meta']['failed_examples'][0]['tender_id'] == '1'
-    assert len(result['meta']['failed_examples'][0]['ocids']) == 2
+    assert len(result['meta']['failed_examples'][0]['all_items']) == 2
+    assert result['meta']['total_processed'] == 4
     assert result['meta']['total_passed'] == 2
     assert result['meta']['total_failed'] == 2
 
@@ -56,6 +72,7 @@ def test_failed():
     assert result['value'] == 0.0
     assert len(result['meta']['failed_examples']) == 1
     assert result['meta']['failed_examples'][0]['tender_id'] == '1'
-    assert len(result['meta']['failed_examples'][0]['ocids']) == 100
+    assert len(result['meta']['failed_examples'][0]['all_items']) == 101
+    assert result['meta']['total_processed'] == 101
     assert result['meta']['total_passed'] == 0
     assert result['meta']['total_failed'] == 101

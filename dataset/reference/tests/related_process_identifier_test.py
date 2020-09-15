@@ -16,6 +16,7 @@ def test_undefined():
         'reason': 'there are no pairs of related processes with check-specific properties'
     }
 
+
 items_test_passed = [
     {
         'ocid': '0',
@@ -66,24 +67,33 @@ def test_passed():
         'total_failed': 0,
         'passed_examples': [
             {
+                'ocid': '1',
+                'item_id': 1,
                 'related_process': {
                     'ocid': '1',
+                    'item_id': 1,
                     'related_ocid': '0',
                     'related_path': 'relatedProcesses[0]'
                 },
                 'result': True
             },
             {
+                'ocid': '2',
+                'item_id': 2,
                 'related_process': {
                     'ocid': '2',
+                    'item_id': 2,
                     'related_ocid': '0',
                     'related_path': 'contracts[0].relatedProcesses[0]'
                 },
                 'result': True
             },
             {
+                'ocid': '2',
+                'item_id': 2,
                 'related_process': {
                     'ocid': '2',
+                    'item_id': 2,
                     'related_ocid': '1',
                     'related_path': 'contracts[0].relatedProcesses[1]'
                 },
@@ -143,7 +153,10 @@ def test_failed():
         'total_failed': 1,
         'passed_examples': [
             {
+                'item_id': 1,
+                'ocid': '1',
                 'related_process': {
+                    'item_id': 1,
                     'ocid': '1',
                     'related_ocid': '0',
                     'related_path': 'relatedProcesses[0]'
@@ -151,7 +164,10 @@ def test_failed():
                 'result': True
             },
             {
+                'item_id': 2,
+                'ocid': '2',
                 'related_process': {
+                    'item_id': 2,
                     'ocid': '2',
                     'related_ocid': '0',
                     'related_path': 'contracts[0].relatedProcesses[0]'
@@ -161,7 +177,10 @@ def test_failed():
         ],
         'failed_examples': [
             {
+                'item_id': 2,
+                'ocid': '2',
                 'related_process': {
+                    'item_id': 2,
                     'ocid': '2',
                     'related_ocid': 'unknown',
                     'related_path': 'contracts[0].relatedProcesses[1]'
