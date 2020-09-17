@@ -19,7 +19,7 @@ import dataset.meta_data_aggregator as meta_data_aggregator
 
 consume_routing_key = "_ocds_kingfisher_extractor_init"
 
-routing_key = "_ocds_kingfisher_extractor"
+routing_key = "_extractor"
 
 page_size = 1000
 

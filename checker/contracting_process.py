@@ -22,8 +22,6 @@ routing_key = "_contracting_process_checker"
 def start(environment):
     init_worker(environment)
 
-    consume(callback, get_param("exchange_name") + "_ocds_kingfisher_extractor")
-
     consume(callback, get_param("exchange_name") + "_extractor")
 
     return

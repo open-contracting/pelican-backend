@@ -16,6 +16,7 @@ class phase():
     DATASET = "DATASET"
     TIME_VARIANCE = "TIME_VARIANCE"
     CHECKED = "CHECKED"
+    DELETED = "DELETED"
 
 
 def set_dataset_state(dataset_id, state, phase, size=None):
