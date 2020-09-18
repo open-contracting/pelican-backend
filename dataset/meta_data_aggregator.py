@@ -315,7 +315,10 @@ def get_kingfisher_meta_data(collection_id):
         FROM compiled_release
         JOIN data
         ON compiled_release.data_id = data.id
-        WHERE compiled_release.collection_id = %s
+        WHERE compiled_release.collection_id = %s AND
+            data.data ? 'date' AND
+            data.data->>'date' is not null AND
+            data.data->>'date' <> ''
         LIMIT 1;
         """, (collection_id,)
     )
