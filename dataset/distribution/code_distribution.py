@@ -47,6 +47,9 @@ class CodeDistribution:
                 if key in self.test_values:
                     passed = passed and (0.001 <= value['share'] <= 0.99)
 
+            if any(key not in scope for key in self.test_values):
+                passed = False
+
             result['result'] = passed
             result['value'] = 100 if result['result'] else 0
             result['meta'] = {'shares': scope}

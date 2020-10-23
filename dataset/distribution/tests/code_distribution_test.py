@@ -296,7 +296,6 @@ items_failed2 = [
         ]
     }
 ]
-
 items_failed2.extend([
     {
         'ocid': 0,
@@ -308,6 +307,17 @@ items_failed2.extend([
     }
     for i in range(1000)
 ])
+
+items_failed3 = [
+    {
+        'ocid': 0,
+        'awards': [
+            {
+                'status': 'b'
+            }
+        ]
+    }
+]
 
 
 def test_failed():
@@ -348,5 +358,14 @@ def test_failed():
     assert is_subset_dict({'share': 1000/1001, 'count': 1000}, result['meta']['shares']['b'])
     assert len(result['meta']['shares']['b']['examples']) == 20
 
+    # test_failed2
+    distribution = CodeDistribution(['awards.status'], ['a'], samples_cap=20)
+    scope = {}
+    id = 0
+    for item in items_failed3:
+        scope = distribution.add_item(scope, item, id)
+        id += 1
 
-
+    result = distribution.get_result(scope)
+    assert result['result'] is False
+    assert result['value'] == 0

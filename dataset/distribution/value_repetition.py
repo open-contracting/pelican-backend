@@ -86,14 +86,14 @@ def get_result(scope):
 
         most_frequent_count = sum([scope[k]['count'] for k in most_frequent[:most_frequent_computation]])
 
-        ratio = (most_frequent_count / total_count)
-        passed = ratio < 0.1
+        most_frequent_share = (most_frequent_count / total_count)
+        passed = most_frequent_share < 0.1
 
         for key in most_frequent:
-            scope[key]['share'] = 100 * (scope[key]['count'] / total_count)
+            scope[key]['share'] = scope[key]['count'] / total_count
 
         result['result'] = passed
-        result['value'] = 100 * ratio
+        result['value'] = 100 * most_frequent_share
         result['meta'] = {
             'most_frequent': [
                 scope[key] for key in most_frequent
