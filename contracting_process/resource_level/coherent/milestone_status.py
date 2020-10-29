@@ -38,7 +38,7 @@ def calculate(item):
                 statuses = get_values(milestone["value"], "properties.status", True)
                 date_met = get_values(milestone["value"], "properties.dateMet", True)
                 for status in statuses:  # because 'get_values' return array of values
-                    if status is "scheduled" or status is "notMet":
+                    if status in ("scheduled", "notMet"):
                         application_count += 1
                         if not date_met or not date_met[0]:
                             passed = True
