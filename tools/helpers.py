@@ -1,4 +1,5 @@
 
+import re
 import random
 from datetime import datetime
 from decimal import Decimal
@@ -13,6 +14,13 @@ def parse_datetime(str_datetime):
     '''
     if str_datetime is None:
         return None
+
+    # limit to microseconds
+    str_datetime = re.sub(
+        r'(?<=T\d\d:\d\d:\d\d\.)(\d+)',
+        lambda m: m.group(1)[:6],
+        str_datetime
+    )
 
     try:
         return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%SZ')
