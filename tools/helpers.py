@@ -12,7 +12,7 @@ def parse_datetime(str_datetime):
     ‘2014-10-21T09:30:00Z’ - 9:30 am on the 21st October 2014, UTC
     ‘2014-11-18T18:00:00-06:00’ - 6pm on 18th November 2014 CST (Central Standard Time)
     '''
-    if str_datetime is None:
+    if str_datetime is None or not isinstance(str_datetime, str):
         return None
 
     # limit to microseconds
@@ -57,7 +57,7 @@ def parse_date(str_date):
     '''
     Parse string to valid date.
     '''
-    if str_date is None:
+    if str_date is None or not isinstance(str_date, str):
         return None
 
     try:

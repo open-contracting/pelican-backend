@@ -11,7 +11,7 @@ def test_passed():
         document_format_codelist.calculate({'format': 'application/AML'}, 'format')
     )
     assert is_subset_dict(
-        {'result': True},
+        {'result': False},
         document_format_codelist.calculate({'format': 'offline/print'}, 'format')
     )
 
