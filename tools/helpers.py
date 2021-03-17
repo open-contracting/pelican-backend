@@ -22,6 +22,8 @@ def parse_datetime(str_datetime):
         str_datetime
     )
 
+    str_datetime = str_datetime.replace("Z", "+00:00")
+
     try:
         return datetime.strptime(str_datetime, '%Y-%m-%dT%H:%M:%SZ')
     except ValueError:
