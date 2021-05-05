@@ -20,7 +20,7 @@ class CodeDistribution:
             values.extend(get_values(item, path, value_only=True))
 
         for value in values:
-            if value is None:
+            if value is None or not isinstance(value, str):
                 continue
 
             if value not in scope:

@@ -6,9 +6,13 @@ def test_passed():
     document_format_codelist.format_codelist = ["application/AML"]
 
     assert is_subset_dict(
-        {"result": True}, document_format_codelist.calculate({"format": "application/AML"}, "format")
+        {"result": True},
+        document_format_codelist.calculate({"format": "application/AML"}, "format"),
     )
-    assert is_subset_dict({"result": True}, document_format_codelist.calculate({"format": "offline/print"}, "format"))
+    assert is_subset_dict(
+        {"result": False},
+        document_format_codelist.calculate({"format": "offline/print"}, "format"),
+    )
 
 
 def test_failed():
