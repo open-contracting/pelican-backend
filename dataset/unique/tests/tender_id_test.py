@@ -1,5 +1,4 @@
 from dataset.unique import tender_id
-from tools.helpers import is_subset_dict
 
 
 def test_undefined():

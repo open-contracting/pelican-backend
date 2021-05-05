@@ -1,6 +1,5 @@
 from contracting_process.resource_level.coherent.milestone_status import calculate
 from tools.checks import get_empty_result_resource
-from tools.getter import get_values
 
 version = 1.0
 

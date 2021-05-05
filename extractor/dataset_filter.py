@@ -3,15 +3,13 @@ import sys
 from math import ceil
 
 import click
-import psycopg2.extras
 import simplejson as json
 from psycopg2 import sql
 
-import dataset.meta_data_aggregator as meta_data_aggregator
 from core.state import phase, set_dataset_state, set_item_state, state
 from settings.settings import get_param
 from tools.bootstrap import bootstrap
-from tools.db import commit, get_connection, get_cursor, rollback
+from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
 

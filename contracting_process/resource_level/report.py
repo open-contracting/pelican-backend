@@ -2,7 +2,6 @@ import simplejson as json
 
 from contracting_process.resource_level.definitions import definitions
 from tools.db import commit, get_cursor
-from tools.helpers import ReservoirSampler
 
 
 def create(dataset_id):

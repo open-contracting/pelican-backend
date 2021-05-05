@@ -1,7 +1,6 @@
 import csv
 
 from tools.checks import get_empty_result_field
-from tools.getter import get_values
 
 identifier_scheme_codelist = None
 name = "identifier_scheme"

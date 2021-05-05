@@ -8,7 +8,7 @@ from core.state import get_dataset, get_processed_items_count, get_total_items_c
 from dataset import processor
 from settings.settings import get_param
 from tools.bootstrap import bootstrap
-from tools.db import commit, get_cursor, rollback
+from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
 

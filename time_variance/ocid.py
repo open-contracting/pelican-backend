@@ -1,7 +1,3 @@
-
-from tools.checks import get_empty_result_time_variance
-from tools.getter import get_values
-
 version = 1.0
 
 

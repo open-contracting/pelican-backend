@@ -1,6 +1,5 @@
 from contracting_process.resource_level.coherent.value_realistic import calculate
 from tools.bootstrap import bootstrap
-from tools.checks import get_empty_result_resource
 
 version = 1.0
 bootstrap("test", "value_realistic_test")

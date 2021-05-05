@@ -5,7 +5,7 @@ import simplejson as json
 from settings.settings import CustomLogLevels
 from time_variance.definitions import definitions
 from tools.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
-from tools.db import commit, get_cursor
+from tools.db import get_cursor
 from tools.logging_helper import get_logger
 
 page_size = 1000

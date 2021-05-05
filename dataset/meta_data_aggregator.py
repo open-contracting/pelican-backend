@@ -5,7 +5,6 @@ import requests
 import simplejson as json
 from dateutil.relativedelta import relativedelta
 
-from contracting_process.field_level.definitions import coverage_checks, definitions
 from settings.settings import get_param
 from tools.currency_converter import convert
 from tools.db import get_cursor

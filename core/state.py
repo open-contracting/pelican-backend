@@ -1,5 +1,5 @@
 from settings.settings import CustomLogLevels
-from tools.db import commit, get_cursor, rollback
+from tools.db import get_cursor
 from tools.logging_helper import get_logger
 
 

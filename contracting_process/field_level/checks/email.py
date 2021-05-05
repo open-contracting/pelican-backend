@@ -1,7 +1,6 @@
 from validate_email import validate_email
 
 from tools.checks import get_empty_result_field
-from tools.getter import get_values
 
 """
 author: Iaroslav Kolodka

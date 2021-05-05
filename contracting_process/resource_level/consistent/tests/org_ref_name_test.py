@@ -1,7 +1,6 @@
 import functools
 
 from contracting_process.resource_level.consistent.org_ref_name import calculate
-from tools.checks import get_empty_result_resource
 
 calculate_buyer = functools.partial(calculate, path="buyer")
 
