@@ -54,60 +54,60 @@ ancestor_contracts_big = {
 
 def test_filter():
     scope = get_empty_result_time_variance_scope()
-    assert True == phase_stable.filter(scope, ancestor_empty, 1, None, None)
-    assert True == phase_stable.filter(scope, ancestor_tender, 1, None, None)
-    assert True == phase_stable.filter(scope, ancestor_planning, 1, None, None)
+    assert phase_stable.filter(scope, ancestor_empty, 1, None, None) is True
+    assert phase_stable.filter(scope, ancestor_tender, 1, None, None) is True
+    assert phase_stable.filter(scope, ancestor_planning, 1, None, None) is True
 
 
 def test_evaluate_tender():
     scope = get_empty_result_time_variance_scope()
     scope, result = phase_stable.evaluate(scope, ancestor_empty, 1, new_empty, 2)
-    assert result == True
+    assert result is True
 
     scope, result = phase_stable.evaluate(scope, ancestor_tender, 1, new_empty, 2)
-    assert result == False
+    assert result is False
 
     scope, result = phase_stable.evaluate(scope, ancestor_tender, 1, new_tender, 2)
-    assert result == True
+    assert result is True
 
 
 def test_evaluate_planning():
     scope = get_empty_result_time_variance_scope()
     scope, result = phase_stable.evaluate(scope, ancestor_empty, 1, new_empty, 2)
-    assert result == True
+    assert result is True
 
     scope, result = phase_stable.evaluate(scope, ancestor_planning, 1, new_empty, 2)
-    assert result == False
+    assert result is False
 
     scope, result = phase_stable.evaluate(scope, ancestor_planning, 1, new_planning, 2)
-    assert result == True
+    assert result is True
 
 
 def test_evaluate_awards():
     scope = get_empty_result_time_variance_scope()
     scope, result = phase_stable.evaluate(scope, ancestor_empty, 1, new_empty, 2)
-    assert result == True
+    assert result is True
 
     scope, result = phase_stable.evaluate(scope, ancestor_awards, 1, new_empty, 2)
-    assert result == False
+    assert result is False
 
     scope, result = phase_stable.evaluate(scope, ancestor_awards, 1, new_awards, 2)
-    assert result == True
+    assert result is True
 
     scope, result = phase_stable.evaluate(scope, ancestor_awards_big, 1, new_awards, 2)
-    assert result == False
+    assert result is False
 
 
 def test_evaluate_contracts():
     scope = get_empty_result_time_variance_scope()
     scope, result = phase_stable.evaluate(scope, ancestor_empty, 1, new_empty, 2)
-    assert result == True
+    assert result is True
 
     scope, result = phase_stable.evaluate(scope, ancestor_contracts, 1, new_empty, 2)
-    assert result == False
+    assert result is False
 
     scope, result = phase_stable.evaluate(scope, ancestor_contracts, 1, new_contracts, 2)
-    assert result == True
+    assert result is True
 
     scope, result = phase_stable.evaluate(scope, ancestor_contracts_big, 1, new_contracts, 2)
-    assert result == False
+    assert result is False
