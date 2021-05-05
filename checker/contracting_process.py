@@ -30,7 +30,7 @@ def start(environment):
 def callback(channel, method, properties, body):
     try:
         # parse input message
-        input_message = json.loads(body.decode('utf8'))
+        input_message = json.loads(body.decode("utf8"))
         dataset_id = input_message["dataset_id"]
 
         if "command" not in input_message:
@@ -39,11 +39,14 @@ def callback(channel, method, properties, body):
             logger.info("Processing message for dataset_id {} and items {}".format(dataset_id, item_ids))
 
             # get item from storage
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT data, id, dataset_id
                 FROM data_item
                 WHERE id IN %s;
-                """, (tuple(item_ids),))
+                """,
+                (tuple(item_ids),),
+            )
 
             # perform actual action with items
             processor.do_work(cursor.fetchall())
@@ -58,8 +61,7 @@ def callback(channel, method, properties, body):
         # acknowledge message processing
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
-        logger.exception(
-            "Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()
 
     logger.info("Processing completed.")
@@ -91,5 +93,5 @@ def init_worker(environment):
     logger.info("Contracting process checker initialised")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     start()

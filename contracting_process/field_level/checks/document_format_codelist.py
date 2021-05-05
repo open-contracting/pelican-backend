@@ -1,27 +1,26 @@
-
 import csv
 
 from settings.settings import get_param
 from tools.checks import get_empty_result_field
 
 format_codelist = None
-name = 'document_format_codelist'
+name = "document_format_codelist"
 
 
 def calculate(item, key):
     result = get_empty_result_field(name)
-    result['result'] = False
+    result["result"] = False
 
     if format_codelist is None:
         initialise_format_codelist()
 
     document_format = item[key]
     if document_format in format_codelist:
-        result['result'] = True
+        result["result"] = True
     else:
-        result['result'] = False
-        result['value'] = document_format
-        result['reason'] = 'wrong document format'
+        result["result"] = False
+        result["value"] = document_format
+        result["reason"] = "wrong document format"
 
     return result
 
@@ -30,9 +29,9 @@ def initialise_format_codelist():
     global format_codelist
     format_codelist = []
 
-    with open('registry/format_codelist.csv', 'r') as csv_file:
+    with open("registry/format_codelist.csv", "r") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
-            format_codelist.append(row['Template'])
+            format_codelist.append(row["Template"])
 
-    format_codelist.extend(get_param('additional_document_formats'))
+    format_codelist.extend(get_param("additional_document_formats"))

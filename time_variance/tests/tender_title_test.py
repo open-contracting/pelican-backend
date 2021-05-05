@@ -1,19 +1,9 @@
 from time_variance import tender_title
 from tools.checks import get_empty_result_time_variance_scope
 
-ancestor = {
-    "ocid": "2",
-    "tender": {
-        "title": "Title 1"
-    }
-}
+ancestor = {"ocid": "2", "tender": {"title": "Title 1"}}
 
-new_item = {
-    "ocid": "2",
-    "tender": {
-        "title": "title  1"
-    }
-}
+new_item = {"ocid": "2", "tender": {"title": "title  1"}}
 
 
 def test_evaluate():
@@ -25,11 +15,7 @@ def test_evaluate():
     assert result == True
 
 
-ancestor_no_title_1 = {
-    "ocid": "3",
-    "tender": {
-    }
-}
+ancestor_no_title_1 = {"ocid": "3", "tender": {}}
 
 
 ancestor_no_title_2 = {
@@ -37,20 +23,10 @@ ancestor_no_title_2 = {
 }
 
 
-ancestor_no_title_3 = {
-    "ocid": "3",
-    "tender": {
-        "title": ""
-    }
-}
+ancestor_no_title_3 = {"ocid": "3", "tender": {"title": ""}}
 
 
-ancestor_title_1 = {
-    "ocid": "4",
-    "tender": {
-        "title": "titel"
-    }
-}
+ancestor_title_1 = {"ocid": "4", "tender": {"title": "titel"}}
 
 
 def test_filter():

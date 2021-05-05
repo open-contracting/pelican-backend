@@ -31,7 +31,7 @@ def start(environment):
 def callback(channel, method, properties, body):
     try:
         # parse input message
-        input_message = json.loads(body.decode('utf8'))
+        input_message = json.loads(body.decode("utf8"))
         dataset_id = input_message["dataset_id"]
         dataset = get_dataset(dataset_id)
 
@@ -64,14 +64,21 @@ def callback(channel, method, properties, body):
         # check whether are all items alredy processed
         if processed_count < total_count:
             # contracting process is not done yet
-            logger.debug("There are {} remaining messages to be processed for dataset_id {}".format(
-                total_count - processed_count, dataset_id))
+            logger.debug(
+                "There are {} remaining messages to be processed for dataset_id {}".format(
+                    total_count - processed_count, dataset_id
+                )
+            )
 
             logger.info("Not all messages have been processed by contracting process.")
             channel.basic_ack(delivery_tag=method.delivery_tag)
             return
 
-        if dataset["state"] == state.OK and dataset["phase"] == phase.CONTRACTING_PROCESS and processed_count == total_count:
+        if (
+            dataset["state"] == state.OK
+            and dataset["phase"] == phase.CONTRACTING_PROCESS
+            and processed_count == total_count
+        ):
             # set state to processing
             logger.info(
                 "All messages for dataset_id {} with {} items processed, starting to calculate dataset level checks".format(
@@ -97,14 +104,17 @@ def callback(channel, method, properties, body):
             publish(json.dumps(message), get_param("exchange_name") + routing_key)
 
         else:
-            logger.exception("Dataset processing for dataset_id {} is in weird state. \
-                Dataset state {}. Dataset phase {}.".format(dataset_id, dataset["state"], dataset["phase"]))
+            logger.exception(
+                "Dataset processing for dataset_id {} is in weird state. \
+                Dataset state {}. Dataset phase {}.".format(
+                    dataset_id, dataset["state"], dataset["phase"]
+                )
+            )
             sys.exit()
 
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
-        logger.exception(
-            "Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()
 
 
@@ -120,5 +130,5 @@ def init_worker(environment):
     logger.debug("Dataset checker started.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     start()

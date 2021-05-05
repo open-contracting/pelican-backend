@@ -7,19 +7,10 @@ item_undefined_1 = {
 }
 
 
-item_undefined_2 = {
-    "tender": {
-        "procurementMethod": "direct"
-    }
-}
+item_undefined_2 = {"tender": {"procurementMethod": "direct"}}
 
 
-item_undefined_3 = {
-    "tender": {
-        "procurementMethod": "nondirect",
-        "numberOfTenderers": 0
-    }
-}
+item_undefined_3 = {"tender": {"procurementMethod": "nondirect", "numberOfTenderers": 0}}
 
 
 def test_undefined():
@@ -52,19 +43,9 @@ def test_undefined():
     assert empty_result["meta"] == {"reason": "non-direct procurement method"}
 
 
-item_ok_1 = {
-    "tender": {
-        "numberOfTenderers": 1,
-        "procurementMethod": "direct"
-    }
-}
+item_ok_1 = {"tender": {"numberOfTenderers": 1, "procurementMethod": "direct"}}
 
-item_ok_2 = {
-    "tender": {
-        "numberOfTenderers": 0,
-        "procurementMethod": "direct"
-    }
-}
+item_ok_2 = {"tender": {"numberOfTenderers": 0, "procurementMethod": "direct"}}
 
 
 def test_ok():
@@ -83,12 +64,7 @@ def test_ok():
     assert result["meta"] is None
 
 
-item_failed_1 = {
-    "tender": {
-        "numberOfTenderers": 2,
-        "procurementMethod": "direct"
-    }
-}
+item_failed_1 = {"tender": {"numberOfTenderers": 2, "procurementMethod": "direct"}}
 
 
 def test_failed():

@@ -30,8 +30,11 @@ def calculate(item):
 
         awards_found_count = 0
         for award in awards:
-            if "id" in award["value"] and award["value"]["id"] and \
-                    award["value"]["id"] == contract["value"]["awardID"]:
+            if (
+                "id" in award["value"]
+                and award["value"]["id"]
+                and award["value"]["id"] == contract["value"]["awardID"]
+            ):
                 awards_found_count = awards_found_count + 1
 
         if awards_found_count == 1:
@@ -47,9 +50,7 @@ def calculate(item):
 
     if result["application_count"] > result["pass_count"]:
         result["result"] = False
-        result["meta"] = {
-            "failed_paths": failed_paths
-        }
+        result["meta"] = {"failed_paths": failed_paths}
     else:
         result["result"] = True
 

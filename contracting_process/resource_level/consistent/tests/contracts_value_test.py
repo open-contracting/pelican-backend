@@ -1,79 +1,29 @@
 from contracting_process.resource_level.consistent.contracts_value import calculate
 from tools.bootstrap import bootstrap
 
-bootstrap('test', 'contracts_value_test')
+bootstrap("test", "contracts_value_test")
 
 
-item_test_undefined_no_contracts = {
-    "date": "2019-01-10T22:00:00+01:00",
-    'contracts': [
+item_test_undefined_no_contracts = {"date": "2019-01-10T22:00:00+01:00", "contracts": []}
 
-    ]
-}
-
-item_test_undefined_no_awards = {
-    "date": "2019-01-10T22:00:00+01:00",
-    'contracts': [
-        {
-            'awardID': 0
-        }
-    ],
-    'awards': [
-
-    ]
-}
+item_test_undefined_no_awards = {"date": "2019-01-10T22:00:00+01:00", "contracts": [{"awardID": 0}], "awards": []}
 
 item_test_undefined_same_id = {
     "date": "2019-01-10T22:00:00+01:00",
-    'contracts': [
-        {
-            'awardID': 0
-        }
-    ],
-    'awards': [
-        {
-            'id': 0
-        },
-        {
-            'id': 0
-        }
-    ]
+    "contracts": [{"awardID": 0}],
+    "awards": [{"id": 0}, {"id": 0}],
 }
 
 item_test_undefined_missing_fields = {
     "date": "2019-01-10T22:00:00+01:00",
-    'contracts': [
-        {
-            'awardID': 0
-        }
-    ],
-    'awards': [
-        {
-            'id': 0
-        }
-    ]
+    "contracts": [{"awardID": 0}],
+    "awards": [{"id": 0}],
 }
 
 item_test_undefined_bad_currency = {
     "date": "2019-01-10T22:00:00+01:00",
-    'contracts': [
-        {
-            'awardID': 0,
-            'value': {
-                'currency': 'HAL',
-                'amount': 100
-            }
-        }
-    ],
-    'awards': [
-        {
-            'id': 0,
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
-        }
-    ]
+    "contracts": [{"awardID": 0, "value": {"currency": "HAL", "amount": 100}}],
+    "awards": [{"id": 0, "value": {"currency": "USD", "amount": 100}}],
 }
 
 
@@ -82,113 +32,58 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is 0
     assert result["pass_count"] is 0
-    assert result["meta"] == {'reason': 'there are no contracts'}
+    assert result["meta"] == {"reason": "there are no contracts"}
 
     result = calculate(item_test_undefined_no_awards)
     assert result["result"] is None
     assert result["application_count"] is 0
     assert result["pass_count"] is 0
-    assert result["meta"] == {'reason': 'there are no awards'}
+    assert result["meta"] == {"reason": "there are no awards"}
 
     result = calculate(item_test_undefined_bad_currency)
     assert result["result"] is None
     assert result["application_count"] is 0
     assert result["pass_count"] is 0
-    assert result["meta"] == {'reason': 'rule could not be applied for any award - contracts group'}
+    assert result["meta"] == {"reason": "rule could not be applied for any award - contracts group"}
 
     result = calculate(item_test_undefined_same_id)
     assert result["result"] is None
     assert result["application_count"] is 0
     assert result["pass_count"] is 0
-    assert result["meta"] == {'reason': 'rule could not be applied for any award - contracts group'}
+    assert result["meta"] == {"reason": "rule could not be applied for any award - contracts group"}
 
     result = calculate(item_test_undefined_missing_fields)
     assert result["result"] is None
     assert result["application_count"] is 0
     assert result["pass_count"] is 0
-    assert result["meta"] == {'reason': 'rule could not be applied for any award - contracts group'}
+    assert result["meta"] == {"reason": "rule could not be applied for any award - contracts group"}
+
 
 item_test_passed1 = {
-    'contracts': [
-        {
-            'awardID': 'str',
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
-        },
-        {
-            'awardID': 'str',
-            'value': {
-                'currency': 'USD',
-                'amount': 25
-            }
-        }
+    "contracts": [
+        {"awardID": "str", "value": {"currency": "USD", "amount": 100}},
+        {"awardID": "str", "value": {"currency": "USD", "amount": 25}},
     ],
-    'awards': [
-        {
-            'id': 'str',
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
-        }
-    ]
+    "awards": [{"id": "str", "value": {"currency": "USD", "amount": 100}}],
 }
 
 item_test_passed2 = {
-    'contracts': [
+    "contracts": [
+        {"awardID": "str1", "value": {"currency": "USD", "amount": 100}},
+        {"awardID": "str1", "value": {"currency": "USD", "amount": 25}},
+        {"awardID": "unknown", "value": {"currency": "USD", "amount": 25}},
+        {"awardID": "str2", "value": {"currency": "USD", "amount": 25}},
         {
-            'awardID': 'str1',
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
+            "awardID": "str2",
+            "value": {
+                "currency": "USD",
+            },
         },
-        {
-            'awardID': 'str1',
-            'value': {
-                'currency': 'USD',
-                'amount': 25
-            }
-        },
-        {
-            'awardID': 'unknown',
-            'value': {
-                'currency': 'USD',
-                'amount': 25
-            }
-        },
-        {
-            'awardID': 'str2',
-            'value': {
-                'currency': 'USD',
-                'amount': 25
-            }
-        },
-        {
-            'awardID': 'str2',
-            'value': {
-                'currency': 'USD',
-            }
-        }
     ],
-    'awards': [
-        {
-            'id': 'str1',
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
-        },
-        {
-            'id': 'str2',
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
-        }
-    ]
+    "awards": [
+        {"id": "str1", "value": {"currency": "USD", "amount": 100}},
+        {"id": "str2", "value": {"currency": "USD", "amount": 100}},
+    ],
 }
 
 
@@ -198,16 +93,7 @@ def test_passed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        'awards': [
-            {
-                'awardID': 'str',
-                'awards.value': {
-                    'amount': 100,
-                    'currency': 'USD'
-                },
-                'contracts.value_sum': 125
-            }
-        ]
+        "awards": [{"awardID": "str", "awards.value": {"amount": 100, "currency": "USD"}, "contracts.value_sum": 125}]
     }
 
     result = calculate(item_test_passed2)
@@ -215,44 +101,16 @@ def test_passed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        'awards': [
-            {
-                'awardID': 'str1',
-                'awards.value': {
-                    'amount': 100,
-                    'currency': 'USD'
-                },
-                'contracts.value_sum': 125
-            }
-        ]
+        "awards": [{"awardID": "str1", "awards.value": {"amount": 100, "currency": "USD"}, "contracts.value_sum": 125}]
     }
 
+
 item_test_failed = {
-    'contracts': [
-        {
-            'awardID': 'str',
-            'value': {
-                'currency': 'USD',
-                'amount': -100
-            }
-        },
-        {
-            'awardID': 'str',
-            'value': {
-                'currency': 'USD',
-                'amount': -51
-            }
-        }
+    "contracts": [
+        {"awardID": "str", "value": {"currency": "USD", "amount": -100}},
+        {"awardID": "str", "value": {"currency": "USD", "amount": -51}},
     ],
-    'awards': [
-        {
-            'id': 'str',
-            'value': {
-                'currency': 'USD',
-                'amount': -100
-            }
-        }
-    ]
+    "awards": [{"id": "str", "value": {"currency": "USD", "amount": -100}}],
 }
 
 
@@ -262,59 +120,22 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        'awards': [
-            {
-                'awardID': 'str',
-                'awards.value': {
-                    'amount': -100,
-                    'currency': 'USD'
-                },
-                'contracts.value_sum': -151
-            }
+        "awards": [
+            {"awardID": "str", "awards.value": {"amount": -100, "currency": "USD"}, "contracts.value_sum": -151}
         ]
     }
 
 
 item_test_passed_multiple_awards = {
-    'contracts': [
-        {
-            'awardID': 0,
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
-        },
-        {
-            'awardID': 0,
-            'value': {
-                'currency': 'USD',
-                'amount': 25
-            }
-        },
-        {
-            'awardID': 1,
-            'value': {
-                'currency': 'USD',
-                'amount': 10
-            }
-        }
+    "contracts": [
+        {"awardID": 0, "value": {"currency": "USD", "amount": 100}},
+        {"awardID": 0, "value": {"currency": "USD", "amount": 25}},
+        {"awardID": 1, "value": {"currency": "USD", "amount": 10}},
     ],
-    'awards': [
-        {
-            'id': 0,
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
-        },
-        {
-            'id': 1,
-            'value': {
-                'currency': 'USD',
-                'amount': 10
-            }
-        }
-    ]
+    "awards": [
+        {"id": 0, "value": {"currency": "USD", "amount": 100}},
+        {"id": 1, "value": {"currency": "USD", "amount": 10}},
+    ],
 }
 
 
@@ -324,66 +145,23 @@ def test_passed_multiple_awards():
     assert result["application_count"] == 2
     assert result["pass_count"] == 2
     assert result["meta"] == {
-        'awards': [
-            {
-                'awardID': 0,
-                'awards.value': {
-                    'amount': 100,
-                    'currency': 'USD'
-                },
-                'contracts.value_sum': 125
-            },
-            {
-                'awardID': 1,
-                'awards.value': {
-                    'amount': 10,
-                    'currency': 'USD'
-                },
-                'contracts.value_sum': 10
-            }
+        "awards": [
+            {"awardID": 0, "awards.value": {"amount": 100, "currency": "USD"}, "contracts.value_sum": 125},
+            {"awardID": 1, "awards.value": {"amount": 10, "currency": "USD"}, "contracts.value_sum": 10},
         ]
     }
 
+
 item_test_failed_multiple_awards = {
-    'contracts': [
-        {
-            'awardID': 0,
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
-        },
-        {
-            'awardID': 0,
-            'value': {
-                'currency': 'USD',
-                'amount': 25
-            }
-        },
-        {
-            'awardID': 1,
-            'value': {
-                'currency': 'USD',
-                'amount': 1
-            }
-        }
+    "contracts": [
+        {"awardID": 0, "value": {"currency": "USD", "amount": 100}},
+        {"awardID": 0, "value": {"currency": "USD", "amount": 25}},
+        {"awardID": 1, "value": {"currency": "USD", "amount": 1}},
     ],
-    'awards': [
-        {
-            'id': 0,
-            'value': {
-                'currency': 'USD',
-                'amount': 100
-            }
-        },
-        {
-            'id': 1,
-            'value': {
-                'currency': 'USD',
-                'amount': 20
-            }
-        }
-    ]
+    "awards": [
+        {"id": 0, "value": {"currency": "USD", "amount": 100}},
+        {"id": 1, "value": {"currency": "USD", "amount": 20}},
+    ],
 }
 
 
@@ -393,22 +171,8 @@ def test_failed_multiple_awards():
     assert result["application_count"] == 2
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        'awards': [
-            {
-                'awardID': 0,
-                'awards.value': {
-                    'amount': 100,
-                    'currency': 'USD'
-                },
-                'contracts.value_sum': 125
-            },
-            {
-                'awardID': 1,
-                'awards.value': {
-                    'amount': 20,
-                    'currency': 'USD'
-                },
-                'contracts.value_sum': 1
-            }
+        "awards": [
+            {"awardID": 0, "awards.value": {"amount": 100, "currency": "USD"}, "contracts.value_sum": 125},
+            {"awardID": 1, "awards.value": {"amount": 20, "currency": "USD"}, "contracts.value_sum": 1},
         ]
     }

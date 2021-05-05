@@ -40,18 +40,10 @@ def do_work(items):
 def resource_level_checks(data, item_id, dataset_id):
     get_logger().log(
         CustomLogLevels.CHECK_TRACE,
-        "Computing resource level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id)
+        "Computing resource level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id),
     )
 
-    result = {
-        "meta": {
-            "ocid": data["ocid"],
-            "item_id": item_id
-        },
-        "checks": {
-
-        }
-    }
+    result = {"meta": {"ocid": data["ocid"], "item_id": item_id}, "checks": {}}
 
     # perform resource level checks
     for check_name, check in resource_level_definitions.items():
@@ -73,18 +65,10 @@ def resource_level_checks(data, item_id, dataset_id):
 def field_level_checks(data, item_id, dataset_id):
     get_logger().log(
         CustomLogLevels.CHECK_TRACE,
-        "Computing field level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id)
+        "Computing field level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id),
     )
 
-    result = {
-        "meta": {
-            "ocid": data["ocid"],
-            "item_id": item_id
-        },
-        "checks": {
-
-        }
-    }
+    result = {"meta": {"ocid": data["ocid"], "item_id": item_id}, "checks": {}}
 
     # perform field level checks
     for path, checks in field_level_definitions.items():
@@ -92,7 +76,7 @@ def field_level_checks(data, item_id, dataset_id):
         path_chunks = path.split(".")
 
         values = []
-        if (len(path_chunks) > 1):
+        if len(path_chunks) > 1:
             # dive deeper in tree
             values = get_values(data, ".".join(path_chunks[:-1]))
         else:
@@ -117,14 +101,8 @@ def field_level_checks(data, item_id, dataset_id):
                 for item in value["value"]:
                     field_result = {
                         "path": None,
-                        "coverage": {
-                            "overall_result": None,
-                            "check_results": None
-                        },
-                        "quality": {
-                            "overall_result": None,
-                            "check_results": None
-                        }
+                        "coverage": {"overall_result": None, "check_results": None},
+                        "quality": {"overall_result": None, "check_results": None},
                     }
 
                     # construct path based on "is the parent a list?"
@@ -140,7 +118,9 @@ def field_level_checks(data, item_id, dataset_id):
 
                     # coverage checks
                     for check, check_name in coverage_checks:
-                        get_logger().log(CustomLogLevels.CHECK_TRACE, "Computing {} check in {} path.".format(check_name, path))
+                        get_logger().log(
+                            CustomLogLevels.CHECK_TRACE, "Computing {} check in {} path.".format(check_name, path)
+                        )
 
                         if field_result["coverage"]["check_results"] is None:
                             field_result["coverage"]["check_results"] = []

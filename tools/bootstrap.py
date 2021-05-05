@@ -11,9 +11,9 @@ def bootstrap(environment, logger_name):
     logger = init_logger(logger_name)
 
     # initializing converter
-    if get_param('currency_converter_data_source') == 'db':
+    if get_param("currency_converter_data_source") == "db":
         import_data(tools.exchange_rates_db.load())
-    elif get_param('currency_converter_data_source') == 'test':
+    elif get_param("currency_converter_data_source") == "test":
         import_data(tools.exchange_rates_test.load())
     else:
         raise AttributeError()

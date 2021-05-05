@@ -2,11 +2,11 @@ from time_variance import ocid
 from tools.checks import get_empty_result_time_variance_scope
 
 ancestor = {
-    'ocid': '2',
+    "ocid": "2",
 }
 
 new_item = {
-    'ocid': '3',
+    "ocid": "3",
 }
 
 
@@ -20,7 +20,7 @@ def test_filter():
 
 
 ok_ancestor = {
-    'ocid': '3',
+    "ocid": "3",
 }
 
 

@@ -1,55 +1,26 @@
 from time_variance import phase_stable
 from tools.checks import get_empty_result_time_variance_scope
 
-ancestor_empty = {
-    "ocid": "3"
-}
+ancestor_empty = {"ocid": "3"}
 
-new_empty = {
-    "ocid": "3"
-}
+new_empty = {"ocid": "3"}
 
-ancestor_tender = {
-    "ocid": "3",
-    "tender": {
-        "title": "sdfds"
-    }
-}
+ancestor_tender = {"ocid": "3", "tender": {"title": "sdfds"}}
 
-new_tender = {
-    "ocid": "3",
-    "tender": {
-        "title": "sdfds"
-    }
-}
+new_tender = {"ocid": "3", "tender": {"title": "sdfds"}}
 
-ancestor_planning = {
-    "ocid": "3",
-    "planning": {
-        "rationale": ""
-    }
-}
+ancestor_planning = {"ocid": "3", "planning": {"rationale": ""}}
 
-new_planning = {
-    "ocid": "3",
-    "planning": {
-        "rationale": ""
-    }
-}
+new_planning = {"ocid": "3", "planning": {"rationale": ""}}
 
-ancestor_awards = {
-    "ocid": "3",
-    "awards": [
-        {"rationale": ""}
-    ]
-}
+ancestor_awards = {"ocid": "3", "awards": [{"rationale": ""}]}
 
 new_awards = {
     "ocid": "3",
     "awards": [
         {"rationale": ""},
         {"rationale": ""},
-    ]
+    ],
 }
 
 ancestor_awards_big = {
@@ -58,22 +29,17 @@ ancestor_awards_big = {
         {"rationale": ""},
         {"rationale": ""},
         {"rationale": ""},
-    ]
+    ],
 }
 
-ancestor_contracts = {
-    "ocid": "3",
-    "contracts": [
-        {"rationale": ""}
-    ]
-}
+ancestor_contracts = {"ocid": "3", "contracts": [{"rationale": ""}]}
 
 new_contracts = {
     "ocid": "3",
     "contracts": [
         {"rationale": ""},
         {"rationale": ""},
-    ]
+    ],
 }
 
 ancestor_contracts_big = {
@@ -82,8 +48,9 @@ ancestor_contracts_big = {
         {"rationale": ""},
         {"rationale": ""},
         {"rationale": ""},
-    ]
+    ],
 }
+
 
 def test_filter():
     scope = get_empty_result_time_variance_scope()

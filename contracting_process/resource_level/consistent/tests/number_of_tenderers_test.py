@@ -67,14 +67,17 @@ def test_failed():
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
-    assert result["meta"] == {"numberOfTenderers": 1, "tenderers": [
-        {
-            "quantity": 4.0,
-        },
-        {
-            "quantity": 5.0,
-        },
-    ], }
+    assert result["meta"] == {
+        "numberOfTenderers": 1,
+        "tenderers": [
+            {
+                "quantity": 4.0,
+            },
+            {
+                "quantity": 5.0,
+            },
+        ],
+    }
 
 
 def test_undefined():

@@ -1,16 +1,9 @@
 from contracting_process.resource_level.coherent.tender_status import calculate
 
-item_undefined_1 = {
-    "tender": {
-    }
-}
+item_undefined_1 = {"tender": {}}
 
 
-item_undefined_2 = {
-    "tender": {
-        "status": "some_status"
-    }
-}
+item_undefined_2 = {"tender": {"status": "some_status"}}
 
 
 def test_undefined():
@@ -46,7 +39,7 @@ item_ok_2 = {
     "tender": {
         "status": "planning",
     },
-    "awards": []
+    "awards": [],
 }
 
 item_ok_3 = {
@@ -54,7 +47,7 @@ item_ok_3 = {
         "status": "planning",
     },
     "awards": [],
-    "contracts": []
+    "contracts": [],
 }
 
 
@@ -85,7 +78,7 @@ item_failed_1 = {
     "tender": {
         "status": "planning",
     },
-    "awards": [{"something": 1}]
+    "awards": [{"something": 1}],
 }
 
 item_failed_2 = {
@@ -93,7 +86,7 @@ item_failed_2 = {
         "status": "planning",
     },
     "awards": [],
-    "contracts": [{"something": 1}]
+    "contracts": [{"something": 1}],
 }
 
 

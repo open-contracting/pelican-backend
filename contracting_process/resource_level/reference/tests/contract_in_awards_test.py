@@ -13,12 +13,9 @@ def test_undefined():
 item_ok = {
     "contracts": [
         {"dateSigned": "2015-12-31T00:00:00Z", "awardID": "1"},
-        {"dateSigned": "2017-12-31T00:00:00Z", "awardID": "2"}
+        {"dateSigned": "2017-12-31T00:00:00Z", "awardID": "2"},
     ],
-    "awards": [
-        {"date": "2015-12-30T00:00:00Z", "id": "1"},
-        {"date": "2017-12-30T00:00:00Z", "id": "2"}
-    ]
+    "awards": [{"date": "2015-12-30T00:00:00Z", "id": "1"}, {"date": "2017-12-30T00:00:00Z", "id": "2"}],
 }
 
 
@@ -36,14 +33,13 @@ item_failed = {
         {"dateSigned": "2015-12-31T00:00:00Z", "awardID": "1"},
         {"dateSigned": "2017-12-31T00:00:00Z", "awardID": "2"},
         {"dateSigned": "2017-12-31T00:00:00Z", "awardID": "3"},
-        {"dateSigned": "2017-12-31T00:00:00Z"}
+        {"dateSigned": "2017-12-31T00:00:00Z"},
     ],
     "awards": [
         {"date": "2015-12-30T00:00:00Z", "id": "1"},
         {"date": "2017-12-30T00:00:00Z", "id": "2"},
-        {"date": "2017-12-30T00:00:00Z", "id": "2"}
-
-    ]
+        {"date": "2017-12-30T00:00:00Z", "id": "2"},
+    ],
 }
 
 

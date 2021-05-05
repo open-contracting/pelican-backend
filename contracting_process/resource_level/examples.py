@@ -1,4 +1,3 @@
-
 import simplejson as json
 
 from contracting_process.resource_level.definitions import definitions
@@ -15,14 +14,15 @@ def create(dataset_id):
         delete
         from resource_level_check_examples
         where dataset_id = %s;
-        """, [dataset_id]
+        """,
+        [dataset_id],
     )
 
     check_samplers = {
         check_name: {
-            'passed': ReservoirSampler(examples_cap),
-            'failed': ReservoirSampler(examples_cap),
-            'undefined': ReservoirSampler(examples_cap)
+            "passed": ReservoirSampler(examples_cap),
+            "failed": ReservoirSampler(examples_cap),
+            "undefined": ReservoirSampler(examples_cap),
         }
         for check_name in definitions
     }
@@ -32,7 +32,8 @@ def create(dataset_id):
         select result->'meta' as meta, d.value as result, d.key as check_name
         from resource_level_check, jsonb_each(result->'checks') d
         where dataset_id = %s;
-        """, [dataset_id]
+        """,
+        [dataset_id],
     )
 
     while True:
@@ -40,26 +41,23 @@ def create(dataset_id):
         if row is None:
             break
 
-        example = {
-            "meta": row[0],
-            "result": row[1]
-        }
+        example = {"meta": row[0], "result": row[1]}
 
         if example["result"]["result"] is True:
-            check_samplers[row[2]]['passed'].process(example)
+            check_samplers[row[2]]["passed"].process(example)
         elif example["result"]["result"] is False:
-            check_samplers[row[2]]['failed'].process(example)
+            check_samplers[row[2]]["failed"].process(example)
         elif example["result"]["result"] is None:
-            check_samplers[row[2]]['undefined'].process(example)
+            check_samplers[row[2]]["undefined"].process(example)
         else:
             raise ValueError()
 
     # saving examples
     for check_name, samplers in check_samplers.items():
         data = {
-            'passed_examples': samplers['passed'].retrieve_samples(),
-            'failed_examples': samplers['failed'].retrieve_samples(),
-            'undefined_examples': samplers['undefined'].retrieve_samples()
+            "passed_examples": samplers["passed"].retrieve_samples(),
+            "failed_examples": samplers["failed"].retrieve_samples(),
+            "undefined_examples": samplers["undefined"].retrieve_samples(),
         }
 
         cursor.execute(
@@ -68,6 +66,7 @@ def create(dataset_id):
             (dataset_id, check_name, data)
             values
             (%s, %s, %s);
-            """, [dataset_id, check_name, json.dumps(data)]
+            """,
+            [dataset_id, check_name, json.dumps(data)],
         )
     commit()

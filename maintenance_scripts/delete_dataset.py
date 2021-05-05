@@ -1,4 +1,3 @@
-
 import click
 
 from core.state import phase, state
@@ -10,7 +9,7 @@ from tools.logging_helper import get_logger
 @click.command()
 @click.argument("environment")
 @click.argument("dataset_id", type=int)
-@click.option('--force', is_flag=True, help='Also deletes descendant filtered datasets.')
+@click.option("--force", is_flag=True, help="Also deletes descendant filtered datasets.")
 def run(environment, dataset_id, force):
     bootstrap(environment, "delete_dataset")
 
@@ -30,10 +29,11 @@ def run(environment, dataset_id, force):
             from dataset
             where id = %s
         );
-        """, (dataset_id,)
+        """,
+        (dataset_id,),
     )
     if not cursor.fetchall()[0][0]:
-        logger.error('Dataset with dataset_id %s does not exist.' % dataset_id)
+        logger.error("Dataset with dataset_id %s does not exist." % dataset_id)
         return
 
     # checking if dataset can be deleted
@@ -42,14 +42,17 @@ def run(environment, dataset_id, force):
         select phase, state
         from progress_monitor_dataset
         where dataset_id = %s;
-        """, (dataset_id,)
+        """,
+        (dataset_id,),
     )
     rows = cursor.fetchall()
     if not rows or rows[0][0] not in (phase.CHECKED, phase.DELETED) or rows[0][1] != state.OK:
-        logger.error((
-            'Dataset with dataset_id %s cannot be deleted. '
-            'For a successful deletion the dataset should be in \'%s\' or \'%s\' phase and \'%s\' state.'
-            ) % (dataset_id, phase.CHECKED, phase.DELETED, state.OK)
+        logger.error(
+            (
+                "Dataset with dataset_id %s cannot be deleted. "
+                "For a successful deletion the dataset should be in '%s' or '%s' phase and '%s' state."
+            )
+            % (dataset_id, phase.CHECKED, phase.DELETED, state.OK)
         )
         return
 
@@ -69,11 +72,12 @@ def run(environment, dataset_id, force):
                         where dataset_id_original in %(dataset_ids)s and
                             dataset_id_filtered = p.dataset_id
                     );
-                """, {
-                    'phases': (phase.CHECKED, phase.DELETED),
-                    'state': state.OK,
-                    'dataset_ids': tuple(delete_dataset_ids),
-                }
+                """,
+                {
+                    "phases": (phase.CHECKED, phase.DELETED),
+                    "state": state.OK,
+                    "dataset_ids": tuple(delete_dataset_ids),
+                },
             )
             new_delete_dataset_ids = [row[0] for row in cursor.fetchall()] + [dataset_id]
             if sorted(delete_dataset_ids) == sorted(new_delete_dataset_ids):
@@ -82,10 +86,12 @@ def run(environment, dataset_id, force):
             delete_dataset_ids = new_delete_dataset_ids.copy()
 
     # safely deleting dataset
-    logger.info((
-        'Deleting datasets with the following dataset_ids: %s. '
-        'Only rows in the following tables will remain: dataset, dataset_filter, progress_monitor_dataset.'
-        ) % str(delete_dataset_ids)
+    logger.info(
+        (
+            "Deleting datasets with the following dataset_ids: %s. "
+            "Only rows in the following tables will remain: dataset, dataset_filter, progress_monitor_dataset."
+        )
+        % str(delete_dataset_ids)
     )
     cursor.execute(
         """
@@ -119,18 +125,19 @@ def run(environment, dataset_id, force):
         update progress_monitor_dataset
         set phase = %(phase)s, state = %(state)s, modified = now()
         where dataset_id in %(dataset_ids)s;
-        """, {
-            'dataset_ids': tuple(delete_dataset_ids),
-            'phase': phase.DELETED,
-            'state': state.OK,
-        }
+        """,
+        {
+            "dataset_ids": tuple(delete_dataset_ids),
+            "phase": phase.DELETED,
+            "state": state.OK,
+        },
     )
     commit()
 
-    logger.info('Datasets with dataset_ids %s have been deleted.' % str(delete_dataset_ids))
+    logger.info("Datasets with dataset_ids %s have been deleted." % str(delete_dataset_ids))
 
     # dropping datasets if no dependencies exist
-    logger.info('Checking if some deleted datasets can be dropped entirely.')
+    logger.info("Checking if some deleted datasets can be dropped entirely.")
     drop_dataset_ids = []
     while True:
         cursor.execute(
@@ -145,11 +152,12 @@ def run(environment, dataset_id, force):
                     where dataset_id_original = p.dataset_id and
                         not dataset_id_filtered in %(dataset_ids)s
                 );
-            """, {
-                'phase': phase.DELETED,
-                'state': state.OK,
-                'dataset_ids': tuple(drop_dataset_ids + [-1]),
-            }
+            """,
+            {
+                "phase": phase.DELETED,
+                "state": state.OK,
+                "dataset_ids": tuple(drop_dataset_ids + [-1]),
+            },
         )
         new_drop_dataset_ids = [row[0] for row in cursor.fetchall()]
         if sorted(drop_dataset_ids) == sorted(new_drop_dataset_ids):
@@ -158,7 +166,7 @@ def run(environment, dataset_id, force):
         drop_dataset_ids = new_drop_dataset_ids.copy()
 
     if drop_dataset_ids:
-        logger.info('The following datasets will be dropped entirely: %s' % str(drop_dataset_ids))
+        logger.info("The following datasets will be dropped entirely: %s" % str(drop_dataset_ids))
         cursor.execute(
             """
             delete from dataset
@@ -170,12 +178,13 @@ def run(environment, dataset_id, force):
 
             delete from progress_monitor_dataset
             where dataset_id in %(dataset_ids)s;
-            """, {'dataset_ids': tuple(drop_dataset_ids)}
+            """,
+            {"dataset_ids": tuple(drop_dataset_ids)},
         )
         commit()
 
-    logger.info('Successful deletion executed.')
+    logger.info("Successful deletion executed.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

@@ -12,30 +12,16 @@ The file contain tests for a function contracting_process.field_level.email.emai
 
 """
 
-item_with_valid_email = {
-    "email": "valid@gmail.com"
-}
+item_with_valid_email = {"email": "valid@gmail.com"}
 
-item_with_invalid_email = {
-    "email": "invalid#email.com"
-}
+item_with_invalid_email = {"email": "invalid#email.com"}
 
 
 def test_with_correct_email():
     result = calculate(item_with_valid_email, "email")
-    assert is_subset_dict(
-        {"result": True},
-        result
-    )
+    assert is_subset_dict({"result": True}, result)
 
 
 def test_with_incorrect_email():
     result = calculate(item_with_invalid_email, "email")
-    assert is_subset_dict(
-        {
-            "result": False,
-            "value": "invalid#email.com",
-            "reason": "Incorrect email format"
-        },
-        result
-    )
+    assert is_subset_dict({"result": False, "value": "invalid#email.com", "reason": "Incorrect email format"}, result)

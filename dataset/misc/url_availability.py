@@ -13,7 +13,7 @@ paths = [
     "tender.documents.url",
     "awards.documents.url",
     "contracts.documents.url",
-    "contracts.implementation.documents.url"
+    "contracts.implementation.documents.url",
 ]
 
 
@@ -55,10 +55,7 @@ def get_result(scope):
 
     # not enough urls
     if len(scope["samples"]) < samples_num:
-        result["meta"] = {
-            "reason": "there is less than {} URLs in the dataset"
-            .format(samples_num)
-        }
+        result["meta"] = {"reason": "there is less than {} URLs in the dataset".format(samples_num)}
         return result
 
     # checking url status
@@ -80,12 +77,8 @@ def get_result(scope):
         "total_processed": samples_num,
         "total_passed": ok_status_num,
         "total_failed": samples_num - ok_status_num,
-        "passed_examples": [
-            sample for sample in scope["samples"] if sample["status"] == "OK"
-        ],
-        "failed_examples": [
-            sample for sample in scope["samples"] if sample["status"] == "ERROR"
-        ]
+        "passed_examples": [sample for sample in scope["samples"] if sample["status"] == "OK"],
+        "failed_examples": [sample for sample in scope["samples"] if sample["status"] == "ERROR"],
     }
 
     return result

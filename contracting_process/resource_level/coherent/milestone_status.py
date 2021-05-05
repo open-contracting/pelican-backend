@@ -46,11 +46,7 @@ def calculate(item):
                         else:
                             passed = False
                         result["meta"]["references"].append(
-                            {
-                                "result": passed,
-                                "status": status,
-                                "path": milestone["path"]
-                            }
+                            {"result": passed, "status": status, "path": milestone["path"]}
                         )
                     break  # there should be only one status
         if application_count > 0:  # else: None

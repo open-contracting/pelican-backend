@@ -3,14 +3,14 @@ from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 
 
-class state():
+class state:
     WAITING = "WAITING"
     IN_PROGRESS = "IN_PROGRESS"
     OK = "OK"
     FAILED = "FAILED"
 
 
-class phase():
+class phase:
     PLANNED = "PLANNED"
     CONTRACTING_PROCESS = "CONTRACTING_PROCESS"
     DATASET = "DATASET"
@@ -30,29 +30,37 @@ def set_dataset_state(dataset_id, state, phase, size=None):
     """
     cursor = get_cursor()
     if size:
-        cursor.execute("""
+        cursor.execute(
+            """
                        INSERT INTO progress_monitor_dataset
                        (dataset_id, state, phase, size)
                        VALUES
                        (%s, %s, %s, %s)
                        ON CONFLICT ON CONSTRAINT unique_dataset_id
                        DO UPDATE SET state = %s, phase = %s, size = %s, modified = now();
-                       """, (dataset_id, state, phase, size, state, phase, size))
+                       """,
+            (dataset_id, state, phase, size, state, phase, size),
+        )
         get_logger().log(
             CustomLogLevels.STATE_TRACE,
-            "Dataset state set to: state = {}, phase = {}, size = {}.".format(state, phase, size)
+            "Dataset state set to: state = {}, phase = {}, size = {}.".format(state, phase, size),
         )
 
     else:
-        cursor.execute("""
+        cursor.execute(
+            """
                        INSERT INTO progress_monitor_dataset
                        (dataset_id, state, phase, size)
                        VALUES
                        (%s, %s, %s, %s)
                        ON CONFLICT ON CONSTRAINT unique_dataset_id
                        DO UPDATE SET state = %s, phase = %s, modified = now();
-                       """, (dataset_id, state, phase, size, state, phase))
-        get_logger().log(CustomLogLevels.STATE_TRACE, "Dataset state set to: state = {}, phase = {}.".format(state, phase))
+                       """,
+            (dataset_id, state, phase, size, state, phase),
+        )
+        get_logger().log(
+            CustomLogLevels.STATE_TRACE, "Dataset state set to: state = {}, phase = {}.".format(state, phase)
+        )
 
 
 def set_item_state(dataset_id, item_id, state):
@@ -64,14 +72,17 @@ def set_item_state(dataset_id, item_id, state):
         state: state to be set
     """
     cursor = get_cursor()
-    cursor.execute("""
+    cursor.execute(
+        """
                        INSERT INTO progress_monitor_item
                        (dataset_id, item_id, state)
                        VALUES
                        (%s, %s, %s)
                        ON CONFLICT ON CONSTRAINT unique_dataset_id_item_id
                        DO UPDATE SET state = %s, modified = now();
-                       """, (dataset_id, item_id, state, state))
+                       """,
+        (dataset_id, item_id, state, state),
+    )
 
     get_logger().log(CustomLogLevels.STATE_TRACE, "Item state set to: state = {}.".format(state))
 
@@ -85,16 +96,19 @@ def get_processed_items_count(dataset_id):
         get number of processed items
     """
     cursor = get_cursor()
-    cursor.execute("""
+    cursor.execute(
+        """
                        SELECT count(*) as cnt FROM progress_monitor_item
                        WHERE
                        dataset_id = %s
                        AND state IN (%s, %s);
-                       """, (dataset_id, state.OK, state.FAILED))
+                       """,
+        (dataset_id, state.OK, state.FAILED),
+    )
 
     result = cursor.fetchone()
 
-    return result['cnt']
+    return result["cnt"]
 
 
 def get_total_items_count(dataset_id):
@@ -106,15 +120,18 @@ def get_total_items_count(dataset_id):
         get number of processed items
     """
     cursor = get_cursor()
-    cursor.execute("""
+    cursor.execute(
+        """
                        SELECT size as size FROM progress_monitor_dataset
                        WHERE
                        dataset_id = %s;
-                    """, (dataset_id,))
+                    """,
+        (dataset_id,),
+    )
 
     result = cursor.fetchone()
 
-    return result['size']
+    return result["size"]
 
 
 def get_dataset(dataset_id):
@@ -126,11 +143,14 @@ def get_dataset(dataset_id):
         dataset
     """
     cursor = get_cursor()
-    cursor.execute("""
+    cursor.execute(
+        """
                        SELECT * FROM progress_monitor_dataset
                        WHERE
                        dataset_id = %s;
-                    """, (dataset_id,))
+                    """,
+        (dataset_id,),
+    )
 
     result = cursor.fetchone()
 

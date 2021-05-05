@@ -1,4 +1,3 @@
-
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
 
@@ -9,39 +8,30 @@ def calculate(item):
     result = get_empty_result_resource(version)
 
     awards = [
-        v for v in get_values(item, 'awards')
-        if 'status' in v['value'] and
-        v['value']['status'] in ['pending', 'cancelled', 'unsuccessful']
+        v
+        for v in get_values(item, "awards")
+        if "status" in v["value"] and v["value"]["status"] in ["pending", "cancelled", "unsuccessful"]
     ]
 
     if len(awards) == 0:
-        result['meta'] = {
-            'reason': 'there are no awards with check-specific properties'
-        }
+        result["meta"] = {"reason": "there are no awards with check-specific properties"}
         return result
 
-    contracts_awardID = [
-        v for v in get_values(item, 'contracts.awardID', value_only=True)
-        if v is not None
-    ]
+    contracts_awardID = [v for v in get_values(item, "contracts.awardID", value_only=True) if v is not None]
 
     application_count = 0
     pass_count = 0
-    result['meta'] = {'processed_awards': []}
+    result["meta"] = {"processed_awards": []}
     for award in awards:
-        passed = award['value']['id'] not in contracts_awardID
-        result['meta']['processed_awards'].append(
-            {
-                'path': award['path'],
-                'id': award['value']['id'],
-                'result': passed
-            }
+        passed = award["value"]["id"] not in contracts_awardID
+        result["meta"]["processed_awards"].append(
+            {"path": award["path"], "id": award["value"]["id"], "result": passed}
         )
         application_count += 1
         pass_count = pass_count + 1 if passed else pass_count
 
-    result['result'] = application_count == pass_count
-    result['application_count'] = application_count
-    result['pass_count'] = pass_count
+    result["result"] = application_count == pass_count
+    result["application_count"] = application_count
+    result["pass_count"] = pass_count
 
     return result

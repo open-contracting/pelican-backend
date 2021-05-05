@@ -1,4 +1,3 @@
-
 from collections import Counter
 
 from tools.checks import get_empty_result_resource
@@ -11,13 +10,9 @@ def calculate(item, path):
     result["pass_count"] = 0
 
     parties = [
-        party for party in get_values(item, "parties")
-        if (
-            "id" in party["value"] and
-            party["value"]["id"] and
-            "name" in party["value"] and
-            party["value"]["name"]
-        )
+        party
+        for party in get_values(item, "parties")
+        if ("id" in party["value"] and party["value"]["id"] and "name" in party["value"] and party["value"]["name"])
     ]
     party_id_counts = Counter([party["value"]["id"] for party in parties])
 
@@ -35,12 +30,7 @@ def calculate(item, path):
     test_values = [
         value
         for value in get_values(item, path)
-        if (
-            "id" in value["value"] and
-            value["value"]["id"] and
-            "name" in value["value"] and
-            value["value"]["name"]
-        )
+        if ("id" in value["value"] and value["value"]["id"] and "name" in value["value"] and value["value"]["name"])
     ]
 
     result["meta"] = {"references": []}
@@ -55,21 +45,15 @@ def calculate(item, path):
         result["application_count"] += 1
         result["pass_count"] = result["pass_count"] + 1 if passed else result["pass_count"]
 
-        result["meta"]["references"].append({
-            "party": {
-                "id": party["value"]["id"],
-                "name": party["value"]["name"],
-                "path": party["path"]
-            },
-            path: {
-                "id": value["value"]["id"],
-                "name": value["value"]["name"],
-                "path": value["path"]
-            },
-            "result": passed
-        })
+        result["meta"]["references"].append(
+            {
+                "party": {"id": party["value"]["id"], "name": party["value"]["name"], "path": party["path"]},
+                path: {"id": value["value"]["id"], "name": value["value"]["name"], "path": value["path"]},
+                "result": passed,
+            }
+        )
 
-    if result['application_count'] > 0:
+    if result["application_count"] > 0:
         result["result"] = result["pass_count"] == result["application_count"]
     else:
         result["meta"] = {"reason": "there are no values with check-specific properties"}

@@ -23,37 +23,55 @@ definitions = {
     "distribution.awards_value_repetition": value_repetition.ModuleType("awards"),
     "distribution.contracts_value_repetition": value_repetition.ModuleType("contracts"),
     "distribution.tender_procurement_method": code_distribution.CodeDistribution(
-        ["tender.procurementMethod"],
-        ["open"]),
-    "distribution.tender_status": code_distribution.CodeDistribution(
-        ["tender.status"],
-        ["active", "complete"]),
+        ["tender.procurementMethod"], ["open"]
+    ),
+    "distribution.tender_status": code_distribution.CodeDistribution(["tender.status"], ["active", "complete"]),
     "distribution.tender_award_criteria": code_distribution.CodeDistribution(["tender.awardCriteria"]),
-    "distribution.tender_submission_method": code_distribution.CodeDistribution(
-        ["tender.submissionMethod"]),
-    "distribution.awards_status": code_distribution.CodeDistribution(
-        ["awards.status"],
-        ["active"]),
+    "distribution.tender_submission_method": code_distribution.CodeDistribution(["tender.submissionMethod"]),
+    "distribution.awards_status": code_distribution.CodeDistribution(["awards.status"], ["active"]),
     "distribution.contracts_status": code_distribution.CodeDistribution(
-        ["contracts.status"],
-        ["active", "terminated"]),
+        ["contracts.status"], ["active", "terminated"]
+    ),
     "distribution.milestone_status": code_distribution.CodeDistribution(
-        ["planning.milestones.status", "tender.milestones.status", "contracts.milestones.status",
-         "contracts.implementation.milestones.status"],
-        ["met"]),
+        [
+            "planning.milestones.status",
+            "tender.milestones.status",
+            "contracts.milestones.status",
+            "contracts.implementation.milestones.status",
+        ],
+        ["met"],
+    ),
     "distribution.milestone_type": code_distribution.CodeDistribution(
-        ["planning.milestones.type", "tender.milestones.type", "contracts.milestones.type",
-         "contracts.implementation.milestones.type"]),
+        [
+            "planning.milestones.type",
+            "tender.milestones.type",
+            "contracts.milestones.type",
+            "contracts.implementation.milestones.type",
+        ]
+    ),
     "distribution.document_document_type": code_distribution.CodeDistribution(
-        ["planning.documents.documentType", "tender.documents.documentType",
-         "contracts.documents.documentType", "contracts.implementation.documents.documentType",
-         "awards.documents.documentType"]),
+        [
+            "planning.documents.documentType",
+            "tender.documents.documentType",
+            "contracts.documents.documentType",
+            "contracts.implementation.documents.documentType",
+            "awards.documents.documentType",
+        ]
+    ),
     "distribution.value_currency": code_distribution.CodeDistribution(
-        ["tender.value.currency", "tender.minValue.currency", "awards.value.currency", "contracts.value.currency",
-         "planning.budget.value.currency", "contracts.implementation.transactions.value.currency"]),
+        [
+            "tender.value.currency",
+            "tender.minValue.currency",
+            "awards.value.currency",
+            "contracts.value.currency",
+            "planning.budget.value.currency",
+            "contracts.implementation.transactions.value.currency",
+        ]
+    ),
     "distribution.related_process_relation": code_distribution.CodeDistribution(
         ["relatedProcesses.relationship", "contracts.relatedProcesses.relationship"]
     ),
     "misc.url_availability": url_availability,
     "consistent.related_process_title": related_process_title,
-    "reference.related_process_identifier": related_process_identifier}
+    "reference.related_process_identifier": related_process_identifier,
+}
