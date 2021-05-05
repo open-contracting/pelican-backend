@@ -57,8 +57,8 @@ def test_failed():
     result = calculate(item_failed)
     assert type(result) == dict
     assert result["result"] is False
-    assert result["application_count"] is 10
-    assert result["pass_count"] is 0
+    assert result["application_count"] == 10
+    assert result["pass_count"] == 0
     assert result["meta"] == {
         "failed_paths": [
             {

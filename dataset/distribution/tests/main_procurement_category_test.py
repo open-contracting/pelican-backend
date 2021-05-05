@@ -29,7 +29,7 @@ def test_ok():
     result = main_procurement_category.get_result(scope)
     assert type(result) == dict
     assert result["result"] is True
-    assert result["value"] is 100
+    assert result["value"] == 100
     assert result["meta"] == {
         "shares": {
             "B": {"share": 2 / 3, "count": 2, "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]},
@@ -45,7 +45,7 @@ def test_failed():
     result = main_procurement_category.get_result(scope)
     assert type(result) == dict
     assert result["result"] is False
-    assert result["value"] is 0
+    assert result["value"] == 0
     assert result["meta"] == {
         "shares": {
             "B": {"share": 1.0, "count": 2, "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]},

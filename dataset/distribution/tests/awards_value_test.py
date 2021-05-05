@@ -63,7 +63,7 @@ def test_failed():
     result = awards_value.get_result(scope)
     assert type(result) == dict
     assert result["result"] is False
-    assert result["value"] is 0
+    assert result["value"] == 0
     assert result["meta"] == {
         "counts": {
             "0_1": 1,
@@ -349,7 +349,7 @@ def test_ok():
     result = awards_value.get_result(scope)
     assert type(result) == dict
     assert result["result"] is True
-    assert result["value"] is 100
+    assert result["value"] == 100
     assert result["meta"] == {
         "counts": {
             "0_1": 1,

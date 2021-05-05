@@ -30,32 +30,32 @@ item_test_undefined_bad_currency = {
 def test_undefined():
     result = calculate(item_test_undefined_no_contracts)
     assert result["result"] is None
-    assert result["application_count"] is 0
-    assert result["pass_count"] is 0
+    assert result["application_count"] == 0
+    assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "there are no contracts"}
 
     result = calculate(item_test_undefined_no_awards)
     assert result["result"] is None
-    assert result["application_count"] is 0
-    assert result["pass_count"] is 0
+    assert result["application_count"] == 0
+    assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "there are no awards"}
 
     result = calculate(item_test_undefined_bad_currency)
     assert result["result"] is None
-    assert result["application_count"] is 0
-    assert result["pass_count"] is 0
+    assert result["application_count"] == 0
+    assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "rule could not be applied for any award - contracts group"}
 
     result = calculate(item_test_undefined_same_id)
     assert result["result"] is None
-    assert result["application_count"] is 0
-    assert result["pass_count"] is 0
+    assert result["application_count"] == 0
+    assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "rule could not be applied for any award - contracts group"}
 
     result = calculate(item_test_undefined_missing_fields)
     assert result["result"] is None
-    assert result["application_count"] is 0
-    assert result["pass_count"] is 0
+    assert result["application_count"] == 0
+    assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "rule could not be applied for any award - contracts group"}
 
 

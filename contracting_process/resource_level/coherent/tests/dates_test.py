@@ -39,8 +39,8 @@ def test_ok():
     result = calculate(item_ok)
     assert type(result) == dict
     assert result["result"] is True
-    assert result["application_count"] is 11
-    assert result["pass_count"] is 11
+    assert result["application_count"] == 11
+    assert result["pass_count"] == 11
     assert result["meta"] is None
 
 
@@ -62,9 +62,9 @@ def test_failed():
     result = calculate(item_failed)
     assert type(result) == dict
     assert result["result"] is False
-    # assert result["application_count"] is 11
-    assert result["application_count"] is 10
-    assert result["pass_count"] is 0
+    # assert result["application_count"] == 11
+    assert result["application_count"] == 10
+    assert result["pass_count"] == 0
     assert result["meta"] == {
         "failed_paths": [
             {
@@ -146,8 +146,8 @@ def test_failed_in_contracts():
     result = calculate(item_failed_in_contracts)
     assert type(result) == dict
     assert result["result"] is False
-    assert result["application_count"] is 3
-    assert result["pass_count"] is 0
+    assert result["application_count"] == 3
+    assert result["pass_count"] == 0
     assert result["meta"] == {
         "failed_paths": [
             {
