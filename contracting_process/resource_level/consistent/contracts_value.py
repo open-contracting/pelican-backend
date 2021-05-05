@@ -22,7 +22,9 @@ def calculate(item):
 
     non_applicable_award_ids = set()
     for contract in contracts:
-        matching_awards = [a for a in awards if 'awardID' in contract and 'id' in a and str(contract['awardID']) == str(a['id'])]
+        matching_awards = [
+            a for a in awards if "awardID" in contract and "id" in a and str(contract["awardID"]) == str(a["id"])
+        ]
 
         # matching award can be only one
         if len(matching_awards) != 1:
@@ -82,11 +84,11 @@ def calculate(item):
             continue
 
     for award in awards:
-        if 'id' not in award or str(award['id']) in non_applicable_award_ids:
+        if "id" not in award or str(award["id"]) in non_applicable_award_ids:
             continue
 
         matching_contracts = [
-            c for c in contracts if 'awardID' in c and 'id' in award and str(c['awardID']) == str(award['id'])
+            c for c in contracts if "awardID" in c and "id" in award and str(c["awardID"]) == str(award["id"])
         ]
 
         # no matching contracts

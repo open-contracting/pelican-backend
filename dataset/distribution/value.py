@@ -59,7 +59,7 @@ def get_result(scope):
         count = len(values)
         if count > 99:
             sum_value = sum(int(value["abs_amount"]) for value in values)
-            if (sum_value == 0):
+            if sum_value == 0:
                 result["meta"] = {"reason": "Sum of all contracts is 0. Impossible division by zero."}
                 return result
 

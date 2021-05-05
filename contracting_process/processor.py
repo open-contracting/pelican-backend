@@ -1,4 +1,3 @@
-
 import simplejson as json
 from psycopg2.extras import execute_values
 
