@@ -1,7 +1,6 @@
 import random
 import re
 from datetime import datetime
-from decimal import Decimal
 
 
 def parse_datetime(str_datetime):

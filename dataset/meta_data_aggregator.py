@@ -1,5 +1,4 @@
 import copy
-from datetime import date
 
 import psycopg2.extras
 import requests

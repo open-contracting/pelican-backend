@@ -1,4 +1,3 @@
-import random
 
 from dataset.distribution import value_repetition
 

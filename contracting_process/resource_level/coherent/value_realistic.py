@@ -1,5 +1,3 @@
-from datetime import date
-from decimal import Decimal
 
 from tools.checks import get_empty_result_resource
 from tools.currency_converter import convert

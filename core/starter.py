@@ -1,11 +1,8 @@
 #!/usr/bin/env python
-import csv
 import os
 import shutil
-import sys
 import tempfile
 import time
-from datetime import datetime
 
 import click
 import requests
