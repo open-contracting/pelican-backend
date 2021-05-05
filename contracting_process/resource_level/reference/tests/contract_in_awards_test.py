@@ -1,5 +1,4 @@
-from contracting_process.resource_level.reference.contract_in_awards import \
-    calculate
+from contracting_process.resource_level.reference.contract_in_awards import calculate
 
 
 def test_undefined():

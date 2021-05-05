@@ -1,17 +1,18 @@
 
 import copy
+from datetime import date
+
+import psycopg2.extras
 import requests
 import simplejson as json
-import psycopg2.extras
-from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from tools.db import get_cursor
-from tools.helpers import parse_datetime
-from tools.getter import get_values
-from tools.currency_converter import convert
-from settings.settings import get_param
 from contracting_process.field_level.definitions import coverage_checks, definitions
+from settings.settings import get_param
+from tools.currency_converter import convert
+from tools.db import get_cursor
+from tools.getter import get_values
+from tools.helpers import parse_datetime
 
 EMPTY_SCOPE = {
     'compiled_releases': {

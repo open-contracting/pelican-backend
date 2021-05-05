@@ -1,6 +1,8 @@
 
 from datetime import date
+
 import mock
+
 import tools.currency_converter as cc
 
 #################

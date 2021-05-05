@@ -2,6 +2,7 @@
 import functools
 
 from contracting_process.resource_level.consistent import roles
+
 calculate = functools.partial(
     roles.calculate_path_role,
     path='awards.suppliers',

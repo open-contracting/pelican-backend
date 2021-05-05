@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-import simplejson as json
 import sys
 
 import click
+import simplejson as json
 
+from contracting_process import processor
 from core.state import phase, set_dataset_state, set_item_state, state
 from settings.settings import get_param
+from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
-from tools.bootstrap import bootstrap
-from contracting_process import processor
 
 consume_routing_key = "_extractor"
 

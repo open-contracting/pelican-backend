@@ -1,10 +1,9 @@
 
 import simplejson as json
 
-from tools.db import commit
-from tools.db import get_cursor
-from tools.helpers import ReservoirSampler
 from contracting_process.resource_level.definitions import definitions
+from tools.db import commit, get_cursor
+from tools.helpers import ReservoirSampler
 
 examples_cap = 20
 

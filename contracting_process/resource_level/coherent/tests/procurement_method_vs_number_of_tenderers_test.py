@@ -1,5 +1,4 @@
-from contracting_process.resource_level.coherent.procurement_method_vs_number_of_tenderers import \
-    calculate
+from contracting_process.resource_level.coherent.procurement_method_vs_number_of_tenderers import calculate
 
 item_undefined_1 = {
     "tender": {

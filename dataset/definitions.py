@@ -1,27 +1,15 @@
+from dataset.consistent import related_process_title
 from dataset.distribution import (
     buyer,
     buyer_repetition,
+    code_distribution,
     main_procurement_category,
-    value_repetition,
     value,
-    code_distribution
+    value_repetition,
 )
-
-from dataset.misc import (
-    url_availability
-)
-
-from dataset.unique import (
-    tender_id
-)
-
-from dataset.consistent import (
-    related_process_title
-)
-
-from dataset.reference import (
-    related_process_identifier
-)
+from dataset.misc import url_availability
+from dataset.reference import related_process_identifier
+from dataset.unique import tender_id
 
 definitions = {
     "distribution.main_procurement_category": main_procurement_category,

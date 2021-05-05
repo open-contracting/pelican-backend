@@ -1,5 +1,6 @@
 
 from datetime import date, timedelta
+
 from settings.settings import get_param
 
 rates = dict()

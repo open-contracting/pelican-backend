@@ -1,15 +1,14 @@
+import random
 import sys
 import time
-import random
 
 import simplejson as json
 
-from time_variance.definitions import definitions
-from tools.db import commit, get_cursor
 from settings.settings import CustomLogLevels
+from time_variance.definitions import definitions
+from tools.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
+from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.checks import get_empty_result_time_variance_scope
-from tools.checks import get_empty_result_time_variance
 
 page_size = 1000
 examples_count = 50

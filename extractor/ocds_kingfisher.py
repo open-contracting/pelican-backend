@@ -1,21 +1,20 @@
 #!/usr/bin/env python
-import simplejson as json
 import sys
 from datetime import datetime
 from math import ceil
 
 import click
 import psycopg2.extras
+import simplejson as json
 
+import dataset.meta_data_aggregator as meta_data_aggregator
 from core.state import phase, set_dataset_state, set_item_state, state
 from settings.settings import get_param
+from tools import exchange_rates_db
+from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
-from tools.bootstrap import bootstrap
-from tools import exchange_rates_db
-import dataset.meta_data_aggregator as meta_data_aggregator
-
 
 consume_routing_key = "_ocds_kingfisher_extractor_init"
 

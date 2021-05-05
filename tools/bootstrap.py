@@ -1,8 +1,8 @@
-from tools.logging_helper import init_logger, get_logger
-from settings.settings import set_environment, get_param
-from tools.currency_converter import import_data
 import tools.exchange_rates_db
 import tools.exchange_rates_test
+from settings.settings import get_param, set_environment
+from tools.currency_converter import import_data
+from tools.logging_helper import get_logger, init_logger
 
 
 def bootstrap(environment, logger_name):

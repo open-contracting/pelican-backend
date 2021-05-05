@@ -1,6 +1,7 @@
 import phonenumbers
-from tools.getter import get_values
+
 from tools.checks import get_empty_result_field
+from tools.getter import get_values
 
 """
 author: Iaroslav Kolodka

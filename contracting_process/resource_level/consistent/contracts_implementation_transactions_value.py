@@ -1,8 +1,8 @@
 
 from tools.checks import get_empty_result_resource
+from tools.currency_converter import convert
 from tools.getter import get_values
 from tools.helpers import parse_datetime
-from tools.currency_converter import convert
 
 version = 1.0
 

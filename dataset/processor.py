@@ -3,10 +3,10 @@ import time
 
 import simplejson as json
 
-from dataset.definitions import definitions
 import dataset.meta_data_aggregator as meta_data_aggregator
-from tools.db import commit, get_cursor
+from dataset.definitions import definitions
 from settings.settings import CustomLogLevels
+from tools.db import commit, get_cursor
 
 page_size = 1000
 

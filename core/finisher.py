@@ -1,29 +1,21 @@
 #!/usr/bin/env python
-import click
-import simplejson as json
 import sys
 from datetime import datetime
 
-from dataset import meta_data_aggregator
-from settings.settings import get_param
-from tools.logging_helper import get_logger
-from tools.db import commit
-from tools.db import get_cursor
-from tools.db import rollback
-from tools.rabbit import consume
-from tools.rabbit import publish
-from core.state import state
-from core.state import phase
-from core.state import set_dataset_state
-from core.state import get_processed_items_count
-from core.state import get_total_items_count
-from core.state import get_dataset
-from time_variance import processor
-from tools.bootstrap import bootstrap
-import contracting_process.resource_level.report as resource_level_report
-import contracting_process.resource_level.examples as resource_level_examples
+import click
+import simplejson as json
 
 import contracting_process.field_level.report_examples as field_level_report_examples
+import contracting_process.resource_level.examples as resource_level_examples
+import contracting_process.resource_level.report as resource_level_report
+from core.state import get_dataset, get_processed_items_count, get_total_items_count, phase, set_dataset_state, state
+from dataset import meta_data_aggregator
+from settings.settings import get_param
+from time_variance import processor
+from tools.bootstrap import bootstrap
+from tools.db import commit, get_cursor, rollback
+from tools.logging_helper import get_logger
+from tools.rabbit import consume, publish
 
 consume_routing_key = "_time_variance_checker"
 

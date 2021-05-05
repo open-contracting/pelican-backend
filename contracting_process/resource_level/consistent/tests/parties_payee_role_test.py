@@ -1,8 +1,7 @@
 
 import functools
 
-from contracting_process.resource_level.consistent.parties_role import \
-    calculate
+from contracting_process.resource_level.consistent.parties_role import calculate
 from tools.checks import get_empty_result_resource
 
 """

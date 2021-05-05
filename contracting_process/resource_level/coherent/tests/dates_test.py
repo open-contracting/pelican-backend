@@ -1,6 +1,5 @@
 from contracting_process.resource_level.coherent.dates import calculate
 
-
 item_special_case = {  # tender.tenderPeriod.endDate > date
     "date": "2019-12-31T00:00:00Z",
     "tender": {

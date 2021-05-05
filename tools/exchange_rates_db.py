@@ -1,10 +1,11 @@
 
 import json
-import requests
-from datetime import datetime, date, timedelta
+from datetime import date, datetime, timedelta
 
-from tools.db import get_cursor, commit, rollback
+import requests
+
 from settings.settings import get_param
+from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 
 

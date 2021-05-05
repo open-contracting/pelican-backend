@@ -1,6 +1,6 @@
+from settings.settings import CustomLogLevels
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
-from settings.settings import CustomLogLevels
 
 
 class state():

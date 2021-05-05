@@ -1,25 +1,24 @@
 #!/usr/bin/env python
-import os
-import sys
 import csv
-import time
+import os
 import shutil
-import shortuuid
-import requests
+import sys
 import tempfile
-import simplejson as json
+import time
 from datetime import datetime
 
 import click
+import requests
+import shortuuid
+import simplejson as json
 
-from core.state import (get_dataset, get_processed_items_count,
-                        get_total_items_count, phase, set_dataset_state, state)
+from core.state import get_dataset, get_processed_items_count, get_total_items_count, phase, set_dataset_state, state
 from settings.settings import get_param
 from time_variance import processor
+from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
-from tools.bootstrap import bootstrap
 
 
 @click.command()

@@ -1,19 +1,17 @@
 #!/usr/bin/env python
-import simplejson as json
 import sys
 from datetime import datetime
 
 import click
+import simplejson as json
 
-from core.state import (get_dataset, get_processed_items_count,
-                        get_total_items_count, phase, set_dataset_state, state)
+from core.state import get_dataset, get_processed_items_count, get_total_items_count, phase, set_dataset_state, state
+from dataset import processor
 from settings.settings import get_param
+from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
-from tools.bootstrap import bootstrap
-from dataset import processor
-
 
 consume_routing_key = "_contracting_process_checker"
 

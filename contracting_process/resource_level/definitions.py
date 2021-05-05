@@ -1,28 +1,29 @@
 import functools
 
-
-from contracting_process.resource_level.coherent import (amendments_dates,
-                                                         awards_status,
-                                                         contracts_status,
-                                                         dates,
-                                                         documents_dates,
-                                                         milestones_dates,
-                                                         period,
-                                                         procurement_method_vs_number_of_tenderers,
-                                                         tender_status,
-                                                         milestone_status,
-                                                         value_realistic)
-from contracting_process.resource_level.consistent import (contracts_value,
-                                                           number_of_tenderers,
-                                                           tender_value,
-                                                           roles,
-                                                           contracts_implementation_transactions_value,
-                                                           org_ref_name,
-                                                           period_duration_in_days,
-                                                           parties_role)
-from contracting_process.resource_level.reference import (contract_in_awards,
-                                                          parties)
-
+from contracting_process.resource_level.coherent import (
+    amendments_dates,
+    awards_status,
+    contracts_status,
+    dates,
+    documents_dates,
+    milestone_status,
+    milestones_dates,
+    period,
+    procurement_method_vs_number_of_tenderers,
+    tender_status,
+    value_realistic,
+)
+from contracting_process.resource_level.consistent import (
+    contracts_implementation_transactions_value,
+    contracts_value,
+    number_of_tenderers,
+    org_ref_name,
+    parties_role,
+    period_duration_in_days,
+    roles,
+    tender_value,
+)
+from contracting_process.resource_level.reference import contract_in_awards, parties
 
 definitions = {
     "consistent.number_of_tenderers": number_of_tenderers.calculate,

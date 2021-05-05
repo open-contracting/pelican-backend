@@ -1,7 +1,8 @@
 
 import csv
-from tools.checks import get_empty_result_field
+
 from settings.settings import get_param
+from tools.checks import get_empty_result_field
 
 format_codelist = None
 name = 'document_format_codelist'

@@ -1,7 +1,5 @@
 
-from contracting_process.resource_level.coherent.contracts_status \
-    import calculate
-
+from contracting_process.resource_level.coherent.contracts_status import calculate
 
 item_test_undefined = {
     'contracts': [

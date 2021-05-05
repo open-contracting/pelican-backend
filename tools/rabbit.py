@@ -1,6 +1,6 @@
 import pika
 
-from settings.settings import get_param, CustomLogLevels
+from settings.settings import CustomLogLevels, get_param
 from tools.logging_helper import get_logger
 
 global connected

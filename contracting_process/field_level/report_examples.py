@@ -1,10 +1,10 @@
 
 import simplejson as json
 
-from tools.db import get_cursor, commit
-from tools.logging_helper import get_logger
-from tools.helpers import ReservoirSampler
 from contracting_process.field_level.definitions import coverage_checks, definitions
+from tools.db import commit, get_cursor
+from tools.helpers import ReservoirSampler
+from tools.logging_helper import get_logger
 
 examples_cap = 20
 page_size = 2000
