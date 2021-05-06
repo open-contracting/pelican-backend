@@ -109,7 +109,7 @@ def do_work(dataset_id):
                                             "new_item_ocid": new_item["ocid"],
                                         }
 
-                except:
+                except Exception:
                     logger.error(
                         "Something went wrong when computing time variance level check: "
                         "check = {}, item_id = {}, dataset_id = {}."

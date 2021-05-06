@@ -36,7 +36,7 @@ def get_values(item, str_path, value_only=False):
         try:
             field = groups[0][0]
             index = int(groups[0][1])
-        except:
+        except (IndexError, TypeError, ValueError):
             pass
 
     if field is not None and index is not None and field in item:
@@ -109,7 +109,7 @@ def get_values(item, str_path, value_only=False):
         try:
             field = groups[0][0]
             index = int(groups[0][1])
-        except:
+        except (IndexError, TypeError, ValueError):
             pass
 
     if field is not None and index is not None and field in item:

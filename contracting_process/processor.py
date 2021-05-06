@@ -47,7 +47,7 @@ def resource_level_checks(data, item_id, dataset_id):
         get_logger().log(CustomLogLevels.CHECK_TRACE, "Computing {} check.".format(check_name))
         try:
             result["checks"][check_name] = check(data)
-        except:
+        except Exception:
             get_logger().error(
                 "Something went wrong when computing resource level check: "
                 "check = {}, item_id = {}, dataset_id = {}."
@@ -124,7 +124,7 @@ def field_level_checks(data, item_id, dataset_id):
 
                         try:
                             check_result = check(item, path_chunks[-1])
-                        except:
+                        except Exception:
                             get_logger().error(
                                 "Something went wrong when computing field level check: "
                                 "check = {}, path = {}, item_id = {}, dataset_id = {}."
@@ -150,7 +150,7 @@ def field_level_checks(data, item_id, dataset_id):
 
                             try:
                                 check_result = check(item, path_chunks[-1])
-                            except:
+                            except Exception:
                                 get_logger().error(
                                     "Something went wrong when computing field level check: "
                                     "check = {}, path = {}, item_id = {}, dataset_id = {}."

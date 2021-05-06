@@ -45,7 +45,7 @@ def do_work(dataset_id, logger):
 
                 try:
                     scope[plugin_name] = plugin.add_item(scope[plugin_name], item["data"], item["id"])
-                except:
+                except Exception:
                     logger.error(
                         "Something went wrong when computing dataset level check: "
                         "check = {}, item_id = {}, dataset_id = {}."
