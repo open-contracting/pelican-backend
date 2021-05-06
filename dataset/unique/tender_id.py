@@ -12,7 +12,6 @@ def add_item(scope, item, item_id):
     if not scope:
         scope = {"tender_id_mapping": defaultdict(list)}
 
-    ocid = item["ocid"]
     values = get_values(item, "tender.id", value_only=True)
     if not values:
         return scope

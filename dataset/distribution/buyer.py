@@ -58,7 +58,6 @@ def get_result(scope):
         buyer_with_one_ocid_sampler = ReservoirSampler(examples_cap)
 
         # filling in the histogram
-        max_buyer = {"buyer": None, "ocid_count": -1}
         for value in scope["buyers"].values():
             if value["total_ocid_count"] == 1:
                 ocid_histogram["1"]["total_ocid_count"] += value["total_ocid_count"]

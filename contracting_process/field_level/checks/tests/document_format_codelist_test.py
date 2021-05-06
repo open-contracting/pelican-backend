@@ -18,8 +18,6 @@ def test_passed():
 def test_failed():
     document_format_codelist.format_codelist = []
 
-    fail_result = {"result": False, "value": "lalala", "reason": "wrong file format"}
-
     assert is_subset_dict(
         {"result": False, "value": "unknown", "reason": "wrong document format"},
         document_format_codelist.calculate({"format": "unknown"}, "format"),

@@ -8,7 +8,7 @@ from tools.logging_helper import init_logger
 def bootstrap(environment, logger_name):
     set_environment(environment)
 
-    logger = init_logger(logger_name)
+    init_logger(logger_name)
 
     # initializing converter
     if get_param("currency_converter_data_source") == "db":
