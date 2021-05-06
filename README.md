@@ -4,14 +4,14 @@
 
 Install development dependencies:
 
-```shell
+```bash
 pip install pip-tools
 pip-sync requirements_dev.txt
 ```
 
 Set up the git pre-commit hook:
 
-```shell
+```bash
 pre-commit install
 ```
 
@@ -21,7 +21,7 @@ pre-commit install
 
 Start workers:
 
-```shell
+```bash
 python -m core.finisher [environment]
 python -m checker.time_variance_checker [environment]
 python -m checker.dataset [environment]
@@ -41,12 +41,12 @@ To restart a job, send this message to RabbitMQ:
 
 Reset the database:
 
-```shell
+```bash
 psql DBNAME -f migrations/truncate.sql
 ```
 
 ## Test
 
-```shell
+```bash
 pytest
 ```
