@@ -15,6 +15,8 @@ Set up the git pre-commit hook:
 pre-commit install
 ```
 
+[Developer documentation](https://docs.google.com/document/d/1cfunGPyP-QLHOeQT3olFEHJh0J_aieUJZzxirT7Y8wk/edit)
+
 ## Develop
 
 Start workers:
