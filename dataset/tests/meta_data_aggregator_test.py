@@ -135,7 +135,7 @@ items_test_period = [
 ]
 
 
-def test_prices():
+def test_prices_period():
     scope = {}
     for id in range(len(items_test_period)):
         scope = add_item(scope, items_test_period[id], id)

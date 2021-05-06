@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+import datetime
 
 from settings.settings import get_param
 
@@ -74,7 +74,7 @@ def interpolation_closest(currency, start_date, end_date):
 
     distance_to_start = None
     distance_to_end = None
-    current_date = start_date + timedelta(days=1)
+    current_date = start_date + datetime.timedelta(days=1)
     while current_date < end_date:
         distance_to_start = (current_date - start_date).days
         distance_to_end = (end_date - current_date).days
@@ -84,7 +84,7 @@ def interpolation_closest(currency, start_date, end_date):
             and distance_to_start > get_param("currency_converter_interpolation_max_days_fallback")
             and distance_to_end > get_param("currency_converter_interpolation_max_days_fallback")
         ):
-            current_date += timedelta(
+            current_date += datetime.timedelta(
                 days=distance_to_end - get_param("currency_converter_interpolation_max_days_fallback")
             )
             continue
@@ -99,7 +99,7 @@ def interpolation_closest(currency, start_date, end_date):
 
             rates[current_date][currency] = end_date_rate
 
-        current_date += timedelta(days=1)
+        current_date += datetime.timedelta(days=1)
 
 
 def interpolation_linear(currency, start_date, end_date):
@@ -111,7 +111,7 @@ def interpolation_linear(currency, start_date, end_date):
 
     distance_to_start = None
     distance_to_end = None
-    current_date = start_date + timedelta(days=1)
+    current_date = start_date + datetime.timedelta(days=1)
     while current_date < end_date:
         distance_to_start = (current_date - start_date).days
         distance_to_end = (end_date - current_date).days
@@ -121,7 +121,7 @@ def interpolation_linear(currency, start_date, end_date):
             and distance_to_start > get_param("currency_converter_interpolation_max_days_fallback")
             and distance_to_end > get_param("currency_converter_interpolation_max_days_fallback")
         ):
-            current_date += timedelta(
+            current_date += datetime.timedelta(
                 days=distance_to_end - get_param("currency_converter_interpolation_max_days_fallback")
             )
             continue
@@ -136,7 +136,7 @@ def interpolation_linear(currency, start_date, end_date):
                 6,
             )
 
-        current_date += timedelta(days=1)
+        current_date += datetime.timedelta(days=1)
 
 
 def extrapolation_closest_rate(currency, rel_date):
@@ -162,7 +162,7 @@ def convert(amount, original_currency, target_currency, rel_date):
     if original_currency not in currencies or target_currency not in currencies:
         return None
 
-    if type(rel_date) != date:
+    if type(rel_date) != datetime.date:
         try:
             rel_date = rel_date.date()
         except:

@@ -80,9 +80,8 @@ def callback(channel, method, properties, body):
         ):
             # set state to processing
             logger.info(
-                "All messages for dataset_id {} with {} items processed, starting to calculate dataset level checks".format(
-                    dataset_id, processed_count
-                )
+                f"All messages for dataset_id {dataset_id} with {processed_count} items processed, "
+                "starting to calculate dataset level checks"
             )
             set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
 

@@ -1,6 +1,7 @@
 import json
 from datetime import date, timedelta
 
+import psycopg2
 import requests
 
 from settings.settings import get_param
