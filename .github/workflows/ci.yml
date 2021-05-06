@@ -1,0 +1,25 @@
+name: CI
+on: [push, pull_request]
+env:
+  BASEDIR: https://raw.githubusercontent.com/open-contracting/standard-maintenance-scripts/main
+jobs:
+  build:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.6
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements_dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - run: pip install -r requirements_dev.txt
+      - run: pytest --cov checker --cov contracting_process --cov core --cov dataset --cov extractor --cov maintenance_scripts --cov registry --cov time_variance --cov tools
+        if: always()
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: coveralls --service=github
