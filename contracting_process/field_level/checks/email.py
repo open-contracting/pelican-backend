@@ -1,6 +1,6 @@
-from tools.checks import get_empty_result_field
-from tools.getter import get_values
 from validate_email import validate_email
+
+from tools.checks import get_empty_result_field
 
 """
 author: Iaroslav Kolodka

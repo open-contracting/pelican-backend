@@ -1,8 +1,7 @@
-
 from tools.checks import get_empty_result_resource
+from tools.currency_converter import convert
 from tools.getter import get_values
 from tools.helpers import parse_date
-from tools.currency_converter import convert, currency_available
 
 version = 1.0
 
@@ -22,15 +21,23 @@ def calculate(item):
     planning_budget_amount = planning_budget_amount[0]
 
     # missing amount or currency fields
-    if "amount" not in tender_value or "currency" not in tender_value or \
-       "amount" not in planning_budget_amount or "currency" not in planning_budget_amount:
+    if (
+        "amount" not in tender_value
+        or "currency" not in tender_value
+        or "amount" not in planning_budget_amount
+        or "currency" not in planning_budget_amount
+    ):
 
         result["meta"] = {"reason": "amount or currency is not set"}
         return result
 
     # None fields
-    if tender_value["amount"] is None or tender_value["currency"] is None or \
-       planning_budget_amount["amount"] is None or planning_budget_amount["currency"] is None:
+    if (
+        tender_value["amount"] is None
+        or tender_value["currency"] is None
+        or planning_budget_amount["amount"] is None
+        or planning_budget_amount["currency"] is None
+    ):
 
         result["meta"] = {"reason": "amount or currency is null"}
         return result
@@ -50,24 +57,29 @@ def calculate(item):
     if tender_value_amount is None or planning_budget_amount_amount is None:
         result["meta"] = {
             "reason": "values are not convertible",
-            "tender.value": tender_value, "planning.budget.amount": planning_budget_amount
+            "tender.value": tender_value,
+            "planning.budget.amount": planning_budget_amount,
         }
         return result
 
     # amount is equal to zero
     if tender_value_amount == 0 or planning_budget_amount_amount == 0:
         result["meta"] = {
-            "reason": "amount is equal to zero", "tender.value": tender_value,
-            "planning.budget.amount": planning_budget_amount}
+            "reason": "amount is equal to zero",
+            "tender.value": tender_value,
+            "planning.budget.amount": planning_budget_amount,
+        }
         return result
 
     # different signs
-    if (tender_value_amount > 0 and planning_budget_amount_amount < 0) or \
-       (tender_value_amount < 0 and planning_budget_amount_amount > 0):
+    if (tender_value_amount > 0 and planning_budget_amount_amount < 0) or (
+        tender_value_amount < 0 and planning_budget_amount_amount > 0
+    ):
 
         result["meta"] = {
             "reason": "amounts have different signs",
-            "tender.value": tender_value, "planning.budget.amount": planning_budget_amount
+            "tender.value": tender_value,
+            "planning.budget.amount": planning_budget_amount,
         }
         return result
 

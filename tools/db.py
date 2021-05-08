@@ -28,7 +28,9 @@ def connect():
     global connection
     connection = psycopg2.connect(
         "host='{}' dbname='{}' user='{}' password='{}' port ='{}'".format(
-            get_param("host"), get_param("db"), get_param("user"), get_param("password"), get_param("port")))
+            get_param("host"), get_param("db"), get_param("user"), get_param("password"), get_param("port")
+        )
+    )
 
     global cursor
     cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)

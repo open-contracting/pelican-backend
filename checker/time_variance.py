@@ -1,18 +1,16 @@
 #!/usr/bin/env python
-import simplejson as json
 import sys
-from datetime import datetime
 
 import click
+import simplejson as json
 
-from core.state import (get_dataset, get_processed_items_count,
-                        get_total_items_count, phase, set_dataset_state, state)
+from core.state import phase, set_dataset_state, state
 from settings.settings import get_param
-from tools.db import commit, get_cursor, rollback
+from time_variance import processor
+from tools.bootstrap import bootstrap
+from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
-from tools.bootstrap import bootstrap
-from time_variance import processor
 
 consume_routing_key = "_dataset_checker"
 
@@ -32,7 +30,7 @@ def start(environment):
 def callback(channel, method, properties, body):
     try:
         # read and parse message
-        input_message = json.loads(body.decode('utf8'))
+        input_message = json.loads(body.decode("utf8"))
         dataset_id = input_message["dataset_id"]
 
         # mark dataset as beeing processed
@@ -45,7 +43,7 @@ def callback(channel, method, properties, body):
 
         # all done, mark as completed
         set_dataset_state(dataset_id, state.OK, phase.TIME_VARIANCE)
-        logger.info("Time variance level checks calculated for dataset_id {}".format(dataset_id))        
+        logger.info("Time variance level checks calculated for dataset_id {}".format(dataset_id))
         commit()
 
         # send messages into next phases
@@ -54,8 +52,7 @@ def callback(channel, method, properties, body):
 
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
-        logger.exception(
-            "Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()
 
 
@@ -71,5 +68,5 @@ def init_worker(environment):
     logger.debug("Time variance checker started.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     start()

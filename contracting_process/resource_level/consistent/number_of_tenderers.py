@@ -24,10 +24,7 @@ def calculate(item):
             result["result"] = False
             result["application_count"] = 1
             result["pass_count"] = 0
-            result["meta"] = {
-                "numberOfTenderers": tender["numberOfTenderers"],
-                "tenderers": tender["tenderers"]
-            }
+            result["meta"] = {"numberOfTenderers": tender["numberOfTenderers"], "tenderers": tender["tenderers"]}
 
         return result
 

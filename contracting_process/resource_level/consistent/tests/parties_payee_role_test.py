@@ -1,8 +1,4 @@
-
-import functools
-
-from contracting_process.resource_level.consistent.parties_role import \
-    calculate
+from contracting_process.resource_level.consistent.parties_role import calculate
 from tools.checks import get_empty_result_resource
 
 """
@@ -23,20 +19,16 @@ item_with_no_correct_parties = {
         {
             "id": "adsjk-fhjdkf",  # no roles
             "name": "abcd",
-            "address": {
-                "streetAddress": "dcba "
-            },
+            "address": {"streetAddress": "dcba "},
             "identifier": {"scheme": "12-12-12"},
-            "contactPoint": {}
+            "contactPoint": {},
         },
         {
             "id": "0rw29R-dsfad",  # empty list of roles
             "name": "Unidad Central",
             "roles": [],
-            "memberOf": [
-                {"id": "adsjk-fhjdkf", "name": "abcd"}
-            ],
-        }
+            "memberOf": [{"id": "adsjk-fhjdkf", "name": "abcd"}],
+        },
     ]
 }
 
@@ -46,24 +38,10 @@ correct_item_with_payee = {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
             "roles": ["payee"],
-            "memberOf": [
-                {"id": "0rw29R-11341234", "name": "aabbcc"}
-            ],
+            "memberOf": [{"id": "0rw29R-11341234", "name": "aabbcc"}],
         }
     ],
-    "contracts": [
-        {
-            "implementation": {
-                "transactions": [
-                    {
-                        "payee": {
-                            "id": "010101-a01010"
-                        }
-                    }
-                ]
-            }
-        }
-    ]
+    "contracts": [{"implementation": {"transactions": [{"payee": {"id": "010101-a01010"}}]}}],
 }
 incorrect_item_with_payee = {
     "parties": [
@@ -71,24 +49,10 @@ incorrect_item_with_payee = {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
             "roles": ["payee"],
-            "memberOf": [
-                {"id": "0rw29R-11341234", "name": "aabbcc"}
-            ],
+            "memberOf": [{"id": "0rw29R-11341234", "name": "aabbcc"}],
         }
     ],
-    "contracts": [
-        {
-            "implementation": {
-                "transactions": [
-                    {
-                        "payee": {
-                            "id": "00000000000"
-                        }
-                    }
-                ]
-            }
-        }
-    ]
+    "contracts": [{"implementation": {"transactions": [{"payee": {"id": "00000000000"}}]}}],
 }
 
 incorrect_item_with_no_payee = {
@@ -97,9 +61,7 @@ incorrect_item_with_no_payee = {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
             "roles": ["payee"],
-            "memberOf": [
-                {"id": "0rw29R-11341234", "name": "aabbcc"}
-            ],
+            "memberOf": [{"id": "0rw29R-11341234", "name": "aabbcc"}],
         }
     ]
 }
@@ -120,11 +82,7 @@ def test_with_correct_input():
     expecting_result["pass_count"] = 1
     expecting_result["meta"] = {"references": []}
     expecting_result["meta"]["references"] = [
-        {
-            "party_path": "parties[0]",
-            "examined_role": "payee",
-            "resource_identification": "010101-a01010"
-        }
+        {"party_path": "parties[0]", "examined_role": "payee", "resource_identification": "010101-a01010"}
     ]
     result = calculate(correct_item_with_payee)
     assert expecting_result == result
@@ -138,11 +96,7 @@ def test_with_incorrect_input():
     expecting_result1["pass_count"] = 0
     expecting_result1["meta"] = {"references": []}
     expecting_result1["meta"]["references"] = [
-        {
-            "party_path": "parties[0]",
-            "examined_role": "payee",
-            "resource_identification": "010101-a01010"
-        }
+        {"party_path": "parties[0]", "examined_role": "payee", "resource_identification": "010101-a01010"}
     ]
     result1 = calculate(incorrect_item_with_payee)
     assert expecting_result1 == result1
@@ -153,11 +107,7 @@ def test_with_incorrect_input():
     expecting_result2["pass_count"] = 0
     expecting_result2["meta"] = {"references": []}
     expecting_result2["meta"]["references"] = [
-        {
-            "party_path": "parties[0]",
-            "examined_role": "payee",
-            "resource_identification": "010101-a01010"
-        }
+        {"party_path": "parties[0]", "examined_role": "payee", "resource_identification": "010101-a01010"}
     ]
     result2 = calculate(incorrect_item_with_no_payee)
     assert expecting_result2 == result2

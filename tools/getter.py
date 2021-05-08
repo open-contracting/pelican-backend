@@ -1,4 +1,3 @@
-
 import re
 
 regex = r"^([^[]*)\[([\d]*)\]$"
@@ -20,12 +19,7 @@ def get_values(item, str_path, value_only=False):
                 if value_only:
                     values.append(item[str_path][index])
                 else:
-                    values.append(
-                        {
-                            "path": "{}[{}]".format(str_path, index),
-                            "value": item[str_path][index]
-                        }
-                    )
+                    values.append({"path": "{}[{}]".format(str_path, index), "value": item[str_path][index]})
 
             return values
         else:
@@ -42,7 +36,7 @@ def get_values(item, str_path, value_only=False):
         try:
             field = groups[0][0]
             index = int(groups[0][1])
-        except:
+        except (IndexError, TypeError, ValueError):
             pass
 
     if field is not None and index is not None and field in item:
@@ -50,12 +44,7 @@ def get_values(item, str_path, value_only=False):
             if value_only:
                 values = [item[field][index]]
             else:
-                values = [
-                    {
-                        "path": "{}[{}]".format(field, index),
-                        "value": item[field][index]
-                    }
-                ]
+                values = [{"path": "{}[{}]".format(field, index), "value": item[field][index]}]
 
             return values
 
@@ -120,7 +109,7 @@ def get_values(item, str_path, value_only=False):
         try:
             field = groups[0][0]
             index = int(groups[0][1])
-        except:
+        except (IndexError, TypeError, ValueError):
             pass
 
     if field is not None and index is not None and field in item:

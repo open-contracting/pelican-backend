@@ -12,33 +12,13 @@ def test_empty():
     assert result["meta"] is None
 
 
-first = {
-    "ocid": "1",
-    "tender": {
-        "mainProcurementCategory": "A"
-    }
-}
+first = {"ocid": "1", "tender": {"mainProcurementCategory": "A"}}
 
-second = {
-    "ocid": "2",
-    "tender": {
-        "mainProcurementCategory": "B"
-    }
-}
+second = {"ocid": "2", "tender": {"mainProcurementCategory": "B"}}
 
-third = {
-    "ocid": "3",
-    "tender": {
-        "mainProcurementCategory": "B"
-    }
-}
+third = {"ocid": "3", "tender": {"mainProcurementCategory": "B"}}
 
-fourth = {
-    "ocid": "4",
-    "tender": {
-        "mainProcurementCategory": "B"
-    }
-}
+fourth = {"ocid": "4", "tender": {"mainProcurementCategory": "B"}}
 
 
 def test_ok():
@@ -49,19 +29,11 @@ def test_ok():
     result = main_procurement_category.get_result(scope)
     assert type(result) == dict
     assert result["result"] is True
-    assert result["value"] is 100
+    assert result["value"] == 100
     assert result["meta"] == {
         "shares": {
-            "B": {
-                "share": 2/3,
-                "count": 2,
-                "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]
-            },
-            "A": {
-                "share": 1/3,
-                "count": 1,
-                "examples": [{"item_id": 1, "ocid": "1"}]
-            },
+            "B": {"share": 2 / 3, "count": 2, "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]},
+            "A": {"share": 1 / 3, "count": 1, "examples": [{"item_id": 1, "ocid": "1"}]},
         }
     }
 
@@ -73,13 +45,9 @@ def test_failed():
     result = main_procurement_category.get_result(scope)
     assert type(result) == dict
     assert result["result"] is False
-    assert result["value"] is 0
+    assert result["value"] == 0
     assert result["meta"] == {
         "shares": {
-            "B": {
-                "share": 1.0,
-                "count": 2,
-                "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]
-            },
+            "B": {"share": 1.0, "count": 2, "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]},
         }
     }

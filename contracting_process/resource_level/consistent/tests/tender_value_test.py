@@ -1,50 +1,16 @@
 from contracting_process.resource_level.consistent.tender_value import calculate
 from tools.bootstrap import bootstrap
 
-bootstrap('test', 'tender_value_test')
+bootstrap("test", "tender_value_test")
 
 
-item_test_undefined1 = {
-    "tender": {
+item_test_undefined1 = {"tender": {}, "planning": {"budget": {}}}
 
-    },
-    "planning": {
-        "budget": {
-
-        }
-    }
-}
-
-item_test_undefined2 = {
-    "tender": {
-        "value": {
-
-        }
-    },
-    "planning": {
-        "budget": {
-            "amount": {
-
-            }
-        }
-    }
-}
+item_test_undefined2 = {"tender": {"value": {}}, "planning": {"budget": {"amount": {}}}}
 
 item_test_undefined3 = {
-    "tender": {
-        "value": {
-            "amount": 100.0,
-            "currency": None
-        }
-    },
-    "planning": {
-        "budget": {
-            "amount": {
-                "amount": 100.0,
-                "currency": "USD"
-            }
-        }
-    }
+    "tender": {"value": {"amount": 100.0, "currency": None}},
+    "planning": {"budget": {"amount": {"amount": 100.0, "currency": "USD"}}},
 }
 
 
@@ -68,24 +34,11 @@ def test_undefined():
     assert result["meta"] == {"reason": "amount or currency is null"}
 
 
-item_test_unsupported_currencies = \
-    {
-        "tender": {
-            "value": {
-                "amount": 100.0,
-                "currency": "HAL"
-            }
-        },
-        "planning": {
-            "budget": {
-                "amount": {
-                    "amount": 100.0,
-                    "currency": "USD"
-                }
-            }
-        },
-        "date": "2019-01-10T22:00:00+01:00"
-    }
+item_test_unsupported_currencies = {
+    "tender": {"value": {"amount": 100.0, "currency": "HAL"}},
+    "planning": {"budget": {"amount": {"amount": 100.0, "currency": "USD"}}},
+    "date": "2019-01-10T22:00:00+01:00",
+}
 
 
 def test_unsupported_currencies():
@@ -96,26 +49,14 @@ def test_unsupported_currencies():
     assert result["meta"] == {
         "reason": "values are not convertible",
         "tender.value": item_test_unsupported_currencies["tender"]["value"],
-        "planning.budget.amount": item_test_unsupported_currencies["planning"]["budget"]["amount"]
+        "planning.budget.amount": item_test_unsupported_currencies["planning"]["budget"]["amount"],
     }
 
 
 item_test_currency_conversion = {
-    "tender": {
-        "value": {
-            "amount": 100.0,
-            "currency": "CZK"
-        }
-    },
-    "planning": {
-        "budget": {
-            "amount": {
-                "amount": 100.0,
-                "currency": "JPY"
-            }
-        }
-    },
-    "date": "2019-01-10T22:00:00+01:00"
+    "tender": {"value": {"amount": 100.0, "currency": "CZK"}},
+    "planning": {"budget": {"amount": {"amount": 100.0, "currency": "JPY"}}},
+    "date": "2019-01-10T22:00:00+01:00",
 }
 
 
@@ -129,20 +70,8 @@ def test_currency_conversion():
 
 
 item_test_zero_amount = {
-    "tender": {
-        "value": {
-            "amount": 100.0,
-            "currency": "CZK"
-        }
-    },
-    "planning": {
-        "budget": {
-            "amount": {
-                "amount": 0.0,
-                "currency": "CZK"
-            }
-        }
-    }
+    "tender": {"value": {"amount": 100.0, "currency": "CZK"}},
+    "planning": {"budget": {"amount": {"amount": 0.0, "currency": "CZK"}}},
 }
 
 
@@ -151,27 +80,16 @@ def test_zero_amount():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == \
-        {"reason": "amount is equal to zero",
-         "tender.value": item_test_zero_amount["tender"]["value"],
-         "planning.budget.amount": item_test_zero_amount["planning"]["budget"]["amount"]}
+    assert result["meta"] == {
+        "reason": "amount is equal to zero",
+        "tender.value": item_test_zero_amount["tender"]["value"],
+        "planning.budget.amount": item_test_zero_amount["planning"]["budget"]["amount"],
+    }
 
 
 item_test_different_signs = {
-    "tender": {
-        "value": {
-            "amount": 100.0,
-            "currency": "CZK"
-        }
-    },
-    "planning": {
-        "budget": {
-            "amount": {
-                "amount": -100.0,
-                "currency": "CZK"
-            }
-        }
-    }
+    "tender": {"value": {"amount": 100.0, "currency": "CZK"}},
+    "planning": {"budget": {"amount": {"amount": -100.0, "currency": "CZK"}}},
 }
 
 
@@ -180,44 +98,21 @@ def test_different_signs():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == \
-        {"reason": "amounts have different signs",
-         "tender.value": item_test_different_signs["tender"]["value"],
-         "planning.budget.amount": item_test_different_signs["planning"]["budget"]["amount"]}
+    assert result["meta"] == {
+        "reason": "amounts have different signs",
+        "tender.value": item_test_different_signs["tender"]["value"],
+        "planning.budget.amount": item_test_different_signs["planning"]["budget"]["amount"],
+    }
 
 
 item_test_passed1 = {
-    "tender": {
-        "value": {
-            "amount": 100.0,
-            "currency": "CZK"
-        }
-    },
-    "planning": {
-        "budget": {
-            "amount": {
-                "amount": 148.0,
-                "currency": "CZK"
-            }
-        }
-    }
+    "tender": {"value": {"amount": 100.0, "currency": "CZK"}},
+    "planning": {"budget": {"amount": {"amount": 148.0, "currency": "CZK"}}},
 }
 
 item_test_passed2 = {
-    "tender": {
-        "value": {
-            "amount": -100.0,
-            "currency": "CZK"
-        }
-    },
-    "planning": {
-        "budget": {
-            "amount": {
-                "amount": -50.0,
-                "currency": "CZK"
-            }
-        }
-    }
+    "tender": {"value": {"amount": -100.0, "currency": "CZK"}},
+    "planning": {"budget": {"amount": {"amount": -50.0, "currency": "CZK"}}},
 }
 
 
@@ -228,7 +123,7 @@ def test_passed():
     assert result["pass_count"] == 1
     assert result["meta"] == {
         "tender.value": item_test_passed1["tender"]["value"],
-        "planning.budget.amount": item_test_passed1["planning"]["budget"]["amount"]
+        "planning.budget.amount": item_test_passed1["planning"]["budget"]["amount"],
     }
 
     result = calculate(item_test_passed2)
@@ -237,42 +132,18 @@ def test_passed():
     assert result["pass_count"] == 1
     assert result["meta"] == {
         "tender.value": item_test_passed2["tender"]["value"],
-        "planning.budget.amount": item_test_passed2["planning"]["budget"]["amount"]
+        "planning.budget.amount": item_test_passed2["planning"]["budget"]["amount"],
     }
 
 
 item_test_failed1 = {
-    "tender": {
-        "value": {
-            "amount": 500.0,
-            "currency": "CZK"
-        }
-    },
-    "planning": {
-        "budget": {
-            "amount": {
-                "amount": 249.0,
-                "currency": "CZK"
-            }
-        }
-    }
+    "tender": {"value": {"amount": 500.0, "currency": "CZK"}},
+    "planning": {"budget": {"amount": {"amount": 249.0, "currency": "CZK"}}},
 }
 
 item_test_failed2 = {
-    "tender": {
-        "value": {
-            "amount": -500.0,
-            "currency": "CZK"
-        }
-    },
-    "planning": {
-        "budget": {
-            "amount": {
-                "amount": -751.0,
-                "currency": "CZK"
-            }
-        }
-    }
+    "tender": {"value": {"amount": -500.0, "currency": "CZK"}},
+    "planning": {"budget": {"amount": {"amount": -751.0, "currency": "CZK"}}},
 }
 
 
@@ -283,7 +154,7 @@ def test_failed():
     assert result["pass_count"] == 0
     assert result["meta"] == {
         "tender.value": item_test_failed1["tender"]["value"],
-        "planning.budget.amount": item_test_failed1["planning"]["budget"]["amount"]
+        "planning.budget.amount": item_test_failed1["planning"]["budget"]["amount"],
     }
 
     result = calculate(item_test_failed2)
@@ -292,5 +163,5 @@ def test_failed():
     assert result["pass_count"] == 0
     assert result["meta"] == {
         "tender.value": item_test_failed2["tender"]["value"],
-        "planning.budget.amount": item_test_failed2["planning"]["budget"]["amount"]
+        "planning.budget.amount": item_test_failed2["planning"]["budget"]["amount"],
     }

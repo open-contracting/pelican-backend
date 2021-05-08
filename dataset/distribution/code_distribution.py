@@ -1,4 +1,3 @@
-
 from tools.checks import get_empty_result_dataset
 from tools.getter import get_values
 from tools.helpers import ReservoirSampler
@@ -14,21 +13,21 @@ class CodeDistribution:
         if not scope:
             scope = {}
 
-        ocid = get_values(item, 'ocid', value_only=True)[0]
+        ocid = get_values(item, "ocid", value_only=True)[0]
 
         values = []
         for path in self.paths:
             values.extend(get_values(item, path, value_only=True))
 
         for value in values:
-            if value is None:
+            if value is None or not isinstance(value, str):
                 continue
 
             if value not in scope:
-                scope[value] = {'count': 0, 'sampler': ReservoirSampler(self.samples_cap)}
+                scope[value] = {"count": 0, "sampler": ReservoirSampler(self.samples_cap)}
 
-            scope[value]['count'] += 1
-            scope[value]['sampler'].process({'item_id': item_id, 'ocid': ocid})
+            scope[value]["count"] += 1
+            scope[value]["sampler"].process({"item_id": item_id, "ocid": ocid})
 
         return scope
 
@@ -36,27 +35,25 @@ class CodeDistribution:
         result = get_empty_result_dataset()
 
         if scope:
-            total_count = sum([value['count'] for value in scope.values()])
+            total_count = sum([value["count"] for value in scope.values()])
 
             passed = True
             for key, value in scope.items():
-                value['share'] = value['count'] / total_count
-                value['examples'] = value['sampler'].retrieve_samples()
-                del value['sampler']
+                value["share"] = value["count"] / total_count
+                value["examples"] = value["sampler"].retrieve_samples()
+                del value["sampler"]
 
                 if key in self.test_values:
-                    passed = passed and (0.001 <= value['share'] <= 0.99)
+                    passed = passed and (0.001 <= value["share"] <= 0.99)
 
             if any(key not in scope for key in self.test_values):
                 passed = False
 
-            result['result'] = passed
-            result['value'] = 100 if result['result'] else 0
-            result['meta'] = {'shares': scope}
+            result["result"] = passed
+            result["value"] = 100 if result["result"] else 0
+            result["meta"] = {"shares": scope}
 
         else:
-            result['meta'] = {
-                'reason': 'no values in specified paths found'
-            }
+            result["meta"] = {"reason": "no values in specified paths found"}
 
         return result

@@ -8,12 +8,14 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    period_paths = ["tender.tenderPeriod",
-                    "tender.enquiryPeriod",
-                    "tender.awardPeriod",
-                    "tender.contractPeriod",
-                    "awards.contractPeriod",
-                    "contracts.period"]
+    period_paths = [
+        "tender.tenderPeriod",
+        "tender.enquiryPeriod",
+        "tender.awardPeriod",
+        "tender.contractPeriod",
+        "awards.contractPeriod",
+        "contracts.period",
+    ]
 
     application_count = None
     pass_count = None
@@ -26,13 +28,11 @@ def calculate(item):
 
         for period in periods:
             # missing dates
-            if "startDate" not in period["value"] or \
-                    "endDate" not in period["value"]:
+            if "startDate" not in period["value"] or "endDate" not in period["value"]:
                 continue
 
             # null dates
-            if not period["value"]["startDate"] or \
-                    not period["value"]["endDate"]:
+            if not period["value"]["startDate"] or not period["value"]["endDate"]:
                 continue
 
             startDate = parse_datetime(period["value"]["startDate"])

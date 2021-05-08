@@ -18,7 +18,7 @@ testing_roles = {
 
 
 def calculate(item) -> dict:
-    """ Method is designed to test items from parties on existing refereced items.
+    """Method is designed to test items from parties on existing refereced items.
 
     Paramtertes
     ------------
@@ -43,17 +43,12 @@ def calculate(item) -> dict:
     parties = get_values(item, "parties")
     parties_roles = []
     for party in parties:
-        if ("value" in party and party["value"]):
+        if "value" in party and party["value"]:
             party_value = party["value"]
-            if ("roles" in party_value and party_value["roles"] and
-                    "id" in party_value and party_value["id"]):
+            if "roles" in party_value and party_value["roles"] and "id" in party_value and party_value["id"]:
                 for role in party_value["roles"]:
                     if role in testing_roles.keys():
-                        party_item = {
-                            "role": role,
-                            "id":  party_value["id"],
-                            "path": party["path"]
-                        }
+                        party_item = {"role": role, "id": party_value["id"], "path": party["path"]}
                         parties_roles.append(party_item)
 
     if not parties_roles:
@@ -66,10 +61,7 @@ def calculate(item) -> dict:
         found_items += get_values(item, role_path)
         for elem in found_items:
             if "value" in elem and "id" in elem["value"]:
-                elem_box = {
-                    "id": elem["value"]["id"],
-                    "role": role_name
-                }
+                elem_box = {"id": elem["value"]["id"], "role": role_name}
                 items_from_paths.append(elem_box)
 
     passed = None
@@ -88,11 +80,7 @@ def calculate(item) -> dict:
         application_count += 1
         pass_count = pass_count + 1 if passed else pass_count
         result["meta"]["references"].append(
-            {
-                "party_path": party["path"],
-                "examined_role": party["role"],
-                "resource_identification": party["id"]
-            }
+            {"party_path": party["path"], "examined_role": party["role"], "resource_identification": party["id"]}
         )
 
     result["application_count"] = application_count

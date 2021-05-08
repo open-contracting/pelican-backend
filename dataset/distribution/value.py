@@ -1,11 +1,9 @@
-import operator
 import functools
 
 from tools.checks import get_empty_result_dataset
+from tools.currency_converter import convert, currency_available
 from tools.getter import get_values
 from tools.helpers import parse_date
-from tools.currency_converter import convert, currency_available
-
 
 version = 1.0
 
@@ -28,9 +26,13 @@ def add_item(scope, item, item_id, path):
                 value["item_id"] = item_id
                 value["ocid"] = ocid
 
-                if "currency" not in value["value"] or value["value"]["currency"] is None or \
-                        "amount" not in value["value"] or value["value"]["amount"] is None or \
-                        float(value["value"]["amount"]) < 0:
+                if (
+                    "currency" not in value["value"]
+                    or value["value"]["currency"] is None
+                    or "amount" not in value["value"]
+                    or value["value"]["amount"] is None
+                    or float(value["value"]["amount"]) < 0
+                ):
                     continue
 
                 if currency_available(value["value"]["currency"]):
@@ -38,9 +40,8 @@ def add_item(scope, item, item_id, path):
                         if "date" in item and item["date"]:
                             rel_date = parse_date(item["date"])
                             value["abs_amount"] = convert(
-                                value["value"]["amount"],
-                                value["value"]["currency"],
-                                "USD", rel_date)
+                                value["value"]["amount"], value["value"]["currency"], "USD", rel_date
+                            )
                         if "abs_amount" in value and value["abs_amount"] is not None:
                             scope["values"].append(value)
                     else:
@@ -56,14 +57,17 @@ def get_result(scope):
     if scope:
         values = scope["values"]
         count = len(values)
-        if (count > 99):
+        if count > 99:
             sum_value = sum(int(value["abs_amount"]) for value in values)
+            if sum_value == 0:
+                result["meta"] = {"reason": "Sum of all contracts is 0. Impossible division by zero."}
+                return result
 
-            percent_size = int(count/100)
-            percent_index_1 = (percent_size)
-            percent_index_5 = (5 * percent_size)
-            percent_index_20 = (20 * percent_size)
-            percent_index_50 = (50 * percent_size)
+            percent_size = int(count / 100)
+            percent_index_1 = percent_size
+            percent_index_5 = 5 * percent_size
+            percent_index_20 = 20 * percent_size
+            percent_index_50 = 50 * percent_size
 
             sorted_values = sorted(values, key=lambda s: int(s["abs_amount"]), reverse=True)
 
@@ -73,26 +77,15 @@ def get_result(scope):
             count_20_50_percent = len(sorted_values[percent_index_20:percent_index_50])
             count_50_100_percent = len(sorted_values[percent_index_50:])
 
-            sum_0_1_percent = sum(
-                int(value["abs_amount"])
-                for value in sorted_values[:percent_index_1]
-            )
-            sum_1_5_percent = sum(
-                int(value["abs_amount"])
-                for value in sorted_values[percent_index_1:percent_index_5]
-            )
+            sum_0_1_percent = sum(int(value["abs_amount"]) for value in sorted_values[:percent_index_1])
+            sum_1_5_percent = sum(int(value["abs_amount"]) for value in sorted_values[percent_index_1:percent_index_5])
             sum_5_20_percent = sum(
-                int(value["abs_amount"])
-                for value in sorted_values[percent_index_5:percent_index_20]
+                int(value["abs_amount"]) for value in sorted_values[percent_index_5:percent_index_20]
             )
             sum_20_50_percent = sum(
-                int(value["abs_amount"])
-                for value in sorted_values[percent_index_20:percent_index_50]
+                int(value["abs_amount"]) for value in sorted_values[percent_index_20:percent_index_50]
             )
-            sum_50_100_percent = sum(
-                int(value["abs_amount"])
-                for value in sorted_values[percent_index_50:]
-            )
+            sum_50_100_percent = sum(int(value["abs_amount"]) for value in sorted_values[percent_index_50:])
 
             result["meta"] = {
                 "shares": {
@@ -100,14 +93,14 @@ def get_result(scope):
                     "1_5": sum_1_5_percent / sum_value,
                     "5_20": sum_5_20_percent / sum_value,
                     "20_50": sum_20_50_percent / sum_value,
-                    "50_100": sum_50_100_percent / sum_value
+                    "50_100": sum_50_100_percent / sum_value,
                 },
                 "sums": {
                     "0_1": sum_0_1_percent,
                     "1_5": sum_1_5_percent,
                     "5_20": sum_5_20_percent,
                     "20_50": sum_20_50_percent,
-                    "50_100": sum_50_100_percent
+                    "50_100": sum_50_100_percent,
                 },
                 "counts": {
                     "0_1": count_0_1_percent,
@@ -123,7 +116,7 @@ def get_result(scope):
                     "20_50": sorted_values[percent_index_20:percent_index_50][:10],
                     "50_100": sorted_values[percent_index_50:][:10],
                 },
-                "sum": sum_value
+                "sum": sum_value,
             }
 
             if sum_0_1_percent > (sum_value / 2):

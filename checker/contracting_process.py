@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-import simplejson as json
 import sys
 
 import click
+import simplejson as json
 
-from core.state import phase, set_dataset_state, set_item_state, state
+from contracting_process import processor
+from core.state import phase, set_dataset_state, state
 from settings.settings import get_param
-from tools.db import commit, get_cursor, rollback
+from tools.bootstrap import bootstrap
+from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import consume, publish
-from tools.bootstrap import bootstrap
-from contracting_process import processor
 
 consume_routing_key = "_extractor"
 
@@ -30,7 +30,7 @@ def start(environment):
 def callback(channel, method, properties, body):
     try:
         # parse input message
-        input_message = json.loads(body.decode('utf8'))
+        input_message = json.loads(body.decode("utf8"))
         dataset_id = input_message["dataset_id"]
 
         if "command" not in input_message:
@@ -39,11 +39,14 @@ def callback(channel, method, properties, body):
             logger.info("Processing message for dataset_id {} and items {}".format(dataset_id, item_ids))
 
             # get item from storage
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT data, id, dataset_id
                 FROM data_item
                 WHERE id IN %s;
-                """, (tuple(item_ids),))
+                """,
+                (tuple(item_ids),),
+            )
 
             # perform actual action with items
             processor.do_work(cursor.fetchall())
@@ -58,8 +61,7 @@ def callback(channel, method, properties, body):
         # acknowledge message processing
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
-        logger.exception(
-            "Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()
 
     logger.info("Processing completed.")
@@ -91,5 +93,5 @@ def init_worker(environment):
     logger.info("Contracting process checker initialised")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     start()

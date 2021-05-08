@@ -1,19 +1,17 @@
-
 import functools
 
 import contracting_process.field_level.checks.date_time as date_time
+import contracting_process.field_level.checks.document_description_length as document_description_length
+import contracting_process.field_level.checks.document_format_codelist as document_format_codelist
+import contracting_process.field_level.checks.document_type as document_type
+import contracting_process.field_level.checks.email as email
+import contracting_process.field_level.checks.exists as exists
+import contracting_process.field_level.checks.identifier_scheme as identifier_scheme
 import contracting_process.field_level.checks.language as language
+import contracting_process.field_level.checks.non_empty as non_empty
 import contracting_process.field_level.checks.number_checks as number_checks
 import contracting_process.field_level.checks.ocid_prefix_check as ocid_prefix_check
 import contracting_process.field_level.checks.telephone as telephone
-import contracting_process.field_level.checks.document_description_length as document_description_length
-import contracting_process.field_level.checks.email as email
-import contracting_process.field_level.checks.document_format_codelist as document_format_codelist
-import contracting_process.field_level.checks.identifier_scheme as identifier_scheme
-import contracting_process.field_level.checks.document_type as document_type
-
-import contracting_process.field_level.checks.exists as exists
-import contracting_process.field_level.checks.non_empty as non_empty
 
 coverage_checks = [(exists.calculate, exists.name), (non_empty.calculate, non_empty.name)]
 
@@ -89,7 +87,9 @@ definitions = {
     "planning.budget.source": [],
     "planning.documents": [],
     "planning.documents.id": [],
-    "planning.documents.documentType": [(functools.partial(document_type.calculate_section, section='planning'), document_type.name)],
+    "planning.documents.documentType": [
+        (functools.partial(document_type.calculate_section, section="planning"), document_type.name)
+    ],
     "planning.documents.title": [],
     "planning.documents.description": [(document_description_length.calculate, document_description_length.name)],
     "planning.documents.url": [],
@@ -109,9 +109,13 @@ definitions = {
     "planning.milestones.status": [],
     "planning.milestones.documents": [],
     "planning.milestones.documents.id": [],
-    "planning.milestones.documents.documentType": [(functools.partial(document_type.calculate_section, section='planning'), document_type.name)],
+    "planning.milestones.documents.documentType": [
+        (functools.partial(document_type.calculate_section, section="planning"), document_type.name)
+    ],
     "planning.milestones.documents.title": [],
-    "planning.milestones.documents.description": [(document_description_length.calculate, document_description_length.name)],
+    "planning.milestones.documents.description": [
+        (document_description_length.calculate, document_description_length.name)
+    ],
     "planning.milestones.documents.url": [],
     "planning.milestones.documents.datePublished": [(date_time.calculate, date_time.name)],
     "planning.milestones.documents.dateModified": [(date_time.calculate, date_time.name)],
@@ -234,7 +238,9 @@ definitions = {
     "tender.tenderers.contactPoint.url": [],
     "tender.documents": [],
     "tender.documents.id": [],
-    "tender.documents.documentType": [(functools.partial(document_type.calculate_section, section='tender'), document_type.name)],
+    "tender.documents.documentType": [
+        (functools.partial(document_type.calculate_section, section="tender"), document_type.name)
+    ],
     "tender.documents.title": [],
     "tender.documents.description": [(document_description_length.calculate, document_description_length.name)],
     "tender.documents.url": [],
@@ -254,9 +260,13 @@ definitions = {
     "tender.milestones.status": [],
     "tender.milestones.documents": [],
     "tender.milestones.documents.id": [],
-    "tender.milestones.documents.documentType": [(functools.partial(document_type.calculate_section, section='tender'), document_type.name)],
+    "tender.milestones.documents.documentType": [
+        (functools.partial(document_type.calculate_section, section="tender"), document_type.name)
+    ],
     "tender.milestones.documents.title": [],
-    "tender.milestones.documents.description": [(document_description_length.calculate, document_description_length.name)],
+    "tender.milestones.documents.description": [
+        (document_description_length.calculate, document_description_length.name)
+    ],
     "tender.milestones.documents.url": [],
     "tender.milestones.documents.datePublished": [(date_time.calculate, date_time.name)],
     "tender.milestones.documents.dateModified": [(date_time.calculate, date_time.name)],
@@ -345,7 +355,9 @@ definitions = {
     "awards.contractPeriod.durationInDays": [(number_checks.calculate, number_checks.name)],
     "awards.documents": [],
     "awards.documents.id": [],
-    "awards.documents.documentType": [(functools.partial(document_type.calculate_section, section='award'), document_type.name)],
+    "awards.documents.documentType": [
+        (functools.partial(document_type.calculate_section, section="award"), document_type.name)
+    ],
     "awards.documents.title": [],
     "awards.documents.description": [(document_description_length.calculate, document_description_length.name)],
     "awards.documents.url": [],
@@ -412,7 +424,9 @@ definitions = {
     "contracts.dateSigned": [(date_time.calculate, date_time.name)],
     "contracts.documents": [],
     "contracts.documents.id": [],
-    "contracts.documents.documentType": [(functools.partial(document_type.calculate_section, section='contract'), document_type.name)],
+    "contracts.documents.documentType": [
+        (functools.partial(document_type.calculate_section, section="contract"), document_type.name)
+    ],
     "contracts.documents.title": [],
     "contracts.documents.description": [(document_description_length.calculate, document_description_length.name)],
     "contracts.documents.url": [],
@@ -432,7 +446,9 @@ definitions = {
     "contracts.implementation.transactions.payer.name": [],
     "contracts.implementation.transactions.payer.id": [],
     "contracts.implementation.transactions.payer.identifier": [],
-    "contracts.implementation.transactions.payer.identifier.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
+    "contracts.implementation.transactions.payer.identifier.scheme": [
+        (identifier_scheme.calculate, identifier_scheme.name)
+    ],
     "contracts.implementation.transactions.payer.identifier.id": [],
     "contracts.implementation.transactions.payer.identifier.legalName": [],
     "contracts.implementation.transactions.payer.identifier.uri": [],
@@ -443,7 +459,9 @@ definitions = {
     "contracts.implementation.transactions.payer.address.postalCode": [],
     "contracts.implementation.transactions.payer.address.countryName": [],
     "contracts.implementation.transactions.payer.additionalIdentifiers": [],
-    "contracts.implementation.transactions.payer.additionalIdentifiers.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
+    "contracts.implementation.transactions.payer.additionalIdentifiers.scheme": [
+        (identifier_scheme.calculate, identifier_scheme.name)
+    ],
     "contracts.implementation.transactions.payer.additionalIdentifiers.id": [],
     "contracts.implementation.transactions.payer.additionalIdentifiers.legalName": [],
     "contracts.implementation.transactions.payer.additionalIdentifiers.uri": [],
@@ -457,7 +475,9 @@ definitions = {
     "contracts.implementation.transactions.payee.name": [],
     "contracts.implementation.transactions.payee.id": [],
     "contracts.implementation.transactions.payee.identifier": [],
-    "contracts.implementation.transactions.payee.identifier.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
+    "contracts.implementation.transactions.payee.identifier.scheme": [
+        (identifier_scheme.calculate, identifier_scheme.name)
+    ],
     "contracts.implementation.transactions.payee.identifier.id": [],
     "contracts.implementation.transactions.payee.identifier.legalName": [],
     "contracts.implementation.transactions.payee.identifier.uri": [],
@@ -468,7 +488,9 @@ definitions = {
     "contracts.implementation.transactions.payee.address.postalCode": [],
     "contracts.implementation.transactions.payee.address.countryName": [],
     "contracts.implementation.transactions.payee.additionalIdentifiers": [],
-    "contracts.implementation.transactions.payee.additionalIdentifiers.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
+    "contracts.implementation.transactions.payee.additionalIdentifiers.scheme": [
+        (identifier_scheme.calculate, identifier_scheme.name)
+    ],
     "contracts.implementation.transactions.payee.additionalIdentifiers.id": [],
     "contracts.implementation.transactions.payee.additionalIdentifiers.legalName": [],
     "contracts.implementation.transactions.payee.additionalIdentifiers.uri": [],
@@ -483,12 +505,16 @@ definitions = {
     "contracts.implementation.transactions.amount.amount": [],
     "contracts.implementation.transactions.currency": [],
     "contracts.implementation.transactions.providerOrganization": [],
-    "contracts.implementation.transactions.providerOrganization.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
+    "contracts.implementation.transactions.providerOrganization.scheme": [
+        (identifier_scheme.calculate, identifier_scheme.name)
+    ],
     "contracts.implementation.transactions.providerOrganization.id": [],
     "contracts.implementation.transactions.providerOrganization.legalName": [],
     "contracts.implementation.transactions.providerOrganization.uri": [],
     "contracts.implementation.transactions.receiverOrganization": [],
-    "contracts.implementation.transactions.receiverOrganization.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
+    "contracts.implementation.transactions.receiverOrganization.scheme": [
+        (identifier_scheme.calculate, identifier_scheme.name)
+    ],
     "contracts.implementation.transactions.receiverOrganization.id": [],
     "contracts.implementation.transactions.receiverOrganization.legalName": [],
     "contracts.implementation.transactions.receiverOrganization.uri": [],
@@ -505,7 +531,7 @@ definitions = {
     "contracts.implementation.milestones.documents": [],
     "contracts.implementation.milestones.documents.id": [],
     "contracts.implementation.milestones.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section='implementation'), document_type.name)
+        (functools.partial(document_type.calculate_section, section="implementation"), document_type.name)
     ],
     "contracts.implementation.milestones.documents.title": [],
     "contracts.implementation.milestones.documents.description": [
@@ -514,15 +540,19 @@ definitions = {
     "contracts.implementation.milestones.documents.url": [],
     "contracts.implementation.milestones.documents.datePublished": [(date_time.calculate, date_time.name)],
     "contracts.implementation.milestones.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "contracts.implementation.milestones.documents.format": [(document_format_codelist.calculate, document_format_codelist.name)],
+    "contracts.implementation.milestones.documents.format": [
+        (document_format_codelist.calculate, document_format_codelist.name)
+    ],
     "contracts.implementation.milestones.documents.language": [(language.calculate, language.name)],
     "contracts.implementation.documents": [],
     "contracts.implementation.documents.id": [],
     "contracts.implementation.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section='implementation'), document_type.name)
+        (functools.partial(document_type.calculate_section, section="implementation"), document_type.name)
     ],
     "contracts.implementation.documents.title": [],
-    "contracts.implementation.documents.description": [(document_description_length.calculate, document_description_length.name)],
+    "contracts.implementation.documents.description": [
+        (document_description_length.calculate, document_description_length.name)
+    ],
     "contracts.implementation.documents.url": [],
     "contracts.implementation.documents.datePublished": [(date_time.calculate, date_time.name)],
     "contracts.implementation.documents.dateModified": [(date_time.calculate, date_time.name)],
@@ -548,10 +578,12 @@ definitions = {
     "contracts.milestones.documents": [],
     "contracts.milestones.documents.id": [],
     "contracts.milestones.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section='contract'), document_type.name)
+        (functools.partial(document_type.calculate_section, section="contract"), document_type.name)
     ],
     "contracts.milestones.documents.title": [],
-    "contracts.milestones.documents.description": [(document_description_length.calculate, document_description_length.name)],
+    "contracts.milestones.documents.description": [
+        (document_description_length.calculate, document_description_length.name)
+    ],
     "contracts.milestones.documents.url": [],
     "contracts.milestones.documents.datePublished": [(date_time.calculate, date_time.name)],
     "contracts.milestones.documents.dateModified": [(date_time.calculate, date_time.name)],
@@ -584,5 +616,5 @@ definitions = {
     "relatedProcesses.title": [],
     "relatedProcesses.scheme": [],
     "relatedProcesses.identifier": [],
-    "relatedProcesses.uri": []
+    "relatedProcesses.uri": [],
 }

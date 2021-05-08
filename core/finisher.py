@@ -1,29 +1,19 @@
 #!/usr/bin/env python
+import sys
+
 import click
 import simplejson as json
-import sys
-from datetime import datetime
-
-from dataset import meta_data_aggregator
-from settings.settings import get_param
-from tools.logging_helper import get_logger
-from tools.db import commit
-from tools.db import get_cursor
-from tools.db import rollback
-from tools.rabbit import consume
-from tools.rabbit import publish
-from core.state import state
-from core.state import phase
-from core.state import set_dataset_state
-from core.state import get_processed_items_count
-from core.state import get_total_items_count
-from core.state import get_dataset
-from time_variance import processor
-from tools.bootstrap import bootstrap
-import contracting_process.resource_level.report as resource_level_report
-import contracting_process.resource_level.examples as resource_level_examples
 
 import contracting_process.field_level.report_examples as field_level_report_examples
+import contracting_process.resource_level.examples as resource_level_examples
+import contracting_process.resource_level.report as resource_level_report
+from core.state import phase, set_dataset_state, state
+from dataset import meta_data_aggregator
+from settings.settings import get_param
+from tools.bootstrap import bootstrap
+from tools.db import commit, get_cursor
+from tools.logging_helper import get_logger
+from tools.rabbit import consume
 
 consume_routing_key = "_time_variance_checker"
 
@@ -41,7 +31,7 @@ def start(environment):
 def callback(channel, method, properties, body):
     try:
         # read and parse message
-        input_message = json.loads(body.decode('utf8'))
+        input_message = json.loads(body.decode("utf8"))
         dataset_id = input_message["dataset_id"]
 
         # creating reports and examples
@@ -51,7 +41,11 @@ def callback(channel, method, properties, body):
         logger.info("Resource level checks examples for dataset_id {} are being picked".format(dataset_id))
         resource_level_examples.create(dataset_id)
 
-        logger.info("Field level checks report for dataset_id {} is being calculated and examples are being picked".format(dataset_id))
+        logger.info(
+            "Field level checks report for dataset_id {} is being calculated and examples are being picked".format(
+                dataset_id
+            )
+        )
         field_level_report_examples.create(dataset_id)
 
         # adding final meta data for current dataset
@@ -69,8 +63,7 @@ def callback(channel, method, properties, body):
 
         channel.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
-        logger.exception(
-            "Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()
 
 
@@ -86,5 +79,5 @@ def init_worker(environment):
     logger.debug("Finisher worker started.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     start()

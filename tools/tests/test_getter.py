@@ -5,46 +5,13 @@ item = {
     "tender": {
         "id": "0rw29R-005-2011-1",
         "items": [
-            {
-                "unit": {"name": "Unidad"},
-                "quantity": 4.0,
-                "inner_list": [{"aaa": "bbb"}, {"aaa": "ccc"}]
-            },
-            {
-                "quantity": 5.0,
-                "inner_list": [{"aaa": "ddd"}, {"aaa": "eee"}]
-            },
-            {
-                "unit": {"name": "Unimom"},
-                "quantity": 5.0,
-                "inner_list": [{"aaa": "ddd"}, {"aaa": "eee"}]
-            },
+            {"unit": {"name": "Unidad"}, "quantity": 4.0, "inner_list": [{"aaa": "bbb"}, {"aaa": "ccc"}]},
+            {"quantity": 5.0, "inner_list": [{"aaa": "ddd"}, {"aaa": "eee"}]},
+            {"unit": {"name": "Unimom"}, "quantity": 5.0, "inner_list": [{"aaa": "ddd"}, {"aaa": "eee"}]},
         ],
-        "milestones": [
-            {
-                "status": None
-            }
-        ]
+        "milestones": [{"status": None}],
     },
-    "contracts": [
-        {
-            "documents": [
-                {
-                    "id": 0
-                },
-                {
-                    "id": 1
-                }
-            ]
-        },
-        {
-            "documents": [
-                {
-                    "id": 2
-                }
-            ]
-        }
-    ]
+    "contracts": [{"documents": [{"id": 0}, {"id": 1}]}, {"documents": [{"id": 2}]}],
 }
 
 
@@ -61,11 +28,11 @@ def test_get_value_simple():
 
     result = get_values(item, "tender.ids")
     assert type(result) is list
-    assert(len(result)) == 0
+    assert (len(result)) == 0
 
     result = get_values(item, "tender.ids", value_only=True)
     assert type(result) is list
-    assert(len(result)) == 0
+    assert (len(result)) == 0
 
 
 def test_get_value_lists():
@@ -104,10 +71,17 @@ def test_join():
         {"path": "tender.items[1].inner_list[0].aaa", "value": "ddd"},
         {"path": "tender.items[1].inner_list[1].aaa", "value": "eee"},
         {"path": "tender.items[2].inner_list[0].aaa", "value": "ddd"},
-        {"path": "tender.items[2].inner_list[1].aaa", "value": "eee"}]
+        {"path": "tender.items[2].inner_list[1].aaa", "value": "eee"},
+    ]
 
-    assert get_values(item, "tender.items.inner_list.aaa", value_only=True) == \
-        ["bbb", "ccc", "ddd", "eee", "ddd", "eee"]
+    assert get_values(item, "tender.items.inner_list.aaa", value_only=True) == [
+        "bbb",
+        "ccc",
+        "ddd",
+        "eee",
+        "ddd",
+        "eee",
+    ]
 
     assert get_values(item, "tender.items.inner_list") == [
         {"path": "tender.items[0].inner_list[0]", "value": {"aaa": "bbb"}},
@@ -115,66 +89,48 @@ def test_join():
         {"path": "tender.items[1].inner_list[0]", "value": {"aaa": "ddd"}},
         {"path": "tender.items[1].inner_list[1]", "value": {"aaa": "eee"}},
         {"path": "tender.items[2].inner_list[0]", "value": {"aaa": "ddd"}},
-        {"path": "tender.items[2].inner_list[1]", "value": {"aaa": "eee"}}]
+        {"path": "tender.items[2].inner_list[1]", "value": {"aaa": "eee"}},
+    ]
 
-    assert get_values(item, "tender.items.inner_list", value_only=True) == \
-        [{"aaa": "bbb"}, {"aaa": "ccc"}, {"aaa": "ddd"}, {"aaa": "eee"}, {"aaa": "ddd"}, {"aaa": "eee"}]
+    assert get_values(item, "tender.items.inner_list", value_only=True) == [
+        {"aaa": "bbb"},
+        {"aaa": "ccc"},
+        {"aaa": "ddd"},
+        {"aaa": "eee"},
+        {"aaa": "ddd"},
+        {"aaa": "eee"},
+    ]
 
 
 def test_end_of_path():
     result = get_values(item, "tender")
     assert type(result) is list
-    assert result == [
-        {
-            "path": "tender",
-            "value": item["tender"]
-        }
-    ]
+    assert result == [{"path": "tender", "value": item["tender"]}]
 
     result = get_values(item, "tender", value_only=True)
     assert type(result) is list
-    assert result == [
-        item["tender"]
-    ]
+    assert result == [item["tender"]]
 
     result = get_values(item, "tender.items")
     assert type(result) is list
     assert len(result) == 3
     assert result == [
-        {
-            "path": "tender.items[0]",
-            "value": item["tender"]["items"][0]
-        },
-        {
-            "path": "tender.items[1]",
-            "value": item["tender"]["items"][1]
-        },
-        {
-            "path": "tender.items[2]",
-            "value": item["tender"]["items"][2]
-        }
+        {"path": "tender.items[0]", "value": item["tender"]["items"][0]},
+        {"path": "tender.items[1]", "value": item["tender"]["items"][1]},
+        {"path": "tender.items[2]", "value": item["tender"]["items"][2]},
     ]
 
     result = get_values(item, "tender.items", value_only=True)
     assert type(result) is list
     assert len(result) == 3
-    assert result == [
-        item["tender"]["items"][0],
-        item["tender"]["items"][1],
-        item["tender"]["items"][2]
-    ]
+    assert result == [item["tender"]["items"][0], item["tender"]["items"][1], item["tender"]["items"][2]]
 
 
 def test_indexing():
     result = get_values(item, "tender.items[0]")
     assert type(result) is list
     assert len(result) == 1
-    assert result == [
-        {
-            "path": "tender.items[0]",
-            "value": item["tender"]["items"][0]
-        }
-    ]
+    assert result == [{"path": "tender.items[0]", "value": item["tender"]["items"][0]}]
 
     result = get_values(item, "tender.items[0]", value_only=True)
     assert type(result) is list
@@ -185,33 +141,19 @@ def test_indexing():
     assert type(result) is list
     assert len(result) == 2
     assert result == [
-        {
-            "path": "contracts[0].documents[0]",
-            "value": item["contracts"][0]["documents"][0]
-        },
-        {
-            "path": "contracts[1].documents[0]",
-            "value": item["contracts"][1]["documents"][0]
-        }
+        {"path": "contracts[0].documents[0]", "value": item["contracts"][0]["documents"][0]},
+        {"path": "contracts[1].documents[0]", "value": item["contracts"][1]["documents"][0]},
     ]
 
     result = get_values(item, "contracts.documents[0]", value_only=True)
     assert type(result) is list
     assert len(result) == 2
-    assert result == [
-        item["contracts"][0]["documents"][0],
-        item["contracts"][1]["documents"][0]
-    ]
+    assert result == [item["contracts"][0]["documents"][0], item["contracts"][1]["documents"][0]]
 
     result = get_values(item, "contracts.documents[1]")
     assert type(result) is list
     assert len(result) == 1
-    assert result == [
-        {
-            "path": "contracts[0].documents[1]",
-            "value": item["contracts"][0]["documents"][1]
-        }
-    ]
+    assert result == [{"path": "contracts[0].documents[1]", "value": item["contracts"][0]["documents"][1]}]
 
     result = get_values(item, "contracts.documents[1]", value_only=True)
     assert type(result) is list
@@ -222,49 +164,23 @@ def test_indexing():
     assert type(result) is list
     assert len(result) == 2
     assert result == [
-        {
-            "path": "contracts[0].documents[0]",
-            "value": item["contracts"][0]["documents"][0]
-        },
-        {
-            "path": "contracts[0].documents[1]",
-            "value": item["contracts"][0]["documents"][1]
-        }
+        {"path": "contracts[0].documents[0]", "value": item["contracts"][0]["documents"][0]},
+        {"path": "contracts[0].documents[1]", "value": item["contracts"][0]["documents"][1]},
     ]
 
     result = get_values(item, "contracts[0].documents", value_only=True)
     assert type(result) is list
     assert len(result) == 2
-    assert result == [
-        item["contracts"][0]["documents"][0],
-        item["contracts"][0]["documents"][1]
-    ]
+    assert result == [item["contracts"][0]["documents"][0], item["contracts"][0]["documents"][1]]
 
 
 def test_none_value():
     result = get_values(item, "tender.milestones.status")
     assert type(result) is list
     assert len(result) == 1
-    assert result == [
-        {
-            "path": "tender.milestones[0].status",
-            "value": item["tender"]["milestones"][0]["status"]
-        }
-    ]
+    assert result == [{"path": "tender.milestones[0].status", "value": item["tender"]["milestones"][0]["status"]}]
 
     result = get_values(item, "tender.milestones.status", value_only=True)
     assert type(result) is list
     assert len(result) == 1
     assert result == [item["tender"]["milestones"][0]["status"]]
-
-
-
-
-
-
-
-
-
-
-
-

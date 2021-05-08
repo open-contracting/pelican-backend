@@ -16,7 +16,7 @@ def calculate(item):
         ["tender.tenderPeriod.endDate", "contracts.dateSigned"],
         ["contracts.dateSigned", "date"],
         ["tender.tenderPeriod.endDate", "awards.date"],
-        ["awards.date", "date"]
+        ["awards.date", "date"],
     ]
 
     failed_paths = []
@@ -38,12 +38,14 @@ def calculate(item):
                             result["application_count"] = result["application_count"] + 1
 
                             if first_date > second_date:
-                                failed_paths.append({
-                                    "path_1": first_date_item["path"],
-                                    "value_1": first_date_item["value"],
-                                    "path_2": second_date_item["path"],
-                                    "value_2": second_date_item["value"],
-                                })
+                                failed_paths.append(
+                                    {
+                                        "path_1": first_date_item["path"],
+                                        "value_1": first_date_item["value"],
+                                        "path_2": second_date_item["path"],
+                                        "value_2": second_date_item["value"],
+                                    }
+                                )
                             else:
                                 result["pass_count"] = result["pass_count"] + 1
 
@@ -66,12 +68,14 @@ def calculate(item):
                         result["application_count"] = result["application_count"] + 1
 
                         if first_date > second_date:
-                            failed_paths.append({
-                                "path_1": first_date_item["path"],
-                                "value_1": first_date_item["value"],
-                                "path_2": second_date_item["path"],
-                                "value_2": second_date_item["value"],
-                            })
+                            failed_paths.append(
+                                {
+                                    "path_1": first_date_item["path"],
+                                    "value_1": first_date_item["value"],
+                                    "path_2": second_date_item["path"],
+                                    "value_2": second_date_item["value"],
+                                }
+                            )
                         else:
                             result["pass_count"] = result["pass_count"] + 1
 
@@ -88,8 +92,7 @@ def calculate(item):
 
                 contracts = get_values(item, "contracts")
                 for contract in contracts:
-                    if "awardID" in contract["value"] and \
-                            "dateSigned" in contract["value"]:
+                    if "awardID" in contract["value"] and "dateSigned" in contract["value"]:
                         contract_id = contract["value"]["awardID"]
                         contract_date = parse_date(contract["value"]["dateSigned"])
 
@@ -99,12 +102,14 @@ def calculate(item):
                         result["application_count"] = result["application_count"] + 1
 
                         if award_date > contract_date:
-                            failed_paths.append({
-                                "path_1": "{}.date".format(award["path"]),
-                                "value_1": award["value"]["date"],
-                                "path_2": "{}.dateSigned".format(contract["path"]),
-                                "value_2": contract["value"]["dateSigned"],
-                            })
+                            failed_paths.append(
+                                {
+                                    "path_1": "{}.date".format(award["path"]),
+                                    "value_1": award["value"]["date"],
+                                    "path_2": "{}.dateSigned".format(contract["path"]),
+                                    "value_2": contract["value"]["dateSigned"],
+                                }
+                            )
                         else:
                             result["pass_count"] = result["pass_count"] + 1
 
@@ -116,9 +121,7 @@ def calculate(item):
 
     if result["application_count"] > result["pass_count"]:
         result["result"] = False
-        result["meta"] = {
-            "failed_paths": failed_paths
-        }
+        result["meta"] = {"failed_paths": failed_paths}
     else:
         result["result"] = True
 
