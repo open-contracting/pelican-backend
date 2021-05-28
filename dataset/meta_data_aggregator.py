@@ -164,32 +164,43 @@ def get_kingfisher_meta_data(collection_id):
     # kingfisher metadata #
     #######################
     meta_data["kingfisher_metadata"] = {}
+
+    # Select whole chain of ascendants of the given child (inclusive). This child must be last in the chain.
     kf_cursor.execute(
         """
-        SELECT c.id, c.store_start_at, a.store_end_at
-        FROM collection AS a
-        INNER JOIN collection AS b ON a.transform_from_collection_id = b.id
-        INNER JOIN collection AS c ON b.transform_from_collection_id = c.id
-        AND a.id = %s
-        LIMIT 1;
+        WITH RECURSIVE tree(id, parent, root, deep) AS (
+            SELECT c.id, c.transform_from_collection_id AS parent, c.id AS root, 1 AS deep
+            FROM collection c
+            LEFT JOIN collection c2 ON (c2.transform_from_collection_id = c.id)
+            WHERE c2 IS NULL
+        UNION ALL
+            SELECT c.id, c.transform_from_collection_id, t.root, t.deep + 1
+            FROM collection c, tree t
+            WHERE c.id = t.parent
+        )
+        SELECT c.id, c.store_start_at, c.store_end_at
+        FROM tree t
+        JOIN collection c on (t.id = c.id)
+        WHERE t.root = %s
+        ORDER BY deep ASC;
         """,
         (collection_id,),
     )
-    result = kf_cursor.fetchone()
+    result = kf_cursor.fetchall()
 
     if result is None:
         return meta_data
 
     meta_data["kingfisher_metadata"]["collection_id"] = collection_id
-    if result[1]:
-        meta_data["kingfisher_metadata"]["processing_start"] = result[1].strftime(DATETIME_STR_FORMAT)
-    if result[2]:
-        meta_data["kingfisher_metadata"]["processing_end"] = result[2].strftime(DATETIME_STR_FORMAT)
+    # store_start_at of the last record in the chain by deep (first parent)
+    meta_data["kingfisher_metadata"]["processing_start"] = result[-1][1].strftime(DATETIME_STR_FORMAT)
+    # store_end_at of the first record in the chain by deep (last child)
+    meta_data["kingfisher_metadata"]["processing_end"] = result[0][2].strftime(DATETIME_STR_FORMAT)
 
     ##########################################
     # retrieving additional database entries #
     ##########################################
-    proprietary_id = result[0]
+    proprietary_id = result[-1][0]
     with_collection = None
     package_data = None
 
