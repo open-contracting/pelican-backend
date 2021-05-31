@@ -114,6 +114,9 @@ def callback(channel, method, properties, body):
             meta_data = meta_data_aggregator.get_kingfisher_meta_data(collection_id)
             meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
+            logger.debug("Ack message befiore starting potentialy long data load.")
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+
             # batch initialization
             max_batch_size = get_param("extractor_max_batch_size")
             batch_size = 0
@@ -183,8 +186,6 @@ def callback(channel, method, properties, body):
             # resend messages
             dataset_id = input_message["dataset_id"]
             resend(dataset_id)
-
-        channel.basic_ack(delivery_tag=method.delivery_tag)
 
     except Exception:
         logger.exception("Something went wrong when processing {}".format(body))
