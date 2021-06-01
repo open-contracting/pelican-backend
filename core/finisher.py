@@ -13,7 +13,7 @@ from settings.settings import get_param
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import consume
+from tools.rabbit import ack, consume
 
 consume_routing_key = "_time_variance_checker"
 
@@ -28,7 +28,7 @@ def start(environment):
     return
 
 
-def callback(channel, method, properties, body):
+def callback(connection, channel, delivery_tag, body):
     try:
         # read and parse message
         input_message = json.loads(body.decode("utf8"))
@@ -58,10 +58,7 @@ def callback(channel, method, properties, body):
         logger.info("All the work done for dataset_id {}".format(dataset_id))
         commit()
 
-        # perform finish actions
-        # send mails etc.
-
-        channel.basic_ack(delivery_tag=method.delivery_tag)
+        ack(connection, channel, delivery_tag)
     except Exception:
         logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()

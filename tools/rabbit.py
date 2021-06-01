@@ -1,3 +1,6 @@
+import functools
+import threading
+
 import pika
 
 from settings.settings import CustomLogLevels, get_param
@@ -40,6 +43,7 @@ def connect():
             heartbeat=0,
         )
     )
+
     global channel
     channel = connection.channel()
 
@@ -49,19 +53,43 @@ def connect():
     connected = True
     logger.info("RabbitMQ connection established")
 
+    return connection
 
-def consume(callback, routing_key):
+
+def consume(target_callback, routing_key):
     if not connected:
-        connect()
+        connection = connect()
 
-    channel.queue_declare(queue=routing_key, durable=True)
+        channel.queue_declare(queue=routing_key, durable=True)
 
-    channel.queue_bind(exchange=get_param("exchange_name"), queue=routing_key, routing_key=routing_key)
+        channel.queue_bind(exchange=get_param("exchange_name"), queue=routing_key, routing_key=routing_key)
 
-    channel.basic_qos(prefetch_count=1)
-    channel.basic_consume(queue=routing_key, on_message_callback=callback)
+        channel.basic_qos(prefetch_count=1)
+
+        on_message_callback = functools.partial(on_message, args=(connection, target_callback))
+        channel.basic_consume(queue=routing_key, on_message_callback=on_message_callback)
+
+        channel.start_consuming()
 
     logger.debug(
         "Consuming messages from exchange {} with routing key {}".format(get_param("exchange_name"), routing_key)
     )
-    channel.start_consuming()
+
+
+def on_message(channel, method_frame, header_frame, body, args):
+    (connection, target_callback) = args
+    delivery_tag = method_frame.delivery_tag
+    t = threading.Thread(target=target_callback, args=(connection, channel, delivery_tag, body))
+    t.start()
+
+
+def ack(connection, channel, delivery_tag):
+    logger.debug(
+        "ACK message from channel {} with delivery tag {}".format(channel, delivery_tag)
+    )
+    cb = functools.partial(ack_message, channel, delivery_tag)
+    connection.add_callback_threadsafe(cb)
+
+
+def ack_message(channel, delivery_tag):
+    channel.basic_ack(delivery_tag)

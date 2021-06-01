@@ -10,7 +10,7 @@ from settings.settings import get_param
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import consume, publish
+from tools.rabbit import ack, consume, publish
 
 consume_routing_key = "_contracting_process_checker"
 
@@ -27,7 +27,7 @@ def start(environment):
     return
 
 
-def callback(channel, method, properties, body):
+def callback(connection, channel, delivery_tag, body):
     try:
         # parse input message
         input_message = json.loads(body.decode("utf8"))
@@ -37,24 +37,24 @@ def callback(channel, method, properties, body):
         # optimization when resending
         if dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:
             logger.info("Checks have been already calculated for this dataset.")
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+            ack(connection, channel, delivery_tag)
             return
 
         if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.DATASET:
             # lets do nothing, calculations is already in progress
             logger.info("Other worker probably already started with the job. Doing nothing.")
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+            ack(connection, channel, delivery_tag)
             return
 
         if dataset["phase"] == phase.TIME_VARIANCE or dataset["phase"] == phase.CHECKED:
             logger.info("Checks have been already calculated for this dataset.")
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+            ack(connection, channel, delivery_tag)
             return
 
         if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.CONTRACTING_PROCESS:
             # contracting process is not done yet
             logger.info("Not all messages have been processed by contracting process.")
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+            ack(connection, channel, delivery_tag)
             return
 
         processed_count = get_processed_items_count(dataset_id)
@@ -70,7 +70,7 @@ def callback(channel, method, properties, body):
             )
 
             logger.info("Not all messages have been processed by contracting process.")
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+            ack(connection, channel, delivery_tag)
             return
 
         if (
@@ -110,7 +110,7 @@ def callback(channel, method, properties, body):
             )
             sys.exit()
 
-        channel.basic_ack(delivery_tag=method.delivery_tag)
+        ack(connection, channel, delivery_tag)
     except Exception:
         logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()

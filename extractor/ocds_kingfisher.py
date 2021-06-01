@@ -13,7 +13,7 @@ from tools import exchange_rates_db
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import consume, publish
+from tools.rabbit import ack, consume, publish
 
 consume_routing_key = "_ocds_kingfisher_extractor_init"
 
@@ -40,7 +40,7 @@ def start(environment):
     return
 
 
-def callback(channel, method, properties, body):
+def callback(connection, channel, delivery_tag, body):
     # fixer io update
     if get_param("fixer_io_update"):
         exchange_rates_db.update_from_fixer_io()
@@ -114,9 +114,6 @@ def callback(channel, method, properties, body):
             meta_data = meta_data_aggregator.get_kingfisher_meta_data(collection_id)
             meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
-            logger.debug("Ack message befiore starting potentialy long data load.")
-            channel.basic_ack(delivery_tag=method.delivery_tag)
-
             # batch initialization
             max_batch_size = get_param("extractor_max_batch_size")
             batch_size = 0
@@ -187,6 +184,7 @@ def callback(channel, method, properties, body):
             dataset_id = input_message["dataset_id"]
             resend(dataset_id)
 
+        ack(connection, channel, delivery_tag)
     except Exception:
         logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()

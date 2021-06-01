@@ -10,7 +10,7 @@ from time_variance import processor
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import consume, publish
+from tools.rabbit import ack, consume, publish
 
 consume_routing_key = "_dataset_checker"
 
@@ -27,7 +27,7 @@ def start(environment):
     return
 
 
-def callback(channel, method, properties, body):
+def callback(connection, channel, delivery_tag, body):
     try:
         # read and parse message
         input_message = json.loads(body.decode("utf8"))
@@ -50,7 +50,7 @@ def callback(channel, method, properties, body):
         message = {"dataset_id": dataset_id}
         publish(json.dumps(message), get_param("exchange_name") + routing_key)
 
-        channel.basic_ack(delivery_tag=method.delivery_tag)
+        ack(connection, channel, delivery_tag)
     except Exception:
         logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()

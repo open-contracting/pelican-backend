@@ -11,7 +11,7 @@ from settings.settings import get_param
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import consume, publish
+from tools.rabbit import ack, consume, publish
 
 consume_routing_key = "_dataset_filter_extractor_init"
 routing_key = "_extractor"
@@ -43,7 +43,7 @@ def start(environment):
 #     },
 #     "max_items": 5000
 # }
-def callback(channel, method, properties, body):
+def callback(connection, channel, delivery_tag, body):
     try:
         input_message = json.loads(body.decode("utf8"))
 
@@ -56,7 +56,7 @@ def callback(channel, method, properties, body):
             or len(input_message["filter_message"]) == 0
         ):
             logger.warning("Input message is malformed, will be dropped.")
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+            ack(connection, channel, delivery_tag)
             return
 
         dataset_id_original = input_message["dataset_id_original"]
@@ -86,7 +86,7 @@ def callback(channel, method, properties, body):
             logger.warning(
                 "Dataset with dataset_id {} does not exist or cannot be filtered.".format(dataset_id_original)
             )
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+            ack(connection, channel, delivery_tag)
             return
 
         logger.info("Creating row in dataset table for filtered dataset")
@@ -207,7 +207,8 @@ def callback(channel, method, properties, body):
                 dataset_id_original, dataset_id_filtered
             )
         )
-        channel.basic_ack(delivery_tag=method.delivery_tag)
+
+        ack(connection, channel, delivery_tag)
 
     except Exception:
         logger.exception("Something went wrong when processing {}".format(body))
