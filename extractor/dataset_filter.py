@@ -191,7 +191,7 @@ def callback(connection, channel, delivery_tag, body):
                 batch.append(inserted_id)
                 if batch_size >= max_batch_size or items_inserted == items_count:
                     message = {"item_ids": batch, "dataset_id": dataset_id_filtered}
-                    publish(json.dumps(message), get_param("exchange_name") + routing_key)
+                    publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
 
                     batch_size = 0
                     batch.clear()

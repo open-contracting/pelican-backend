@@ -99,7 +99,7 @@ def callback(connection, channel, delivery_tag, body):
 
             # send message for a next phase
             message = {"dataset_id": dataset_id}
-            publish(json.dumps(message), get_param("exchange_name") + routing_key)
+            publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
 
         else:
             logger.exception(

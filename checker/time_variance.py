@@ -48,7 +48,7 @@ def callback(connection, channel, delivery_tag, body):
 
         # send messages into next phases
         message = {"dataset_id": dataset_id}
-        publish(json.dumps(message), get_param("exchange_name") + routing_key)
+        publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
 
         ack(connection, channel, delivery_tag)
     except Exception:

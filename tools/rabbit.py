@@ -10,7 +10,15 @@ global connected
 connected = False
 
 
-def publish(message, routing_key):
+def publish(connection, channel, message, routing_key):
+    logger.debug(
+        "Publish message from channel {} with routing_key {}".format(channel, routing_key)
+    )
+    cb = functools.partial(publish_message, channel, message, routing_key)
+    connection.add_callback_threadsafe(cb)
+
+
+def publish_message(channel, message, routing_key):
     if not connected:
         connect()
     channel.basic_publish(
@@ -40,7 +48,7 @@ def connect():
             port=get_param("rabbit_port"),
             credentials=credentials,
             blocked_connection_timeout=1800,
-            heartbeat=0,
+            heartbeat=100,
         )
     )
 

@@ -41,7 +41,7 @@ def start(environment, name, collection_id, ancestor_id, max_items):
         "ancestor_id": ancestor_id,
         "max_items": max_items,
     }
-    publish(json.dumps(message), get_param("exchange_name") + routing_key)
+    publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
 
     return
 

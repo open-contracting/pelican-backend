@@ -55,7 +55,7 @@ def callback(connection, channel, delivery_tag, body):
 
             # send message to next phase
             message = {"dataset_id": dataset_id}
-            publish(json.dumps(message), get_param("exchange_name") + routing_key)
+            publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
         else:
             resend(dataset_id)
         # acknowledge message processing
@@ -76,7 +76,7 @@ def resend(dataset_id):
     commit()
 
     message = {"dataset_id": dataset_id}
-    publish(json.dumps(message), get_param("exchange_name") + routing_key)
+    publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
 
     logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
 
