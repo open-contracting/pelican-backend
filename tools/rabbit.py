@@ -18,6 +18,12 @@ def publish(connection, channel, message, routing_key):
     connection.add_callback_threadsafe(cb)
 
 
+def connect_and_publish_message(message, routing_key):
+    connection = connect()
+    channel = connection.channel()
+    publish_message(channel, message, routing_key)
+
+
 def publish_message(channel, message, routing_key):
     if not connected:
         connect()

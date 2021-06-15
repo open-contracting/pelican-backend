@@ -57,7 +57,7 @@ def callback(connection, channel, delivery_tag, body):
             message = {"dataset_id": dataset_id}
             publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
         else:
-            resend(dataset_id)
+            resend(connection, channel, dataset_id)
         # acknowledge message processing
         ack(connection, channel, delivery_tag)
     except Exception:
@@ -67,7 +67,7 @@ def callback(connection, channel, delivery_tag, body):
     logger.info("Processing completed.")
 
 
-def resend(dataset_id):
+def resend(connection, channel, dataset_id):
     logger.info("Resending messages for dataset_id {} started".format(dataset_id))
 
     # mark dataset as done

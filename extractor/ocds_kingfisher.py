@@ -182,7 +182,7 @@ def callback(connection, channel, delivery_tag, body):
         else:
             # resend messages
             dataset_id = input_message["dataset_id"]
-            resend(dataset_id)
+            resend(connection, channel, dataset_id)
 
         ack(connection, channel, delivery_tag)
     except Exception:
@@ -190,7 +190,7 @@ def callback(connection, channel, delivery_tag, body):
         sys.exit()
 
 
-def resend(dataset_id):
+def resend(connection, channel, dataset_id):
     logger.info("Resending messages for dataset_id {} started".format(dataset_id))
     cursor.execute(
         """

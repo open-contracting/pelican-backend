@@ -13,7 +13,7 @@ from settings.settings import get_param
 from tools.bootstrap import bootstrap
 from tools.db import get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import publish
+from tools.rabbit import connect_and_publish_message
 
 
 @click.command()
@@ -41,7 +41,7 @@ def start(environment, name, collection_id, ancestor_id, max_items):
         "ancestor_id": ancestor_id,
         "max_items": max_items,
     }
-    publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
+    connect_and_publish_message(json.dumps(message), get_param("exchange_name") + routing_key)
 
     return
 
