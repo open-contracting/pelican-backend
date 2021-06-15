@@ -23,7 +23,7 @@ jobs:
       - run: curl -s -S --retry 3 $BASEDIR/tests/script.sh | bash -
       - run: shellcheck $(shfmt -f .)
       - run: shfmt -d -i 4 -sr $(shfmt -f .)
-      - run: pip install -r requirements.txt black==20.8b1
+      - run: pip install -r requirements.txt black
       - run: black --check .
       - run: pip install -r requirements_dev.txt
       - run: pytest /tmp/test_requirements.py
