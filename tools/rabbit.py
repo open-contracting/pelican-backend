@@ -11,9 +11,7 @@ connected = False
 
 
 def publish(connection, channel, message, routing_key):
-    logger.debug(
-        "Publish message from channel {} with routing_key {}".format(channel, routing_key)
-    )
+    logger.debug("Publish message from channel {} with routing_key {}".format(channel, routing_key))
     cb = functools.partial(publish_message, channel, message, routing_key)
     connection.add_callback_threadsafe(cb)
 
@@ -98,9 +96,7 @@ def on_message(channel, method_frame, header_frame, body, args):
 
 
 def ack(connection, channel, delivery_tag):
-    logger.debug(
-        "ACK message from channel {} with delivery tag {}".format(channel, delivery_tag)
-    )
+    logger.debug("ACK message from channel {} with delivery tag {}".format(channel, delivery_tag))
     cb = functools.partial(ack_message, channel, delivery_tag)
     connection.add_callback_threadsafe(cb)
 
