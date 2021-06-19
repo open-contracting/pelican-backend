@@ -1,0 +1,41 @@
+version: "2.2"
+services:
+  ocds_extractor:
+    image: "ghcr.io/open-contracting/pelican-backend:latest"
+    command: "extractor.ocds_kingfisher docker"
+    network_mode: "host"
+    env_file:
+      - dqt.env
+    restart: unless-stopped
+    scale: 4
+  contracting_process_1:
+    image: "ghcr.io/open-contracting/pelican-backend:latest"
+    command: "checker.contracting_process docker"
+    network_mode: "host"
+    env_file:
+      - dqt.env
+    restart: unless-stopped
+    scale: 4
+  dataset:
+    image: "ghcr.io/open-contracting/pelican-backend:latest"
+    command: "checker.dataset docker"
+    network_mode: "host"
+    env_file:
+      - dqt.env
+    restart: unless-stopped
+    scale: 4
+  time_variance:
+    image: "ghcr.io/open-contracting/pelican-backend:latest"
+    command: "checker.time_variance docker"
+    network_mode: "host"
+    env_file:
+      - dqt.env
+    restart: unless-stopped
+    scale: 4
+  finisher:
+    image: "ghcr.io/open-contracting/pelican-backend:latest"
+    command: "core.finisher docker"
+    env_file:
+      - dqt.env
+    network_mode: "host"
+    restart: unless-stopped
