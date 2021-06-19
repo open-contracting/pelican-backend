@@ -39,14 +39,32 @@ config_data = {
         "currency_converter_extrapolation": os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION"),
         "currency_converter_interpolation_max_days_fallback": os.getenv(
             "CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK"
-        ),  # noqa: E501
+        ),
         "currency_converter_extrapolation_max_days_fallback": os.getenv(
             "CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK"
-        ),  # noqa: E501
+        ),
         "fixer_io_api_key": os.getenv("FIXER_IO_API_KEY"),
         "fixer_io_update": os.getenv("FIXER_IO_UPDATE", "1").lower() in ("1", "true", "y", "yes"),
         "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
-    }
+    },
+    "test": {
+        "log_level": logging.DEBUG,
+        "log_filename": "/tmp/dqt_test1.log",
+        "host": "localhost",
+        "user": "dqt",
+        "password": "dqt",
+        "port": "5432",
+        "db": "dqt",
+        "schema": "development, postgis, public",
+        "currency_converter_data_source": "test",
+        "currency_converter_interpolation": "linear",
+        "currency_converter_extrapolation": "closest",
+        "currency_converter_interpolation_max_days_fallback": 90,
+        "currency_converter_extrapolation_max_days_fallback": 180,
+        "fixer_io_api_key": "key",
+        "fixer_io_update": False,
+        "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
+    },
 }
 
 
