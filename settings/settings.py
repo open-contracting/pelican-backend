@@ -27,22 +27,22 @@ config_data = {
         "rabbit_port": os.getenv("RABBIT_PORT"),
         "rabbit_username": os.getenv("RABBIT_USERNAME"),
         "rabbit_password": os.getenv("RABBIT_PASSWORD"),
-        "extractor_max_batch_size": os.getenv("EXTRACTOR_MAX_BATCH_SIZE"),
+        "extractor_max_batch_size": int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE")),
         "kf_extractor_host": os.getenv("KF_EXTRACTOR_HOST"),
         "kf_extractor_user": os.getenv("KF_EXTRACTOR_USER"),
         "kf_extractor_password": os.getenv("KF_EXTRACTOR_PASSWORD"),
         "kf_extractor_port": os.getenv("KF_EXTRACTOR_PORT"),
         "kf_extractor_db": os.getenv("KF_EXTRACTOR_DB"),
-        "kf_extractor_max_size": os.getenv("KF_EXTRACTOR_MAX_SIZE"),
+        "kf_extractor_max_size": int(os.getenv("KF_EXTRACTOR_MAX_SIZE")),
         "currency_converter_data_source": os.getenv("CURRENCY_CONVERTER_DATA_SOURCE"),
         "currency_converter_interpolation": os.getenv("CURRENCY_CONVERTER_INTERPOLATION"),
         "currency_converter_extrapolation": os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION"),
-        "currency_converter_interpolation_max_days_fallback": os.getenv(
+        "currency_converter_interpolation_max_days_fallback": int(os.getenv(
             "CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK"
-        ),
-        "currency_converter_extrapolation_max_days_fallback": os.getenv(
+        )),
+        "currency_converter_extrapolation_max_days_fallback": int(os.getenv(
             "CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK"
-        ),
+        )),
         "fixer_io_api_key": os.getenv("FIXER_IO_API_KEY"),
         "fixer_io_update": os.getenv("FIXER_IO_UPDATE", "1").lower() in ("1", "true", "y", "yes"),
         "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
