@@ -303,16 +303,16 @@ def get_kingfisher_meta_data(collection_id):
         (collection_id,),
     )
     result = kf_cursor.fetchone()
-    meta_data["collection_metadata"]["published_from"] = (
-        parse_datetime(result[0]).strftime(DATETIME_STR_FORMAT)
-        if (result is not None and result[0] is not None)
-        else None
-    )
-    meta_data["collection_metadata"]["published_to"] = (
-        parse_datetime(result[1]).strftime(DATETIME_STR_FORMAT)
-        if (result is not None and result[1] is not None)
-        else None
-    )
+
+    if result and result[0] and parse_datetime(result[0]):
+        meta_data["collection_metadata"]["published_from"] = parse_datetime(result[0]).strftime(DATETIME_STR_FORMAT)
+    else:
+        meta_data["collection_metadata"]["published_from"] = None
+
+    if result and result[1] and parse_datetime(result[1]):
+        meta_data["collection_metadata"]["published_to"] = parse_datetime(result[1]).strftime(DATETIME_STR_FORMAT)
+    else:
+        meta_data["collection_metadata"]["published_to"] = None
 
     return meta_data
 
