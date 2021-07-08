@@ -42,6 +42,7 @@ jobs:
       - name: Build container image
         uses: docker/build-push-action@v2
         with:
+          context: .
           push: true
           file: docker/dqt/Dockerfile
           tags: |
