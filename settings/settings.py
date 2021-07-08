@@ -46,6 +46,8 @@ config_data = {
         "fixer_io_api_key": os.getenv("FIXER_IO_API_KEY"),
         "fixer_io_update": os.getenv("FIXER_IO_UPDATE", "1").lower() in ("1", "true", "y", "yes"),
         "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
+        "sentry_dns": os.getenv("SENTRY_DNS", False),
+        "sentry_sample_rate": os.getenv("SENTRY_SAMPLE_RATE", 1.0),
     },
     "test": {
         "log_level": logging.DEBUG,

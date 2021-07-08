@@ -1,3 +1,5 @@
+import sentry_sdk
+
 import tools.exchange_rates_db
 import tools.exchange_rates_test
 from settings.settings import get_param, set_environment
@@ -7,6 +9,12 @@ from tools.logging_helper import init_logger
 
 def bootstrap(environment, logger_name):
     set_environment(environment)
+
+    if get_param("sentry_dns"):
+        sentry_sdk.init(
+            get_param("sentry_dns"),
+            traces_sample_rate=get_param("sentry_sample_rate"),
+        )
 
     init_logger(logger_name)
 

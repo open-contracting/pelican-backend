@@ -8,3 +8,4 @@ requests
 shortuuid
 simplejson
 validate_email
+sentry-sdk
