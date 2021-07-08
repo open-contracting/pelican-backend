@@ -66,6 +66,8 @@ config_data = {
         "fixer_io_api_key": "key",
         "fixer_io_update": False,
         "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
+        "sentry_dns": os.getenv("SENTRY_DNS", False),
+        "sentry_sample_rate": os.getenv("SENTRY_SAMPLE_RATE", 1.0),
     },
 }
 
