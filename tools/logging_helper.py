@@ -44,13 +44,13 @@ def init_logger(logger_name):
 
     if get_param("sentry_dns"):
         sentry_logging = LoggingIntegration(
-            level=logging.INFO,        # Capture info and above as breadcrumbs
-            event_level=logging.ERROR  # Send errors as events
+            level=logging.INFO,  # Capture info and above as breadcrumbs
+            event_level=logging.ERROR,  # Send errors as events
         )
 
         sentry_sdk.init(
             dsn="https://5ca8ca8fb3c145e3bd160ff77ab5af1f@o288126.ingest.sentry.io/5823905",
-            integrations=[sentry_logging]
+            integrations=[sentry_logging],
         )
 
     global initialized
