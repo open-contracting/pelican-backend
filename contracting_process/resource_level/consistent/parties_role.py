@@ -8,14 +8,6 @@ author: Iaroslav Kolodka, Lucie Procházková
 
 """
 
-testing_roles = {
-    "supplier": "awards.suppliers",
-    "tenderer": "tender.tenderers",
-    "procuringEntity": "tender.procuringEntity",
-    "payer": "contracts.implementation.transactions.payer",
-    "payee": "contracts.implementation.transactions.payee",
-}
-
 
 def calculate(item, role, path) -> dict:
     """Method is designed to test items from parties on existing refereced items.

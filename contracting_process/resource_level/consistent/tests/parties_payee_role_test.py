@@ -12,7 +12,15 @@ The file contain tests for a 'function contracting_process.resource_level.consis
 
 """
 
-version = "1.0"
+version = "1.1"
+
+testing_roles = {
+    "supplier": "awards.suppliers",
+    "tenderer": "tender.tenderers",
+    "procuringEntity": "tender.procuringEntity",
+    "payer": "contracts.implementation.transactions.payer",
+    "payee": "contracts.implementation.transactions.payee",
+}
 
 item_with_no_correct_parties = {
     "parties": [
@@ -70,8 +78,9 @@ incorrect_item_with_no_payee = {
 def test_on_inaction():
     expecting_result = get_empty_result_resource(version)
     expecting_result["reason"] = "There are no parties with set role and id"
-    result = calculate(item_with_no_correct_parties)
-    assert expecting_result == result
+    for role in testing_roles:
+        result = calculate(item_with_no_correct_parties, role, testing_roles[role])
+        assert expecting_result == result
 
 
 def test_with_correct_input():
@@ -84,7 +93,7 @@ def test_with_correct_input():
     expecting_result["meta"]["references"] = [
         {"party_path": "parties[0]", "examined_role": "payee", "resource_identification": "010101-a01010"}
     ]
-    result = calculate(correct_item_with_payee)
+    result = calculate(correct_item_with_payee, role="payee", path=testing_roles["payee"])
     assert expecting_result == result
 
 
@@ -98,7 +107,7 @@ def test_with_incorrect_input():
     expecting_result1["meta"]["references"] = [
         {"party_path": "parties[0]", "examined_role": "payee", "resource_identification": "010101-a01010"}
     ]
-    result1 = calculate(incorrect_item_with_payee)
+    result1 = calculate(incorrect_item_with_payee, role="payee", path=testing_roles["payee"])
     assert expecting_result1 == result1
     expecting_result2 = get_empty_result_resource(version)
     expecting_result2["result"] = False
@@ -109,5 +118,5 @@ def test_with_incorrect_input():
     expecting_result2["meta"]["references"] = [
         {"party_path": "parties[0]", "examined_role": "payee", "resource_identification": "010101-a01010"}
     ]
-    result2 = calculate(incorrect_item_with_no_payee)
+    result2 = calculate(incorrect_item_with_no_payee, role="payee", path=testing_roles["payee"])
     assert expecting_result2 == result2
