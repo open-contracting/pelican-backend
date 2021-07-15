@@ -29,7 +29,21 @@ definitions = {
     "consistent.number_of_tenderers": number_of_tenderers.calculate,
     "consistent.tender_value": tender_value.calculate,
     "consistent.contracts_value": contracts_value.calculate,
-    "consistent.parties_roles": parties_role.calculate,
+    "consistent.supplier_referenced": functools.partial(
+        parties_role.calculate, path="awards.suppliers", role="supplier"
+    ),
+    "consistent.tenderer_referenced": functools.partial(
+        parties_role.calculate, path="tender.tenderers", role="tenderer"
+    ),
+    "consistent.procuringEntity_referenced": functools.partial(
+        parties_role.calculate, path="tender.procuringEntity", role="procuringEntity"
+    ),
+    "consistent.payer_referenced": functools.partial(
+        parties_role.calculate, path="contracts.implementation.transactions.payer", role="payer"
+    ),
+    "consistent.payee_referenced": functools.partial(
+        parties_role.calculate, path="contracts.implementation.transactions.payee", role="payee"
+    ),
     "consistent.supplier_in_parties_roles": functools.partial(
         roles.calculate_path_role, path="awards.suppliers", role="supplier"
     ),

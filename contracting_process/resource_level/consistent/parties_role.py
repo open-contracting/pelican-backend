@@ -1,10 +1,10 @@
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
 
-version = "1.0"
+version = "1.1"
 
 """
-author: Iaroslav Kolodka
+author: Iaroslav Kolodka, Lucie Procházková
 
 """
 
@@ -17,10 +17,10 @@ testing_roles = {
 }
 
 
-def calculate(item) -> dict:
+def calculate(item, role, path) -> dict:
     """Method is designed to test items from parties on existing refereced items.
 
-    Paramtertes
+    Parameters
     ------------
     item: dict
         testing JSON
@@ -46,23 +46,21 @@ def calculate(item) -> dict:
         if "value" in party and party["value"]:
             party_value = party["value"]
             if "roles" in party_value and party_value["roles"] and "id" in party_value and party_value["id"]:
-                for role in party_value["roles"]:
-                    if role in testing_roles.keys():
-                        party_item = {"role": role, "id": party_value["id"], "path": party["path"]}
-                        parties_roles.append(party_item)
+                if role in party_value["roles"]:
+                    party_item = {"role": role, "id": party_value["id"], "path": party["path"]}
+                    parties_roles.append(party_item)
 
     if not parties_roles:
         result["reason"] = "There are no parties with set role and id"
         return result
 
     items_from_paths = []
-    for role_name, role_path in testing_roles.items():
-        found_items = []
-        found_items += get_values(item, role_path)
-        for elem in found_items:
-            if "value" in elem and "id" in elem["value"]:
-                elem_box = {"id": elem["value"]["id"], "role": role_name}
-                items_from_paths.append(elem_box)
+    found_items = []
+    found_items += get_values(item, path)
+    for elem in found_items:
+        if "value" in elem and "id" in elem["value"]:
+            elem_box = {"id": elem["value"]["id"], "role": role}
+            items_from_paths.append(elem_box)
 
     passed = None
     pass_count = 0
@@ -72,7 +70,6 @@ def calculate(item) -> dict:
         if not result["meta"] or "references" not in result["meta"]:
             result["meta"] = {"references": []}
         passed = False
-        role = None
         for referenced_item in items_from_paths:
             if str(referenced_item["id"]) == str(party["id"]) and referenced_item["role"] == party["role"]:
                 passed = True
