@@ -69,7 +69,12 @@ def calculate(item, role, path) -> dict:
         application_count += 1
         pass_count = pass_count + 1 if passed else pass_count
         result["meta"]["references"].append(
-            {"party_path": party["path"], "examined_role": party["role"], "resource_identification": party["id"]}
+            {
+                "party_path": party["path"],
+                "examined_role": party["role"],
+                "resource_identification": party["id"],
+                "result": passed,
+            }
         )
 
     result["application_count"] = application_count
