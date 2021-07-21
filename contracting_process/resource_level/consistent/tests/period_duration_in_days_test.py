@@ -9,13 +9,61 @@ item_test_undefined = {
 
 
 def test_undefined():
-    result = calculate({})
+    result = calculate({}, "tender.tenderPeriod")
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no values with check-specific properties"}
 
-    result = calculate(item_test_undefined)
+    result = calculate({}, "tender.contractPeriod")
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+
+    result = calculate({}, "tender.enquiryPeriod")
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+
+    result = calculate({}, "awards.contractPeriod")
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+
+    result = calculate({}, "contracts.period")
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+
+    result = calculate(item_test_undefined, "tender.tenderPeriod")
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+
+    result = calculate(item_test_undefined, "tender.contractPeriod")
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+
+    result = calculate(item_test_undefined, "tender.enquiryPeriod")
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+
+    result = calculate(item_test_undefined, "awards.contractPeriod")
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+
+    result = calculate(item_test_undefined, "contracts.period")
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
@@ -73,25 +121,34 @@ item_test_passed3 = {
 
 
 def test_passed():
-    result = calculate(item_test_passed1)
+    result = calculate(item_test_passed1, "awards.contractPeriod")
     assert result["result"] is True
-    assert result["application_count"] == 3
-    assert result["pass_count"] == 3
+    assert result["application_count"] == 1
+    assert result["pass_count"] == 1
     assert result["meta"] == {
         "periods": [
             {"path": "awards[0].contractPeriod", "result": True},
+        ]
+    }
+
+    result = calculate(item_test_passed1, "contracts.period")
+    assert result["result"] is True
+    assert result["application_count"] == 2
+    assert result["pass_count"] == 2
+    assert result["meta"] == {
+        "periods": [
             {"path": "contracts[0].period", "result": True},
             {"path": "contracts[1].period", "result": True},
         ]
     }
 
-    result = calculate(item_test_passed2)
+    result = calculate(item_test_passed2, "tender.enquiryPeriod")
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
     assert result["meta"] == {"periods": [{"path": "tender.enquiryPeriod", "result": True}]}
 
-    result = calculate(item_test_passed3)
+    result = calculate(item_test_passed3, "tender.enquiryPeriod")
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
@@ -129,13 +186,22 @@ item_test_failed = {
 
 
 def test_failed():
-    result = calculate(item_test_failed)
+    result = calculate(item_test_failed, "awards.contractPeriod")
     assert result["result"] is False
-    assert result["application_count"] == 3
-    assert result["pass_count"] == 1
+    assert result["application_count"] == 1
+    assert result["pass_count"] == 0
     assert result["meta"] == {
         "periods": [
             {"path": "awards[0].contractPeriod", "result": False},
+        ]
+    }
+
+    result = calculate(item_test_failed, "contracts.period")
+    assert result["result"] is False
+    assert result["application_count"] == 2
+    assert result["pass_count"] == 1
+    assert result["meta"] == {
+        "periods": [
             {"path": "contracts[0].period", "result": False},
             {"path": "contracts[1].period", "result": True},
         ]
