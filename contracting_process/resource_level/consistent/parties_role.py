@@ -16,6 +16,11 @@ def calculate(item, role, path) -> dict:
     ------------
     item: dict
         testing JSON
+    role: string
+        testing role
+    path:
+        path to the tested role
+
 
     Returns
     -----------
@@ -28,6 +33,7 @@ def calculate(item, role, path) -> dict:
                 "party_path": identification of a resource,
                 "examined_role": party role that was examined
                 "resource_identification" - identification of a resource
+                "result" - result for this particular role
         }
 
     """

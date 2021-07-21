@@ -7,19 +7,35 @@ from tools.helpers import parse_datetime
 version = 1.0
 
 
-def calculate(item):
+def calculate(item, path):
+    """Method is designed to test items for correct periods - if period duration is consistent with start and enddate.
+
+    Parameters
+    ------------
+    item: dict
+        testing JSON
+    path:
+        path to the tested period
+
+
+    Returns
+    -----------
+    result: dict
+        {
+            "result" - if successed
+            "application_count" - application count
+            "pass_count" - pass count
+            "meta" -
+                "periods" -
+                    "path"  - path to the tested role
+                    "result" - if successed
+        }
+
+    """
+
     result = get_empty_result_resource(version)
 
-    period_paths = [
-        "tender.tenderPeriod",
-        "tender.enquiryPeriod",
-        "tender.awardPeriod",
-        "tender.contractPeriod",
-        "awards.contractPeriod",
-        "contracts.period",
-    ]
-
-    periods = [period for path in period_paths for period in get_values(item, path)]
+    periods = [period for period in get_values(item, path)]
 
     result["application_count"] = 0
     result["pass_count"] = 0

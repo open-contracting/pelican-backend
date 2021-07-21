@@ -61,7 +61,24 @@ definitions = {
         roles.calculate_path_role, path="contracts.implementation.transactions.payee", role="payee"
     ),
     "consistent.contracts_implementation_transactions_value": contracts_implementation_transactions_value.calculate,
-    "consistent.period_duration_in_days": period_duration_in_days.calculate,
+    "consistent.period_duration_in_days_tender": functools.partial(
+        period_duration_in_days.calculate, path="tender.tenderPeriod"
+    ),
+    "consistent.period_duration_in_days_enquiry": functools.partial(
+        period_duration_in_days.calculate, path="tender.enquiryPeriod"
+    ),
+    "consistent.period_duration_in_days_award": functools.partial(
+        period_duration_in_days.calculate, path="tender.awardPeriod"
+    ),
+    "consistent.period_duration_in_days_contract": functools.partial(
+        period_duration_in_days.calculate, path="tender.contractPeriod"
+    ),
+    "consistent.period_duration_in_days_award_contract": functools.partial(
+        period_duration_in_days.calculate, path="awards.contractPeriod"
+    ),
+    "consistent.period_duration_in_days_contracts": functools.partial(
+        period_duration_in_days.calculate, path="contracts.period"
+    ),
     "consistent.supplier_name_in_parties": functools.partial(org_ref_name.calculate, path="awards.suppliers"),
     "consistent.tenderer_name_in_parties": functools.partial(org_ref_name.calculate, path="tender.tenderers"),
     "consistent.buyer_name_in_parties": functools.partial(org_ref_name.calculate, path="buyer"),
