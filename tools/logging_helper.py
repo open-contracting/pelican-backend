@@ -49,7 +49,7 @@ def init_logger(logger_name):
         )
 
         sentry_sdk.init(
-            dsn="https://5ca8ca8fb3c145e3bd160ff77ab5af1f@o288126.ingest.sentry.io/5823905",
+            dsn=get_param("sentry_dns"),
             integrations=[sentry_logging],
         )
 
