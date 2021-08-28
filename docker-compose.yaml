@@ -40,9 +40,9 @@ services:
     network_mode: "host"
     restart: unless-stopped
   wiper:
-      image: "ghcr.io/open-contracting/pelican-backend:latest"
-      command: "core.wiper docker"
-      env_file:
-        - dqt.env
-      network_mode: "host"
-      restart: unless-stopped
+    image: "ghcr.io/open-contracting/pelican-backend:latest"
+    command: "core.wiper docker"
+    env_file:
+      - dqt.env
+    network_mode: "host"
+    restart: unless-stopped
