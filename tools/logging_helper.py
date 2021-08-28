@@ -42,14 +42,14 @@ def init_logger(logger_name):
     logger.addHandler(fh)
     logger.addHandler(ch)
 
-    if get_param("sentry_dns"):
+    if get_param("sentry_dsn"):
         sentry_logging = LoggingIntegration(
             level=logging.INFO,  # Capture info and above as breadcrumbs
             event_level=logging.ERROR,  # Send errors as events
         )
 
         sentry_sdk.init(
-            dsn=get_param("sentry_dns"),
+            dsn=get_param("sentry_dsn"),
             integrations=[sentry_logging],
         )
 
