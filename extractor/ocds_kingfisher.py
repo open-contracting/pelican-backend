@@ -55,15 +55,7 @@ def callback(connection, channel, delivery_tag, body):
 
             logger.info("Reading kingfisher data started. name: {} collection_id: {}".format(name, collection_id))
 
-            kf_connection = psycopg2.connect(
-                "host='{}' dbname='{}' user='{}' password='{}' port ='{}'".format(
-                    get_param("kf_extractor_host"),
-                    get_param("kf_extractor_db"),
-                    get_param("kf_extractor_user"),
-                    get_param("kf_extractor_password"),
-                    get_param("kf_extractor_port"),
-                )
-            )
+            kf_connection = psycopg2.connect(get_param("kingfisher_process_database_url"))
 
             kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
             logger.info("King fisher DB connection established")
@@ -78,7 +70,7 @@ def callback(connection, channel, delivery_tag, body):
                     WHERE compiled_release.collection_id = %s
                     AND pg_column_size(data.data) < %s;
                     """,
-                    (collection_id, get_param("kf_extractor_max_size")),
+                    (collection_id, get_param("kingfisher_process_max_size")),
                 )
             else:
                 kf_cursor.execute(
@@ -91,7 +83,7 @@ def callback(connection, channel, delivery_tag, body):
                     AND pg_column_size(data.data) < %s
                     LIMIT %s;
                     """,
-                    (collection_id, get_param("kf_extractor_max_size"), max_items),
+                    (collection_id, get_param("kingfisher_process_max_size"), max_items),
                 )
 
             result = kf_cursor.fetchall()

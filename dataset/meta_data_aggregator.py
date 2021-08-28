@@ -146,15 +146,7 @@ DATETIME_STR_FORMAT = "%Y-%m-%d %H.%M.%S"
 
 
 def get_kingfisher_meta_data(collection_id):
-    kf_connection = psycopg2.connect(
-        "host='{}' dbname='{}' user='{}' password='{}' port ='{}'".format(
-            get_param("kf_extractor_host"),
-            get_param("kf_extractor_db"),
-            get_param("kf_extractor_user"),
-            get_param("kf_extractor_password"),
-            get_param("kf_extractor_port"),
-        )
-    )
+    kf_connection = psycopg2.connect(get_param("kingfisher_process_database_url"))
 
     kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
