@@ -14,7 +14,7 @@ environment = None
 
 config_data = {
     "docker": {
-        "log_level": logging.DEBUG,
+        "log_level": logging.WARNING,
         "log_filename": os.getenv("LOG_FILENAME"),
         "database_url": os.getenv("DATABASE_URL"),
         "schema": os.getenv("SCHEMA"),
