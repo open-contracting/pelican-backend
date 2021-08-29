@@ -1,5 +1,6 @@
 import functools
 import threading
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 import pika
 
@@ -44,22 +45,16 @@ def connect():
     global logger
     logger = get_logger()
     logger.debug("Connecting to RabbitMQ...")
-    credentials = pika.PlainCredentials(get_param("rabbit_username"), get_param("rabbit_password"))
 
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(
-            host=get_param("rabbit_host"),
-            port=get_param("rabbit_port"),
-            credentials=credentials,
-            blocked_connection_timeout=1800,
-            heartbeat=100,
-        )
-    )
+    parsed = urlsplit(get_param("rabbit_url"))
+    query = parse_qs(parsed.query)
+    query.update({"blocked_connection_timeout": 1800, "heartbeat": 100})
+
+    connection = pika.BlockingConnection(pika.URLParameters(parsed._replace(query=urlencode(query)).geturl()))
 
     global channel
     channel = connection.channel()
-
-    channel.exchange_declare(exchange=get_param("exchange_name"), durable="true", exchange_type="direct")
+    channel.exchange_declare(exchange=get_param("exchange_name"), durable=True, exchange_type="direct")
 
     global connected
     connected = True
