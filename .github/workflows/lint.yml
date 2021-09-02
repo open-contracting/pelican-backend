@@ -23,4 +23,4 @@ jobs:
       - run: pip install -r requirements.txt black
       - run: black --check .
       - run: pip install -r requirements_dev.txt
-      - run: pytest /tmp/test_requirements.py
+      - run: STANDARD_MAINTENANCE_SCRIPTS_IGNORE=psycopg2 pytest /tmp/test_requirements.py
