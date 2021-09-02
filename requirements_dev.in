@@ -5,5 +5,6 @@ flake8
 isort
 pip-tools
 pre-commit
+psycopg2-binary
 pytest
 pytest-cov
