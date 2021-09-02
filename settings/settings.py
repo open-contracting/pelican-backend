@@ -33,7 +33,6 @@ config_data = {
             os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", "18")
         ),
         "fixer_io_api_key": os.getenv("FIXER_IO_API_KEY"),
-        "fixer_io_update": os.getenv("FIXER_IO_UPDATE", "1").lower() in ("1", "true", "y", "yes"),
         "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
         "sentry_dsn": os.getenv("SENTRY_DSN", False),
         "sentry_sample_rate": os.getenv("SENTRY_SAMPLE_RATE", 1.0),
@@ -48,8 +47,7 @@ config_data = {
         "currency_converter_extrapolation": "closest",
         "currency_converter_interpolation_max_days_fallback": 90,
         "currency_converter_extrapolation_max_days_fallback": 180,
-        "fixer_io_api_key": "key",
-        "fixer_io_update": False,
+        "fixer_io_api_key": None,
         "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
         "sentry_dsn": os.getenv("SENTRY_DSN", False),
         "sentry_sample_rate": os.getenv("SENTRY_SAMPLE_RATE", 1.0),

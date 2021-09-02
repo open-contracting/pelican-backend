@@ -30,8 +30,7 @@ cursor = None
 def start(environment):
     init_worker(environment)
 
-    # fixer io update
-    if get_param("fixer_io_update"):
+    if get_param("fixer_io_api_key"):
         exchange_rates_db.update_from_fixer_io()
 
     consume(callback, get_param("exchange_name") + consume_routing_key)
@@ -40,8 +39,7 @@ def start(environment):
 
 
 def callback(connection, channel, delivery_tag, body):
-    # fixer io update
-    if get_param("fixer_io_update"):
+    if get_param("fixer_io_api_key"):
         exchange_rates_db.update_from_fixer_io()
 
     try:
