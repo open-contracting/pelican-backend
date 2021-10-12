@@ -19,7 +19,9 @@ def load():
         """
     )
 
-    return cursor.fetchall()
+    all_rates = cursor.fetchall()
+    cursor.close()
+    return all_rates
 
 
 def update_from_fixer_io():
@@ -275,6 +277,7 @@ def update_from_fixer_io():
 
         target_date += timedelta(days=1)
 
+    cursor.close()
     logger.info("Exchange rates update finished.")
 
 

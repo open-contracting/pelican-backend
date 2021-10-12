@@ -306,6 +306,9 @@ def get_kingfisher_meta_data(collection_id):
     else:
         meta_data["collection_metadata"]["published_to"] = None
 
+    kf_cursor.close()
+    kf_connection.close()
+
     return meta_data
 
 
@@ -330,6 +333,8 @@ def get_dqt_meta_data(dataset_id):
     meta_data["data_quality_tool_metadata"]["processing_start"] = row[0].strftime(DATETIME_STR_FORMAT)
     meta_data["data_quality_tool_metadata"]["processing_end"] = row[1].strftime(DATETIME_STR_FORMAT)
 
+    cursor.close()
+
     return meta_data
 
 
@@ -343,3 +348,5 @@ def update_meta_data(meta_data, dataset_id):
         """,
         (json.dumps(meta_data), dataset_id),
     )
+
+    cursor.close()

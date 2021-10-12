@@ -185,6 +185,8 @@ def save_field_level_checks(result_items, items_count):
 
     get_logger().debug("Field level checks saved.")
 
+    cursor.close()
+
 
 # result_item: (result, item_id, dataset_id)
 def save_resource_level_check(result_items, items_count):
@@ -198,5 +200,7 @@ def save_resource_level_check(result_items, items_count):
     """
 
     execute_values(cursor, sql, result_items, page_size=items_count)
+
+    cursor.close()
 
     get_logger().debug("Resource level checks saved.")

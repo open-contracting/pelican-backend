@@ -22,8 +22,6 @@ page_size = 1000
 
 logger = None
 
-cursor = None
-
 
 @click.command()
 @click.argument("environment")
@@ -41,7 +39,7 @@ def start(environment):
 def callback(connection, channel, delivery_tag, body):
     if get_param("fixer_io_api_key"):
         exchange_rates_db.update_from_fixer_io()
-
+    cursor = get_cursor()
     try:
         input_message = json.loads(body.decode("utf8"))
 
@@ -171,7 +169,8 @@ def callback(connection, channel, delivery_tag, body):
                 )
 
             logger.info("All items with dataset_id {} have been downloaded".format(dataset_id))
-
+            kf_cursor.close()
+            kf_connection.close()
         else:
             # resend messages
             dataset_id = input_message["dataset_id"]
@@ -180,9 +179,12 @@ def callback(connection, channel, delivery_tag, body):
     except Exception:
         logger.exception("Something went wrong when processing {}".format(body))
         ack(connection, channel, delivery_tag)
+    finally:
+        cursor.close()
 
 
 def resend(connection, channel, dataset_id):
+    cursor = get_cursor()
     logger.info("Resending messages for dataset_id {} started".format(dataset_id))
     cursor.execute(
         """
@@ -220,6 +222,7 @@ def resend(connection, channel, dataset_id):
             batch_size = 0
             batch.clear()
 
+    cursor.close()
     logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
 
 
@@ -228,9 +231,6 @@ def init_worker(environment):
 
     global logger
     logger = get_logger()
-
-    global cursor
-    cursor = get_cursor()
 
     logger.debug("OCDS Kingfisher extractor initialized.")
 

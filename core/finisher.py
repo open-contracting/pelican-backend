@@ -11,7 +11,7 @@ from core.state import phase, set_dataset_state, state
 from dataset import meta_data_aggregator
 from settings.settings import get_param
 from tools.bootstrap import bootstrap
-from tools.db import commit, get_cursor
+from tools.db import commit
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume
 
@@ -69,9 +69,6 @@ def init_worker(environment):
 
     global logger
     logger = get_logger()
-
-    global cursor
-    cursor = get_cursor()
 
     logger.debug("Finisher worker started.")
 

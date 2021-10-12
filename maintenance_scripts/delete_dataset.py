@@ -16,7 +16,6 @@ def run(environment, dataset_id, force):
     global logger
     logger = get_logger()
 
-    global cursor
     cursor = get_cursor()
 
     logger.info("Script initialized")
@@ -183,6 +182,7 @@ def run(environment, dataset_id, force):
         )
         commit()
 
+    cursor.close()
     logger.info("Successful deletion executed.")
 
 

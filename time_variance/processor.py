@@ -133,6 +133,8 @@ def do_work(dataset_id):
         result = get_result(scope[plugin_name], plugin.version)
         save_time_variance_level_check(plugin_name, result, dataset_id)
 
+    cursor.close()
+
     return
 
 
