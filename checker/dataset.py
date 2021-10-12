@@ -8,7 +8,7 @@ from core.state import get_dataset, get_processed_items_count, get_total_items_c
 from dataset import processor
 from settings.settings import get_param
 from tools.bootstrap import bootstrap
-from tools.db import commit, get_cursor
+from tools.db import commit
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume, publish
 
@@ -28,6 +28,7 @@ def start(environment):
 
 
 def callback(connection, channel, delivery_tag, body):
+
     try:
         # parse input message
         input_message = json.loads(body.decode("utf8"))
@@ -121,9 +122,6 @@ def init_worker(environment):
 
     global logger
     logger = get_logger()
-
-    global cursor
-    cursor = get_cursor()
 
     logger.debug("Dataset checker started.")
 

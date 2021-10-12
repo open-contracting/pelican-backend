@@ -61,6 +61,7 @@ def set_dataset_state(dataset_id, state, phase, size=None):
         get_logger().log(
             CustomLogLevels.STATE_TRACE, "Dataset state set to: state = {}, phase = {}.".format(state, phase)
         )
+    cursor.close()
 
 
 def set_item_state(dataset_id, item_id, state):
@@ -83,7 +84,7 @@ def set_item_state(dataset_id, item_id, state):
                        """,
         (dataset_id, item_id, state, state),
     )
-
+    cursor.close()
     get_logger().log(CustomLogLevels.STATE_TRACE, "Item state set to: state = {}.".format(state))
 
 
@@ -107,7 +108,7 @@ def get_processed_items_count(dataset_id):
     )
 
     result = cursor.fetchone()
-
+    cursor.close()
     return result["cnt"]
 
 
@@ -130,7 +131,7 @@ def get_total_items_count(dataset_id):
     )
 
     result = cursor.fetchone()
-
+    cursor.close()
     return result["size"]
 
 
@@ -153,5 +154,5 @@ def get_dataset(dataset_id):
     )
 
     result = cursor.fetchone()
-
+    cursor.close()
     return result

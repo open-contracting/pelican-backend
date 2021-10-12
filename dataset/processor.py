@@ -65,6 +65,8 @@ def do_work(dataset_id, logger):
 
         logger.info("Processed page {}".format(pager))
 
+        cursor.close()
+
     if no_item_processed:
         logger.info("No item with dataset_id {} found. Skipping dataset checks computation.".format(dataset_id))
         return
@@ -99,3 +101,5 @@ def save_dataset_level_check(check_name, result, dataset_id):
         """,
         (check_name, result["result"], result["value"], meta, dataset_id),
     )
+
+    cursor.close()

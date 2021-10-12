@@ -24,6 +24,9 @@ def start(environment):
 
 
 def callback(connection, channel, delivery_tag, body):
+
+    cursor = get_cursor()
+
     try:
         # read and parse message
         input_message = json.loads(body.decode("utf8"))
@@ -45,6 +48,8 @@ def callback(connection, channel, delivery_tag, body):
     except Exception:
         logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()
+    finally:
+        cursor.close()
 
 
 def init_worker(environment):
@@ -52,9 +57,6 @@ def init_worker(environment):
 
     global logger
     logger = get_logger()
-
-    global cursor
-    cursor = get_cursor()
 
     logger.debug("Wiper worker started.")
 

@@ -17,7 +17,6 @@ consume_routing_key = "_dataset_filter_extractor_init"
 routing_key = "_extractor"
 page_size = 1000
 logger = None
-cursor = None
 
 
 @click.command()
@@ -44,6 +43,8 @@ def start(environment):
 #     "max_items": 5000
 # }
 def callback(connection, channel, delivery_tag, body):
+
+    cursor = get_cursor()
     try:
         input_message = json.loads(body.decode("utf8"))
 
@@ -213,6 +214,8 @@ def callback(connection, channel, delivery_tag, body):
     except Exception:
         logger.exception("Something went wrong when processing {}".format(body))
         sys.exit()
+    finally:
+        cursor.close()
 
 
 def init_worker(environment):
@@ -220,12 +223,6 @@ def init_worker(environment):
 
     global logger
     logger = get_logger()
-
-    global cursor
-    cursor = get_cursor()
-
-    global connection
-    connection = get_cursor()
 
     logger.debug("Dataset filter extractor initialized.")
 

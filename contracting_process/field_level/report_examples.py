@@ -249,3 +249,5 @@ def create(dataset_id):
             [dataset_id, path, json.dumps(path_checks)],
         )
     commit()
+
+    cursor.close()

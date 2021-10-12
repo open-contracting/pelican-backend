@@ -70,3 +70,5 @@ def create(dataset_id):
             [dataset_id, check_name, json.dumps(data)],
         )
     commit()
+
+    cursor.close()

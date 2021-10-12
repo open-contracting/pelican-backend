@@ -12,6 +12,12 @@ def get_cursor():
     logger = get_logger()
     if not connected:
         connect()
+    cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    logger.info("DB connection established")
+    schema = get_param("schema")
+    logger.debug("Setting schema to {}".format(schema))
+    cursor.execute("SET search_path to {};".format(schema))
+
     return cursor
 
 
@@ -27,20 +33,8 @@ def connect():
     logger.debug("Connecting to db...")
     global connection
     connection = psycopg2.connect(get_param("database_url"))
-
-    global cursor
-    cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    logger.info("DB connection established")
-    set_schema(get_param("schema"))
-
     global connected
     connected = True
-    return cursor
-
-
-def set_schema(schema):
-    logger.debug("Setting schema to {}".format(schema))
-    cursor.execute("SET search_path to {};".format(schema))
 
 
 def commit():

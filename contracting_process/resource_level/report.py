@@ -107,3 +107,6 @@ def create(dataset_id):
         [dataset_id, json.dumps(report)],
     )
     commit()
+
+    cursor.close()
+
