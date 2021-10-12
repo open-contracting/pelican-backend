@@ -28,7 +28,6 @@ def start(environment):
 
 
 def callback(connection, channel, delivery_tag, body):
-
     cursor = get_cursor()
     try:
         # parse input message

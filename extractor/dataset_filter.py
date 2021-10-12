@@ -43,7 +43,6 @@ def start(environment):
 #     "max_items": 5000
 # }
 def callback(connection, channel, delivery_tag, body):
-
     cursor = get_cursor()
     try:
         input_message = json.loads(body.decode("utf8"))

@@ -28,7 +28,6 @@ def start(environment):
 
 
 def callback(connection, channel, delivery_tag, body):
-
     try:
         # parse input message
         input_message = json.loads(body.decode("utf8"))
