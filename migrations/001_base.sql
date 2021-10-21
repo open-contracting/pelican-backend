@@ -1,9 +1,3 @@
-DROP SCHEMA IF EXISTS development CASCADE;
-
-CREATE SCHEMA development;
-
-SET search_path TO development;
-
 CREATE TABLE dataset (
     id bigserial PRIMARY KEY,
     name character varying(255),
