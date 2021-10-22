@@ -218,7 +218,7 @@ def callback(connection, channel, delivery_tag, body):
 
 
 def init_worker(environment):
-    bootstrap(environment, "dataset_filter_extractor")
+    bootstrap(environment, "extractor.dataset_filter")
 
     global logger
     logger = get_logger()

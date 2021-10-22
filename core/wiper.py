@@ -51,7 +51,7 @@ def callback(connection, channel, delivery_tag, body):
 
 
 def init_worker(environment):
-    bootstrap(environment, "wiper_worker")
+    bootstrap(environment, "core.wiper")
 
     global logger
     logger = get_logger()

@@ -65,7 +65,7 @@ def callback(connection, channel, delivery_tag, body):
 
 
 def init_worker(environment):
-    bootstrap(environment, "finisher_worker")
+    bootstrap(environment, "core.finisher")
 
     global logger
     logger = get_logger()

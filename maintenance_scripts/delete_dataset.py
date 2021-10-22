@@ -11,7 +11,7 @@ from tools.logging_helper import get_logger
 @click.argument("dataset_id", type=int)
 @click.option("--force", is_flag=True, help="Also deletes descendant filtered datasets.")
 def run(environment, dataset_id, force):
-    bootstrap(environment, "delete_dataset")
+    bootstrap(environment, "maintenance_scripts.delete_dataset")
 
     global logger
     logger = get_logger()

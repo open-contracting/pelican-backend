@@ -46,7 +46,7 @@ def start(environment, name, collection_id, ancestor_id, max_items):
 
 
 def init_worker(environment):
-    bootstrap(environment, "starter_worker")
+    bootstrap(environment, "core.starter")
 
     global logger
     logger = get_logger()

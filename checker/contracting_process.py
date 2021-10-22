@@ -85,7 +85,7 @@ def resend(connection, channel, dataset_id):
 
 
 def init_worker(environment):
-    bootstrap(environment, "contracting_process_checker")
+    bootstrap(environment, "checker.contracting_process")
 
     global logger
     logger = get_logger()
