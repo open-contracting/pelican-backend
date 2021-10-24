@@ -143,7 +143,7 @@ CREATE TABLE field_level_check_examples (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     data jsonb,
-    path varchar,
+    path character varying,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
@@ -177,7 +177,7 @@ CREATE TABLE resource_level_check_examples (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     data jsonb,
-    check_name varchar,
+    check_name character varying,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
