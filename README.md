@@ -1,5 +1,7 @@
 # Pelican backend
 
+Pelican backend ingests OCDS data and measures its quality.
+
 ## Getting started
 
 Install development dependencies:
