@@ -233,8 +233,3 @@ CREATE TABLE exchange_rates (
 CREATE INDEX exchange_rates_rates_idx ON exchange_rates USING gin (rates jsonb_path_ops);
 
 CREATE INDEX exchange_rates_valid_on_idx ON exchange_rates (valid_on);
-
-COPY exchange_rates (valid_on, rates)
-FROM
-    './tools/exchange_rates_dump.csv' DELIMITER ',' CSV HEADER;
-
