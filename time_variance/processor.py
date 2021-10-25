@@ -186,17 +186,11 @@ def get_result(scope, version):
 
     if scope["coverage_count"] > 0:
         result["check_value"] = round(scope["ok_count"] / (scope["coverage_count"] / 100))
-        if result["check_value"] > 95:
-            result["check_result"] = True
-        else:
-            result["check_result"] = False
+        result["check_result"] = result["check_value"] > 95
 
     if scope["total_count"] > 0:
         result["coverage_value"] = round(scope["coverage_count"] / (scope["total_count"] / 100))
-        if result["coverage_value"] > 95:
-            result["coverage_result"] = True
-        else:
-            result["coverage_result"] = False
+        result["coverage_result"] = result["coverage_value"] > 95
 
     result["examples"] = scope["examples"]
 
