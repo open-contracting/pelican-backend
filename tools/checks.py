@@ -24,7 +24,12 @@ def get_empty_result_resource(version=1.0):
 
 
 def get_empty_result_dataset(version=1.0):
-    empty_result = {"result": None, "value": None, "meta": None, "version": version}
+    empty_result = {
+        "result": None,
+        "value": None,
+        "meta": None,
+        "version": version,
+    }
 
     return empty_result
 
