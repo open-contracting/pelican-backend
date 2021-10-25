@@ -21,6 +21,9 @@ consume_routing_key = "_time_variance_checker"
 @click.command()
 @click.argument("environment")
 def start(environment):
+    """
+    Create reports, pick examples, and update dataset metadata.
+    """
     init_worker(environment)
 
     consume(callback, get_param("exchange_name") + consume_routing_key)

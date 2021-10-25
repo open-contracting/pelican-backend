@@ -20,6 +20,9 @@ routing_key = "_dataset_checker"
 @click.command()
 @click.argument("environment")
 def start(environment):
+    """
+    Perform the dataset-level checks.
+    """
     init_worker(environment)
 
     consume(callback, get_param("exchange_name") + consume_routing_key)

@@ -26,6 +26,9 @@ logger = None
 @click.command()
 @click.argument("environment")
 def start(environment):
+    """
+    Import collections from Kingfisher Process.
+    """
     init_worker(environment)
 
     if get_param("fixer_io_api_key"):

@@ -20,6 +20,9 @@ routing_key = "_contracting_process_checker"
 @click.command()
 @click.argument("environment")
 def start(environment):
+    """
+    Perform the field-level and compiled release-level checks.
+    """
     init_worker(environment)
 
     consume(callback, get_param("exchange_name") + consume_routing_key)

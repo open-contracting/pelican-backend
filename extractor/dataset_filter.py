@@ -22,6 +22,9 @@ logger = None
 @click.command()
 @click.argument("environment")
 def start(environment):
+    """
+    Add filtered datasets.
+    """
     init_worker(environment)
     consume(callback, get_param("exchange_name") + consume_routing_key)
 
