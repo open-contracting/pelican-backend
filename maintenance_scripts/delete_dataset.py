@@ -9,8 +9,11 @@ from tools.logging_helper import get_logger
 @click.command()
 @click.argument("environment")
 @click.argument("dataset_id", type=int)
-@click.option("--force", is_flag=True, help="Also deletes descendant filtered datasets.")
-def run(environment, dataset_id, force):
+@click.option("--include-filtered", is_flag=True, help="Delete its filtered datasets.")
+def run(environment, dataset_id, filtered):
+    """
+    Delete a dataset.
+    """
     bootstrap(environment, "maintenance_scripts.delete_dataset")
 
     global logger
@@ -57,7 +60,7 @@ def run(environment, dataset_id, force):
 
     # searching for descendant filtered datasets
     delete_dataset_ids = [dataset_id]
-    if force:
+    if filtered:
         while True:
             cursor.execute(
                 """

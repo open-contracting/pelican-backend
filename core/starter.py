@@ -19,9 +19,12 @@ from tools.rabbit import connect_and_publish_message
 @click.argument("environment")
 @click.argument("name")
 @click.argument("collection_id")
-@click.option("--ancestor_id", default=None, help="Id of already calculated dataset. Used for time variance checks.")
-@click.option("--max_items", default=None, help="Number of items to be downloaded. USefull for testing and debug.")
-def start(environment, name, collection_id, ancestor_id, max_items):
+@click.option("--previous-dataset", type=int, help="ID of previous dataset for time-based checks.")
+@click.option("--sample", type=int, help="Number of compiled releases to import.")
+def start(environment, name, collection_id, previous_dataset, sample):
+    """
+    Create a dataset.
+    """
     init_worker(environment)
 
     logger.info("Updating registries...")
@@ -37,8 +40,8 @@ def start(environment, name, collection_id, ancestor_id, max_items):
     message = {
         "name": name,
         "collection_id": collection_id,
-        "ancestor_id": ancestor_id,
-        "max_items": max_items,
+        "ancestor_id": previous_dataset,
+        "max_items": sample,
     }
     connect_and_publish_message(json.dumps(message), get_param("exchange_name") + routing_key)
 
