@@ -42,12 +42,10 @@ def get_result(scope):
 
         result["meta"] = {"shares": data}
 
-        if share > 0.95:
-            result["result"] = False
-            result["value"] = 0
-        else:
-            result["result"] = True
-            result["value"] = 100
+        passed = share <= 0.95
+
+        result["result"] = passed
+        result["value"] = 100 if passed else 0
 
         return result
     else:

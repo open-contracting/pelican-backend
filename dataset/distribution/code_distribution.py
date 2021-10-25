@@ -50,7 +50,7 @@ class CodeDistribution:
                 passed = False
 
             result["result"] = passed
-            result["value"] = 100 if result["result"] else 0
+            result["value"] = 100 if passed else 0
             result["meta"] = {"shares": scope}
 
         else:

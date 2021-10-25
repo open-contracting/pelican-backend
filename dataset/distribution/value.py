@@ -119,12 +119,11 @@ def get_result(scope):
                 "sum": sum_value,
             }
 
-            if sum_0_1_percent > (sum_value / 2):
-                result["result"] = False
-                result["value"] = 0
-            else:
-                result["result"] = True
-                result["value"] = 100
+            passed = sum_0_1_percent <= (sum_value / 2)
+
+            result["result"] = passed
+            result["value"] = 100 if passed else 0
+
             return result
         else:
             result["meta"] = {"reason": "unsufficient amount of values (at least 100 required)"}

@@ -44,10 +44,7 @@ def get_result(scope):
 
     relevant_releases_count = sum(len(v) for v in scope["tender_id_mapping"].values())
     passed_releases_count = sum(len(v) for v in scope["tender_id_mapping"].values() if len(v) == 1)
-    if relevant_releases_count == passed_releases_count:
-        result["result"] = True
-    else:
-        result["result"] = False
+    result["result"] = relevant_releases_count == passed_releases_count
 
     passed_examples_sampler = ReservoirSampler(100)
     failed_examples_sampler = ReservoirSampler(100)
