@@ -69,7 +69,7 @@ incorrect_item_with_no_payee = {
 
 def test_on_inaction():
     expecting_result = get_empty_result_resource(version)
-    expecting_result["reason"] = "There are no parties with set role and id"
+    expecting_result["meta"] = {"reason": "There are no parties with set role and id"}
     result = calculate(item_with_no_correct_parties)
     assert expecting_result == result
 
