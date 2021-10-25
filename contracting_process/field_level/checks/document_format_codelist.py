@@ -15,10 +15,11 @@ def calculate(item, key):
         initialise_format_codelist()
 
     document_format = item[key]
-    if document_format in format_codelist:
-        result["result"] = True
-    else:
-        result["result"] = False
+
+    passed = document_format in format_codelist
+    result["result"] = passed
+
+    if not passed:
         result["value"] = document_format
         result["reason"] = "wrong document format"
 

@@ -13,10 +13,11 @@ def calculate(item, key):
         initialise_identifier_scheme_codelist()
 
     scheme = item[key]
-    if scheme in identifier_scheme_codelist:
-        result["result"] = True
-    else:
-        result["result"] = False
+
+    passed = scheme in identifier_scheme_codelist
+    result["result"] = passed
+
+    if not passed:
         result["value"] = scheme
         result["reason"] = "wrong identifier scheme"
 

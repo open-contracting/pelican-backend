@@ -20,15 +20,13 @@ def calculate(item):
     number_of_tenderers = number_of_tenderers_values[0]
 
     if procurement_method == "direct":
-        if number_of_tenderers == 0 or number_of_tenderers == 1:
-            result["result"] = True
-            result["application_count"] = 1
-            result["pass_count"] = 1
-            result["meta"] = None
-        else:
-            result["result"] = False
-            result["application_count"] = 1
-            result["pass_count"] = 0
+        passed = number_of_tenderers == 0 or number_of_tenderers == 1
+
+        result["result"] = passed
+        result["application_count"] = 1
+        result["pass_count"] = int(passed)
+
+        if not passed:
             result["meta"] = {"numberOfTenderers": number_of_tenderers}
 
         return result

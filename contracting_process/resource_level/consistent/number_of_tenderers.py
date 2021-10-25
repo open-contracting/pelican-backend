@@ -15,15 +15,13 @@ def calculate(item):
     tender = item["tender"]
 
     if "tenderers" in tender and "numberOfTenderers" in tender and type(tender["tenderers"]) == list:
-        # everything is set, we can compare
-        if tender["numberOfTenderers"] == len(tender["tenderers"]):
-            result["result"] = True
-            result["application_count"] = 1
-            result["pass_count"] = 1
-        else:
-            result["result"] = False
-            result["application_count"] = 1
-            result["pass_count"] = 0
+        passed = tender["numberOfTenderers"] == len(tender["tenderers"])
+
+        result["result"] = passed
+        result["application_count"] = 1
+        result["pass_count"] = int(passed)
+
+        if not passed:
             result["meta"] = {"numberOfTenderers": tender["numberOfTenderers"], "tenderers": tender["tenderers"]}
 
         return result
