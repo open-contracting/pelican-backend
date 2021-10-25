@@ -1,5 +1,3 @@
-SET search_path TO development;
-
 TRUNCATE TABLE dataset;
 
 TRUNCATE TABLE report;
