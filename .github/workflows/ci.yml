@@ -44,7 +44,7 @@ jobs:
         with:
           context: .
           push: true
-          file: docker/dqt/Dockerfile
+          file: Dockerfile
           tags: |
             ghcr.io/open-contracting/pelican-backend:latest
             ghcr.io/open-contracting/pelican-backend:${{ env.TAG }}
