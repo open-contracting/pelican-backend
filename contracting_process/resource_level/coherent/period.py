@@ -44,15 +44,14 @@ def calculate(item):
 
             passed = startDate <= endDate
 
-            if application_count is not None:
-                application_count += 1
-            else:
-                application_count = 1
+            if application_count is None:
+                application_count = 0
+            if pass_count is None:
+                pass_count = 0
 
-            if pass_count is not None:
-                pass_count = pass_count + 1 if passed else pass_count
-            else:
-                pass_count = 1 if passed else 0
+            application_count += 1
+            if passed:
+                pass_count += 1
 
             failed_paths.append({"path": period["path"], "result": passed})
 

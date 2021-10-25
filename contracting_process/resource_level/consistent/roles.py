@@ -39,7 +39,8 @@ def calculate_path_role(item, path, role):
         )
 
         application_count += 1
-        pass_count = pass_count + 1 if passed else pass_count
+        if passed:
+            pass_count += 1
 
         result["meta"]["references"].append(
             {

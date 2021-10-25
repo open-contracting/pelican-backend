@@ -88,7 +88,7 @@ def calculate(item):
 
     result["result"] = passed
     result["application_count"] = 1
-    result["pass_count"] = 1 if passed else 0
+    result["pass_count"] = int(passed)
     result["meta"] = {"tender.value": tender_value, "planning.budget.amount": planning_budget_amount}
 
     return result

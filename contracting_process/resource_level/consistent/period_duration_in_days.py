@@ -56,7 +56,8 @@ def calculate(item):
         passed = math.floor(duration_in_days_computed) <= duration_in_days <= math.ceil(duration_in_days_computed)
 
         result["application_count"] += 1
-        result["pass_count"] = result["pass_count"] + 1 if passed else result["pass_count"]
+        if passed:
+            result["pass_count"] += 1
         result["meta"]["periods"].append({"path": period["path"], "result": passed})
 
     if result["application_count"] == 0:

@@ -28,7 +28,8 @@ def calculate(item):
             {"path": award["path"], "id": award["value"]["id"], "result": passed}
         )
         application_count += 1
-        pass_count = pass_count + 1 if passed else pass_count
+        if passed:
+            pass_count += 1
 
     result["result"] = application_count == pass_count
     result["application_count"] = application_count

@@ -52,7 +52,7 @@ def calculate(item) -> dict:
                         parties_roles.append(party_item)
 
     if not parties_roles:
-        result["reason"] = "There are no parties with set role and id"
+        result["meta"] = {"reason": "There are no parties with set role and id"}
         return result
 
     items_from_paths = []
@@ -78,7 +78,8 @@ def calculate(item) -> dict:
                 passed = True
                 break
         application_count += 1
-        pass_count = pass_count + 1 if passed else pass_count
+        if passed:
+            pass_count += 1
         result["meta"]["references"].append(
             {"party_path": party["path"], "examined_role": party["role"], "resource_identification": party["id"]}
         )

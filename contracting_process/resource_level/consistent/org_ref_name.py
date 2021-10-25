@@ -43,7 +43,8 @@ def calculate(item, path):
 
         passed = value["value"]["name"] == party["value"]["name"]
         result["application_count"] += 1
-        result["pass_count"] = result["pass_count"] + 1 if passed else result["pass_count"]
+        if passed:
+            result["pass_count"] += 1
 
         result["meta"]["references"].append(
             {

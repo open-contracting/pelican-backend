@@ -83,7 +83,8 @@ def calculate(item):
         passed = transactions_amount_sum <= contract_amount
 
         result["application_count"] += 1
-        result["pass_count"] = result["pass_count"] + 1 if passed else result["pass_count"]
+        if passed:
+            result["pass_count"] += 1
         result["meta"]["contracts"].append(
             {
                 "path": contract["path"],
