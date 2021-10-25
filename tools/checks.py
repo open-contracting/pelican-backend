@@ -1,5 +1,11 @@
 def get_empty_result_field(name, version=1.0):
-    empty_result = {"name": name, "result": None, "value": None, "reason": None, "version": version}
+    empty_result = {
+        "name": name,
+        "result": None,
+        "value": None,
+        "reason": None,
+        "version": version,
+    }
 
     return empty_result
 
