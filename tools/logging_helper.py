@@ -32,13 +32,11 @@ def init_logger(logger_name):
 
     log_filename = settings.LOG_FILENAME
     if log_filename:
-        # create file handler which logs even debug messages
         fh = logging.FileHandler(log_filename)
-        fh.setLevel(settings.LOG_LEVEL)
+        fh.setLevel(logging.DEBUG)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
 
-    # create console handler with a higher log level
     ch = logging.StreamHandler()
     ch.setLevel(settings.LOG_LEVEL)
     ch.setFormatter(formatter)
