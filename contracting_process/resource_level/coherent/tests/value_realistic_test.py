@@ -2,7 +2,7 @@ from contracting_process.resource_level.coherent.value_realistic import calculat
 from tools.bootstrap import bootstrap
 
 version = 1.0
-bootstrap("test", "value_realistic_test")
+bootstrap("value_realistic_test")
 
 item_undefined1 = {"tender": {}, "date": "2019-01-10T22:00:00+01:00"}
 

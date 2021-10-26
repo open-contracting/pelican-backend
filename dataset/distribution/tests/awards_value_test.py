@@ -1,7 +1,7 @@
 from dataset.distribution import value
 from tools.bootstrap import bootstrap
 
-bootstrap("test", "awards_value_test")
+bootstrap("awards_value_test")
 awards_value = value.ModuleType("awards.value")
 
 

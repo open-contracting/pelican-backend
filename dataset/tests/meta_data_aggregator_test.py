@@ -1,7 +1,7 @@
 from dataset.meta_data_aggregator import add_item, get_result
 from tools.bootstrap import bootstrap
 
-bootstrap("test", "meta_data_aggregator_test")
+bootstrap("meta_data_aggregator_test")
 
 
 items_test_compiled_releases = [

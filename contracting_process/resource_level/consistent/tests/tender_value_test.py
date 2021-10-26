@@ -1,7 +1,7 @@
 from contracting_process.resource_level.consistent.tender_value import calculate
 from tools.bootstrap import bootstrap
 
-bootstrap("test", "tender_value_test")
+bootstrap("tender_value_test")
 
 
 item_test_undefined1 = {"tender": {}, "planning": {"budget": {}}}

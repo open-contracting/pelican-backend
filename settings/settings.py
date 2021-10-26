@@ -9,19 +9,18 @@ class CustomLogLevels:
     SUB_CHECK_TRACE = 6
 
 
+# Extractors collect this number of items before publishing a message.
+EXTRACTOR_MAX_BATCH_SIZE = int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", 100))
+
+# Do not import compiled releases whose size is larger than this number of bytes.
+KINGFISHER_PROCESS_MAX_SIZE = int(os.getenv("KINGFISHER_PROCESS_MAX_SIZE", 300000))
+
 # Logging
 
 # The log level of the stream handler.
 LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "WARNING"))
 # The file path of the file handler. The file handler's level is always DEBUG.
 LOG_FILENAME = os.getenv("LOG_FILENAME")
-
-# Batch sizes
-
-# Extractors collect this number of items before publishing a message.
-EXTRACTOR_MAX_BATCH_SIZE = int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", 100))
-# Do not import compiled releases whose size is larger than this number of bytes.
-KINGFISHER_PROCESS_MAX_SIZE = int(os.getenv("KINGFISHER_PROCESS_MAX_SIZE", 300000))
 
 # Local services
 

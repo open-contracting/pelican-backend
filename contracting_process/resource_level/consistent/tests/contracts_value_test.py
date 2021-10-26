@@ -1,7 +1,7 @@
 from contracting_process.resource_level.consistent.contracts_value import calculate
 from tools.bootstrap import bootstrap
 
-bootstrap("test", "contracts_value_test")
+bootstrap("contracts_value_test")
 
 
 item_test_undefined_no_contracts = {"date": "2019-01-10T22:00:00+01:00", "contracts": []}

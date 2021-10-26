@@ -1,7 +1,7 @@
 from contracting_process.resource_level.consistent.contracts_implementation_transactions_value import calculate
 from tools.bootstrap import bootstrap
 
-bootstrap("test", "contracts_implementation_transactions_value_test")
+bootstrap("contracts_implementation_transactions_value_test")
 
 item_test_undefined1 = {"contracts": [{}, {"implementation": {}}, {"implementation": {"transactions": []}}]}
 
