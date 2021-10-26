@@ -6,7 +6,7 @@ This changelog only notes major changes, to notify other developers.
 2021-10-26
 ----------
 
--  refactor: Re-organize the repository. :commit:`75a3859`
+-  refactor: Re-organize the repository. :compare:`75a3859..7dbecc9`
 
 2021-10-25
 ----------

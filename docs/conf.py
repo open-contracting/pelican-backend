@@ -72,6 +72,7 @@ autodoc_member_order = "bysource"
 extlinks = {
     "issue": ("https://github.com/open-contracting/pelican-backend/issues/%s", "#%s"),
     "commit": ("https://github.com/open-contracting/pelican-backend/commit/%s", None),
+    "compare": ("https://github.com/open-contracting/pelican-backend/compare/%s", None),
 }
 
 on_rtd = os.environ.get("READTHEDOCS", None) == "True"
