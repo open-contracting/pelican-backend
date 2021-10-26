@@ -1,4 +1,4 @@
-from time_variance import phase_stable
+from time_variance.checks import phase_stable
 from tools.checks import get_empty_result_time_variance_scope
 
 ancestor_empty = {"ocid": "3"}

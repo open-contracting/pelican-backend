@@ -1,4 +1,4 @@
-from time_variance import ocid, phase_stable, tender_title
+from time_variance.checks import ocid, phase_stable, tender_title
 
 definitions = {
     "ocid": ocid,
