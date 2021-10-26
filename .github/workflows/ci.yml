@@ -5,7 +5,28 @@ env:
 jobs:
   build:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432/tcp
+      rabbitmq:
+        image: rabbitmq:latest
+        options: >-
+          --health-cmd "rabbitmqctl node_health_check"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5672/tcp
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
@@ -17,9 +38,14 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements_dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+      - run: |
+          psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -f migrations/001_base.sql -f migrations/002_constraints.sql
+          psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -c "\copy exchange_rates (valid_on, rates) from 'tools/exchange_rates_dump.csv' delimiter ',' csv header;"
       - run: pip install -r requirements_dev.txt
       - run: pytest --cov checker --cov contracting_process --cov core --cov dataset --cov extractor --cov maintenance_scripts --cov registry --cov time_variance --cov tools
         if: always()
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: coveralls --service=github
