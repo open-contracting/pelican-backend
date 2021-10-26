@@ -10,9 +10,9 @@ This project uses a direct exchange in the same way as the `default exchange <ht
 
 In each worker, the queue name and binding key is set by ``consume_routing_key``, and the routing key of published messages is set by ``routing_key``. Queue names and routing keys are prefixed by the exchange name, set by the ``RABBIT_EXCHANGE_NAME`` environment variable.
 
-When debugging, the sample messages below can be used to re-run steps. For the ``extractor`` workers, it might be easier to :ref:`add-dataset` with ``--sample INTEGER``.
-
 For design decisions relating to RabbitMQ, see the `Software Development Handbook <https://ocp-software-handbook.readthedocs.io/en/latest/services/rabbitmq.html#design-decisions>`__.
+
+Having trouble? See :doc:`../tasks/troubleshoot`.
 
 .. list-table::
    :widths: auto

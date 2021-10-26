@@ -3,11 +3,12 @@ State machine
 
 The ``progress_monitor_dataset`` and ``progress_monitor_item`` tables track the progress of datasets and items.
 
+.. _state-dataset:
+
 Dataset
 -------
 
 .. list-table::
-   :widths: auto
    :header-rows: 1
 
    * - Phase
@@ -51,7 +52,6 @@ Item
 ----
 
 .. list-table::
-   :widths: auto
    :header-rows: 1
 
    * - State

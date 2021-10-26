@@ -4,6 +4,8 @@ Workers
 Import
 ------
 
+.. _extractor-ocds-kingfisher:
+
 extractor.ocds_kingfisher
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

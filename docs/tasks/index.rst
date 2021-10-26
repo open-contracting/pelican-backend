@@ -7,3 +7,4 @@ Tasks
    database
    datasets
    checks/index
+   troubleshoot

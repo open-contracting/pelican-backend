@@ -26,8 +26,13 @@ Development
 
 The default values in the ``settings.py`` file should be appropriate as-is. You can override them by setting environment variables.
 
-You can now :doc:`start workers<../reference/workers>` and run tests:
+You can now:
 
-.. code-block:: bash
+-  :doc:`Start workers<../reference/workers>`
+-  Run tests:
 
-   pytest
+   .. code-block:: bash
+
+      pytest
+
+Having trouble? See :doc:`../tasks/troubleshoot`.
