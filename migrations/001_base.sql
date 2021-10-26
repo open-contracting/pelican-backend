@@ -69,14 +69,12 @@ CREATE TABLE progress_monitor_dataset (
 
 CREATE INDEX progress_monitor_dataset_modified_idx ON progress_monitor_dataset (modified);
 
-CREATE UNIQUE INDEX progress_monitor_dataset_dataset_id_idx ON progress_monitor_dataset (dataset_id);
-
 CREATE INDEX progress_monitor_dataset_state_idx ON progress_monitor_dataset (state);
 
 CREATE INDEX progress_monitor_dataset_phase_idx ON progress_monitor_dataset (phase);
 
 ALTER TABLE progress_monitor_dataset
-    ADD CONSTRAINT unique_dataset_id UNIQUE USING INDEX progress_monitor_dataset_dataset_id_idx;
+    ADD CONSTRAINT unique_dataset_id UNIQUE (dataset_id);
 
 CREATE TABLE progress_monitor_item (
     id bigserial PRIMARY KEY,
@@ -143,7 +141,7 @@ CREATE TABLE field_level_check_examples (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     data jsonb,
-    path varchar,
+    path character varying,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
@@ -177,7 +175,7 @@ CREATE TABLE resource_level_check_examples (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     data jsonb,
-    check_name varchar,
+    check_name character varying,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
