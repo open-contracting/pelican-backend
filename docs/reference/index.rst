@@ -60,7 +60,6 @@ Repository structure
    │   └── unique                Uniqueness checks
    ├── migrations             Database migrations
    ├── registry               Cached copies of remote files
-   ├── settings               Project settings
    ├── time_variance          Time-based checks
    ├── tools                  Shared utilities
    └── workers                :doc:`All workers<reference/workers>`

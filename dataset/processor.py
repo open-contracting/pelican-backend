@@ -2,8 +2,8 @@ import simplejson as json
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from dataset.definitions import definitions
-from settings.settings import CustomLogLevels
 from tools.db import get_cursor
+from tools.settings import CustomLogLevels
 
 page_size = 1000
 

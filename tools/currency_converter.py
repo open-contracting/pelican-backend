@@ -1,6 +1,6 @@
 import datetime
 
-from settings import settings
+from tools import settings
 
 rates = dict()
 bounds = dict()

@@ -5,7 +5,7 @@ import requests
 import simplejson as json
 from dateutil.relativedelta import relativedelta
 
-from settings import settings
+from tools import settings
 from tools.currency_converter import convert
 from tools.db import get_cursor
 from tools.getter import get_values

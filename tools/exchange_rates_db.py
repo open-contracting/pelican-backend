@@ -4,7 +4,7 @@ from datetime import date, timedelta
 import psycopg2
 import requests
 
-from settings import settings
+from tools import settings
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 

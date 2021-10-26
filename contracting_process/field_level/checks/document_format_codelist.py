@@ -1,6 +1,6 @@
 import csv
 
-from settings import settings
+from tools import settings
 from tools.checks import get_empty_result_field
 
 format_codelist = None

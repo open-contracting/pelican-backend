@@ -6,8 +6,7 @@ import psycopg2.extras
 import simplejson as json
 
 import dataset.meta_data_aggregator as meta_data_aggregator
-from settings import settings
-from tools import exchange_rates_db
+from tools import exchange_rates_db, settings
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger

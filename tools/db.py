@@ -1,6 +1,6 @@
 import psycopg2.extras
 
-from settings import settings
+from tools import settings
 from tools.logging_helper import get_logger
 
 global connected

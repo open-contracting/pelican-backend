@@ -1,6 +1,6 @@
-from settings.settings import CustomLogLevels
 from tools.db import get_cursor
 from tools.logging_helper import get_logger
+from tools.settings import CustomLogLevels
 
 
 class state:

@@ -2,11 +2,11 @@ import random
 
 import simplejson as json
 
-from settings.settings import CustomLogLevels
 from time_variance.definitions import definitions
 from tools.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
 from tools.db import get_cursor
 from tools.logging_helper import get_logger
+from tools.settings import CustomLogLevels
 
 page_size = 1000
 examples_count = 50

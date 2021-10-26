@@ -6,7 +6,7 @@ import click
 import simplejson as json
 from psycopg2 import sql
 
-from settings import settings
+from tools import settings
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger

@@ -3,7 +3,7 @@ import logging
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
-from settings import settings
+from tools import settings
 
 global initialized
 initialized = False
