@@ -15,7 +15,6 @@ For design decisions relating to RabbitMQ, see the `Software Development Handboo
 Having trouble? See :doc:`../tasks/troubleshoot`.
 
 .. list-table::
-   :widths: auto
    :header-rows: 1
 
    * - Worker/Command
@@ -64,7 +63,6 @@ Tables
 ~~~~~~
 
 .. list-table::
-   :widths: auto
    :header-rows: 1
 
    * - Table
