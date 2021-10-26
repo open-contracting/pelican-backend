@@ -21,9 +21,12 @@ Set up the git pre-commit hook:
 
 :doc:`../tasks/database`.
 
-:doc:`Start workers<../reference/workers>`.
+Development
+-----------
 
-Run tests:
+The default values in the ``settings.py`` file should be appropriate as-is. You can override them by setting environment variables.
+
+You can now :doc:`start workers<../reference/workers>` and run tests:
 
 .. code-block:: bash
 
