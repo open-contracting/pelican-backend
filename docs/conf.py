@@ -33,6 +33,7 @@ author = "Open Contracting Partnership"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.viewcode",
 ]
 
@@ -67,6 +68,10 @@ autodoc_default_options = {
     "members": None,
 }
 autodoc_member_order = "bysource"
+
+extlinks = {
+    "commit": ("https://github.com/open-contracting/pelican-backend/commit/%s", None),
+}
 
 on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 

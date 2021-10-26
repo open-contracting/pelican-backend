@@ -20,3 +20,4 @@ In the code and database, "resource" is used for "compiled release" (or "item"),
    tasks/index
    reference/index
    contributing/index
+   changelog
