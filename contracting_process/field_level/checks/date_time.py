@@ -3,7 +3,7 @@ from datetime import datetime
 from tools.checks import get_empty_result_field
 from tools.helpers import parse_date
 
-lower_bound_date = datetime(1970, 1, 1).date()
+lower_bound_date = datetime(1990, 1, 1).date()
 upper_bound_date = datetime(2050, 1, 1).date()
 
 name = "date_time"
