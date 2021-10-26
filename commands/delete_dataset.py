@@ -13,7 +13,7 @@ def run(dataset_id, filtered):
     """
     Delete a dataset.
     """
-    bootstrap("maintenance_scripts.delete_dataset")
+    bootstrap("commands.delete_dataset")
 
     global logger
     logger = get_logger()

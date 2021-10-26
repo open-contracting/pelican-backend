@@ -3,6 +3,11 @@ Changelog
 
 This changelog only notes major changes, to notify other developers.
 
+2021-10-26
+----------
+
+-  refactor: Re-organize the repository.
+
 2021-10-25
 ----------
 

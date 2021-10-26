@@ -21,11 +21,11 @@ It is also focused on *intrinsic* quality rather than *extrinsic* quality. That 
 Worker design
 -------------
 
-Workers communicate via a :ref:`rabbitmq` exchange to import and assess OCDS data, writing the results to a :ref:`postgresql` database.
+Workers communicate via a :ref:`rabbitmq` exchange to extract and assess OCDS data, writing the results to a :ref:`postgresql` database.
 
 Workers can be daemonized and run in parallel. The pipeline is:
 
-#. An ``extractor`` worker imports a collection and its compiled releases. It publishes the IDs of the items in batches.
+#. An ``extractor`` worker extracts a collection and its compiled releases. It publishes the IDs of the items in batches.
 #. The ``checker/contracting_process`` worker performs the field-level and compiled release-level checks. After each batch is processed, it publishes the ID of the dataset.
 #. The ``checker/dataset`` worker determines whether field-level and compiled release-level checks have been performed on all items. If so, it performs the dataset-level checks. After, it publishes the ID of the dataset.
 #. The ``checker/time_variance`` worker performs the time-based checks. After, it publishes the ID of the dataset.
@@ -44,7 +44,7 @@ Repository structure
 
 .. code-block:: none
 
-   ├── checker                Workers to measure quality
+   ├── commands               :doc:`All commands<tasks/datasets>`
    ├── contracting_process    Field-level and compiled release-level checks
    │   ├── field_level           Field-level checks
    │   │   └── checks               Individual checks
@@ -52,20 +52,21 @@ Repository structure
    │       ├── coherent             Coherence checks
    │       ├── consistent           Consistency checks
    │       └── reference            Reference checks
-   ├── core                   Workers to finish and wipe datasets, and command to add datasets
    ├── dataset                Dataset-level checks
    │   ├── consistent            Consistency checks
    │   ├── distribution          Distribution checks
    │   ├── misc                  Miscellaneous checks
    │   ├── reference             Reference checks
    │   └── unique                Uniqueness checks
-   ├── extractor              Workers to import data
-   ├── maintenance_scripts    Command to remove datasets
    ├── migrations             Database migrations
    ├── registry               Cached copies of remote files
    ├── settings               Project settings
    ├── time_variance          Time-based checks
-   └── tools                  Shared utilities
+   ├── tools                  Shared utilities
+   └── workers                All workers
+       ├── extract                Extractor workers
+       ├── check                  Checker workers
+       └── report                 Reporter workers
 
 ..
    tree -d -I '__pycache__|tests|htmlcov|docs'

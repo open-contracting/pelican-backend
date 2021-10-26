@@ -21,10 +21,10 @@ Having trouble? See :doc:`../tasks/troubleshoot`.
      - Queue (input)
      - Message routing key (output)
      - Sample message
-   * - ``core.starter``
+   * - ``commands.create_dataset``
      - N/A
      - ``ocds_kingfisher_extractor_init``
-     - :ref:`add-dataset`
+     - :ref:`create-dataset`
    * - ``extractor.ocds_kingfisher``
      - ``ocds_kingfisher_extractor_init``
      - ``extractor``
@@ -70,11 +70,11 @@ Tables
      - ``INSERT``
      - ``SELECT``
    * - ``dataset``
-     - Imported collections
+     - Extracted collections
      - ``extractor``
      - ``extractor/dataset_filter``, ``dataset/meta_data_aggregator``, ``time_variance/processor``
    * - ``data_item``
-     - Imported compiled releases
+     - Extracted compiled releases
      - ``extractor``
      - ``checker/contracting_process``, ``dataset/processor``, ``time_variance/processor``
    * - ``field_level_check``

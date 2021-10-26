@@ -17,11 +17,11 @@ Dataset
      - Set by
    * - ``CONTRACTING_PROCESS``
      - ``IN_PROGRESS``
-     - Import is in-progress
+     - Extraction is in-progress
      - ``extractor`` workers
    * - ``CONTRACTING_PROCESS``
      - ``OK``
-     - Import is complete
+     - Extraction is complete
      - ``extractor`` workers
    * - ``DATASET``
      - ``IN_PROGRESS``
@@ -46,7 +46,7 @@ Dataset
    * - ``DELETED``
      - ``OK``
      - The dataset is deleted, but the row is needed for foreign key references
-     - ``maintenance_scripts/delete_dataset``
+     - ``commands/delete_dataset``
 
 Item
 ----

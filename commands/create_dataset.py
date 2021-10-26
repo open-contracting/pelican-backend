@@ -45,7 +45,7 @@ def start(name, collection_id, previous_dataset, sample):
 
 
 def init_worker():
-    bootstrap("core.starter")
+    bootstrap("commands.create_dataset")
 
     global logger
     logger = get_logger()

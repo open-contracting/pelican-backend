@@ -1,8 +1,8 @@
 Workers
 =======
 
-Import
-------
+Extract
+-------
 
 .. _extractor-ocds-kingfisher:
 
@@ -13,7 +13,7 @@ extractor.ocds_kingfisher
 
    python -m extractor.ocds_kingfisher
 
-Import collections from Kingfisher Process.
+Extract collections from Kingfisher Process.
 
 #. Receive a message
 #. Select data IDs for the matching collection in Kingfisher Process
@@ -32,7 +32,7 @@ extractor.dataset_filter
 
    python -m extractor.dataset_filter
 
-Add filtered datasets.
+Create filtered datasets.
 
 The worker will ignore a message if the dataset is not in the ``CHECKED`` phase.
 

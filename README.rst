@@ -1,6 +1,6 @@
 |Build Status| |Coverage Status|
 
-Pelican backend imports OCDS data and measures its quality.
+Pelican backend extracts OCDS data and measures its quality.
 
 (If you are viewing this on GitHub, open the `full documentation <https://pelican-backend.readthedocs.io/>`__ for additional details.)
 
