@@ -70,6 +70,7 @@ autodoc_default_options = {
 autodoc_member_order = "bysource"
 
 extlinks = {
+    "issue": ("https://github.com/open-contracting/pelican-backend/issues/%s", "#%s"),
     "commit": ("https://github.com/open-contracting/pelican-backend/commit/%s", None),
 }
 

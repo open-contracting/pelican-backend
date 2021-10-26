@@ -3,6 +3,10 @@ Pelican backend
 
 .. include:: ../README.rst
 
+.. warning::
+
+   The content from the `GitHub wiki <https://github.com/open-contracting/pelican-backend/wiki>`__ has not yet been migrated. (:issue:`3`)
+
 Word choice
 -----------
 
