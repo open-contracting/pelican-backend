@@ -227,7 +227,7 @@ def resend(connection, channel, dataset_id):
 
 
 def init_worker():
-    bootstrap("extractor.ocds_kingfisher")
+    bootstrap("workers.extract.kingfisher_process")
 
     global logger
     logger = get_logger()

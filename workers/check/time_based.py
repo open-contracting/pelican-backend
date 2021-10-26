@@ -56,7 +56,7 @@ def callback(connection, channel, delivery_tag, body):
 
 
 def init_worker():
-    bootstrap("checker.time_variance")
+    bootstrap("workers.check.time_based")
 
     global logger
     logger = get_logger()

@@ -18,35 +18,35 @@ Dataset
    * - ``CONTRACTING_PROCESS``
      - ``IN_PROGRESS``
      - Extraction is in-progress
-     - ``extractor`` workers
+     - ``workers.extract.*``
    * - ``CONTRACTING_PROCESS``
      - ``OK``
      - Extraction is complete
-     - ``extractor`` workers
+     - ``workers.extract.*``
    * - ``DATASET``
      - ``IN_PROGRESS``
      - Dataset-level checks are in-progress
-     - ``checker/dataset``
+     - ``workers.check.dataset``
    * - ``DATASET``
      - ``OK``
      - Dataset-level checks are complete
-     - ``checker/dataset``
+     - ``workers.check.dataset``
    * - ``TIME_VARIANCE``
      - ``IN_PROGRESS``
      - Time-based checks are in-progress
-     - ``checker/time_variance``
+     - ``workers.check.time_based``
    * - ``TIME_VARIANCE``
      - ``OK``
      - Time-based checks are complete
-     - ``checker/time_variance``
+     - ``workers.check.time_based``
    * - ``CHECKED``
      - ``OK``
      - All work is complete
-     - ``core/finisher``
+     - ``workers.report``
    * - ``DELETED``
      - ``OK``
      - The dataset is deleted, but the row is needed for foreign key references
-     - ``commands/delete_dataset``
+     - ``commands.delete_dataset``
 
 Item
 ----
@@ -59,7 +59,7 @@ Item
      - Set by
    * - ``IN_PROGRESS``
      - The item's field-level and compiled release-level checks have not yet been performed
-     - ``extractor`` workers
+     - ``workers.extract.*``
    * - ``OK``
      - The item's field-level and compiled release-level checks have been performed
      - ``contracting_process/processor.py``

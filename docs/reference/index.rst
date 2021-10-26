@@ -25,11 +25,11 @@ Workers communicate via a :ref:`rabbitmq` exchange to extract and assess OCDS da
 
 Workers can be daemonized and run in parallel. The pipeline is:
 
-#. An ``extractor`` worker extracts a collection and its compiled releases. It publishes the IDs of the items in batches.
-#. The ``checker/contracting_process`` worker performs the field-level and compiled release-level checks. After each batch is processed, it publishes the ID of the dataset.
-#. The ``checker/dataset`` worker determines whether field-level and compiled release-level checks have been performed on all items. If so, it performs the dataset-level checks. After, it publishes the ID of the dataset.
-#. The ``checker/time_variance`` worker performs the time-based checks. After, it publishes the ID of the dataset.
-#. The ``core/finisher`` worker creates field-level and compiled release-level reports, picks field-level and compiled release-level examples, and updates the dataset's metadata.
+#. An :ref:`extract<workers-extract>` worker extracts a collection and its compiled releases. It publishes the IDs of the items in batches.
+#. The :ref:`check-data-item` worker performs the field-level and compiled release-level checks. After each batch is processed, it publishes the ID of the dataset.
+#. The :ref:`check-dataset` worker determines whether field-level and compiled release-level checks have been performed on all items. If so, it performs the dataset-level checks. After, it publishes the ID of the dataset.
+#. The :ref:`check-time-based` worker performs the time-based checks. After, it publishes the ID of the dataset.
+#. The :ref:`report` worker creates field-level and compiled release-level reports, picks field-level and compiled release-level examples, and updates the dataset's metadata.
 
 Workers are `Click <https://click.palletsprojects.com/>`__ programs that are:
 
@@ -65,8 +65,7 @@ Repository structure
    ├── tools                  Shared utilities
    └── workers                All workers
        ├── extract                Extractor workers
-       ├── check                  Checker workers
-       └── report                 Reporter workers
+       └── check                  Checker workers
 
 ..
    tree -d -I '__pycache__|tests|htmlcov|docs'

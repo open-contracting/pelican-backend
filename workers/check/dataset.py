@@ -116,7 +116,7 @@ def callback(connection, channel, delivery_tag, body):
 
 
 def init_worker():
-    bootstrap("checker.dataset")
+    bootstrap("workers.check.dataset")
 
     global logger
     logger = get_logger()

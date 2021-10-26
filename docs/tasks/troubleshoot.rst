@@ -8,7 +8,7 @@ When a worker fails, instead of re-processing the entire dataset from the beginn
 
 The `RabbitMQ management interface <https://www.rabbitmq.com/management.html>`__ makes it easy to add a message to a queue. For reference, see the sample messages in the :ref:`rabbitmq` section.
 
-For the ``extractor`` workers, it might be easier to :ref:`create-dataset` with ``--sample INTEGER``.
+For the :ref:`extract<workers-extract>` workers, it might be easier to :ref:`create-dataset` with ``--sample INTEGER``.
 
 .. note::
 
@@ -26,14 +26,14 @@ Some workers accept special messages that contain a ``"command"`` key. Presently
    * - Worker
      - Sample message
      - Effect
-   * - ``extractor.ocds_kingfisher``
+   * - ``workers.extract.kingfisher_process``
      - ``{"command": true, "dataset_id": 123}``
      - -  Sets the :ref:`dataset's state<state-dataset>` to ``CONTRACTING_PROCESS`` and ``IN_PROGRESS``
        -  Sets the dataset's size to the number of related items in the ``data_item`` table
-       -  Performs the same steps :ref:`as usual<extractor-ocds-kingfisher>` that follow the point-of-no-return
+       -  Performs the same steps :ref:`as usual<extract-kingfisher-process>` that follow the point-of-no-return
 
-       In short, if the extractor had failed, this causes the field-level and compiled release-level checks to start.
-   * - ``checker.contracting_process``
+       In short, if the worker had failed, this causes the field-level and compiled release-level checks to start.
+   * - ``workers.check.data_item``
      - ``{"command": true, "dataset_id": 123}``
      - -  Sets the :ref:`dataset's state<state-dataset>` to ``CONTRACTING_PROCESS`` and ``OK``
        -  Publishes a :ref:`message<rabbitmq>`

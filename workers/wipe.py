@@ -47,7 +47,7 @@ def callback(connection, channel, delivery_tag, body):
 
 
 def init_worker():
-    bootstrap("core.wiper")
+    bootstrap("workers.wipe")
 
     global logger
     logger = get_logger()

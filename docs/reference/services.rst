@@ -25,31 +25,31 @@ Having trouble? See :doc:`../tasks/troubleshoot`.
      - N/A
      - ``ocds_kingfisher_extractor_init``
      - :ref:`create-dataset`
-   * - ``extractor.ocds_kingfisher``
+   * - ``workers.extract.kingfisher_process``
      - ``ocds_kingfisher_extractor_init``
      - ``extractor``
      - ``{"dataset_id": 1, "item_ids": [1,2,3]}``
-   * - ``extractor.dataset_filter``
+   * - ``workers.extract.dataset_filter``
      - ``dataset_filter_extractor_init``
      - ``extractor``
      - ``{"dataset_id": 1, "item_ids": [1,2,3]}``
-   * - ``checker.contracting_process``
+   * - ``workers.check.data_item``
      - ``extractor``
      - ``contracting_process_checker``
      - ``{"dataset_id": 123}``
-   * - ``checker.dataset``
+   * - ``workers.check.dataset``
      - ``contracting_process_checker``
      - ``dataset_checker``
      - ``{"dataset_id": 123}``
-   * - ``checker.time_variance``
+   * - ``workers.check.time_based``
      - ``dataset_checker``
      - ``time_variance_checker``
      - ``{"dataset_id": 123}``
-   * - ``core.finisher``
+   * - ``workers.report``
      - ``time_variance_checker``
      - N/A
      - N/A
-   * - ``core.wiper``
+   * - ``workers.wipe``
      - ``wiper_init``
      - N/A
      - N/A
@@ -67,16 +67,16 @@ Tables
 
    * - Table
      - Description
-     - ``INSERT``
-     - ``SELECT``
+     - ``INSERT`` by
+     - ``SELECT`` by
    * - ``dataset``
      - Extracted collections
-     - ``extractor``
-     - ``extractor/dataset_filter``, ``dataset/meta_data_aggregator``, ``time_variance/processor``
+     - ``workers.extract``
+     - ``workers.extract.dataset_filter``, ``dataset/meta_data_aggregator``, ``time_variance/processor``
    * - ``data_item``
      - Extracted compiled releases
-     - ``extractor``
-     - ``checker/contracting_process``, ``dataset/processor``, ``time_variance/processor``
+     - ``workers.extract``
+     - ``workers.check.data_item``, ``dataset/processor``, ``time_variance/processor``
    * - ``field_level_check``
      - Field-level check results
      - ``contracting_process/processor``
@@ -103,12 +103,12 @@ Tables
      - N/A
    * - ``progress_monitor_dataset``
      - Progress of datasets' processing (see :doc:`state-machine`)
-     - ``extractor``, ``checker``, ``core/finisher``
-     - ``extractor/dataset_filter``, ``checker/dataset``
+     - ``workers.extract``, ``workers.check``, ``workers.report``
+     - ``workers.extract.dataset_filter``, ``workers.check.dataset``
    * - ``progress_monitor_item``
      - Progress of items' processing (see :doc:`state-machine`)
-     - ``extractor``, ``contracting_process/processor``
-     - ``checker/dataset``
+     - ``workers.extract``, ``contracting_process/processor``
+     - ``workers.check.dataset``
 
 .. image:: ../_static/erd.png
    :target: ../_static/erd.png

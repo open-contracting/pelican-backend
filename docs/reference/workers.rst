@@ -1,17 +1,19 @@
 Workers
 =======
 
+.. _workers-extract:
+
 Extract
 -------
 
-.. _extractor-ocds-kingfisher:
+.. _extract-kingfisher-process:
 
-extractor.ocds_kingfisher
-~~~~~~~~~~~~~~~~~~~~~~~~~
+extract.kingfisher_process
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   python -m extractor.ocds_kingfisher
+   python -m workers.extract.kingfisher_process
 
 Extract collections from Kingfisher Process.
 
@@ -25,12 +27,12 @@ Extract collections from Kingfisher Process.
 #. Initializes each item's state as in-progress
 #. Publishes a message with batches of item IDs
 
-extractor.dataset_filter
-~~~~~~~~~~~~~~~~~~~~~~~~
+extract.dataset_filter
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   python -m extractor.dataset_filter
+   python -m workers.extract.dataset_filter
 
 Create filtered datasets.
 
@@ -43,12 +45,14 @@ The worker will ignore a message if the dataset is not in the ``CHECKED`` phase.
 Check
 -----
 
-checker.contracting_process
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. _check-data-item:
+
+check.data_item
+~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   python -m checker.contracting_process
+   python -m workers.check.data_item
 
 Perform the field-level and compiled release-level checks.
 
@@ -62,12 +66,14 @@ Perform the field-level and compiled release-level checks.
 
 There can be many workers processing the same dataset at the same time. 
 
-checker.dataset
-~~~~~~~~~~~~~~~
+.. _check-dataset:
+
+check.dataset
+~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   python -m checker.dataset
+   python -m workers.check.dataset
 
 Perform the dataset-level checks.
 
@@ -80,12 +86,14 @@ Perform the dataset-level checks.
 
 To determine whether field-level and compiled release-level checks have been performed on all items, it waits for the dataset to be in the ``CONTRACTING_PROCESS`` phase and ``OK`` state, with all its items in the ``OK`` state (see :doc:`state-machine`).
 
-checker.time_variance
-~~~~~~~~~~~~~~~~~~~~~
+.. _check-time-based:
+
+check.time_based
+~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   python -m checker.time_variance_checker
+   python -m workers.check.time_based
 
 Perform the time-based checks.
 
@@ -95,15 +103,17 @@ Perform the time-based checks.
 #. Store the results from each check
 #. Publish a message
 
-Report
+Others
 ------
 
-core.finisher
-~~~~~~~~~~~~~
+.. _report:
+
+report
+~~~~~~
 
 .. code-block:: bash
 
-   python -m core.finisher
+   python -m workers.report
 
 Create reports, pick examples, and update dataset metadata.
 

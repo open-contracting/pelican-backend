@@ -64,7 +64,7 @@ def callback(connection, channel, delivery_tag, body):
 
 
 def init_worker():
-    bootstrap("core.finisher")
+    bootstrap("workers.report")
 
     global logger
     logger = get_logger()
