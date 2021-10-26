@@ -13,9 +13,6 @@ def get_cursor():
     if not connected:
         connect()
     cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    schema = get_param("schema")
-    logger.debug("Setting schema to {}".format(schema))
-    cursor.execute("SET search_path to {};".format(schema))
 
     return cursor
 
