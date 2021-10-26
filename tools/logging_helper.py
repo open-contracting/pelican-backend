@@ -3,7 +3,7 @@ import logging
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
-from settings.settings import get_param
+from settings import settings
 
 global initialized
 initialized = False
@@ -26,32 +26,32 @@ def init_logger(logger_name):
     global logger
     logger = logging.getLogger(logger_name)
 
-    logger.setLevel(get_param("log_level"))
+    logger.setLevel(settings.LOG_LEVEL)
 
     formatter = logging.Formatter("%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(message)s")
 
-    log_filename = get_param("log_filename")
+    log_filename = settings.LOG_FILENAME
     if log_filename:
         # create file handler which logs even debug messages
         fh = logging.FileHandler(log_filename)
-        fh.setLevel(get_param("log_level"))
+        fh.setLevel(settings.LOG_LEVEL)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
 
     # create console handler with a higher log level
     ch = logging.StreamHandler()
-    ch.setLevel(get_param("log_level"))
+    ch.setLevel(settings.LOG_LEVEL)
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
-    if get_param("sentry_dsn"):
+    if settings.SENTRY_DSN:
         sentry_logging = LoggingIntegration(
             level=logging.INFO,  # Capture info and above as breadcrumbs
             event_level=logging.ERROR,  # Send errors as events
         )
 
         sentry_sdk.init(
-            dsn=get_param("sentry_dsn"),
+            dsn=settings.SENTRY_DSN,
             integrations=[sentry_logging],
         )
 

@@ -7,14 +7,13 @@ from tools.logging_helper import get_logger
 
 
 @click.command()
-@click.argument("environment")
 @click.argument("dataset_id", type=int)
 @click.option("--include-filtered", is_flag=True, help="Delete its filtered datasets.")
-def run(environment, dataset_id, filtered):
+def run(dataset_id, filtered):
     """
     Delete a dataset.
     """
-    bootstrap(environment, "maintenance_scripts.delete_dataset")
+    bootstrap("maintenance_scripts.delete_dataset")
 
     global logger
     logger = get_logger()

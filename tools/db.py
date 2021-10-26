@@ -1,6 +1,6 @@
 import psycopg2.extras
 
-from settings.settings import get_param
+from settings import settings
 from tools.logging_helper import get_logger
 
 global connected
@@ -28,7 +28,7 @@ def get_connection():
 def connect():
     logger.debug("Connecting to db...")
     global connection
-    connection = psycopg2.connect(get_param("database_url"))
+    connection = psycopg2.connect(settings.DATABASE_URL)
     logger.info("DB connection established")
     global connected
     connected = True

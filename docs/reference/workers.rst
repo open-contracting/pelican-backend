@@ -9,7 +9,7 @@ extractor.ocds_kingfisher
 
 .. code-block:: bash
 
-   python -m extractor.ocds_kingfisher ENVIRONMENT
+   python -m extractor.ocds_kingfisher
 
 Import collections from Kingfisher Process.
 
@@ -28,7 +28,7 @@ extractor.dataset_filter
 
 .. code-block:: bash
 
-   python -m extractor.dataset_filter ENVIRONMENT
+   python -m extractor.dataset_filter
 
 Add filtered datasets.
 
@@ -46,7 +46,7 @@ checker.contracting_process
 
 .. code-block:: bash
 
-   python -m checker.contracting_process ENVIRONMENT
+   python -m checker.contracting_process
 
 Perform the field-level and compiled release-level checks.
 
@@ -65,7 +65,7 @@ checker.dataset
 
 .. code-block:: bash
 
-   python -m checker.dataset ENVIRONMENT
+   python -m checker.dataset
 
 Perform the dataset-level checks.
 
@@ -83,7 +83,7 @@ checker.time_variance
 
 .. code-block:: bash
 
-   python -m checker.time_variance_checker ENVIRONMENT
+   python -m checker.time_variance_checker
 
 Perform the time-based checks.
 
@@ -101,7 +101,7 @@ core.finisher
 
 .. code-block:: bash
 
-   python -m core.finisher ENVIRONMENT
+   python -m core.finisher
 
 Create reports, pick examples, and update dataset metadata.
 

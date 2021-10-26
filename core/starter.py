@@ -9,23 +9,21 @@ import requests
 import shortuuid
 import simplejson as json
 
-from settings.settings import get_param
 from tools.bootstrap import bootstrap
 from tools.logging_helper import get_logger
 from tools.rabbit import connect_and_publish_message
 
 
 @click.command()
-@click.argument("environment")
 @click.argument("name")
 @click.argument("collection_id")
 @click.option("--previous-dataset", type=int, help="ID of previous dataset for time-based checks.")
 @click.option("--sample", type=int, help="Number of compiled releases to import.")
-def start(environment, name, collection_id, previous_dataset, sample):
+def start(name, collection_id, previous_dataset, sample):
     """
     Create a dataset.
     """
-    init_worker(environment)
+    init_worker()
 
     logger.info("Updating registries...")
     with open("registry/origin.json", "r") as json_file:
@@ -35,7 +33,7 @@ def start(environment, name, collection_id, previous_dataset, sample):
         logger.info("Updating registry on path %s" % path)
         update_registry(path, urls)
 
-    routing_key = "_ocds_kingfisher_extractor_init"
+    routing_key = "ocds_kingfisher_extractor_init"
 
     message = {
         "name": name,
@@ -43,13 +41,13 @@ def start(environment, name, collection_id, previous_dataset, sample):
         "ancestor_id": previous_dataset,
         "max_items": sample,
     }
-    connect_and_publish_message(json.dumps(message), get_param("exchange_name") + routing_key)
+    connect_and_publish_message(json.dumps(message), routing_key)
 
     return
 
 
-def init_worker(environment):
-    bootstrap(environment, "core.starter")
+def init_worker():
+    bootstrap("core.starter")
 
     global logger
     logger = get_logger()

@@ -8,7 +8,7 @@ Add a dataset
 
 .. code-block:: bash
 
-   python -m core.starter [OPTIONS] ENVIRONMENT SPIDER_YYYY-MM-DD ID
+   python -m core.starter [OPTIONS] SPIDER_YYYY-MM-DD ID
 
 --previous-dataset INTEGER  ID of previous dataset for time-based checks.
 --sample INTEGER            Number of compiled releases to import.
@@ -20,7 +20,7 @@ Remove a dataset
 
 .. code-block:: bash
 
-   python -m maintenance_scripts.delete_dataset [OPTIONS] ENVIRONMENT ID
+   python -m maintenance_scripts.delete_dataset [OPTIONS] ID
 
 --include-filtered  Delete any filtered datasets based on this dataset.
 

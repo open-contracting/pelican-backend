@@ -5,7 +5,7 @@ import requests
 import simplejson as json
 from dateutil.relativedelta import relativedelta
 
-from settings.settings import get_param
+from settings import settings
 from tools.currency_converter import convert
 from tools.db import get_cursor
 from tools.getter import get_values
@@ -146,7 +146,7 @@ DATETIME_STR_FORMAT = "%Y-%m-%d %H.%M.%S"
 
 
 def get_kingfisher_meta_data(collection_id):
-    kf_connection = psycopg2.connect(get_param("kingfisher_process_database_url"))
+    kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
 
     kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 

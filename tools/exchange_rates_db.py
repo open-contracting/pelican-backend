@@ -4,7 +4,7 @@ from datetime import date, timedelta
 import psycopg2
 import requests
 
-from settings.settings import get_param
+from settings import settings
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 
@@ -231,7 +231,7 @@ def update_from_fixer_io():
             response = requests.get(
                 LINK.format(
                     date_historical=date_str,
-                    access_key=get_param("fixer_io_api_key"),
+                    access_key=settings.FIXER_IO_API_KEY,
                     base=BASE,
                     symbols=CURRENCIES_STR,
                 ),

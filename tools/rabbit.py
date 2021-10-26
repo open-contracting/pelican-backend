@@ -4,7 +4,7 @@ from urllib.parse import parse_qs, urlencode, urlsplit
 
 import pika
 
-from settings.settings import CustomLogLevels, get_param
+from settings import settings
 from tools.logging_helper import get_logger
 
 global connected
@@ -24,19 +24,21 @@ def connect_and_publish_message(message, routing_key):
 
 
 def publish_message(channel, message, routing_key):
+    routing_key = f"{settings.RABBIT_EXCHANGE_NAME}_{routing_key}"
+
     if not connected:
         connect()
     channel.basic_publish(
-        exchange=get_param("exchange_name"),
+        exchange=settings.RABBIT_EXCHANGE_NAME,
         routing_key=routing_key,
         body=message,
         properties=pika.BasicProperties(delivery_mode=2),
     )
 
     logger.log(
-        CustomLogLevels.MESSAGE_TRACE,
+        settings.CustomLogLevels.MESSAGE_TRACE,
         "Published message to exchange {} with routing key {}. Message: {}".format(
-            get_param("exchange_name"), routing_key, message
+            settings.RABBIT_EXCHANGE_NAME, routing_key, message
         ),
     )
 
@@ -46,7 +48,7 @@ def connect():
     logger = get_logger()
     logger.debug("Connecting to RabbitMQ...")
 
-    parsed = urlsplit(get_param("rabbit_url"))
+    parsed = urlsplit(settings.RABBIT_URL)
     query = parse_qs(parsed.query)
     query.update({"blocked_connection_timeout": 1800, "heartbeat": 100})
 
@@ -54,7 +56,7 @@ def connect():
 
     global channel
     channel = connection.channel()
-    channel.exchange_declare(exchange=get_param("exchange_name"), durable=True, exchange_type="direct")
+    channel.exchange_declare(exchange=settings.RABBIT_EXCHANGE_NAME, durable=True, exchange_type="direct")
 
     global connected
     connected = True
@@ -64,12 +66,14 @@ def connect():
 
 
 def consume(target_callback, routing_key):
+    routing_key = f"{settings.RABBIT_EXCHANGE_NAME}_{routing_key}"
+
     if not connected:
         connection = connect()
 
         channel.queue_declare(queue=routing_key, durable=True)
 
-        channel.queue_bind(exchange=get_param("exchange_name"), queue=routing_key, routing_key=routing_key)
+        channel.queue_bind(exchange=settings.RABBIT_EXCHANGE_NAME, queue=routing_key, routing_key=routing_key)
 
         channel.basic_qos(prefetch_count=1)
 
@@ -79,7 +83,7 @@ def consume(target_callback, routing_key):
         channel.start_consuming()
 
     logger.debug(
-        "Consuming messages from exchange {} with routing key {}".format(get_param("exchange_name"), routing_key)
+        "Consuming messages from exchange {} with routing key {}".format(settings.RABBIT_EXCHANGE_NAME, routing_key)
     )
 
 

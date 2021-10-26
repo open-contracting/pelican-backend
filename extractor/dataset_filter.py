@@ -7,26 +7,25 @@ import simplejson as json
 from psycopg2 import sql
 
 from core.state import phase, set_dataset_state, set_item_state, state
-from settings.settings import get_param
+from settings import settings
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume, publish
 
-consume_routing_key = "_dataset_filter_extractor_init"
-routing_key = "_extractor"
+consume_routing_key = "dataset_filter_extractor_init"
+routing_key = "extractor"
 page_size = 1000
 logger = None
 
 
 @click.command()
-@click.argument("environment")
-def start(environment):
+def start():
     """
     Add filtered datasets.
     """
-    init_worker(environment)
-    consume(callback, get_param("exchange_name") + consume_routing_key)
+    init_worker()
+    consume(callback, consume_routing_key)
 
     return
 
@@ -155,7 +154,7 @@ def callback(connection, channel, delivery_tag, body):
         ids = [row[0] for row in cursor.fetchall()]
 
         # batch initialization
-        max_batch_size = get_param("extractor_max_batch_size")
+        max_batch_size = settings.EXTRACTOR_MAX_BATCH_SIZE
         batch_size = 0
         batch = []
 
@@ -194,7 +193,7 @@ def callback(connection, channel, delivery_tag, body):
                 batch.append(inserted_id)
                 if batch_size >= max_batch_size or items_inserted == items_count:
                     message = {"item_ids": batch, "dataset_id": dataset_id_filtered}
-                    publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
+                    publish(connection, channel, json.dumps(message), routing_key)
 
                     batch_size = 0
                     batch.clear()
@@ -220,8 +219,8 @@ def callback(connection, channel, delivery_tag, body):
         cursor.close()
 
 
-def init_worker(environment):
-    bootstrap(environment, "extractor.dataset_filter")
+def init_worker():
+    bootstrap("extractor.dataset_filter")
 
     global logger
     logger = get_logger()

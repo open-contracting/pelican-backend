@@ -1,6 +1,6 @@
 import csv
 
-from settings.settings import get_param
+from settings import settings
 from tools.checks import get_empty_result_field
 
 format_codelist = None
@@ -35,4 +35,4 @@ def initialise_format_codelist():
         for row in csv_reader:
             format_codelist.append(row["Template"])
 
-    format_codelist.extend(get_param("additional_document_formats"))
+    format_codelist.extend(settings.ADDITIONAL_DOCUMENT_FORMATS)

@@ -4,21 +4,19 @@ import sys
 import click
 import simplejson as json
 
-from settings.settings import get_param
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume
 
-consume_routing_key = "_wiper_init"
+consume_routing_key = "wiper_init"
 
 
 @click.command()
-@click.argument("environment")
-def start(environment):
-    init_worker(environment)
+def start():
+    init_worker()
 
-    consume(callback, get_param("exchange_name") + consume_routing_key)
+    consume(callback, consume_routing_key)
 
     return
 
@@ -50,8 +48,8 @@ def callback(connection, channel, delivery_tag, body):
         cursor.close()
 
 
-def init_worker(environment):
-    bootstrap(environment, "core.wiper")
+def init_worker():
+    bootstrap("core.wiper")
 
     global logger
     logger = get_logger()

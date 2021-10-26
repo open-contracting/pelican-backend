@@ -9,24 +9,22 @@ import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
 from core.state import phase, set_dataset_state, state
 from dataset import meta_data_aggregator
-from settings.settings import get_param
 from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume
 
-consume_routing_key = "_time_variance_checker"
+consume_routing_key = "time_variance_checker"
 
 
 @click.command()
-@click.argument("environment")
-def start(environment):
+def start():
     """
     Create reports, pick examples, and update dataset metadata.
     """
-    init_worker(environment)
+    init_worker()
 
-    consume(callback, get_param("exchange_name") + consume_routing_key)
+    consume(callback, consume_routing_key)
 
     return
 
@@ -67,8 +65,8 @@ def callback(connection, channel, delivery_tag, body):
         sys.exit()
 
 
-def init_worker(environment):
-    bootstrap(environment, "core.finisher")
+def init_worker():
+    bootstrap("core.finisher")
 
     global logger
     logger = get_logger()

@@ -7,16 +7,16 @@ import simplejson as json
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from core.state import phase, set_dataset_state, set_item_state, state
-from settings.settings import get_param
+from settings import settings
 from tools import exchange_rates_db
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume, publish
 
-consume_routing_key = "_ocds_kingfisher_extractor_init"
+consume_routing_key = "ocds_kingfisher_extractor_init"
 
-routing_key = "_extractor"
+routing_key = "extractor"
 
 page_size = 1000
 
@@ -24,23 +24,22 @@ logger = None
 
 
 @click.command()
-@click.argument("environment")
-def start(environment):
+def start():
     """
     Import collections from Kingfisher Process.
     """
-    init_worker(environment)
+    init_worker()
 
-    if get_param("fixer_io_api_key"):
+    if settings.FIXER_IO_API_KEY:
         exchange_rates_db.update_from_fixer_io()
 
-    consume(callback, get_param("exchange_name") + consume_routing_key)
+    consume(callback, consume_routing_key)
 
     return
 
 
 def callback(connection, channel, delivery_tag, body):
-    if get_param("fixer_io_api_key"):
+    if settings.FIXER_IO_API_KEY:
         exchange_rates_db.update_from_fixer_io()
     cursor = get_cursor()
     try:
@@ -54,7 +53,7 @@ def callback(connection, channel, delivery_tag, body):
 
             logger.info("Reading kingfisher data started. name: {} collection_id: {}".format(name, collection_id))
 
-            kf_connection = psycopg2.connect(get_param("kingfisher_process_database_url"))
+            kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
 
             kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
             logger.info("King fisher DB connection established")
@@ -69,7 +68,7 @@ def callback(connection, channel, delivery_tag, body):
                     WHERE compiled_release.collection_id = %s
                     AND pg_column_size(data.data) < %s;
                     """,
-                    (collection_id, get_param("kingfisher_process_max_size")),
+                    (collection_id, settings.KINGFISHER_PROCESS_MAX_SIZE),
                 )
             else:
                 kf_cursor.execute(
@@ -82,7 +81,7 @@ def callback(connection, channel, delivery_tag, body):
                     AND pg_column_size(data.data) < %s
                     LIMIT %s;
                     """,
-                    (collection_id, get_param("kingfisher_process_max_size"), max_items),
+                    (collection_id, settings.KINGFISHER_PROCESS_MAX_SIZE, max_items),
                 )
 
             result = kf_cursor.fetchall()
@@ -109,7 +108,7 @@ def callback(connection, channel, delivery_tag, body):
             ack(connection, channel, delivery_tag)
 
             # batch initialization
-            max_batch_size = get_param("extractor_max_batch_size")
+            max_batch_size = settings.EXTRACTOR_MAX_BATCH_SIZE
             batch_size = 0
             batch = []
 
@@ -160,7 +159,7 @@ def callback(connection, channel, delivery_tag, body):
                     batch.append(inserted_id)
                     if batch_size >= max_batch_size or items_inserted == items_count:
                         message = {"item_ids": batch, "dataset_id": dataset_id}
-                        publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
+                        publish(connection, channel, json.dumps(message), routing_key)
 
                         batch_size = 0
                         batch.clear()
@@ -202,7 +201,7 @@ def resend(connection, channel, dataset_id):
     set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=len(ids))
 
     # batch initialization
-    max_batch_size = get_param("extractor_max_batch_size")
+    max_batch_size = settings.EXTRACTOR_MAX_BATCH_SIZE
     batch_size = 0
     batch = []
 
@@ -220,7 +219,7 @@ def resend(connection, channel, dataset_id):
         batch.append(entry[0])
         if batch_size >= max_batch_size or items_inserted == items_count:
             message = {"item_ids": batch, "dataset_id": dataset_id}
-            publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
+            publish(connection, channel, json.dumps(message), routing_key)
 
             batch_size = 0
             batch.clear()
@@ -229,8 +228,8 @@ def resend(connection, channel, dataset_id):
     logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
 
 
-def init_worker(environment):
-    bootstrap(environment, "extractor.ocds_kingfisher")
+def init_worker():
+    bootstrap("extractor.ocds_kingfisher")
 
     global logger
     logger = get_logger()

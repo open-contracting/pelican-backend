@@ -5,27 +5,25 @@ import click
 import simplejson as json
 
 from core.state import phase, set_dataset_state, state
-from settings.settings import get_param
 from time_variance import processor
 from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume, publish
 
-consume_routing_key = "_dataset_checker"
+consume_routing_key = "dataset_checker"
 
-routing_key = "_time_variance_checker"
+routing_key = "time_variance_checker"
 
 
 @click.command()
-@click.argument("environment")
-def start(environment):
+def start():
     """
     Perform the time-based checks.
     """
-    init_worker(environment)
+    init_worker()
 
-    consume(callback, get_param("exchange_name") + consume_routing_key)
+    consume(callback, consume_routing_key)
 
     return
 
@@ -51,7 +49,7 @@ def callback(connection, channel, delivery_tag, body):
 
         # send messages into next phases
         message = {"dataset_id": dataset_id}
-        publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
+        publish(connection, channel, json.dumps(message), routing_key)
 
         ack(connection, channel, delivery_tag)
     except Exception:
@@ -59,8 +57,8 @@ def callback(connection, channel, delivery_tag, body):
         sys.exit()
 
 
-def init_worker(environment):
-    bootstrap(environment, "checker.time_variance")
+def init_worker():
+    bootstrap("checker.time_variance")
 
     global logger
     logger = get_logger()

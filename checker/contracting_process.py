@@ -6,26 +6,24 @@ import simplejson as json
 
 from contracting_process import processor
 from core.state import phase, set_dataset_state, state
-from settings.settings import get_param
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume, publish
 
-consume_routing_key = "_extractor"
+consume_routing_key = "extractor"
 
-routing_key = "_contracting_process_checker"
+routing_key = "contracting_process_checker"
 
 
 @click.command()
-@click.argument("environment")
-def start(environment):
+def start():
     """
     Perform the field-level and compiled release-level checks.
     """
-    init_worker(environment)
+    init_worker()
 
-    consume(callback, get_param("exchange_name") + consume_routing_key)
+    consume(callback, consume_routing_key)
 
     return
 
@@ -59,7 +57,7 @@ def callback(connection, channel, delivery_tag, body):
 
             # send message to next phase
             message = {"dataset_id": dataset_id}
-            publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
+            publish(connection, channel, json.dumps(message), routing_key)
         else:
             resend(connection, channel, dataset_id)
         # acknowledge message processing
@@ -82,13 +80,13 @@ def resend(connection, channel, dataset_id):
     commit()
 
     message = {"dataset_id": dataset_id}
-    publish(connection, channel, json.dumps(message), get_param("exchange_name") + routing_key)
+    publish(connection, channel, json.dumps(message), routing_key)
 
     logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
 
 
-def init_worker(environment):
-    bootstrap(environment, "checker.contracting_process")
+def init_worker():
+    bootstrap("checker.contracting_process")
 
     global logger
     logger = get_logger()

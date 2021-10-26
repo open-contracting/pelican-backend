@@ -2,7 +2,6 @@ import logging
 import os
 
 
-# custom log levels
 class CustomLogLevels:
     MESSAGE_TRACE = 9
     CHECK_TRACE = 8
@@ -10,61 +9,45 @@ class CustomLogLevels:
     SUB_CHECK_TRACE = 6
 
 
-environment = None
+# Logging
 
-config_data = {
-    "docker": {
-        "log_level": logging.WARNING,
-        "log_filename": os.getenv("LOG_FILENAME"),
-        "database_url": os.getenv("DATABASE_URL"),
-        "schema": os.getenv("DATABASE_SCHEMA"),
-        "exchange_name": os.getenv("RABBIT_EXCHANGE_NAME"),
-        "rabbit_url": os.getenv("RABBIT_URL"),
-        "extractor_max_batch_size": int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", "10")),
-        "kingfisher_process_database_url": os.getenv("KINGFISHER_PROCESS_DATABASE_URL"),
-        "kingfisher_process_max_size": int(os.getenv("KINGFISHER_PROCESS_MAX_SIZE", "30000")),
-        "currency_converter_data_source": os.getenv("CURRENCY_CONVERTER_DATA_SOURCE", "db"),
-        "currency_converter_interpolation": os.getenv("CURRENCY_CONVERTER_INTERPOLATION", "linear"),
-        "currency_converter_extrapolation": os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION", "closest"),
-        "currency_converter_interpolation_max_days_fallback": int(
-            os.getenv("CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK", "9")
-        ),
-        "currency_converter_extrapolation_max_days_fallback": int(
-            os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", "18")
-        ),
-        "fixer_io_api_key": os.getenv("FIXER_IO_API_KEY"),
-        "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
-        "sentry_dsn": os.getenv("SENTRY_DSN", False),
-        "sentry_sample_rate": os.getenv("SENTRY_SAMPLE_RATE", 1.0),
-    },
-    "test": {
-        "log_level": logging.DEBUG,
-        "log_filename": "/tmp/dqt_test1.log",
-        "database_url": "postgresql://dqt:dqt@localhost:5432/dqt",
-        "schema": "development, public",
-        "currency_converter_data_source": "test",
-        "currency_converter_interpolation": "linear",
-        "currency_converter_extrapolation": "closest",
-        "currency_converter_interpolation_max_days_fallback": 90,
-        "currency_converter_extrapolation_max_days_fallback": 180,
-        "fixer_io_api_key": None,
-        "additional_document_formats": ["offline/print", "image/gif", "image/jpeg"],
-        "sentry_dsn": os.getenv("SENTRY_DSN", False),
-        "sentry_sample_rate": os.getenv("SENTRY_SAMPLE_RATE", 1.0),
-    },
-}
+LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "WARNING"))
+LOG_FILENAME = os.getenv("LOG_FILENAME")
 
+# Batch sizes
 
-def get_param(param_name):
-    global environment
-    return config_data[environment][param_name]
+EXTRACTOR_MAX_BATCH_SIZE = int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", 100))
+KINGFISHER_PROCESS_MAX_SIZE = int(os.getenv("KINGFISHER_PROCESS_MAX_SIZE", 300000))
 
+# Local services
 
-def set_environment(environment_name):
-    global environment
-    environment = environment_name
+# To set the search path, use, for example: postgresql:///pelican_backend?options=-csearch_path%3Dproduction,public
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql:///pelican_backend?application_name=pelican_backend")
+KINGFISHER_PROCESS_DATABASE_URL = os.getenv(
+    "KINGFISHER_PROCESS_DATABASE_URL", "postgresql:///kingfisher_process?application_name=kingfisher_process"
+)
 
+RABBIT_URL = os.getenv("RABBIT_URL", "amqp://localhost")
+RABBIT_EXCHANGE_NAME = os.getenv("RABBIT_EXCHANGE_NAME", "pelican_development")
 
-def get_environment():
-    global environment
-    return environment
+# Third-party services
+
+FIXER_IO_API_KEY = os.getenv("FIXER_IO_API_KEY")
+
+SENTRY_DSN = os.getenv("SENTRY_DSN")
+SENTRY_SAMPLE_RATE = os.getenv("SENTRY_SAMPLE_RATE", 1.0)
+
+# Currency conversion
+
+CURRENCY_CONVERTER_INTERPOLATION = os.getenv("CURRENCY_CONVERTER_INTERPOLATION", "linear")
+CURRENCY_CONVERTER_EXTRAPOLATION = os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION", "closest")
+CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK = int(
+    os.getenv("CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK", 90)
+)
+CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK = int(
+    os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", 180)
+)
+
+# Constants
+
+ADDITIONAL_DOCUMENT_FORMATS = ["offline/print", "image/gif", "image/jpeg"]
