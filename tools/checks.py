@@ -11,7 +11,6 @@ def get_empty_result_field(name, version=1.0):
 def get_empty_result_resource(version=1.0):
     return {
         "result": None,
-        "value": None,
         "meta": None,
         "application_count": None,
         "pass_count": None,
