@@ -1,6 +1,14 @@
 Reference
 =========
 
+.. toctree::
+   :caption: Contents
+   :maxdepth: 2
+
+   workers
+   services
+   state-machine
+
 Goals
 -----
 
@@ -73,11 +81,3 @@ Pelican backend (*DQT* in the diagram) and `Pelican frontend <https://pelican-fr
    :target: ../_static/components.png
 
 .. https://app.diagrams.net/?page-id=eUBU3am9u6r-Z2GVQuAO#G10GykQCg41pxzQglRFYs2aa4OPHz-ivCS
-
-.. toctree::
-   :caption: Contents
-   :maxdepth: 2
-
-   workers
-   services
-   state-machine
