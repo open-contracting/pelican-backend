@@ -58,13 +58,15 @@ Repository structure
    │   ├── misc                  Miscellaneous checks
    │   ├── reference             Reference checks
    │   └── unique                Uniqueness checks
-   ├── migrations             Database migrations
-   ├── registry               Cached copies of remote files
+   ├── pelican                The main project
+   │   ├── migrations            Database migrations
+   │   └── static                Static files (SQL dumps, SQL snippets, etc.)
    ├── time_variance          Time-based checks
+   │   └── checks                Individual checks
    ├── tools                  Shared utilities
    └── workers                :doc:`All workers<reference/workers>`
-       ├── extract                Extractor workers
-       └── check                  Checker workers
+       ├── extract               Extractor workers
+       └── check                 Checker workers
 
 ..
    tree -d -I '__pycache__|tests|htmlcov|docs'

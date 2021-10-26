@@ -12,11 +12,16 @@ To use another schema, you can set the ``PGOPTIONS`` environment variable when r
 Run migrations
 --------------
 
-Run the files in the ``migrations/`` directory in numerical order. For example:
+Run the files in the ``pelican/migrations/`` directory in numerical order. For example:
 
 .. code-block:: bash
 
-   psql pelican_backend -f migrations/001_base.sql -f migrations/002_constraints.sql
+   psql pelican_backend -f pelican/migrations/*.sql
+
+..
+
+   Bash filename expansion is alphabetically sorted.
+   https://www.gnu.org/software/bash/manual/bash.html#Filename-Expansion
 
 Load exchange rates
 -------------------
@@ -27,7 +32,7 @@ Instead, load a file:
 
 .. code-block:: sql
 
-   psql pelican_backend -c "\copy exchange_rates (valid_on, rates) from 'tools/exchange_rates_dump.csv' delimiter ',' csv header;"
+   psql pelican_backend -c "\copy exchange_rates (valid_on, rates) from 'pelican/static/exchange_rates_dump.csv' delimiter ',' csv header;"
 
 Dump exchange rates
 -------------------
@@ -43,4 +48,4 @@ Truncate all tables in the database. For example:
 
 .. code-block:: bash
 
-   psql pelican_backend -f migrations/truncate.sql
+   psql pelican_backend -f pelican/migrations/truncate.sql

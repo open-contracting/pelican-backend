@@ -26,7 +26,7 @@ def start(name, collection_id, previous_dataset, sample):
     init_worker()
 
     logger.info("Updating registries...")
-    with open("registry/origin.json", "r") as json_file:
+    with open(os.path.join("pelican", "static", "origin.json"), "r") as json_file:
         origin = json.load(json_file)
 
     for path, urls in origin.items():
