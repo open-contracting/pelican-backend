@@ -4,14 +4,11 @@ from tools.logging_helper import get_logger
 
 
 class state:
-    WAITING = "WAITING"
     IN_PROGRESS = "IN_PROGRESS"
     OK = "OK"
-    FAILED = "FAILED"
 
 
 class phase:
-    PLANNED = "PLANNED"
     CONTRACTING_PROCESS = "CONTRACTING_PROCESS"
     DATASET = "DATASET"
     TIME_VARIANCE = "TIME_VARIANCE"
@@ -104,7 +101,7 @@ def get_processed_items_count(dataset_id):
                        dataset_id = %s
                        AND state IN (%s, %s);
                        """,
-        (dataset_id, state.OK, state.FAILED),
+        (dataset_id, state.OK),
     )
 
     result = cursor.fetchone()
