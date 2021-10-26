@@ -79,6 +79,13 @@ def do_work(dataset_id):
                     if filtering_result:
                         scope[plugin_name]["total_count"] += 1
 
+                        # Time-based checks report two numbers: "pairs found" and "pairs passed" (as a percentage of
+                        # pairs found). This if-statement serves to calculate the "pairs found".
+                        #
+                        # In general, time-based checks require the new item to be present in order to be evaluated,
+                        # which this if-statement guarantees. The `ocid` check is special, because its "pairs passed"
+                        # test is the same as this "pairs found" test. As such, its "pairs passed" result will always
+                        # be 100%. In short: this if-statement is not in error.
                         if item[2]:
                             scope[plugin_name]["coverage_count"] += 1
                             scope[plugin_name], evaluation_result = plugin.evaluate(
