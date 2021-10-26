@@ -7,12 +7,12 @@ import simplejson as json
 import contracting_process.field_level.report_examples as field_level_report_examples
 import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
-from core.state import phase, set_dataset_state, state
 from dataset import meta_data_aggregator
 from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume
+from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "time_variance_checker"
 

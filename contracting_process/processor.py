@@ -4,11 +4,11 @@ from psycopg2.extras import execute_values
 from contracting_process.field_level.definitions import coverage_checks
 from contracting_process.field_level.definitions import definitions as field_level_definitions
 from contracting_process.resource_level.definitions import definitions as resource_level_definitions
-from core.state import set_item_state, state
 from settings.settings import CustomLogLevels
 from tools.db import get_cursor
 from tools.getter import get_values
 from tools.logging_helper import get_logger
+from tools.state import set_item_state, state
 
 
 # item: (data, item_id, dataset_id)

@@ -6,13 +6,13 @@ import psycopg2.extras
 import simplejson as json
 
 import dataset.meta_data_aggregator as meta_data_aggregator
-from core.state import phase, set_dataset_state, set_item_state, state
 from settings import settings
 from tools import exchange_rates_db
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume, publish
+from tools.state import phase, set_dataset_state, set_item_state, state
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
 

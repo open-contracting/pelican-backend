@@ -5,11 +5,11 @@ import click
 import simplejson as json
 
 from contracting_process import processor
-from core.state import phase, set_dataset_state, state
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
 from tools.rabbit import ack, consume, publish
+from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "extractor"
 

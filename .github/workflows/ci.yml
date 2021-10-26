@@ -42,7 +42,7 @@ jobs:
       - run: |
           psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -f migrations/001_base.sql
           psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -c "\copy exchange_rates (valid_on, rates) from 'tools/exchange_rates_dump.csv' delimiter ',' csv header;"
-      - run: pytest --cov commands --cov contracting_process --cov core --cov dataset --cov registry --cov time_variance --cov tools --cov workers
+      - run: pytest --cov commands --cov contracting_process --cov dataset --cov registry --cov time_variance --cov tools --cov workers
         if: always()
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres

@@ -1,9 +1,9 @@
 import click
 
-from core.state import phase, state
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
+from tools.state import phase, state
 
 
 @click.command()
