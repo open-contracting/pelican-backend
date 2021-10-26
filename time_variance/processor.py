@@ -142,8 +142,6 @@ def do_work(dataset_id):
 
     cursor.close()
 
-    return
-
 
 def save_time_variance_level_check(check_name, result, dataset_id):
     cursor = get_cursor()

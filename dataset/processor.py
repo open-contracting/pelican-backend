@@ -80,8 +80,6 @@ def do_work(dataset_id, logger):
     meta_data = meta_data_aggregator.get_result(meta_data_aggregator_scope)
     meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
-    return
-
 
 def save_dataset_level_check(check_name, result, dataset_id):
     cursor = get_cursor()

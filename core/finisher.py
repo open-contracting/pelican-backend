@@ -26,8 +26,6 @@ def start():
 
     consume(callback, consume_routing_key)
 
-    return
-
 
 def callback(connection, channel, delivery_tag, body):
     try:

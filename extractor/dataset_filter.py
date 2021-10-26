@@ -27,8 +27,6 @@ def start():
     init_worker()
     consume(callback, consume_routing_key)
 
-    return
-
 
 # input message example
 # {

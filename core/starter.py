@@ -43,8 +43,6 @@ def start(name, collection_id, previous_dataset, sample):
     }
     connect_and_publish_message(json.dumps(message), routing_key)
 
-    return
-
 
 def init_worker():
     bootstrap("core.starter")
