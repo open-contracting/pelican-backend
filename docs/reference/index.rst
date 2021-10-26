@@ -63,7 +63,7 @@ Repository structure
    ├── settings               Project settings
    ├── time_variance          Time-based checks
    ├── tools                  Shared utilities
-   └── workers                All workers
+   └── workers                :doc:`All workers<reference/workers>`
        ├── extract                Extractor workers
        └── check                  Checker workers
 
