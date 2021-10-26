@@ -19,7 +19,7 @@ Pairs of items with the same ocid are read in batches from the dataset and its a
 #. Accepts five arguments: an accumulator, an ancestor's item and its ID, and a dataset's item and its ID
 #. Returns whether the check can be calculated against the pair of items (for example, if both are present)
 
-If ``filter`` returns ``True``, the ``evaluate`` function:
+If ``filter`` returns ``True``, and if the new item is present, then the ``evaluate`` function:
 
 #. Accepts five arguments, like ``filter``
 #. Determines whether the check passes
