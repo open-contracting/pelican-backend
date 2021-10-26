@@ -1,17 +1,19 @@
 import functools
 
-import contracting_process.field_level.checks.date_time as date_time
-import contracting_process.field_level.checks.document_description_length as document_description_length
-import contracting_process.field_level.checks.document_format_codelist as document_format_codelist
-import contracting_process.field_level.checks.document_type as document_type
-import contracting_process.field_level.checks.email as email
-import contracting_process.field_level.checks.exists as exists
-import contracting_process.field_level.checks.identifier_scheme as identifier_scheme
-import contracting_process.field_level.checks.language as language
-import contracting_process.field_level.checks.non_empty as non_empty
-import contracting_process.field_level.checks.number_checks as number_checks
-import contracting_process.field_level.checks.ocid_prefix_check as ocid_prefix_check
-import contracting_process.field_level.checks.telephone as telephone
+from contracting_process.field_level.checks import (
+    date_time,
+    document_description_length,
+    document_format_codelist,
+    document_type,
+    email,
+    exists,
+    identifier_scheme,
+    language,
+    non_empty,
+    number_checks,
+    ocid_prefix_check,
+    telephone,
+)
 
 coverage_checks = [(exists.calculate, exists.name), (non_empty.calculate, non_empty.name)]
 
