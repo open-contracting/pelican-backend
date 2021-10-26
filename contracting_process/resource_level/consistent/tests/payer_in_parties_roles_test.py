@@ -19,28 +19,24 @@ item_test_undefined3 = {
 def test_undefined():
     result = calculate({})
     assert result["result"] is None
-    assert result["value"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no parties with id set"}
 
     result = calculate(item_test_undefined1)
     assert result["result"] is None
-    assert result["value"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no values with check-specific properties"}
 
     result = calculate(item_test_undefined2)
     assert result["result"] is None
-    assert result["value"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no values with check-specific properties"}
 
     result = calculate(item_test_undefined3)
     assert result["result"] is None
-    assert result["value"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no values with check-specific properties"}
@@ -55,7 +51,6 @@ item_test_passed = {
 def test_passed():
     result = calculate(item_test_passed)
     assert result["result"] is True
-    assert result["value"] is None
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
     assert result["meta"] == {
@@ -90,7 +85,6 @@ item_test_failed2 = {
 def test_failed():
     result = calculate(item_test_failed1)
     assert result["result"] is False
-    assert result["value"] is None
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
@@ -109,7 +103,6 @@ def test_failed():
 
     result = calculate(item_test_failed2)
     assert result["result"] is False
-    assert result["value"] is None
     assert result["application_count"] == 3
     assert result["pass_count"] == 1
     assert result["meta"] == {
