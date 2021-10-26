@@ -2,6 +2,7 @@ import random
 
 import requests
 
+from tools import settings
 from tools.checks import get_empty_result_dataset
 from tools.getter import get_values
 
@@ -62,7 +63,7 @@ def get_result(scope):
     ok_status_num = 0
     for sample in scope["samples"]:
         try:
-            request = requests.get(sample["value"], timeout=30, stream=True)
+            request = requests.get(sample["value"], timeout=settings.REQUESTS_TIMEOUT, stream=True)
             if 200 <= request.status_code < 400:
                 sample["status"] = "OK"
                 ok_status_num += 1

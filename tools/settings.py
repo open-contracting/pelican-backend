@@ -52,6 +52,9 @@ CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK = int(
     os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", 180)
 )
 
-# Constants
+# Check configuration
 
 ADDITIONAL_DOCUMENT_FORMATS = ["offline/print", "image/gif", "image/jpeg"]
+
+# Timeout for URL availability check.
+REQUESTS_TIMEOUT = 30

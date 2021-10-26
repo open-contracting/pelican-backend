@@ -1,6 +1,12 @@
+from unittest.mock import patch
+
 from dataset.misc import url_availability
 
-item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": "https://www.google.com/"}]}}
+item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": "https://httpbin.org/status/200"}]}}
+
+
+class mock_settings:
+    REQUESTS_TIMEOUT = 2
 
 
 def test_undefined():
@@ -25,10 +31,10 @@ def test_undefined():
 
 item_test_passed = {
     "ocid": "0",
-    "planning": {"documents": [{"url": "https://www.google.com/"} for _ in range(25)]},
-    "tender": {"documents": [{"url": "https://www.google.com/"} for _ in range(25)]},
-    "awards": [{"documents": [{"url": "https://www.google.com/"}]} for _ in range(25)],
-    "contracts": [{"documents": [{"url": "https://www.google.com/"}]} for _ in range(25)],
+    "planning": {"documents": [{"url": "https://httpbin.org/status/200"} for _ in range(25)]},
+    "tender": {"documents": [{"url": "https://httpbin.org/status/200"} for _ in range(25)]},
+    "awards": [{"documents": [{"url": "https://httpbin.org/status/200"}]} for _ in range(25)],
+    "contracts": [{"documents": [{"url": "https://httpbin.org/status/200"}]} for _ in range(25)],
 }
 
 
@@ -45,26 +51,25 @@ def test_passed():
 
 
 items_test_failed_multiple = [
-    {"ocid": str(num), "planning": {"documents": [{"url": "https://www.google.com/"}]}} for num in range(99)
+    {"ocid": str(num), "planning": {"documents": [{"url": "https://httpbin.org/status/200"}]}} for num in range(99)
 ]
-items_test_failed_multiple.append(
-    {"ocid": "99", "planning": {"documents": [{"url": "https://www.nonexistingurl.com/"}]}}
-)
+items_test_failed_multiple.append({"ocid": "99", "planning": {"documents": [{"url": "https://httpbin.org/delay/10"}]}})
 
 
 # working when samples_num is set to 100
 def test_failed_multiple():
-    scope = {}
+    with patch.object(url_availability, "settings", new=mock_settings):
+        scope = {}
 
-    id = 0
-    for item in items_test_failed_multiple:
-        scope = url_availability.add_item(scope, item, id)
-        id += 1
+        id = 0
+        for item in items_test_failed_multiple:
+            scope = url_availability.add_item(scope, item, id)
+            id += 1
 
-    result = url_availability.get_result(scope)
-    assert result["result"] is False
-    assert result["value"] == 99
-    assert len(result["meta"]["passed_examples"]) == 99
-    assert len(result["meta"]["failed_examples"]) == 1
-    assert len([s for s in result["meta"]["passed_examples"] if s["status"] == "OK"]) == 99
-    assert len([s for s in result["meta"]["failed_examples"] if s["status"] == "ERROR"]) == 1
+        result = url_availability.get_result(scope)
+        assert result["result"] is False
+        assert result["value"] == 99
+        assert len(result["meta"]["passed_examples"]) == 99
+        assert len(result["meta"]["failed_examples"]) == 1
+        assert len([s for s in result["meta"]["passed_examples"] if s["status"] == "OK"]) == 99
+        assert len([s for s in result["meta"]["failed_examples"] if s["status"] == "ERROR"]) == 1
