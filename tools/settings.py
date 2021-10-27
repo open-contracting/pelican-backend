@@ -41,13 +41,23 @@ FIXER_IO_API_KEY = os.getenv("FIXER_IO_API_KEY")
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 SENTRY_SAMPLE_RATE = os.getenv("SENTRY_SAMPLE_RATE", 1.0)
 
-# Currency conversion
+# Currency conversion: Sets how the rate is determined if a date is missing a rate.
 
+# Interpolation refers to the behavior when the date is between dates with known rates. If disabled, the value is not
+# converted. Otherwise, the rate is determined by either using linear interpolation ("linear") or copying the rate of
+# the closest date ("closest").
 CURRENCY_CONVERTER_INTERPOLATION = os.getenv("CURRENCY_CONVERTER_INTERPOLATION", "linear")
-CURRENCY_CONVERTER_EXTRAPOLATION = os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION", "closest")
+# If the distance to the nearby date(s) is greater than this number of days, the value is not converted. Set to -1 to
+# set the limit to infinity.
 CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK = int(
     os.getenv("CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK", 90)
 )
+
+# Extrapolation refers to the behavior when the date is outside dates with known rates. if disabled, the value is not
+# converted. Otherwise, the reate is determined by copying the rate of the closest date ("closest").
+CURRENCY_CONVERTER_EXTRAPOLATION = os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION", "closest")
+# If the distance to the closest date is greater than this number of days, the value is not converted. Set to -1 to
+# set the limit to infinity.
 CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK = int(
     os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", 180)
 )
