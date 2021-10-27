@@ -7,7 +7,7 @@ from tools.logging_helper import init_logger
 if "PYTEST_CURRENT_TEST" in os.environ:
     import tools.exchange_rates_db as exchange_rates
 else:
-    import tools.exchange_rates_test as exchange_rates
+    import tools.exchange_rates_file as exchange_rates
 
 
 def bootstrap(logger_name):
