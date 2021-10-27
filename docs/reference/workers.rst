@@ -42,6 +42,8 @@ The worker will ignore a message if the dataset is not in the ``CHECKED`` phase.
 
    This worker is only needed if the Pelican frontend is deployed.
 
+.. _workers-check:
+
 Check
 -----
 
@@ -85,6 +87,10 @@ Perform the dataset-level checks.
 #. Publish a message
 
 To determine whether field-level and compiled release-level checks have been performed on all items, it waits for the dataset to be in the ``CONTRACTING_PROCESS`` phase and ``OK`` state, with all its items in the ``OK`` state (see :doc:`state-machine`).
+
+.. note::
+
+   In principle, a dataset or time-based check could depend on the results of field-level and compiled release-level checks, and a time-based check could depend on the results of a dataset check. That is why the `Aggregator pattern <https://www.enterpriseintegrationpatterns.com/patterns/messaging/Aggregator.html>`__ is implemented in this worker. Otherwise, it could have been implemented in a separate worker, which would publish a message that the dataset worker and time-based worker would consume, to allow all :ref:`check<workers-extract>` to run in parallel.
 
 .. _check-time-based:
 
