@@ -14,6 +14,9 @@ consume_routing_key = "wiper_init"
 
 @click.command()
 def start():
+    """
+    Delete datasets.
+    """
     init_worker()
 
     consume(callback, consume_routing_key)

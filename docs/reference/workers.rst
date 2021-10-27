@@ -123,3 +123,28 @@ Create reports, pick examples, and update dataset metadata.
 #. Calculate field-level report
 #. Prepare (random) examples from field-level checks 
 #. Update the dataset's metadata
+
+wipe
+~~~~
+
+.. note::
+
+   This worker is only needed when deploying the `Data Registry <https://github.com/open-contracting/data-registry>`__.
+
+.. code-block:: bash
+
+   python -m workers.wipe
+
+Delete datasets.
+
+#. Receive a message
+#. Delete the dataset's rows in:
+
+   -  ``resource_level_check``
+   -  ``field_level_check``
+   -  ``progress_monitor_item``
+   -  ``progress_monitor_dataset``
+   -  ``data_item``
+   -  ``dataset``
+
+This worker assumes that the deployment does not enable filtered datasets (``dataset_filter`` table) or time-based checks (``time_variance_level_check`` table).
