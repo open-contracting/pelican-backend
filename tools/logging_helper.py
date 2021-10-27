@@ -30,13 +30,6 @@ def init_logger(logger_name):
 
     formatter = logging.Formatter("%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(message)s")
 
-    log_filename = settings.LOG_FILENAME
-    if log_filename:
-        fh = logging.FileHandler(log_filename)
-        fh.setLevel(logging.DEBUG)
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-
     ch = logging.StreamHandler()
     ch.setLevel(settings.LOG_LEVEL)
     ch.setFormatter(formatter)

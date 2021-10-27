@@ -18,9 +18,7 @@ KINGFISHER_PROCESS_MAX_SIZE = int(os.getenv("KINGFISHER_PROCESS_MAX_SIZE", 30000
 # Logging
 
 # The log level of the stream handler.
-LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "WARNING"))
-# The file path of the file handler. The file handler's level is always DEBUG.
-LOG_FILENAME = os.getenv("LOG_FILENAME")
+LOG_LEVEL = getattr(logging, os.getenv("LOG_LEVEL", "DEBUG"))
 
 # Local services
 
