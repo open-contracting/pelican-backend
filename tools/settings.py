@@ -16,7 +16,7 @@ EXTRACTOR_MAX_BATCH_SIZE = int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", 100))
 #
 # In practice, very large releases create very large results and cause processing to fail. Since less than 0.005%
 # of releases in Kingfisher Process exceed 300 kB, these releases are simply excluded instead of pursing another
-# solution. (2021-10-27: 2650 out of 6.12318e+07)
+# solution. (2021-10-27: n=6.12318e+07: >300 kB: 2650 0.005%; >30 kB: 195009 0.3%)
 KINGFISHER_PROCESS_MAX_SIZE = int(os.getenv("KINGFISHER_PROCESS_MAX_SIZE", 300000))
 
 # Additional formats for document format check.

@@ -155,8 +155,6 @@ def extrapolation_closest_rate(currency, rel_date):
 
         return rates[bound[1]][currency]
 
-    return None
-
 
 def convert(amount, original_currency, target_currency, rel_date):
     if original_currency not in currencies or target_currency not in currencies:

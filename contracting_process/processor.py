@@ -31,8 +31,6 @@ def do_work(items):
 
     get_logger().debug("Work done.")
 
-    return None
-
 
 def resource_level_checks(data, item_id, dataset_id):
     get_logger().log(
