@@ -1,4 +1,7 @@
+import os
 from unittest.mock import patch
+
+import pytest
 
 from dataset.misc import url_availability
 
@@ -6,7 +9,7 @@ item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": "https://
 
 
 class mock_settings:
-    REQUESTS_TIMEOUT = 2
+    REQUESTS_TIMEOUT = 1
 
 
 def test_undefined():
@@ -38,7 +41,7 @@ item_test_passed = {
 }
 
 
-# working when samples_num is set to 100
+@pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
 def test_passed():
     scope = {}
     scope = url_availability.add_item(scope, item_test_passed, 0)
@@ -56,7 +59,7 @@ items_test_failed_multiple = [
 items_test_failed_multiple.append({"ocid": "99", "planning": {"documents": [{"url": "https://httpbin.org/delay/10"}]}})
 
 
-# working when samples_num is set to 100
+@pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
 def test_failed_multiple():
     with patch.object(url_availability, "settings", new=mock_settings):
         scope = {}
