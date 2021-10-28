@@ -36,7 +36,6 @@ Repository structure
 
 .. code-block:: none
 
-   ├── commands               :doc:`All commands<tasks/datasets>`
    ├── contracting_process    Field-level and compiled release-level checks
    │   ├── field_level           Field-level checks
    │   │   └── checks               Individual checks

@@ -1,14 +1,16 @@
 Manage datasets
 ===============
 
-.. _create-dataset:
+A CLI interface is provided via the ``./manage.py`` script, with the following commands.
 
-Create a dataset
-----------------
+.. _manage-add:
+
+add
+---
 
 .. code-block:: bash
 
-   python -m commands.create_dataset [OPTIONS] SPIDER_YYYY-MM-DD ID
+   ./manage.py add [OPTIONS] SPIDER_YYYY-MM-DD ID
 
 Create a dataset.
 
@@ -17,12 +19,14 @@ Create a dataset.
 
 This command also updates the lists of OCID prefixes, identifier schemes, and document formats, used by :doc:`field-level quality checks<checks/field>`.
 
-Delete a dataset
-----------------
+.. _manage-remove:
+
+remove
+------
 
 .. code-block:: bash
 
-   python -m commands.delete_dataset [OPTIONS] ID
+   ./manage.py remove [OPTIONS] ID
 
 Delete a dataset.
 

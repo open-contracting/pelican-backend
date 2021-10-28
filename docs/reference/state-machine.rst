@@ -46,7 +46,7 @@ Dataset
    * - ``DELETED``
      - ``OK``
      - The dataset is deleted, but the row is needed for foreign key references
-     - ``commands.delete_dataset``
+     - :ref:`manage-remove` command
 
 Item
 ----

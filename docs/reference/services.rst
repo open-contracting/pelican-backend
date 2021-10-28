@@ -21,10 +21,10 @@ Having trouble? See :doc:`../tasks/troubleshoot`.
      - Queue (input)
      - Message routing key (output)
      - Sample message
-   * - ``commands.create_dataset``
+   * - ``manage.py add``
      - N/A
      - ``ocds_kingfisher_extractor_init``
-     - :ref:`create-dataset`
+     - :ref:`manage-add` command
    * - ``workers.extract.kingfisher_process``
      - ``ocds_kingfisher_extractor_init``
      - ``extractor``
