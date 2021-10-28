@@ -1,10 +1,13 @@
 from dataset.distribution import main_procurement_category
 
+item_unset1 = {"ocid": "1"}
+item_unset2 = {"ocid": "2"}
+
 
 def test_empty():
     scope = {}
-    scope = main_procurement_category.add_item(scope, {"ocid": "1"}, 1)
-    scope = main_procurement_category.add_item(scope, {"ocid": "2"}, 2)
+    scope = main_procurement_category.add_item(scope, item_unset1, 1)
+    scope = main_procurement_category.add_item(scope, item_unset2, 2)
     result = main_procurement_category.get_result(scope)
     assert type(result) == dict
     assert result["result"] is None

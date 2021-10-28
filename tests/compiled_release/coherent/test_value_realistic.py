@@ -4,17 +4,15 @@ from tools.bootstrap import bootstrap
 version = 1.0
 bootstrap("value_realistic_test")
 
+item_undefined0 = {"date": "2019-01-10T22:00:00+01:00"}
 item_undefined1 = {"tender": {}, "date": "2019-01-10T22:00:00+01:00"}
-
 item_undefined2 = {"tender": {"value": {}}, "date": "2019-01-10T22:00:00+01:00"}
-
 item_undefined3 = {"tender": {"value": {"amount": None, "currency": "USD"}}, "date": "2019-01-10T22:00:00+01:00"}
-
 item_undefined4 = {"tender": {"value": {"amount": 100, "currency": "unknown"}}, "date": "2019-01-10T22:00:00+01:00"}
 
 
 def test_undefined():
-    empty_result = calculate({"date": "2019-01-10T22:00:00+01:00"})
+    empty_result = calculate(item_undefined0)
     assert empty_result["result"] is None
     assert empty_result["application_count"] == 0
     assert empty_result["pass_count"] == 0

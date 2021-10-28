@@ -5,6 +5,7 @@ import pytest
 
 from dataset.misc import url_availability
 
+item_unset = {"ocid": "0"}
 item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": "https://httpbin.org/status/200"}]}}
 
 
@@ -14,7 +15,7 @@ class mock_settings:
 
 def test_undefined():
     scope = {}
-    scope = url_availability.add_item(scope, {"ocid": "0"}, 0)
+    scope = url_availability.add_item(scope, item_unset, 0)
     result = url_availability.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None

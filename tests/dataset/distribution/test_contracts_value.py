@@ -4,11 +4,14 @@ from tools.bootstrap import bootstrap
 bootstrap("contracts_value_test")
 contracts_value = value.ModuleType("contracts.value")
 
+item_unset1 = {"ocid": "1"}
+item_unset2 = {"ocid": "2"}
+
 
 def test_empty():
     scope = {}
-    scope = contracts_value.add_item(scope, {"ocid": "1"}, 1)
-    scope = contracts_value.add_item(scope, {"ocid": "1"}, 2)
+    scope = contracts_value.add_item(scope, item_unset1, 1)
+    scope = contracts_value.add_item(scope, item_unset2, 2)
     result = contracts_value.get_result(scope)
     assert type(result) == dict
     assert result["result"] is None

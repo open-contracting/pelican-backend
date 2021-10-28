@@ -1,10 +1,20 @@
 from dataset.unique import tender_id
 
+item_tender_unset = {"ocid": "1"}
+item_tender_unset3 = {"ocid": "3"}
+item_tender_unset5 = {"ocid": "5"}
+item_tender_empty = {"ocid": "2", "tender": {}}
+item_tender_id_str = {"ocid": "2", "tender": {"id": "2"}}
+item_tender_id_int = {"ocid": "1", "tender": {"id": 1}}
+item_tender_id_int2 = {"ocid": "2", "tender": {"id": 1}}
+item_tender_id_int3 = {"ocid": "3", "tender": {"id": 3}}
+item_tender_id_int4 = {"ocid": "4", "tender": {"id": 4}}
+
 
 def test_undefined():
     scope = {}
-    scope = tender_id.add_item(scope, {"ocid": "1"}, 1)
-    scope = tender_id.add_item(scope, {"ocid": "2", "tender": {}}, 2)
+    scope = tender_id.add_item(scope, item_tender_unset, 1)
+    scope = tender_id.add_item(scope, item_tender_empty, 2)
     result = tender_id.get_result(scope)
 
     assert result["result"] is None
@@ -14,9 +24,9 @@ def test_undefined():
 
 def test_passed():
     scope = {}
-    scope = tender_id.add_item(scope, {"ocid": "1", "tender": {"id": 1}}, 1)
-    scope = tender_id.add_item(scope, {"ocid": "2", "tender": {"id": "2"}}, 2)
-    scope = tender_id.add_item(scope, {"ocid": "3"}, 3)
+    scope = tender_id.add_item(scope, item_tender_id_int, 1)
+    scope = tender_id.add_item(scope, item_tender_id_str, 2)
+    scope = tender_id.add_item(scope, item_tender_unset3, 3)
     result = tender_id.get_result(scope)
 
     assert result["result"] is True
@@ -43,11 +53,11 @@ def test_passed():
 
 def test_failed():
     scope = {}
-    scope = tender_id.add_item(scope, {"ocid": "1", "tender": {"id": 1}}, 1)
-    scope = tender_id.add_item(scope, {"ocid": "2", "tender": {"id": 1}}, 2)
-    scope = tender_id.add_item(scope, {"ocid": "3", "tender": {"id": 3}}, 3)
-    scope = tender_id.add_item(scope, {"ocid": "4", "tender": {"id": 4}}, 4)
-    scope = tender_id.add_item(scope, {"ocid": "5"}, 5)
+    scope = tender_id.add_item(scope, item_tender_id_int, 1)
+    scope = tender_id.add_item(scope, item_tender_id_int2, 2)
+    scope = tender_id.add_item(scope, item_tender_id_int3, 3)
+    scope = tender_id.add_item(scope, item_tender_id_int4, 4)
+    scope = tender_id.add_item(scope, item_tender_unset5, 5)
     result = tender_id.get_result(scope)
 
     assert result["result"] is False

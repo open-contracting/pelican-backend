@@ -1,6 +1,8 @@
 from dataset.distribution import buyer_repetition
 from tools.helpers import is_subset_dict
 
+item_unset = {"ocid": "0"}
+
 
 def test_undefined():
     scope = {}
@@ -10,7 +12,7 @@ def test_undefined():
     assert result["meta"] == {"reason": "no data items were processed"}
 
     scope = {}
-    scope = buyer_repetition.add_item(scope, {"ocid": "0"}, 0)
+    scope = buyer_repetition.add_item(scope, item_unset, 0)
     result = buyer_repetition.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None

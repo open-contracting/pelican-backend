@@ -1,5 +1,7 @@
 from dataset.distribution import buyer
 
+item_unset = {"ocid": "0"}
+
 
 def test_undefined():
     scope = {}
@@ -9,7 +11,7 @@ def test_undefined():
     assert result["meta"] == {"reason": "no data items were processed"}
 
     scope = {}
-    scope = buyer.add_item(scope, {"ocid": "0"}, 0)
+    scope = buyer.add_item(scope, item_unset, 0)
     result = buyer.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
