@@ -1,6 +1,6 @@
 import phonenumbers
 
-from tools.checks import field_level_check
+from tools.checks import field_quality_check
 
 name = "telephone"
 
@@ -13,5 +13,5 @@ def test(value):
         return False, f"incorrect format: {e}"
 
 
-# phonenumbers.parse errors on non-str input.
-calculate = field_level_check(name, test, require_type=str)
+# phonenumbers.parse() errors on non-str input.
+calculate = field_quality_check(name, test, require_type=str)

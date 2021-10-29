@@ -1,13 +1,3 @@
-def get_empty_result_field(name, version=1.0):
-    return {
-        "name": name,
-        "result": None,
-        "value": None,
-        "reason": None,
-        "version": version,
-    }
-
-
 def get_empty_result_resource(version=1.0):
     return {
         "result": None,
@@ -48,26 +38,68 @@ def get_empty_result_time_variance_scope():
     }
 
 
-def field_level_check(name, func, require_type=None):
+def field_coverage_check(name, test, version=1.0):
+    """
+    :param str name: the machine name of the check
+    :param test: a function that accepts a value and returns a tuple of a boolean (whether the test passed) and a
+                 string (the reason for any failed test)
+    :param float version: the version number of the check
+    """
+
     def method(item, key):
-        result = get_empty_result_field(name)
+        obj = _empty_field_result(name, version=version)
 
-        value = item[key]
-        if require_type and type(value) != require_type:
-            result["result"] = False
-            result["value"] = value
-            result["reason"] = f"not a {require_type.__name__}"
+        passed, reason = test(item, key)
 
-            return result
-
-        passed, reason = func(value)
-
-        result["result"] = passed
-        if not passed:
-            result["value"] = value
-            if not result["reason"]:
-                result["reason"] = reason
-
-        return result
+        return _prepare_field_result(obj, passed, item.get(key), reason)
 
     return method
+
+
+def field_quality_check(name, test, version=1.0, require_type=None, return_value=None):
+    """
+    :param str name: the machine name of the check
+    :param test: a function that accepts a value and returns a tuple of a boolean (whether the test passed) and a
+                 string (the reason for any failed test)
+    :param float version: the version number of the check
+    :param bool require_type: the type that the value must have for the test to run without error
+    :param return_value: a function that accepts a value and returns the value to set in the returned object
+    """
+
+    def method(item, key, **kwargs):
+        obj = _empty_field_result(name, version=version)
+
+        value = item[key]
+
+        if require_type and type(value) != require_type:
+            obj["result"] = False
+            obj["value"] = value
+            obj["reason"] = f"not a {require_type.__name__}"
+            return obj
+
+        passed, reason = test(value, **kwargs)
+
+        return _prepare_field_result(obj, passed, value, reason, return_value=return_value)
+
+    return method
+
+
+def _empty_field_result(name, version=1.0):
+    return {
+        "name": name,
+        "result": None,
+        "value": None,
+        "reason": None,
+        "version": version,
+    }
+
+
+def _prepare_field_result(obj, passed, value, reason, return_value=None):
+    obj["result"] = passed
+    if not passed:
+        if return_value:
+            obj["value"] = return_value(value)
+        else:
+            obj["value"] = value
+        obj["reason"] = reason
+    return obj

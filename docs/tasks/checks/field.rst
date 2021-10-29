@@ -4,8 +4,9 @@ Field-level
 Backend
 -------
 
-#. Find a quality check under the ``contracting_process/field_level/checks`` directory to copy as a starting point.
-#. Assign the quality check to fields in the ``contracting_process/field_level/definitions.py`` file. For example:
+#. Determine the type of check (see :ref:`repository-structure`).
+#. Find a check under the corresponding ``contracting_process/field_level`` sub-directory to copy as a starting point.
+#. Assign the check to fields in the ``contracting_process/field_level/definitions.py`` file. For example:
 
    .. literalinclude:: ../../../contracting_process/field_level/definitions.py
       :language: python
@@ -18,18 +19,22 @@ Backend
 
 Each check is a function, named ``calculate`` by convention, that:
 
-#. Accepts two arguments (e.g. ``{"email": "invalid"}`` and ``email``). named ``data`` and ``key`` by convention
+#. Accepts two arguments (e.g. ``{"email": "invalid"}`` and ``email``). named ``item`` and ``key`` by convention
 #. Creates an empty ``result`` dict
 #. Determines whether the check passes
 #. If it passes, sets ``result["result"] = True``
 #. If it fails, sets ``result["result"] = False`` as well as the ``value`` and ``reason`` keys
 #. Returns the ``result`` dict
 
+.. note::
+
+   The ``field_coverage_check`` and ``field_quality_check`` functions handle most of this logic, such that you only need to implement whether the check passes.
+
 An empty ``result`` dict looks like:
 
 .. literalinclude:: ../../../tools/checks.py
    :language: python
-   :start-after: get_empty_result_field
+   :start-after: obj =
    :end-at: }
 
 Example

@@ -38,7 +38,10 @@ Repository structure
 
    ├── contracting_process    Field-level and compiled release-level checks
    │   ├── field_level           Field-level checks
-   │   │   └── checks               Individual checks
+   │   │   ├── codelist             List inclusion checks
+   │   │   ├── coverage             Coverage checks
+   │   │   ├── format               String format checks
+   │   │   └── range                Range checks
    │   └── resource_level        Compiled release-level checks
    │       ├── coherent             Coherence checks
    │       ├── consistent           Consistency checks

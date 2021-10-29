@@ -50,7 +50,7 @@ def parse_date(str_date):
     Parse string to valid date.
     """
     if str_date is None or not isinstance(str_date, str):
-        return None
+        return
 
     try:
         return datetime.strptime(str_date[:10], "%Y-%m-%d").date()

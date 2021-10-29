@@ -10,6 +10,7 @@ This changelog only notes major changes, to notify other developers.
 -  fix: ``coherent.milestone_status`` now works (was always N/A).
 -  fix: ``coherent/value_realistic`` now uses ``planning.budget.amount`` (was ``planning.budget.value``).
 -  fix: ``distribution.value_currency`` now uses ``planning.budget.amount.currency`` (was ``planning.budget.value.currency``).
+-  refactor: Reduce code duplication in field-level checks. :compare:`2df8f95..`
 -  refactor: Re-do the CLI interface. :commit:`ef8a9bf` :commit:`75a3859` :commit:`160aaa8`
 
 2021-10-26

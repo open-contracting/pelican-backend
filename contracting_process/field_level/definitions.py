@@ -1,10 +1,9 @@
 import functools
 
-from contracting_process.field_level.codelist import document_format, identifier_scheme, language
-from contracting_process.field_level.coherent import document_type, number
+from contracting_process.field_level.codelist import document_format, document_type, identifier_scheme, language
+from contracting_process.field_level.coverage import exists, non_empty
 from contracting_process.field_level.format import email, ocid, telephone
-from contracting_process.field_level.misc import date_time, document_description_length
-from contracting_process.field_level.present import exists, non_empty
+from contracting_process.field_level.range import date_time, document_description_length, number
 
 coverage_checks = [(exists.calculate, exists.name), (non_empty.calculate, non_empty.name)]
 
