@@ -27,6 +27,10 @@ Extract collections from Kingfisher Process.
 #. Initializes each item's state as in-progress
 #. Publishes a message with batches of item IDs
 
+.. note::
+
+   Some field-level checks use external codelists. These are cached in-memory by each worker for 1 day.
+
 extract.dataset_filter
 ~~~~~~~~~~~~~~~~~~~~~~
 
