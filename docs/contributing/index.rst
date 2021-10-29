@@ -62,3 +62,10 @@ Time-based checks
   No results for ``\b(filter|evaluate)\((?!\w+, \w+, \w+, \w+, \w+\))``
 
 Any exceptions to the above must be moved to the global scope, or manually validated.
+
+Update examples for new versions of OCDS:
+
+.. code-block:: bash
+
+   curl -sS https://raw.githubusercontent.com/open-contracting/sample-data/main/blank-template/release-template-1__1__5.json -o tests/fixtures/blank.json
+   curl -sS https://raw.githubusercontent.com/open-contracting/sample-data/main/fictional-example/1.1/record/ocds-213czf-000-00001.json | jq '.records[0].compiledRelease' > tests/fixtures/compiled-release.json
