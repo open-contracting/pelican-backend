@@ -1,5 +1,14 @@
+import json
+import os
+
+
 def is_subset_dict(subset, superset):
     return subset.items() <= superset.items()
+
+
+def read(basename):
+    with open(os.path.join("tests", "fixtures", f"{basename}.json")) as f:
+        return json.load(f)
 
 
 # I'm not sure if this can be accomplished with pytest, so using unittest with pytest-subtests. At first glance, we
