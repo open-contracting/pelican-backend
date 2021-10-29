@@ -72,7 +72,7 @@ importlib-resources==5.3.0
     #   virtualenv
 isort==5.8.0
     # via -r requirements_dev.in
-jsonschema==3.2.0
+jsonschema==4.0.0
     # via -r requirements_dev.in
 mccabe==0.6.1
     # via flake8
@@ -139,7 +139,6 @@ simplejson==3.16.0
 six==1.12.0
     # via
     #   -r requirements.txt
-    #   jsonschema
     #   packaging
     #   pytest
     #   python-dateutil
@@ -173,4 +172,3 @@ zipp==3.6.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
-# setuptools
