@@ -46,3 +46,28 @@ def get_empty_result_time_variance_scope():
         "ok_count": 0,
         "examples": [],
     }
+
+
+def field_level_check(name, func, require_type=None):
+    def method(item, key):
+        result = get_empty_result_field(name)
+
+        value = item[key]
+        if require_type and type(value) != require_type:
+            result["result"] = False
+            result["value"] = value
+            result["reason"] = f"not a {require_type.__name__}"
+
+            return result
+
+        passed, reason = func(value)
+
+        result["result"] = passed
+        if not passed:
+            result["value"] = value
+            if not result["reason"]:
+                result["reason"] = reason
+
+        return result
+
+    return method

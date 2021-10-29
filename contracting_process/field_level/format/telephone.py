@@ -1,43 +1,17 @@
 import phonenumbers
 
-from tools.checks import get_empty_result_field
+from tools.checks import field_level_check
 
-"""
-author: Iaroslav Kolodka
-
-"""
 name = "telephone"
 
 
-def calculate(item, key):
-    """
-    The method is designed to check the telephone number for the correct formatting
+def test(value):
+    try:
+        number = phonenumbers.parse(value, None)
+        return phonenumbers.is_possible_number(number), "incorrect format"
+    except phonenumbers.NumberParseException as e:
+        return False, f"incorrect format: {e}"
 
-    parametres
-    ---------
-    :item : JSON
-            tested JSON
-    :path : str
-            path to tуlephone number
 
-    """
-    result = get_empty_result_field(name)
-
-    number = item[key]
-    value = None
-    if number:
-        value = number
-        try:
-            parsed_number = phonenumbers.parse(value, None)
-            is_valid = phonenumbers.is_possible_number(parsed_number)
-            if is_valid:
-                result["result"] = True
-                return result
-
-        except phonenumbers.NumberParseException:
-            pass
-
-    result["result"] = False
-    result["value"] = value
-    result["reason"] = "Telephone number is formatted incorrectly."
-    return result
+# phonenumbers.parse errors on non-str input.
+calculate = field_level_check(name, test, require_type=str)

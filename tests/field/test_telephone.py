@@ -31,17 +31,17 @@ def test_with_incorrect_number():
     expected_result1 = {
         "result": False,
         "value": "+42077755533",  # number is too short
-        "reason": "Telephone number is formatted incorrectly.",
+        "reason": "incorrect format",
     }
     expected_result2 = {
         "result": False,
         "value": "+420777555a33",  # incorrect number
-        "reason": "Telephone number is formatted incorrectly.",
+        "reason": "incorrect format",
     }
     expected_result3 = {
         "result": False,
         "value": "+999777555333",  # the region shuld not exist
-        "reason": "Telephone number is formatted incorrectly.",
+        "reason": "incorrect format: (0) Could not interpret numbers after plus-sign.",
     }
     result1 = calculate(item_with_invalid_number1, "telephone")
     result2 = calculate(item_with_invalid_number2, "telephone")

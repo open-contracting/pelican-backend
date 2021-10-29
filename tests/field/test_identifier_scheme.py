@@ -8,10 +8,10 @@ def test_passed():
 
 def test_failed():
     assert is_subset_dict(
-        {"result": False, "value": "b", "reason": "wrong identifier scheme"},
+        {"result": False, "value": "b", "reason": "not in codelist"},
         calculate({"scheme": "b"}, "scheme"),
     )
     assert is_subset_dict(
-        {"result": False, "value": None, "reason": "wrong identifier scheme"},
+        {"result": False, "value": None, "reason": "not in codelist"},
         calculate({"scheme": None}, "scheme"),
     )

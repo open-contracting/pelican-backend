@@ -24,4 +24,4 @@ def test_with_correct_email():
 
 def test_with_incorrect_email():
     result = calculate(item_with_invalid_email, "email")
-    assert is_subset_dict({"result": False, "value": "invalid#email.com", "reason": "Incorrect email format"}, result)
+    assert is_subset_dict({"result": False, "value": "invalid#email.com", "reason": "incorrect format"}, result)

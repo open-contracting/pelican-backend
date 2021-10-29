@@ -15,6 +15,6 @@ def test_passed():
 
 def test_failed():
     assert is_subset_dict(
-        {"result": False, "value": "unknown", "reason": "wrong document format"},
+        {"result": False, "value": "unknown", "reason": "not in codelist"},
         calculate({"format": "unknown"}, "format"),
     )

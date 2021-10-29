@@ -9,6 +9,6 @@ def test_passed():
 
 def test_failed():
     assert is_subset_dict(
-        {"result": False, "value": "a000-a00000", "reason": "wrong ocid"},
+        {"result": False, "value": "a000-a00000", "reason": "ocid prefix not in codelist"},
         calculate({"ocid": "a000-a00000"}, "ocid"),
     )

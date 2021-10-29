@@ -1,33 +1,13 @@
 from validate_email import validate_email
 
-from tools.checks import get_empty_result_field
+from tools.checks import field_level_check
 
-"""
-author: Iaroslav Kolodka
-
-The method is designed to check the email address for the correct formatting.
-
-parametre:
-    - item: tested JSON
-    - key:  email key
-
-"""
 name = "email"
 
 
-def calculate(item, key):
-    result = get_empty_result_field(name)
+def test(value):
+    return validate_email(value), "incorrect format"
 
-    email = item[key]
-    value = None
-    if email:
-        value = email
-        is_valid = validate_email(value)
-        if is_valid:
-            result["result"] = True
-            return result
 
-    result["result"] = False
-    result["value"] = value
-    result["reason"] = "Incorrect email format"
-    return result
+# validate_email errors on non-str input.
+calculate = field_level_check(name, test, require_type=str)
