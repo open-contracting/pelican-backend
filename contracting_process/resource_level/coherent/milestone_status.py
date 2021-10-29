@@ -35,8 +35,8 @@ def calculate(item):
             passed = None
             status = None
             if "value" in milestone and milestone["value"]:
-                statuses = get_values(milestone["value"], "properties.status", True)
-                date_met = get_values(milestone["value"], "properties.dateMet", True)
+                statuses = get_values(milestone["value"], "status", True)
+                date_met = get_values(milestone["value"], "dateMet", True)
                 for status in statuses:  # because 'get_values' return array of values
                     if status in ("scheduled", "notMet"):
                         passed = not date_met or not date_met[0]
