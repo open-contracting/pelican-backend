@@ -64,7 +64,7 @@ definitions = {
             "tender.minValue.currency",
             "awards.value.currency",
             "contracts.value.currency",
-            "planning.budget.value.currency",
+            "planning.budget.amount.currency",
             "contracts.implementation.transactions.value.currency",
         ]
     ),

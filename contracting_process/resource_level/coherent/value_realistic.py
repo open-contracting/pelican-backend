@@ -10,7 +10,7 @@ value_paths = [
     "tender.minValue",
     "awards.value",
     "contracts.value",
-    "planning.budget.value",
+    "planning.budget.amount",
     "contracts.implementation.transactions.value",
 ]
 
