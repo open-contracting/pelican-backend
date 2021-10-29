@@ -1,10 +1,14 @@
 FROM python:3
 
-WORKDIR /usr/src/app
+WORKDIR /workdir
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+RUN groupadd -r pelican && useradd --no-log-init -r -g pelican pelican
+
+USER pelican:pelican
+
+COPY --chown=pelican:pelican . .
 
 ENTRYPOINT [ "python", "-m"]
