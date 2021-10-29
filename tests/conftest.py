@@ -18,7 +18,7 @@ def schema():
             for value in data.values():
                 set_additional_properties_false(value)
 
-    with open(os.path.join("tests", "fixtures", "release-schema.json")) as f:
+    with open(os.path.join("pelican", "static", "release-schema.json")) as f:
         schema = json.load(f)
 
     set_additional_properties_false(schema)

@@ -1,5 +1,6 @@
 cachetools
 click
+jsonref
 phonenumbers
 pika
 psycopg2

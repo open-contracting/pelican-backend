@@ -16,6 +16,8 @@ click==7.1.2
     # via -r requirements.in
 idna==2.8
     # via requests
+jsonref==0.2
+    # via -r requirements.in
 phonenumbers==8.10.17
     # via -r requirements.in
 pika==1.1.0

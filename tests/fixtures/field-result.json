@@ -5132,42 +5132,6 @@
         }
       }
     ],
-    "tender.enquiryPeriod.durationInDays": [
-      {
-        "path": "tender.enquiryPeriod.durationInDays",
-        "coverage": {
-          "overall_result": true,
-          "check_results": [
-            {
-              "name": "exists",
-              "result": true,
-              "value": null,
-              "reason": null,
-              "version": 1.0
-            },
-            {
-              "name": "non_empty",
-              "result": true,
-              "value": null,
-              "reason": null,
-              "version": 1.0
-            }
-          ]
-        },
-        "quality": {
-          "overall_result": true,
-          "check_results": [
-            {
-              "name": "number_checks",
-              "result": true,
-              "value": null,
-              "reason": null,
-              "version": 1.0
-            }
-          ]
-        }
-      }
-    ],
     "tender.enquiryPeriod.startDate": [
       {
         "path": "tender.enquiryPeriod.startDate",
@@ -5258,6 +5222,42 @@
         "quality": {
           "overall_result": null,
           "check_results": null
+        }
+      }
+    ],
+    "tender.enquiryPeriod.durationInDays": [
+      {
+        "path": "tender.enquiryPeriod.durationInDays",
+        "coverage": {
+          "overall_result": true,
+          "check_results": [
+            {
+              "name": "exists",
+              "result": true,
+              "value": null,
+              "reason": null,
+              "version": 1.0
+            },
+            {
+              "name": "non_empty",
+              "result": true,
+              "value": null,
+              "reason": null,
+              "version": 1.0
+            }
+          ]
+        },
+        "quality": {
+          "overall_result": true,
+          "check_results": [
+            {
+              "name": "number_checks",
+              "result": true,
+              "value": null,
+              "reason": null,
+              "version": 1.0
+            }
+          ]
         }
       }
     ],
@@ -10286,67 +10286,8 @@
           ]
         },
         "quality": {
-          "overall_result": false,
-          "check_results": [
-            {
-              "name": "document_description_length",
-              "result": false,
-              "value": {
-                "transactions": [
-                  {
-                    "id": "ocds-213czf-000-00001-1",
-                    "source": "https://openspending.org/uk-barnet-spending/",
-                    "date": "2010-08-01T00:00:00Z",
-                    "value": {
-                      "amount": 50000,
-                      "currency": "GBP"
-                    },
-                    "payer": {
-                      "id": "GB-LAC-E09000003",
-                      "name": "London Borough of Barnet"
-                    },
-                    "payee": {
-                      "id": "GB-COH-11111111",
-                      "name": "AnyCorp Cycle Provision"
-                    },
-                    "uri": "https://openspending.org/uk-barnet-spending/transaction/asd9235qaghvs1059620ywhgai"
-                  },
-                  {
-                    "id": "ocds-213czf-000-00001-2",
-                    "source": "https://openspending.org/uk-barnet-spending/",
-                    "date": "2010-10-01T00:00:00Z",
-                    "value": {
-                      "amount": 10000,
-                      "currency": "GBP"
-                    },
-                    "payer": {
-                      "id": "GB-LAC-E09000003",
-                      "name": "London Borough of Barnet"
-                    },
-                    "payee": {
-                      "id": "GB-COH-11111111",
-                      "name": "AnyCorp Cycle Provision"
-                    },
-                    "uri": "https://openspending.org/uk-barnet-spending/transaction/asd9235qaghvs105962as0012"
-                  }
-                ],
-                "documents": [
-                  {
-                    "id": "9.0",
-                    "documentType": "physicalProgressReport",
-                    "title": "Progress report",
-                    "description": "Physical progress report for cycle path construction",
-                    "url": "http://example.com/reports/ocds-213czf-000-00001/cycle-path-01.pdf",
-                    "datePublished": "2010-12-15T15:34:02Z",
-                    "format": "application/pdf",
-                    "language": "en"
-                  }
-                ]
-              },
-              "reason": "not a str",
-              "version": 1.0
-            }
-          ]
+          "overall_result": null,
+          "check_results": null
         }
       }
     ],
@@ -11472,46 +11413,6 @@
         }
       }
     ],
-    "contracts.implementation.transactions.currency": [
-      {
-        "path": "contracts[0].implementation.transactions[0].currency",
-        "coverage": {
-          "overall_result": false,
-          "check_results": [
-            {
-              "name": "exists",
-              "result": false,
-              "value": null,
-              "reason": "not set",
-              "version": 1.0
-            }
-          ]
-        },
-        "quality": {
-          "overall_result": null,
-          "check_results": null
-        }
-      },
-      {
-        "path": "contracts[0].implementation.transactions[1].currency",
-        "coverage": {
-          "overall_result": false,
-          "check_results": [
-            {
-              "name": "exists",
-              "result": false,
-              "value": null,
-              "reason": "not set",
-              "version": 1.0
-            }
-          ]
-        },
-        "quality": {
-          "overall_result": null,
-          "check_results": null
-        }
-      }
-    ],
     "contracts.implementation.transactions.providerOrganization": [
       {
         "path": "contracts[0].implementation.transactions[0].providerOrganization",
@@ -12208,8 +12109,16 @@
           ]
         },
         "quality": {
-          "overall_result": null,
-          "check_results": null
+          "overall_result": true,
+          "check_results": [
+            {
+              "name": "language",
+              "result": true,
+              "value": null,
+              "reason": null,
+              "version": 1.0
+            }
+          ]
         }
       }
     ],

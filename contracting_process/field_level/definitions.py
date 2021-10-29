@@ -1,610 +1,99 @@
 import functools
+from pathlib import Path
+
+import jsonref
 
 from contracting_process.field_level.codelist import document_format, document_type, identifier_scheme, language
 from contracting_process.field_level.coverage import exists, non_empty
 from contracting_process.field_level.format import email, ocid, telephone
 from contracting_process.field_level.range import date_time, document_description_length, number
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+
+def _descend(value, new_path, dot_path, refs):
+    if hasattr(value, "__reference__"):
+        refs = refs + (value.__reference__["$ref"][14:],)  # remove #/definitions/
+
+    yield dot_path, []
+    yield from _definitions(value["properties"], path=new_path, refs=refs)
+
+
+def _definitions(properties, path=None, refs=None):
+    if path is None:
+        path = ()
+    if refs is None:
+        refs = ()
+
+    for key, value in properties.items():
+        new_path = path + (key,)
+        dot_path = ".".join(new_path)
+
+        if "object" in value["type"] and "properties" in value:
+            yield from _descend(value, new_path, dot_path, refs)
+        elif (
+            "array" in value["type"]
+            and "items" in value
+            and "object" in value["items"]["type"]
+            and "properties" in value["items"]
+        ):
+            yield from _descend(value["items"], new_path, dot_path, refs)
+        else:
+            checks = []
+
+            if "format" in value and value["format"] == "date-time":
+                checks.append((date_time.calculate, date_time.name))
+
+            if not refs:
+                if key == "language":
+                    checks.append((language.calculate, language.name))
+                elif key == "ocid":
+                    checks.append((ocid.calculate, ocid.name))
+            elif refs[-1] == "ContactPoint":
+                if key == "email":
+                    checks.append((email.calculate, email.name))
+                elif key in ("faxNumber", "telephone"):
+                    checks.append((telephone.calculate, telephone.name))
+            elif refs[-1] == "Document":
+                if key == "description":
+                    checks.append((document_description_length.calculate, document_description_length.name))
+                elif key == "documentType":
+                    if refs[1] == "Implementation":
+                        index = 1
+                    else:
+                        index = 0
+                    checks.append(
+                        (
+                            functools.partial(document_type.calculate_section, section=refs[index].lower()),
+                            document_type.name,
+                        )
+                    )
+                elif key == "format":
+                    checks.append((document_format.calculate, document_format.name))
+                elif key == "language":
+                    checks.append((language.calculate, language.name))
+            elif refs[-1] == "Identifier":
+                if key == "scheme":
+                    checks.append((identifier_scheme.calculate, identifier_scheme.name))
+            elif refs[-1] == "Item":
+                if key == "quantity":
+                    checks.append((number.calculate, number.name))
+            elif refs[-1] == "Period":
+                if key == "durationInDays":
+                    checks.append((number.calculate, number.name))
+            elif refs[-1] == "Tender":
+                if key == "numberOfTenderers":
+                    checks.append((number.calculate, number.name))
+            elif refs[-1] == "Value":
+                if key == "amount" and new_path[-3] in ("transactions", "unit"):
+                    checks.append((number.calculate, number.name))
+
+            yield dot_path, checks
+
+
+with (BASE_DIR / "pelican" / "static" / "release-schema.json").open() as f:
+    schema = jsonref.load(f)
+
 coverage_checks = [(exists.calculate, exists.name), (non_empty.calculate, non_empty.name)]
 
-definitions = {
-    "ocid": [(ocid.calculate, ocid.name)],
-    "id": [],
-    "date": [(date_time.calculate, date_time.name)],
-    "tag": [],
-    "initiationType": [],
-    "parties": [],
-    "parties.name": [],
-    "parties.id": [],
-    "parties.identifier": [],
-    "parties.identifier.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "parties.identifier.id": [],
-    "parties.identifier.legalName": [],
-    "parties.identifier.uri": [],
-    "parties.additionalIdentifiers": [],
-    "parties.additionalIdentifiers.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "parties.additionalIdentifiers.id": [],
-    "parties.additionalIdentifiers.legalName": [],
-    "parties.additionalIdentifiers.uri": [],
-    "parties.address": [],
-    "parties.address.streetAddress": [],
-    "parties.address.locality": [],
-    "parties.address.region": [],
-    "parties.address.postalCode": [],
-    "parties.address.countryName": [],
-    "parties.contactPoint": [],
-    "parties.contactPoint.name": [],
-    "parties.contactPoint.email": [(email.calculate, email.name)],
-    "parties.contactPoint.telephone": [(telephone.calculate, telephone.name)],
-    "parties.contactPoint.faxNumber": [(telephone.calculate, telephone.name)],
-    "parties.contactPoint.url": [],
-    "parties.roles": [],
-    "parties.details": [],
-    "buyer": [],
-    "buyer.name": [],
-    "buyer.id": [],
-    "buyer.identifier": [],
-    "buyer.identifier.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "buyer.identifier.id": [],
-    "buyer.identifier.legalName": [],
-    "buyer.identifier.uri": [],
-    "buyer.address": [],
-    "buyer.address.streetAddress": [],
-    "buyer.address.locality": [],
-    "buyer.address.region": [],
-    "buyer.address.postalCode": [],
-    "buyer.address.countryName": [],
-    "buyer.additionalIdentifiers": [],
-    "buyer.additionalIdentifiers.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "buyer.additionalIdentifiers.id": [],
-    "buyer.additionalIdentifiers.legalName": [],
-    "buyer.additionalIdentifiers.uri": [],
-    "buyer.contactPoint": [],
-    "buyer.contactPoint.name": [],
-    "buyer.contactPoint.email": [(email.calculate, email.name)],
-    "buyer.contactPoint.telephone": [(telephone.calculate, telephone.name)],
-    "buyer.contactPoint.faxNumber": [(telephone.calculate, telephone.name)],
-    "buyer.contactPoint.url": [],
-    "planning": [],
-    "planning.rationale": [],
-    "planning.budget": [],
-    "planning.budget.id": [],
-    "planning.budget.description": [],
-    "planning.budget.amount": [],
-    "planning.budget.amount.amount": [],
-    "planning.budget.amount.currency": [],
-    "planning.budget.project": [],
-    "planning.budget.projectID": [],
-    "planning.budget.uri": [],
-    "planning.budget.source": [],
-    "planning.documents": [],
-    "planning.documents.id": [],
-    "planning.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section="planning"), document_type.name)
-    ],
-    "planning.documents.title": [],
-    "planning.documents.description": [(document_description_length.calculate, document_description_length.name)],
-    "planning.documents.url": [],
-    "planning.documents.datePublished": [(date_time.calculate, date_time.name)],
-    "planning.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "planning.documents.format": [(document_format.calculate, document_format.name)],
-    "planning.documents.language": [(language.calculate, language.name)],
-    "planning.milestones": [],
-    "planning.milestones.id": [],
-    "planning.milestones.title": [],
-    "planning.milestones.type": [],
-    "planning.milestones.description": [],
-    "planning.milestones.code": [],
-    "planning.milestones.dueDate": [(date_time.calculate, date_time.name)],
-    "planning.milestones.dateMet": [(date_time.calculate, date_time.name)],
-    "planning.milestones.dateModified": [(date_time.calculate, date_time.name)],
-    "planning.milestones.status": [],
-    "planning.milestones.documents": [],
-    "planning.milestones.documents.id": [],
-    "planning.milestones.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section="planning"), document_type.name)
-    ],
-    "planning.milestones.documents.title": [],
-    "planning.milestones.documents.description": [
-        (document_description_length.calculate, document_description_length.name)
-    ],
-    "planning.milestones.documents.url": [],
-    "planning.milestones.documents.datePublished": [(date_time.calculate, date_time.name)],
-    "planning.milestones.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "planning.milestones.documents.format": [(document_format.calculate, document_format.name)],
-    "planning.milestones.documents.language": [(language.calculate, language.name)],
-    "tender": [],
-    "tender.id": [],
-    "tender.title": [],
-    "tender.description": [],
-    "tender.status": [],
-    "tender.procuringEntity": [],
-    "tender.procuringEntity.name": [],
-    "tender.procuringEntity.id": [],
-    "tender.procuringEntity.identifier": [],
-    "tender.procuringEntity.identifier.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "tender.procuringEntity.identifier.id": [],
-    "tender.procuringEntity.identifier.legalName": [],
-    "tender.procuringEntity.identifier.uri": [],
-    "tender.procuringEntity.address": [],
-    "tender.procuringEntity.address.streetAddress": [],
-    "tender.procuringEntity.address.locality": [],
-    "tender.procuringEntity.address.region": [],
-    "tender.procuringEntity.address.postalCode": [],
-    "tender.procuringEntity.address.countryName": [],
-    "tender.procuringEntity.additionalIdentifiers": [],
-    "tender.procuringEntity.additionalIdentifiers.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "tender.procuringEntity.additionalIdentifiers.id": [],
-    "tender.procuringEntity.additionalIdentifiers.legalName": [],
-    "tender.procuringEntity.additionalIdentifiers.uri": [],
-    "tender.procuringEntity.contactPoint": [],
-    "tender.procuringEntity.contactPoint.name": [],
-    "tender.procuringEntity.contactPoint.email": [(email.calculate, email.name)],
-    "tender.procuringEntity.contactPoint.telephone": [(telephone.calculate, telephone.name)],
-    "tender.procuringEntity.contactPoint.faxNumber": [(telephone.calculate, telephone.name)],
-    "tender.procuringEntity.contactPoint.url": [],
-    "tender.items": [],
-    "tender.items.id": [],
-    "tender.items.description": [],
-    "tender.items.classification": [],
-    "tender.items.classification.scheme": [],
-    "tender.items.classification.id": [],
-    "tender.items.classification.description": [],
-    "tender.items.classification.uri": [],
-    "tender.items.additionalClassifications": [],
-    "tender.items.additionalClassifications.scheme": [],
-    "tender.items.additionalClassifications.id": [],
-    "tender.items.additionalClassifications.description": [],
-    "tender.items.additionalClassifications.uri": [],
-    "tender.items.quantity": [(number.calculate, number.name)],
-    "tender.items.unit": [],
-    "tender.items.unit.scheme": [],
-    "tender.items.unit.id": [],
-    "tender.items.unit.name": [],
-    "tender.items.unit.value": [],
-    "tender.items.unit.value.amount": [(number.calculate, number.name)],
-    "tender.items.unit.value.currency": [],
-    "tender.items.unit.uri": [],
-    "tender.value": [],
-    "tender.value.amount": [],
-    "tender.value.currency": [],
-    "tender.minValue": [],
-    "tender.minValue.amount": [],
-    "tender.minValue.currency": [],
-    "tender.procurementMethod": [],
-    "tender.procurementMethodDetails": [],
-    "tender.procurementMethodRationale": [],
-    "tender.mainProcurementCategory": [],
-    "tender.additionalProcurementCategories": [],
-    "tender.awardCriteria": [],
-    "tender.awardCriteriaDetails": [],
-    "tender.submissionMethod": [],
-    "tender.submissionMethodDetails": [],
-    "tender.tenderPeriod": [],
-    "tender.tenderPeriod.startDate": [(date_time.calculate, date_time.name)],
-    "tender.tenderPeriod.endDate": [(date_time.calculate, date_time.name)],
-    "tender.tenderPeriod.maxExtentDate": [(date_time.calculate, date_time.name)],
-    "tender.tenderPeriod.durationInDays": [(number.calculate, number.name)],
-    "tender.enquiryPeriod": [],
-    "tender.enquiryPeriod.durationInDays": [(number.calculate, number.name)],
-    "tender.enquiryPeriod.startDate": [(date_time.calculate, date_time.name)],
-    "tender.enquiryPeriod.endDate": [(date_time.calculate, date_time.name)],
-    "tender.enquiryPeriod.maxExtentDate": [(date_time.calculate, date_time.name)],
-    "tender.hasEnquiries": [],
-    "tender.eligibilityCriteria": [],
-    "tender.awardPeriod": [],
-    "tender.awardPeriod.startDate": [(date_time.calculate, date_time.name)],
-    "tender.awardPeriod.endDate": [(date_time.calculate, date_time.name)],
-    "tender.awardPeriod.maxExtentDate": [(date_time.calculate, date_time.name)],
-    "tender.awardPeriod.durationInDays": [(number.calculate, number.name)],
-    "tender.contractPeriod": [],
-    "tender.contractPeriod.startDate": [(date_time.calculate, date_time.name)],
-    "tender.contractPeriod.endDate": [(date_time.calculate, date_time.name)],
-    "tender.contractPeriod.maxExtentDate": [(date_time.calculate, date_time.name)],
-    "tender.contractPeriod.durationInDays": [(number.calculate, number.name)],
-    "tender.numberOfTenderers": [(number.calculate, number.name)],
-    "tender.tenderers": [],
-    "tender.tenderers.name": [],
-    "tender.tenderers.id": [],
-    "tender.tenderers.identifier": [],
-    "tender.tenderers.identifier.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "tender.tenderers.identifier.id": [],
-    "tender.tenderers.identifier.legalName": [],
-    "tender.tenderers.identifier.uri": [],
-    "tender.tenderers.address": [],
-    "tender.tenderers.address.streetAddress": [],
-    "tender.tenderers.address.locality": [],
-    "tender.tenderers.address.region": [],
-    "tender.tenderers.address.postalCode": [],
-    "tender.tenderers.address.countryName": [],
-    "tender.tenderers.additionalIdentifiers": [],
-    "tender.tenderers.additionalIdentifiers.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "tender.tenderers.additionalIdentifiers.id": [],
-    "tender.tenderers.additionalIdentifiers.legalName": [],
-    "tender.tenderers.additionalIdentifiers.uri": [],
-    "tender.tenderers.contactPoint": [],
-    "tender.tenderers.contactPoint.name": [],
-    "tender.tenderers.contactPoint.email": [(email.calculate, email.name)],
-    "tender.tenderers.contactPoint.telephone": [(telephone.calculate, telephone.name)],
-    "tender.tenderers.contactPoint.faxNumber": [(telephone.calculate, telephone.name)],
-    "tender.tenderers.contactPoint.url": [],
-    "tender.documents": [],
-    "tender.documents.id": [],
-    "tender.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section="tender"), document_type.name)
-    ],
-    "tender.documents.title": [],
-    "tender.documents.description": [(document_description_length.calculate, document_description_length.name)],
-    "tender.documents.url": [],
-    "tender.documents.datePublished": [(date_time.calculate, date_time.name)],
-    "tender.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "tender.documents.format": [(document_format.calculate, document_format.name)],
-    "tender.documents.language": [(language.calculate, language.name)],
-    "tender.milestones": [],
-    "tender.milestones.id": [],
-    "tender.milestones.title": [],
-    "tender.milestones.type": [],
-    "tender.milestones.description": [],
-    "tender.milestones.code": [],
-    "tender.milestones.dueDate": [(date_time.calculate, date_time.name)],
-    "tender.milestones.dateMet": [(date_time.calculate, date_time.name)],
-    "tender.milestones.dateModified": [(date_time.calculate, date_time.name)],
-    "tender.milestones.status": [],
-    "tender.milestones.documents": [],
-    "tender.milestones.documents.id": [],
-    "tender.milestones.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section="tender"), document_type.name)
-    ],
-    "tender.milestones.documents.title": [],
-    "tender.milestones.documents.description": [
-        (document_description_length.calculate, document_description_length.name)
-    ],
-    "tender.milestones.documents.url": [],
-    "tender.milestones.documents.datePublished": [(date_time.calculate, date_time.name)],
-    "tender.milestones.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "tender.milestones.documents.format": [(document_format.calculate, document_format.name)],
-    "tender.milestones.documents.language": [(language.calculate, language.name)],
-    "tender.amendments": [],
-    "tender.amendments.date": [(date_time.calculate, date_time.name)],
-    "tender.amendments.rationale": [],
-    "tender.amendments.id": [],
-    "tender.amendments.description": [],
-    "tender.amendments.amendsReleaseID": [],
-    "tender.amendments.releaseID": [],
-    "tender.amendments.changes": [],
-    "tender.amendments.changes.property": [],
-    "tender.amendments.changes.former_value": [],
-    "tender.amendment": [],
-    "tender.amendment.date": [(date_time.calculate, date_time.name)],
-    "tender.amendment.rationale": [],
-    "tender.amendment.id": [],
-    "tender.amendment.description": [],
-    "tender.amendment.amendsReleaseID": [],
-    "tender.amendment.releaseID": [],
-    "tender.amendment.changes": [],
-    "tender.amendment.changes.property": [],
-    "tender.amendment.changes.former_value": [],
-    "awards": [],
-    "awards.id": [],
-    "awards.title": [],
-    "awards.description": [],
-    "awards.status": [],
-    "awards.date": [(date_time.calculate, date_time.name)],
-    "awards.value": [],
-    "awards.value.amount": [],
-    "awards.value.currency": [],
-    "awards.suppliers": [],
-    "awards.suppliers.name": [],
-    "awards.suppliers.id": [],
-    "awards.suppliers.identifier": [],
-    "awards.suppliers.identifier.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "awards.suppliers.identifier.id": [],
-    "awards.suppliers.identifier.legalName": [],
-    "awards.suppliers.identifier.uri": [],
-    "awards.suppliers.address": [],
-    "awards.suppliers.address.streetAddress": [],
-    "awards.suppliers.address.locality": [],
-    "awards.suppliers.address.region": [],
-    "awards.suppliers.address.postalCode": [],
-    "awards.suppliers.address.countryName": [],
-    "awards.suppliers.additionalIdentifiers": [],
-    "awards.suppliers.additionalIdentifiers.scheme": [(identifier_scheme.calculate, identifier_scheme.name)],
-    "awards.suppliers.additionalIdentifiers.id": [],
-    "awards.suppliers.additionalIdentifiers.legalName": [],
-    "awards.suppliers.additionalIdentifiers.uri": [],
-    "awards.suppliers.contactPoint": [],
-    "awards.suppliers.contactPoint.name": [],
-    "awards.suppliers.contactPoint.email": [(email.calculate, email.name)],
-    "awards.suppliers.contactPoint.telephone": [(telephone.calculate, telephone.name)],
-    "awards.suppliers.contactPoint.faxNumber": [(telephone.calculate, telephone.name)],
-    "awards.suppliers.contactPoint.url": [],
-    "awards.items": [],
-    "awards.items.id": [],
-    "awards.items.description": [],
-    "awards.items.classification": [],
-    "awards.items.classification.scheme": [],
-    "awards.items.classification.id": [],
-    "awards.items.classification.description": [],
-    "awards.items.classification.uri": [],
-    "awards.items.additionalClassifications": [],
-    "awards.items.additionalClassifications.scheme": [],
-    "awards.items.additionalClassifications.id": [],
-    "awards.items.additionalClassifications.description": [],
-    "awards.items.additionalClassifications.uri": [],
-    "awards.items.quantity": [(number.calculate, number.name)],
-    "awards.items.unit": [],
-    "awards.items.unit.scheme": [],
-    "awards.items.unit.id": [],
-    "awards.items.unit.name": [],
-    "awards.items.unit.value": [],
-    "awards.items.unit.value.amount": [(number.calculate, number.name)],
-    "awards.items.unit.value.currency": [],
-    "awards.items.unit.uri": [],
-    "awards.contractPeriod": [],
-    "awards.contractPeriod.startDate": [(date_time.calculate, date_time.name)],
-    "awards.contractPeriod.endDate": [(date_time.calculate, date_time.name)],
-    "awards.contractPeriod.maxExtentDate": [(date_time.calculate, date_time.name)],
-    "awards.contractPeriod.durationInDays": [(number.calculate, number.name)],
-    "awards.documents": [],
-    "awards.documents.id": [],
-    "awards.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section="award"), document_type.name)
-    ],
-    "awards.documents.title": [],
-    "awards.documents.description": [(document_description_length.calculate, document_description_length.name)],
-    "awards.documents.url": [],
-    "awards.documents.datePublished": [(date_time.calculate, date_time.name)],
-    "awards.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "awards.documents.format": [(document_format.calculate, document_format.name)],
-    "awards.documents.language": [(language.calculate, language.name)],
-    "awards.amendments": [],
-    "awards.amendments.date": [(date_time.calculate, date_time.name)],
-    "awards.amendments.rationale": [],
-    "awards.amendments.id": [],
-    "awards.amendments.description": [],
-    "awards.amendments.amendsReleaseID": [],
-    "awards.amendments.releaseID": [],
-    "awards.amendments.changes": [],
-    "awards.amendments.changes.property": [],
-    "awards.amendments.changes.former_value": [],
-    "awards.amendment": [],
-    "awards.amendment.date": [(date_time.calculate, date_time.name)],
-    "awards.amendment.rationale": [],
-    "awards.amendment.id": [],
-    "awards.amendment.description": [],
-    "awards.amendment.amendsReleaseID": [],
-    "awards.amendment.releaseID": [],
-    "awards.amendment.changes": [],
-    "awards.amendment.changes.property": [],
-    "awards.amendment.changes.former_value": [],
-    "contracts": [],
-    "contracts.id": [],
-    "contracts.awardID": [],
-    "contracts.title": [],
-    "contracts.description": [],
-    "contracts.status": [],
-    "contracts.period": [],
-    "contracts.period.startDate": [(date_time.calculate, date_time.name)],
-    "contracts.period.endDate": [(date_time.calculate, date_time.name)],
-    "contracts.period.maxExtentDate": [(date_time.calculate, date_time.name)],
-    "contracts.period.durationInDays": [(number.calculate, number.name)],
-    "contracts.value": [],
-    "contracts.value.amount": [],
-    "contracts.value.currency": [],
-    "contracts.items": [],
-    "contracts.items.id": [],
-    "contracts.items.description": [],
-    "contracts.items.classification": [],
-    "contracts.items.classification.scheme": [],
-    "contracts.items.classification.id": [],
-    "contracts.items.classification.description": [],
-    "contracts.items.classification.uri": [],
-    "contracts.items.additionalClassifications": [],
-    "contracts.items.additionalClassifications.scheme": [],
-    "contracts.items.additionalClassifications.id": [],
-    "contracts.items.additionalClassifications.description": [],
-    "contracts.items.additionalClassifications.uri": [],
-    "contracts.items.quantity": [(number.calculate, number.name)],
-    "contracts.items.unit": [],
-    "contracts.items.unit.scheme": [],
-    "contracts.items.unit.id": [],
-    "contracts.items.unit.name": [],
-    "contracts.items.unit.value": [],
-    "contracts.items.unit.value.amount": [(number.calculate, number.name)],
-    "contracts.items.unit.value.currency": [],
-    "contracts.items.unit.uri": [],
-    "contracts.dateSigned": [(date_time.calculate, date_time.name)],
-    "contracts.documents": [],
-    "contracts.documents.id": [],
-    "contracts.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section="contract"), document_type.name)
-    ],
-    "contracts.documents.title": [],
-    "contracts.documents.description": [(document_description_length.calculate, document_description_length.name)],
-    "contracts.documents.url": [],
-    "contracts.documents.datePublished": [(date_time.calculate, date_time.name)],
-    "contracts.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "contracts.documents.format": [(document_format.calculate, document_format.name)],
-    "contracts.documents.language": [(language.calculate, language.name)],
-    "contracts.implementation": [],
-    "contracts.implementation.transactions": [],
-    "contracts.implementation.transactions.id": [],
-    "contracts.implementation.transactions.source": [],
-    "contracts.implementation.transactions.date": [(date_time.calculate, date_time.name)],
-    "contracts.implementation.transactions.value": [],
-    "contracts.implementation.transactions.value.amount": [(number.calculate, number.name)],
-    "contracts.implementation.transactions.value.currency": [],
-    "contracts.implementation.transactions.payer": [],
-    "contracts.implementation.transactions.payer.name": [],
-    "contracts.implementation.transactions.payer.id": [],
-    "contracts.implementation.transactions.payer.identifier": [],
-    "contracts.implementation.transactions.payer.identifier.scheme": [
-        (identifier_scheme.calculate, identifier_scheme.name)
-    ],
-    "contracts.implementation.transactions.payer.identifier.id": [],
-    "contracts.implementation.transactions.payer.identifier.legalName": [],
-    "contracts.implementation.transactions.payer.identifier.uri": [],
-    "contracts.implementation.transactions.payer.address": [],
-    "contracts.implementation.transactions.payer.address.streetAddress": [],
-    "contracts.implementation.transactions.payer.address.locality": [],
-    "contracts.implementation.transactions.payer.address.region": [],
-    "contracts.implementation.transactions.payer.address.postalCode": [],
-    "contracts.implementation.transactions.payer.address.countryName": [],
-    "contracts.implementation.transactions.payer.additionalIdentifiers": [],
-    "contracts.implementation.transactions.payer.additionalIdentifiers.scheme": [
-        (identifier_scheme.calculate, identifier_scheme.name)
-    ],
-    "contracts.implementation.transactions.payer.additionalIdentifiers.id": [],
-    "contracts.implementation.transactions.payer.additionalIdentifiers.legalName": [],
-    "contracts.implementation.transactions.payer.additionalIdentifiers.uri": [],
-    "contracts.implementation.transactions.payer.contactPoint": [],
-    "contracts.implementation.transactions.payer.contactPoint.name": [],
-    "contracts.implementation.transactions.payer.contactPoint.email": [(email.calculate, email.name)],
-    "contracts.implementation.transactions.payer.contactPoint.telephone": [(telephone.calculate, telephone.name)],
-    "contracts.implementation.transactions.payer.contactPoint.faxNumber": [(telephone.calculate, telephone.name)],
-    "contracts.implementation.transactions.payer.contactPoint.url": [],
-    "contracts.implementation.transactions.payee": [],
-    "contracts.implementation.transactions.payee.name": [],
-    "contracts.implementation.transactions.payee.id": [],
-    "contracts.implementation.transactions.payee.identifier": [],
-    "contracts.implementation.transactions.payee.identifier.scheme": [
-        (identifier_scheme.calculate, identifier_scheme.name)
-    ],
-    "contracts.implementation.transactions.payee.identifier.id": [],
-    "contracts.implementation.transactions.payee.identifier.legalName": [],
-    "contracts.implementation.transactions.payee.identifier.uri": [],
-    "contracts.implementation.transactions.payee.address": [],
-    "contracts.implementation.transactions.payee.address.streetAddress": [],
-    "contracts.implementation.transactions.payee.address.locality": [],
-    "contracts.implementation.transactions.payee.address.region": [],
-    "contracts.implementation.transactions.payee.address.postalCode": [],
-    "contracts.implementation.transactions.payee.address.countryName": [],
-    "contracts.implementation.transactions.payee.additionalIdentifiers": [],
-    "contracts.implementation.transactions.payee.additionalIdentifiers.scheme": [
-        (identifier_scheme.calculate, identifier_scheme.name)
-    ],
-    "contracts.implementation.transactions.payee.additionalIdentifiers.id": [],
-    "contracts.implementation.transactions.payee.additionalIdentifiers.legalName": [],
-    "contracts.implementation.transactions.payee.additionalIdentifiers.uri": [],
-    "contracts.implementation.transactions.payee.contactPoint": [],
-    "contracts.implementation.transactions.payee.contactPoint.name": [],
-    "contracts.implementation.transactions.payee.contactPoint.email": [(email.calculate, email.name)],
-    "contracts.implementation.transactions.payee.contactPoint.telephone": [(telephone.calculate, telephone.name)],
-    "contracts.implementation.transactions.payee.contactPoint.faxNumber": [(telephone.calculate, telephone.name)],
-    "contracts.implementation.transactions.payee.contactPoint.url": [],
-    "contracts.implementation.transactions.uri": [],
-    "contracts.implementation.transactions.amount": [],
-    "contracts.implementation.transactions.amount.amount": [(number.calculate, number.name)],
-    "contracts.implementation.transactions.amount.currency": [],
-    "contracts.implementation.transactions.providerOrganization": [],
-    "contracts.implementation.transactions.providerOrganization.scheme": [
-        (identifier_scheme.calculate, identifier_scheme.name)
-    ],
-    "contracts.implementation.transactions.providerOrganization.id": [],
-    "contracts.implementation.transactions.providerOrganization.legalName": [],
-    "contracts.implementation.transactions.providerOrganization.uri": [],
-    "contracts.implementation.transactions.receiverOrganization": [],
-    "contracts.implementation.transactions.receiverOrganization.scheme": [
-        (identifier_scheme.calculate, identifier_scheme.name)
-    ],
-    "contracts.implementation.transactions.receiverOrganization.id": [],
-    "contracts.implementation.transactions.receiverOrganization.legalName": [],
-    "contracts.implementation.transactions.receiverOrganization.uri": [],
-    "contracts.implementation.milestones": [],
-    "contracts.implementation.milestones.id": [],
-    "contracts.implementation.milestones.title": [],
-    "contracts.implementation.milestones.type": [],
-    "contracts.implementation.milestones.description": [],
-    "contracts.implementation.milestones.code": [],
-    "contracts.implementation.milestones.dueDate": [(date_time.calculate, date_time.name)],
-    "contracts.implementation.milestones.dateMet": [(date_time.calculate, date_time.name)],
-    "contracts.implementation.milestones.dateModified": [(date_time.calculate, date_time.name)],
-    "contracts.implementation.milestones.status": [],
-    "contracts.implementation.milestones.documents": [],
-    "contracts.implementation.milestones.documents.id": [],
-    "contracts.implementation.milestones.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section="implementation"), document_type.name)
-    ],
-    "contracts.implementation.milestones.documents.title": [],
-    "contracts.implementation.milestones.documents.description": [
-        (document_description_length.calculate, document_description_length.name)
-    ],
-    "contracts.implementation.milestones.documents.url": [],
-    "contracts.implementation.milestones.documents.datePublished": [(date_time.calculate, date_time.name)],
-    "contracts.implementation.milestones.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "contracts.implementation.milestones.documents.format": [(document_format.calculate, document_format.name)],
-    "contracts.implementation.milestones.documents.language": [(language.calculate, language.name)],
-    "contracts.implementation.documents": [],
-    "contracts.implementation.documents.id": [],
-    "contracts.implementation.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section="implementation"), document_type.name)
-    ],
-    "contracts.implementation.documents.title": [],
-    "contracts.implementation.documents.description": [
-        (document_description_length.calculate, document_description_length.name)
-    ],
-    "contracts.implementation.documents.url": [],
-    "contracts.implementation.documents.datePublished": [(date_time.calculate, date_time.name)],
-    "contracts.implementation.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "contracts.implementation.documents.format": [(document_format.calculate, document_format.name)],
-    "contracts.implementation.documents.language": [(language.calculate, language.name)],
-    "contracts.relatedProcesses": [],
-    "contracts.relatedProcesses.id": [],
-    "contracts.relatedProcesses.relationship": [],
-    "contracts.relatedProcesses.title": [],
-    "contracts.relatedProcesses.scheme": [],
-    "contracts.relatedProcesses.identifier": [],
-    "contracts.relatedProcesses.uri": [],
-    "contracts.milestones": [],
-    "contracts.milestones.id": [],
-    "contracts.milestones.title": [],
-    "contracts.milestones.type": [],
-    "contracts.milestones.description": [],
-    "contracts.milestones.code": [],
-    "contracts.milestones.dueDate": [(date_time.calculate, date_time.name)],
-    "contracts.milestones.dateMet": [(date_time.calculate, date_time.name)],
-    "contracts.milestones.dateModified": [(date_time.calculate, date_time.name)],
-    "contracts.milestones.status": [],
-    "contracts.milestones.documents": [],
-    "contracts.milestones.documents.id": [],
-    "contracts.milestones.documents.documentType": [
-        (functools.partial(document_type.calculate_section, section="contract"), document_type.name)
-    ],
-    "contracts.milestones.documents.title": [],
-    "contracts.milestones.documents.description": [
-        (document_description_length.calculate, document_description_length.name)
-    ],
-    "contracts.milestones.documents.url": [],
-    "contracts.milestones.documents.datePublished": [(date_time.calculate, date_time.name)],
-    "contracts.milestones.documents.dateModified": [(date_time.calculate, date_time.name)],
-    "contracts.milestones.documents.format": [(document_format.calculate, document_format.name)],
-    "contracts.milestones.documents.language": [(language.calculate, language.name)],
-    "contracts.amendments": [],
-    "contracts.amendments.date": [(date_time.calculate, date_time.name)],
-    "contracts.amendments.rationale": [],
-    "contracts.amendments.id": [],
-    "contracts.amendments.description": [],
-    "contracts.amendments.amendsReleaseID": [],
-    "contracts.amendments.releaseID": [],
-    "contracts.amendments.changes": [],
-    "contracts.amendments.changes.property": [],
-    "contracts.amendments.changes.former_value": [],
-    "contracts.amendment": [],
-    "contracts.amendment.date": [(date_time.calculate, date_time.name)],
-    "contracts.amendment.rationale": [],
-    "contracts.amendment.id": [],
-    "contracts.amendment.description": [],
-    "contracts.amendment.amendsReleaseID": [],
-    "contracts.amendment.releaseID": [],
-    "contracts.amendment.changes": [],
-    "contracts.amendment.changes.property": [],
-    "contracts.amendment.changes.former_value": [],
-    "language": [(language.calculate, language.name)],
-    "relatedProcesses": [],
-    "relatedProcesses.id": [],
-    "relatedProcesses.relationship": [],
-    "relatedProcesses.title": [],
-    "relatedProcesses.scheme": [],
-    "relatedProcesses.identifier": [],
-    "relatedProcesses.uri": [],
-}
+definitions = dict(_definitions(schema["properties"]))

@@ -19,7 +19,7 @@ Backend
 
 Each check is a function, named ``calculate`` by convention, that:
 
-#. Accepts two arguments (e.g. ``{"email": "invalid"}`` and ``email``). named ``item`` and ``key`` by convention
+#. Accepts two arguments (e.g. ``{"email": "invalid"}`` and ``email``), named ``item`` and ``key`` by convention
 #. Creates an empty ``result`` dict
 #. Determines whether the check passes
 #. If it passes, sets ``result["result"] = True``
@@ -34,7 +34,7 @@ An empty ``result`` dict looks like:
 
 .. literalinclude:: ../../../tools/checks.py
    :language: python
-   :start-after: obj =
+   :start-after: _empty_field_result
    :end-at: }
 
 Example
