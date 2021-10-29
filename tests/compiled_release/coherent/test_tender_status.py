@@ -1,104 +1,37 @@
-from contracting_process.resource_level.coherent.tender_status import calculate
+import unittest
 
-item_unset = {"tender": {}}
-item_codelist__invalid_schema = {"tender": {"status": "invalid"}}
-
-
-def test_undefined():
-    empty_result = calculate({})
-    assert type(empty_result) == dict
-    assert empty_result["result"] is None
-    assert empty_result["application_count"] is None
-    assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "incomplete data for check"}
-
-    empty_result = calculate(item_unset)
-    assert type(empty_result) == dict
-    assert empty_result["result"] is None
-    assert empty_result["application_count"] is None
-    assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "incomplete data for check"}
-
-    empty_result = calculate(item_codelist__invalid_schema)
-    assert type(empty_result) == dict
-    assert empty_result["result"] is None
-    assert empty_result["application_count"] is None
-    assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "non-evaluated tender status"}
+from contracting_process.resource_level.coherent import tender_status
+from tests import CompiledReleaseTests
 
 
-item_ok_1 = {
-    "tender": {
-        "status": "planning",
-    }
-}
-
-item_ok_2 = {
-    "tender": {
-        "status": "planning",
-    },
-    "awards": [],
-}
-
-item_ok_3 = {
-    "tender": {
-        "status": "planning",
-    },
-    "awards": [],
-    "contracts": [],
-}
-
-
-def test_ok():
-    result = calculate(item_ok_1)
-    assert type(result) == dict
-    assert result["result"] is True
-    assert result["application_count"] == 1
-    assert result["pass_count"] == 1
-    assert result["meta"] is None
-
-    result = calculate(item_ok_2)
-    assert type(result) == dict
-    assert result["result"] is True
-    assert result["application_count"] == 1
-    assert result["pass_count"] == 1
-    assert result["meta"] is None
-
-    result = calculate(item_ok_3)
-    assert type(result) == dict
-    assert result["result"] is True
-    assert result["application_count"] == 1
-    assert result["pass_count"] == 1
-    assert result["meta"] is None
-
-
-item_failed_1 = {
-    "tender": {
-        "status": "planning",
-    },
-    "awards": [{"title": ""}],
-}
-
-item_failed_2 = {
-    "tender": {
-        "status": "planning",
-    },
-    "awards": [],
-    "contracts": [{"title": ""}],
-}
-
-
-def test_failed():
-    result = calculate(item_failed_1)
-    assert type(result) == dict
-    assert result["result"] is False
-    assert result["application_count"] == 1
-    assert result["pass_count"] == 0
-    assert result["meta"] == {"contracts_count": 0, "awards_count": 1}
-
-    result = calculate(item_failed_2)
-    assert type(result) == dict
-    assert result["result"] is False
-    assert result["application_count"] == 1
-    assert result["pass_count"] == 0
-    assert result["meta"] == {"contracts_count": 1, "awards_count": 0}
+class TestCase(CompiledReleaseTests, unittest.TestCase):
+    module = tender_status
+    skipping = [
+        (
+            {"tender": {}},
+            "criteria not met",
+        ),
+        (
+            {"tender": {"status": "invalid"}},  # invalid
+            "criteria not met",
+        ),
+    ]
+    passing = [
+        ({"tender": {"status": "planning"}}, None, 1),
+        ({"tender": {"status": "planning"}, "awards": []}, None, 1),
+        ({"tender": {"status": "planning"}, "awards": [], "contracts": []}, None, 1),
+    ]
+    failing = [
+        (
+            {"tender": {"status": "planning"}, "awards": [{"title": ""}]},
+            {"contracts_count": 0, "awards_count": 1},
+            1,
+            0,
+        ),
+        (
+            {"tender": {"status": "planning"}, "awards": [], "contracts": [{"title": ""}]},
+            {"contracts_count": 1, "awards_count": 0},
+            1,
+            0,
+        ),
+    ]

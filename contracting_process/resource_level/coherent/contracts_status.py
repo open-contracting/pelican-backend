@@ -14,7 +14,7 @@ def calculate(item):
     ]
 
     if len(contracts) == 0:
-        result["meta"] = {"reason": "there are no contracts with check-specific properties"}
+        result["meta"] = {"reason": "criteria not met"}
         return result
 
     application_count = 0

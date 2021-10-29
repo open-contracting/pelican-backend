@@ -14,7 +14,7 @@ def calculate(item):
     ]
 
     if len(awards) == 0:
-        result["meta"] = {"reason": "there are no awards with check-specific properties"}
+        result["meta"] = {"reason": "criteria not met"}
         return result
 
     contracts_awardID = [v for v in get_values(item, "contracts.awardID", value_only=True) if v is not None]

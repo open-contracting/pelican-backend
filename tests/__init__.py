@@ -73,7 +73,6 @@ class FieldQualityTests:
     def test_passing(self):
         for value in self.passing:
             with self.subTest(value=value):
-                # raise Exception(repr(self.method))
                 result = self.method({"xxx": value}, "xxx", **self.passing_kwargs)
 
                 self.assertEqual(
@@ -106,6 +105,65 @@ class FieldQualityTests:
                         "result": False,
                         "value": return_value,
                         "reason": reason,
+                        "version": 1.0,
+                    },
+                )
+
+
+class CompiledReleaseTests:
+    passing_kwargs = {}
+    failing_kwargs = {}
+    method = "calculate"
+
+    def setUp(self):
+        self.method = getattr(self.module, self.method)
+
+    def test_skipping(self):
+        skipping = self.skipping
+        skipping.append(({}, skipping[0][1]))
+        for item, reason in skipping:
+            with self.subTest(item=item):
+                result = self.method(item, **self.passing_kwargs)
+
+                self.assertEqual(
+                    result,
+                    {
+                        "result": None,
+                        "meta": {"reason": reason},
+                        "application_count": None,
+                        "pass_count": None,
+                        "version": 1.0,
+                    },
+                )
+
+    def test_passing(self):
+        for item, meta, count in self.passing:
+            with self.subTest(item=item):
+                result = self.method(item, **self.passing_kwargs)
+
+                self.assertEqual(
+                    result,
+                    {
+                        "result": True,
+                        "meta": meta,
+                        "application_count": count,
+                        "pass_count": count,
+                        "version": 1.0,
+                    },
+                )
+
+    def test_failing(self):
+        for item, meta, application_count, pass_count in self.failing:
+            with self.subTest(item=item):
+                result = self.method(item, **self.failing_kwargs)
+
+                self.assertEqual(
+                    result,
+                    {
+                        "result": False,
+                        "meta": meta,
+                        "application_count": application_count,
+                        "pass_count": pass_count,
                         "version": 1.0,
                     },
                 )

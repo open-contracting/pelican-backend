@@ -12,7 +12,7 @@ def calculate(item):
     if not tender_status:
         # completely missing tender value
         result["result"] = None
-        result["meta"] = {"reason": "incomplete data for check"}
+        result["meta"] = {"reason": "criteria not met"}
         return result
 
     tender_status = tender_status[0]
@@ -49,5 +49,5 @@ def calculate(item):
 
     # unable to compare, undefined
     result["result"] = None
-    result["meta"] = {"reason": "non-evaluated tender status"}
+    result["meta"] = {"reason": "criteria not met"}
     return result
