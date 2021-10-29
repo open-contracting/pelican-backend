@@ -16,7 +16,7 @@ This changelog only notes major changes, to notify other developers.
 ----------
 
 -  feat: ``date_time`` now fails on dates before 1990. :issue:`34`
--  refactor: Re-organize the repository. :compare:`75a3859..7dbecc9` :commit:`9241df5` :commit:`bc4f77d` :commit:`1f5f744` :commit:`160aaa8`
+-  refactor: Re-organize the repository. :compare:`75a3859..7dbecc9` :commit:`9241df5` :commit:`bc4f77d` :commit:`1f5f744` :commit:`160aaa8` :commit:`ae0447d`
 
 2021-10-25
 ----------

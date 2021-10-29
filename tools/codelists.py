@@ -14,14 +14,20 @@ def _get(url, key):
     return tuple(row[key] for row in reader)
 
 
+def get_identifier_scheme_codelist():
+    return _get("http://org-id.guide/download.csv", "code")
+
+
+def get_language_codelist():
+    return _get(
+        "https://raw.githubusercontent.com/open-contracting/standard/1.2-dev/schema/codelists/language.csv", "Code"
+    )
+
+
 def get_media_type_codelist():
     return _get(
         "https://raw.githubusercontent.com/open-contracting/standard/1.2-dev/schema/codelists/mediaType.csv", "Code"
     )
-
-
-def get_identifier_scheme_codelist():
-    return _get("http://org-id.guide/download.csv", "code")
 
 
 def get_ocid_prefix_codelist():

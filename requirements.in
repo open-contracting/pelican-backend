@@ -3,7 +3,6 @@ click
 phonenumbers
 pika
 psycopg2
-pycountry
 python-dateutil
 requests
 simplejson
