@@ -56,22 +56,24 @@ def test_missing_dates():
     assert result["meta"] == {"reason": "incomplete data for check"}
 
 
-item_test_ill_formatted_dates1 = {"tender": {"enquiryPeriod": {"startDate": "2014-10-21", "endDate": "2014-10-21"}}}
+item_test_ill_formatted_dates1__invalid_schema = {
+    "tender": {"enquiryPeriod": {"startDate": "2014-10-21", "endDate": "2014-10-21"}}
+}
 
-item_test_ill_formatted_dates2 = {
+item_test_ill_formatted_dates2__invalid_schema = {
     "tender": {"enquiryPeriod": {"startDate": "2014-11-18T18:00:00", "endDate": "2015-12-31T00:00:00-06:00"}}
 }
 
 
 def test_ill_formatted_dates():
-    result = calculate(item_test_ill_formatted_dates1)
+    result = calculate(item_test_ill_formatted_dates1__invalid_schema)
     assert type(result) == dict
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "incomplete data for check"}
 
-    result = calculate(item_test_ill_formatted_dates2)
+    result = calculate(item_test_ill_formatted_dates2__invalid_schema)
     assert type(result) == dict
     assert result["result"] is None
     assert result["application_count"] is None
