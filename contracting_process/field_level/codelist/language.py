@@ -4,27 +4,15 @@ from tools.codelists import get_language_codelist
 name = "language"
 
 
-def calculate(data, key):
+def calculate(item, key):
     result = get_empty_result_field(name)
 
-    value = data[key]
-    if type(value) != str or len(value) != 2:
-        result["result"] = False
-        result["value"] = value
-        result["reason"] = "incorrect formatting"
-        return result
+    value = item[key]
+    passed = value in get_language_codelist()
 
-    if not value.islower():
-        result["result"] = False
+    result["result"] = passed
+    if not passed:
         result["value"] = value
-        result["reason"] = "language code must be in lower case"
-        return result
+        result["reason"] = "not in codelist"
 
-    if value not in get_language_codelist():
-        result["result"] = False
-        result["value"] = value
-        result["reason"] = "country doesn`t exist"
-        return result
-
-    result["result"] = True
     return result

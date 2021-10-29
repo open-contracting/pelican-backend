@@ -7,13 +7,12 @@ name = "identifier_scheme"
 def calculate(item, key):
     result = get_empty_result_field(name)
 
-    scheme = item[key]
+    value = item[key]
+    passed = value in get_identifier_scheme_codelist()
 
-    passed = scheme in get_identifier_scheme_codelist()
     result["result"] = passed
-
     if not passed:
-        result["value"] = scheme
-        result["reason"] = "wrong identifier scheme"
+        result["value"] = value
+        result["reason"] = "not in codelist"
 
     return result
