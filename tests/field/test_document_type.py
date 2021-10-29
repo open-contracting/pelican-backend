@@ -1,25 +1,18 @@
-from contracting_process.field_level.coherent import document_type
-from tests import is_subset_dict
+import unittest
+
+from contracting_process.field_level.codelist import document_type
+from tests import FieldQualityTests
 
 
-def test_passed():
-    document_type.code_to_section_mapping = {"contractGuarantees": ["tender", "contract"]}
-
-    result = document_type.calculate_section({"documentType": "contractGuarantees"}, "documentType", "tender")
-    assert is_subset_dict({"result": True}, result)
-    result = document_type.calculate_section({"documentType": "unknown"}, "documentType", "tender")
-    assert is_subset_dict({"result": True}, result)
-
-
-def test_failed():
-    document_type.code_to_section_mapping = {"contractGuarantees": ["tender", "contract"]}
-
-    result = document_type.calculate_section({"documentType": "contractGuarantees"}, "documentType", "planning")
-    assert is_subset_dict(
-        {
-            "result": False,
-            "value": "contractGuarantees",
-            "reason": "unsupported combination code-section for documentType",
-        },
-        result,
-    )
+class TestCase(FieldQualityTests, unittest.TestCase):
+    module = document_type
+    passing = [
+        "contractGuarantees",
+        "unknown",
+    ]
+    failing = [
+        ("contractGuarantees", "not expected in planning section"),
+    ]
+    passing_kwargs = {"section": "tender"}
+    failing_kwargs = {"section": "planning"}
+    method = "calculate_section"

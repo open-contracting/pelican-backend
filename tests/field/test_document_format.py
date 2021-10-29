@@ -1,20 +1,16 @@
-from contracting_process.field_level.codelist.document_format import calculate
-from tests import is_subset_dict
+import unittest
+
+from contracting_process.field_level.codelist import document_format
+from tests import FieldQualityTests
 
 
-def test_passed():
-    assert is_subset_dict(
-        {"result": True},
-        calculate({"format": "application/AML"}, "format"),
-    )
-    assert is_subset_dict(
-        {"result": True},
-        calculate({"format": "offline/print"}, "format"),
-    )
-
-
-def test_failed():
-    assert is_subset_dict(
-        {"result": False, "value": "unknown", "reason": "not in codelist"},
-        calculate({"format": "unknown"}, "format"),
-    )
+class TestCase(FieldQualityTests, unittest.TestCase):
+    module = document_format
+    passing = [
+        "image/gif",
+        "offline/print",
+    ]
+    failing = [
+        (1, "not in codelist"),
+        ("offline/prin", "not in codelist"),
+    ]

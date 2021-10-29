@@ -1,13 +1,24 @@
-from contracting_process.field_level.present.non_empty import calculate
-from tests import is_subset_dict
+import unittest
+
+from contracting_process.field_level.coverage import non_empty
+from tests import FieldCoverageTests
 
 
-def test_non_empty():
-    assert is_subset_dict({"result": True}, calculate({"amount": 0}, "amount"))
-    assert is_subset_dict({"result": True}, calculate({"lang": "en"}, "lang"))
-    assert is_subset_dict({"result": False, "value": "", "reason": "empty string"}, calculate({"lang": ""}, "lang"))
-    assert is_subset_dict({"result": False, "value": [], "reason": "empty list"}, calculate({"lang": []}, "lang"))
-    assert is_subset_dict(
-        {"result": False, "value": {}, "reason": "empty dictionary"}, calculate({"lang": {}}, "lang")
-    )
-    assert is_subset_dict({"result": False, "value": None, "reason": "missing key"}, calculate({"lang": {}}, "lang2"))
+class TestCase(FieldCoverageTests, unittest.TestCase):
+    module = non_empty
+    passing = [
+        {"key": {"key": None}},
+        {"key": [None]},
+        {"key": "value"},
+        {"key": 0},
+        {"key": True},
+        {"key": False},
+    ]
+    failing = [
+        ({}, "not set"),
+        ({"other": None}, "not set"),
+        ({"key": {}}, "empty object", {}),
+        ({"key": []}, "empty array", []),
+        ({"key": ""}, "empty string", ""),
+        ({"key": None}, "null value"),
+    ]

@@ -1,23 +1,17 @@
-from contracting_process.field_level.misc.document_description_length import calculate
-from tests import is_subset_dict
+import unittest
+
+from contracting_process.field_level.range import document_description_length
+from tests import FieldQualityTests
 
 
-def test_passed():
-    result = calculate({"description": "short"}, "description")
-    assert is_subset_dict({"result": True}, result)
-
-    result = calculate({"description": "".join("_" for _ in range(0, 250))}, "description")
-    assert is_subset_dict({"result": True}, result)
-
-
-def test_failed():
-    data = {"description": "".join("_" for _ in range(0, 251))}
-    result = calculate(data, "description")
-    assert is_subset_dict(
-        {
-            "result": False,
-            "value": len(data["description"]),
-            "reason": "description exceeds max length of 250 characters",
-        },
-        result,
-    )
+class TestCase(FieldQualityTests, unittest.TestCase):
+    module = document_description_length
+    passing = [
+        ".",
+        "." * 250,
+    ]
+    failing = [
+        (1, "not a str"),  # len() would error
+        ([1], "not a str"),  # len() would return
+        ("." * 251, "length greater than 250", 251),
+    ]

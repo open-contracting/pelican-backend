@@ -1,12 +1,15 @@
-from contracting_process.field_level.present.exists import calculate
-from tests import is_subset_dict
+import unittest
+
+from contracting_process.field_level.coverage import exists
+from tests import FieldCoverageTests
 
 
-def test_exists():
-    assert is_subset_dict({"result": True}, calculate({"lang": "en"}, "lang"))
-    assert is_subset_dict({"result": True}, calculate({""}, ""))
-    assert is_subset_dict(
-        {"result": False, "value": None, "reason": "missing key"}, calculate({"lang": "en"}, "lang2")
-    )
-    assert is_subset_dict({"result": False, "value": None, "reason": "missing key"}, calculate({}, "lang2"))
-    assert is_subset_dict({"result": False, "value": None, "reason": "missing key"}, calculate({}, ""))
+class TestCase(FieldCoverageTests, unittest.TestCase):
+    module = exists
+    passing = [
+        {"key": None},
+    ]
+    failing = [
+        ({}, "not set"),
+        ({"other": None}, "not set"),
+    ]

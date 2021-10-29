@@ -1,14 +1,16 @@
-from contracting_process.field_level.format.ocid import calculate
-from tests import is_subset_dict
+import unittest
+
+from contracting_process.field_level.format import ocid
+from tests import FieldQualityTests
 
 
-def test_passed():
-    assert is_subset_dict({"result": True}, calculate({"ocid": "ocds-a2ef3d"}, "ocid"))
-    assert is_subset_dict({"result": True}, calculate({"ocid": "ocds-a2ef3d123123123"}, "ocid"))
-
-
-def test_failed():
-    assert is_subset_dict(
-        {"result": False, "value": "a000-a00000", "reason": "ocid prefix not in codelist"},
-        calculate({"ocid": "a000-a00000"}, "ocid"),
-    )
+class TestCase(FieldQualityTests, unittest.TestCase):
+    module = ocid
+    passing = [
+        "ocds-a2ef3d",
+        "ocds-a2ef3dxxx",
+    ]
+    failing = [
+        (1, "not a str"),
+        ("ocds-a2ef3", "ocid prefix not in codelist"),
+    ]

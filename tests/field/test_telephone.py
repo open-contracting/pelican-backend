@@ -1,51 +1,38 @@
-from contracting_process.field_level.format.telephone import calculate
-from tests import is_subset_dict
+import unittest
 
-"""
-author: Iaroslav Kolodka
-
-The file contain tests for a function contracting_process.field_level.telephone.telephone_number_format .
-
-'test_with_correct_number' is the case when the input item contains a correctly formatted phone number.
-'test_with_incorrect_number' is the case when the input item contains an incorrectly formatted phone number.
+from contracting_process.field_level.format import telephone
+from tests import FieldQualityTests
 
 
-"""
-
-item_with_valid_number1 = {"telephone": "+420777555333"}
-
-item_with_invalid_number1 = {"telephone": "+42077755533"}
-
-item_with_invalid_number2 = {"telephone": "+420777555a33"}
-
-item_with_invalid_number3 = {"telephone": "+999777555333"}
-
-
-def test_with_correct_number():
-    expected_result = {"result": True}
-    result1 = calculate(item_with_valid_number1, "telephone")
-    assert is_subset_dict(expected_result, result1)
-
-
-def test_with_incorrect_number():
-    expected_result1 = {
-        "result": False,
-        "value": "+42077755533",  # number is too short
-        "reason": "incorrect format",
-    }
-    expected_result2 = {
-        "result": False,
-        "value": "+420777555a33",  # incorrect number
-        "reason": "incorrect format",
-    }
-    expected_result3 = {
-        "result": False,
-        "value": "+999777555333",  # the region shuld not exist
-        "reason": "incorrect format: (0) Could not interpret numbers after plus-sign.",
-    }
-    result1 = calculate(item_with_invalid_number1, "telephone")
-    result2 = calculate(item_with_invalid_number2, "telephone")
-    result3 = calculate(item_with_invalid_number3, "telephone")
-    assert is_subset_dict(expected_result1, result1)
-    assert is_subset_dict(expected_result2, result2)
-    assert is_subset_dict(expected_result3, result3)
+class TestCase(FieldQualityTests, unittest.TestCase):
+    module = telephone
+    passing = [
+        "+420123456789",
+        # Grouping
+        "+4 20123456789",
+        # Punctuation
+        "+420 123 456 789",
+        "+420-123-456-789",
+        "+420.123.456.789",
+        "+420/123/456/789",
+        # Extension
+        "+420123456789x",
+        "+420123456789x1",
+        "+420123456789x1234567",
+    ]
+    failing = [
+        (1, "not a str"),
+        ("invalid", "incorrect format: (1) The string supplied did not seem to be a phone number."),
+        ("+420_123_456_789", "incorrect format: (1) The string supplied did not seem to be a phone number."),
+        # + sign
+        ("420 123456789", "incorrect format: (0) Missing or invalid default region."),
+        ("00 420 123456789", "incorrect format: (0) Missing or invalid default region."),
+        # County code
+        ("123456789", "incorrect format: (0) Missing or invalid default region."),
+        ("+999123456789", "incorrect format: (0) Could not interpret numbers after plus-sign."),
+        # Local number
+        ("+42012345678", "incorrect format"),
+        ("+4201234567891234", "incorrect format"),
+        # Extension
+        ("+420123456789x12345678", "incorrect format"),
+    ]

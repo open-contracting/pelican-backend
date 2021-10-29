@@ -1,28 +1,20 @@
-from contracting_process.field_level.misc.date_time import calculate
-from tests import is_subset_dict
+import unittest
+
+from contracting_process.field_level.range import date_time
+from tests import FieldQualityTests
 
 
-def test_date_time_ok():
-    assert is_subset_dict({"result": True}, calculate({"date": "1991-05-05"}, "date"))
-    assert is_subset_dict({"result": True}, calculate({"date": "1990-01-01"}, "date"))
-    assert is_subset_dict({"result": True}, calculate({"date": "2050-01-01"}, "date"))
-
-
-def test_date_time_failed():
-    assert is_subset_dict(
-        {"result": False, "value": "", "reason": "incorrect date format"}, calculate({"date": ""}, "date")
-    )
-    assert is_subset_dict(
-        {"result": False, "value": "abcabc", "reason": "incorrect date format"}, calculate({"date": "abcabc"}, "date")
-    )
-    assert is_subset_dict(
-        {"result": False, "value": 123123, "reason": "incorrect date format"}, calculate({"date": 123123}, "date")
-    )
-    assert is_subset_dict(
-        {"result": False, "value": "1969-5-5", "reason": "date is out of range"},
-        calculate({"date": "1969-5-5"}, "date"),
-    )
-    assert is_subset_dict(
-        {"result": False, "value": "2051-1-1", "reason": "date is out of range"},
-        calculate({"date": "2051-1-1"}, "date"),
-    )
+class TestCase(FieldQualityTests, unittest.TestCase):
+    module = date_time
+    passing = [
+        "1990-1-1",
+        "2049-12-31",
+        "1997-08-09",
+    ]
+    failing = [
+        (20000101, "can't convert to date"),
+        ("invalid", "can't convert to date"),
+        ("2000-02-30", "can't convert to date"),
+        ("1969-12-31", "not in 1990-01-01/2049-12-31"),
+        ("2050-01-01", "not in 1990-01-01/2049-12-31"),
+    ]
