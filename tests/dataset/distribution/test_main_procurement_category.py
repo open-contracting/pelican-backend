@@ -15,13 +15,13 @@ def test_empty():
     assert result["meta"] is None
 
 
-first = {"ocid": "1", "tender": {"mainProcurementCategory": "A"}}
+first = {"ocid": "1", "tender": {"mainProcurementCategory": "goods"}}
 
-second = {"ocid": "2", "tender": {"mainProcurementCategory": "B"}}
+second = {"ocid": "2", "tender": {"mainProcurementCategory": "works"}}
 
-third = {"ocid": "3", "tender": {"mainProcurementCategory": "B"}}
+third = {"ocid": "3", "tender": {"mainProcurementCategory": "works"}}
 
-fourth = {"ocid": "4", "tender": {"mainProcurementCategory": "B"}}
+fourth = {"ocid": "4", "tender": {"mainProcurementCategory": "works"}}
 
 
 def test_ok():
@@ -35,8 +35,12 @@ def test_ok():
     assert result["value"] == 100
     assert result["meta"] == {
         "shares": {
-            "B": {"share": 2 / 3, "count": 2, "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]},
-            "A": {"share": 1 / 3, "count": 1, "examples": [{"item_id": 1, "ocid": "1"}]},
+            "works": {
+                "share": 2 / 3,
+                "count": 2,
+                "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}],
+            },
+            "goods": {"share": 1 / 3, "count": 1, "examples": [{"item_id": 1, "ocid": "1"}]},
         }
     }
 
@@ -51,6 +55,10 @@ def test_failed():
     assert result["value"] == 0
     assert result["meta"] == {
         "shares": {
-            "B": {"share": 1.0, "count": 2, "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}]},
+            "works": {
+                "share": 1.0,
+                "count": 2,
+                "examples": [{"item_id": 2, "ocid": "2"}, {"item_id": 3, "ocid": "3"}],
+            },
         }
     }

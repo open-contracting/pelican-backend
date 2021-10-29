@@ -3,21 +3,15 @@ from tools.checks import get_empty_result_resource
 
 version = 1.0
 
-item_without_milestones = {"id": "sdfsdf", "name": "sdasdad"}
-
-item_with_empty_milestone = {"id": "sdfsdf", "name": "sdasdad", "tender": {"milestones": [{}]}}
-
-
+item_unset = {"id": "1"}
+item_with_empty_milestone = {"id": "1", "tender": {"milestones": [{}]}}
 item_with_all_milestones_locations = {
-    "id": "sdfsdf",
-    "name": "sdasdad",
+    "id": "1",
     "tender": {
         "milestones": [
             {
                 "title": "some_milestone",
-                "properties": {
-                    "status": "notMet",
-                },
+                "status": "notMet",
             }
         ]
     },
@@ -25,9 +19,7 @@ item_with_all_milestones_locations = {
         "milestones": [
             {
                 "title": "some_milestone",
-                "properties": {
-                    "status": "notMet",
-                },
+                "status": "notMet",
             }
         ]
     },
@@ -36,42 +28,32 @@ item_with_all_milestones_locations = {
             "milestones": [
                 {
                     "title": "some_milestone",
-                    "properties": {
-                        "status": "notMet",
-                    },
+                    "status": "notMet",
                 }
             ],
             "implementation": {
                 "milestones": [
                     {
                         "title": "some_milestone",
-                        "properties": {
-                            "status": "notMet",
-                        },
+                        "status": "notMet",
                     }
                 ]
             },
         }
     ],
 }
-
 item_with_few_milestones_in_one_location = {
-    "id": "sdfsdf",
-    "name": "sdasdad",
+    "id": "1",
     "contracts": [
         {
             "milestones": [
                 {
                     "title": "some_milestone",
-                    "properties": {
-                        "status": "notMet",
-                    },
+                    "status": "notMet",
                 },
                 {
                     "title": "some_another_milestone",
-                    "properties": {
-                        "status": "notMet",
-                    },
+                    "status": "notMet",
                 },
             ]
         },
@@ -79,44 +61,33 @@ item_with_few_milestones_in_one_location = {
             "milestones": [
                 {
                     "title": "some_milestone",
-                    "properties": {
-                        "status": "notMet",
-                    },
+                    "status": "notMet",
                 },
                 {
                     "title": "some_another_milestone",
-                    "properties": {
-                        "status": "notMet",
-                    },
+                    "status": "notMet",
                 },
             ]
         },
     ],
 }
-
-
-item_with_incorrect_milestones = {
-    "id": "sdfsdf",
-    "name": "sdasdad",
+item_with_incorrect_milestones__invalid_schema = {
+    "id": "1",
     "tender": {
         "milestones": [
-            {"title": "some_milestone", "properties": {"status": "scheduled", "dateMet": {"some": "thing"}}},
-            {"title": "some_milestone", "properties": {"status": "scheduled", "dateMet": {}}},
+            {"title": "some_milestone", "status": "scheduled", "dateMet": {"some": "thing"}},
+            {"title": "some_milestone", "status": "scheduled", "dateMet": {}},
         ]
     },
     "planning": {
         "milestones": [
             {
                 "title": "some_milestone",
-                "properties": {
-                    "status": None,
-                },
+                "status": None,
             },
             {
                 "title": "some_milestone",
-                "properties": {
-                    "status": "met",
-                },
+                "status": "met",
             },
         ]
     },
@@ -125,18 +96,14 @@ item_with_incorrect_milestones = {
             "milestones": [
                 {
                     "title": "some_milestone",
-                    "properties": {
-                        "status": "notMet",
-                    },
+                    "status": "notMet",
                 }
             ],
             "implementation": {
                 "milestones": [
                     {
                         "title": "some_milestone",
-                        "properties": {
-                            "status": "notMet",
-                        },
+                        "status": "notMet",
                     }
                 ]
             },
@@ -151,7 +118,7 @@ def test_no_milestones():
     result["application_count"] = 0
     result["pass_count"] = 0
     result["meta"] = {}
-    assert calculate(item_without_milestones) == result
+    assert calculate(item_unset) == result
 
 
 def test_on_empty_milestone():
@@ -208,4 +175,4 @@ def test_on_false_result():
         {"result": True, "status": "notMet", "path": "contracts[0].milestones[0]"},
         {"result": True, "status": "notMet", "path": "contracts[0].implementation.milestones[0]"},
     ]
-    assert calculate(item_with_incorrect_milestones) == result
+    assert calculate(item_with_incorrect_milestones__invalid_schema) == result

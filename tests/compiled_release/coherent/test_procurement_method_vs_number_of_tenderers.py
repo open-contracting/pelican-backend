@@ -1,16 +1,8 @@
 from contracting_process.resource_level.coherent.procurement_method_vs_number_of_tenderers import calculate
 
-item_undefined_1 = {
-    "tender": {
-        "numberOfTenderers": 1,
-    }
-}
-
-
-item_undefined_2 = {"tender": {"procurementMethod": "direct"}}
-
-
-item_undefined_3 = {"tender": {"procurementMethod": "nondirect", "numberOfTenderers": 0}}
+item_unset_procurement_method = {"tender": {"numberOfTenderers": 1}}
+item_unset_number_of_tenderers = {"tender": {"procurementMethod": "direct"}}
+item_non_direct = {"tender": {"procurementMethod": "limited", "numberOfTenderers": 1}}
 
 
 def test_undefined():
@@ -21,21 +13,21 @@ def test_undefined():
     assert empty_result["pass_count"] is None
     assert empty_result["meta"] == {"reason": "incomplete data for check"}
 
-    empty_result = calculate(item_undefined_1)
+    empty_result = calculate(item_unset_procurement_method)
     assert type(empty_result) == dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
     assert empty_result["meta"] == {"reason": "incomplete data for check"}
 
-    empty_result = calculate(item_undefined_2)
+    empty_result = calculate(item_unset_number_of_tenderers)
     assert type(empty_result) == dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
     assert empty_result["meta"] == {"reason": "incomplete data for check"}
 
-    empty_result = calculate(item_undefined_3)
+    empty_result = calculate(item_non_direct)
     assert type(empty_result) == dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None

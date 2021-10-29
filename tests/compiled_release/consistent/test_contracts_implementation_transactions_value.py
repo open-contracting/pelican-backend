@@ -3,10 +3,9 @@ from tools.bootstrap import bootstrap
 
 bootstrap("contracts_implementation_transactions_value_test")
 
-item_test_undefined1 = {"contracts": [{}, {"implementation": {}}, {"implementation": {"transactions": []}}]}
-
-item_test_undefined2 = {
-    "awards": [{"id": 1}, {"id": 1}],
+item_empty = {"contracts": [{}, {"implementation": {}}, {"implementation": {"transactions": []}}]}
+item_same_id = {
+    "awards": [{"id": 1}, {"id": 1, "title": ""}],
     "contracts": [
         {"awardID": 0, "implementation": {"transactions": [{}]}},
         {"awardID": 1, "implementation": {"transactions": [{}]}},
@@ -21,13 +20,13 @@ def test_undefined():
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no values with check-specific properties"}
 
-    result = calculate(item_test_undefined1)
+    result = calculate(item_empty)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no values with check-specific properties"}
 
-    result = calculate(item_test_undefined2)
+    result = calculate(item_same_id)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None

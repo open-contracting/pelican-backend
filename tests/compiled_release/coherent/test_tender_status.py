@@ -1,9 +1,7 @@
 from contracting_process.resource_level.coherent.tender_status import calculate
 
-item_undefined_1 = {"tender": {}}
-
-
-item_undefined_2 = {"tender": {"status": "some_status"}}
+item_unset = {"tender": {}}
+item_codelist__invalid_schema = {"tender": {"status": "invalid"}}
 
 
 def test_undefined():
@@ -14,14 +12,14 @@ def test_undefined():
     assert empty_result["pass_count"] is None
     assert empty_result["meta"] == {"reason": "incomplete data for check"}
 
-    empty_result = calculate(item_undefined_1)
+    empty_result = calculate(item_unset)
     assert type(empty_result) == dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
     assert empty_result["meta"] == {"reason": "incomplete data for check"}
 
-    empty_result = calculate(item_undefined_2)
+    empty_result = calculate(item_codelist__invalid_schema)
     assert type(empty_result) == dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
@@ -78,7 +76,7 @@ item_failed_1 = {
     "tender": {
         "status": "planning",
     },
-    "awards": [{"something": 1}],
+    "awards": [{"title": ""}],
 }
 
 item_failed_2 = {
@@ -86,7 +84,7 @@ item_failed_2 = {
         "status": "planning",
     },
     "awards": [],
-    "contracts": [{"something": 1}],
+    "contracts": [{"title": ""}],
 }
 
 

@@ -34,22 +34,22 @@ def test_undefined():
     assert result["meta"] == {"reason": "amount or currency is null"}
 
 
-item_test_unsupported_currencies = {
-    "tender": {"value": {"amount": 100.0, "currency": "HAL"}},
+item_no_rate = {
+    "tender": {"value": {"amount": 100.0, "currency": "UYW"}},
     "planning": {"budget": {"amount": {"amount": 100.0, "currency": "USD"}}},
     "date": "2019-01-10T22:00:00+01:00",
 }
 
 
-def test_unsupported_currencies():
-    result = calculate(item_test_unsupported_currencies)
+def test_no_rate():
+    result = calculate(item_no_rate)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {
         "reason": "values are not convertible",
-        "tender.value": item_test_unsupported_currencies["tender"]["value"],
-        "planning.budget.amount": item_test_unsupported_currencies["planning"]["budget"]["amount"],
+        "tender.value": item_no_rate["tender"]["value"],
+        "planning.budget.amount": item_no_rate["planning"]["budget"]["amount"],
     }
 
 

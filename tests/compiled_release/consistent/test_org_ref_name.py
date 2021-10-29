@@ -75,7 +75,13 @@ item_test_passed2 = {
             "name": "bbb",
         },
     ],
-    "tender": {"tenderers": [{"id": "0", "name": "aaa"}, {"id": "0", "name": "aaa"}, {"id": "1", "name": "bbb"}]},
+    "tender": {
+        "tenderers": [
+            {"id": "0", "name": "aaa"},
+            {"id": "0", "name": "aaa", "identifier": {"id": "1"}},
+            {"id": "1", "name": "bbb"},
+        ]
+    },
 }
 
 

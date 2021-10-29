@@ -27,7 +27,6 @@ item_with_no_correct_parties = {
             "id": "0rw29R-dsfad",  # empty list of roles
             "name": "Unidad Central",
             "roles": [],
-            "memberOf": [{"id": "adsjk-fhjdkf", "name": "abcd"}],
         },
     ]
 }
@@ -38,7 +37,6 @@ correct_item_with_payee = {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
             "roles": ["payee"],
-            "memberOf": [{"id": "0rw29R-11341234", "name": "aabbcc"}],
         }
     ],
     "contracts": [{"implementation": {"transactions": [{"payee": {"id": "010101-a01010"}}]}}],
@@ -49,7 +47,6 @@ incorrect_item_with_payee = {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
             "roles": ["payee"],
-            "memberOf": [{"id": "0rw29R-11341234", "name": "aabbcc"}],
         }
     ],
     "contracts": [{"implementation": {"transactions": [{"payee": {"id": "00000000000"}}]}}],
@@ -61,7 +58,6 @@ incorrect_item_with_no_payee = {
             "id": "010101-a01010",  # empty list of roles
             "name": "Uni",
             "roles": ["payee"],
-            "memberOf": [{"id": "0rw29R-11341234", "name": "aabbcc"}],
         }
     ]
 }

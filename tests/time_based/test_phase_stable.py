@@ -13,41 +13,41 @@ ancestor_planning = {"ocid": "3", "planning": {"rationale": ""}}
 
 new_planning = {"ocid": "3", "planning": {"rationale": ""}}
 
-ancestor_awards = {"ocid": "3", "awards": [{"rationale": ""}]}
+ancestor_awards = {"ocid": "3", "awards": [{"title": ""}]}
 
 new_awards = {
     "ocid": "3",
     "awards": [
-        {"rationale": ""},
-        {"rationale": ""},
+        {"title": ""},
+        {"title": ""},
     ],
 }
 
 ancestor_awards_big = {
     "ocid": "3",
     "awards": [
-        {"rationale": ""},
-        {"rationale": ""},
-        {"rationale": ""},
+        {"title": ""},
+        {"title": ""},
+        {"title": ""},
     ],
 }
 
-ancestor_contracts = {"ocid": "3", "contracts": [{"rationale": ""}]}
+ancestor_contracts = {"ocid": "3", "contracts": [{"title": ""}]}
 
 new_contracts = {
     "ocid": "3",
     "contracts": [
-        {"rationale": ""},
-        {"rationale": ""},
+        {"title": ""},
+        {"title": ""},
     ],
 }
 
 ancestor_contracts_big = {
     "ocid": "3",
     "contracts": [
-        {"rationale": ""},
-        {"rationale": ""},
-        {"rationale": ""},
+        {"title": ""},
+        {"title": ""},
+        {"title": ""},
     ],
 }
 

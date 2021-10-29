@@ -4,55 +4,51 @@ from tools.bootstrap import bootstrap
 bootstrap("contracts_value_test")
 
 
-item_test_undefined_no_contracts = {"date": "2019-01-10T22:00:00+01:00", "contracts": []}
-
-item_test_undefined_no_awards = {"date": "2019-01-10T22:00:00+01:00", "contracts": [{"awardID": 0}], "awards": []}
-
-item_test_undefined_same_id = {
+item_no_contracts = {"date": "2019-01-10T22:00:00+01:00", "contracts": []}
+item_no_awards = {"date": "2019-01-10T22:00:00+01:00", "contracts": [{"awardID": 0}], "awards": []}
+item_same_id = {
     "date": "2019-01-10T22:00:00+01:00",
     "contracts": [{"awardID": 0}],
-    "awards": [{"id": 0}, {"id": 0}],
+    "awards": [{"id": 0}, {"id": 0, "title": ""}],
 }
-
-item_test_undefined_missing_fields = {
+item_missing_fields = {
     "date": "2019-01-10T22:00:00+01:00",
     "contracts": [{"awardID": 0}],
     "awards": [{"id": 0}],
 }
-
-item_test_undefined_bad_currency = {
+item_no_rate = {
     "date": "2019-01-10T22:00:00+01:00",
-    "contracts": [{"awardID": 0, "value": {"currency": "HAL", "amount": 100}}],
+    "contracts": [{"awardID": 0, "value": {"currency": "UYW", "amount": 100}}],
     "awards": [{"id": 0, "value": {"currency": "USD", "amount": 100}}],
 }
 
 
 def test_undefined():
-    result = calculate(item_test_undefined_no_contracts)
+    result = calculate(item_no_contracts)
     assert result["result"] is None
     assert result["application_count"] == 0
     assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "there are no contracts"}
 
-    result = calculate(item_test_undefined_no_awards)
+    result = calculate(item_no_awards)
     assert result["result"] is None
     assert result["application_count"] == 0
     assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "there are no awards"}
 
-    result = calculate(item_test_undefined_bad_currency)
+    result = calculate(item_no_rate)
     assert result["result"] is None
     assert result["application_count"] == 0
     assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "rule could not be applied for any award - contracts group"}
 
-    result = calculate(item_test_undefined_same_id)
+    result = calculate(item_same_id)
     assert result["result"] is None
     assert result["application_count"] == 0
     assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "rule could not be applied for any award - contracts group"}
 
-    result = calculate(item_test_undefined_missing_fields)
+    result = calculate(item_missing_fields)
     assert result["result"] is None
     assert result["application_count"] == 0
     assert result["pass_count"] == 0

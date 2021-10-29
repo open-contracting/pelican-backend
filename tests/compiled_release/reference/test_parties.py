@@ -59,10 +59,10 @@ item_test_failed2 = {
         }
     ],
 }
-item_test_failed3 = {
+item_same_id = {
     "parties": [
         {"id": "0"},
-        {"id": "0"},
+        {"id": "0", "name": ""},
     ],
     "awards": [
         {
@@ -100,7 +100,7 @@ def test_failed():
         "failed": [{"path": "awards[0].suppliers[0]", "reason": "party with specified id is not present"}]
     }
 
-    result = calculate_awards_suppliers(item_test_failed3)
+    result = calculate_awards_suppliers(item_same_id)
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0

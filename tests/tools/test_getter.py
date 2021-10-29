@@ -5,9 +5,9 @@ item = {
     "tender": {
         "id": "0rw29R-005-2011-1",
         "items": [
-            {"unit": {"name": "Unidad"}, "quantity": 4.0, "inner_list": [{"aaa": "bbb"}, {"aaa": "ccc"}]},
-            {"quantity": 5.0, "inner_list": [{"aaa": "ddd"}, {"aaa": "eee"}]},
-            {"unit": {"name": "Unimom"}, "quantity": 5.0, "inner_list": [{"aaa": "ddd"}, {"aaa": "eee"}]},
+            {"unit": {"name": "Unidad"}, "quantity": 4.0, "additionalClassifications": [{"id": "bbb"}, {"id": "ccc"}]},
+            {"quantity": 5.0, "additionalClassifications": [{"id": "ddd"}, {"id": "eee"}]},
+            {"unit": {"name": "Unimom"}, "quantity": 5.0, "additionalClassifications": [{"id": "ddd"}, {"id": "eee"}]},
         ],
         "milestones": [{"status": None}],
     },
@@ -65,16 +65,16 @@ def test_get_value_lists():
 
 
 def test_join():
-    assert get_values(item, "tender.items.inner_list.aaa") == [
-        {"path": "tender.items[0].inner_list[0].aaa", "value": "bbb"},
-        {"path": "tender.items[0].inner_list[1].aaa", "value": "ccc"},
-        {"path": "tender.items[1].inner_list[0].aaa", "value": "ddd"},
-        {"path": "tender.items[1].inner_list[1].aaa", "value": "eee"},
-        {"path": "tender.items[2].inner_list[0].aaa", "value": "ddd"},
-        {"path": "tender.items[2].inner_list[1].aaa", "value": "eee"},
+    assert get_values(item, "tender.items.additionalClassifications.id") == [
+        {"path": "tender.items[0].additionalClassifications[0].id", "value": "bbb"},
+        {"path": "tender.items[0].additionalClassifications[1].id", "value": "ccc"},
+        {"path": "tender.items[1].additionalClassifications[0].id", "value": "ddd"},
+        {"path": "tender.items[1].additionalClassifications[1].id", "value": "eee"},
+        {"path": "tender.items[2].additionalClassifications[0].id", "value": "ddd"},
+        {"path": "tender.items[2].additionalClassifications[1].id", "value": "eee"},
     ]
 
-    assert get_values(item, "tender.items.inner_list.aaa", value_only=True) == [
+    assert get_values(item, "tender.items.additionalClassifications.id", value_only=True) == [
         "bbb",
         "ccc",
         "ddd",
@@ -83,22 +83,22 @@ def test_join():
         "eee",
     ]
 
-    assert get_values(item, "tender.items.inner_list") == [
-        {"path": "tender.items[0].inner_list[0]", "value": {"aaa": "bbb"}},
-        {"path": "tender.items[0].inner_list[1]", "value": {"aaa": "ccc"}},
-        {"path": "tender.items[1].inner_list[0]", "value": {"aaa": "ddd"}},
-        {"path": "tender.items[1].inner_list[1]", "value": {"aaa": "eee"}},
-        {"path": "tender.items[2].inner_list[0]", "value": {"aaa": "ddd"}},
-        {"path": "tender.items[2].inner_list[1]", "value": {"aaa": "eee"}},
+    assert get_values(item, "tender.items.additionalClassifications") == [
+        {"path": "tender.items[0].additionalClassifications[0]", "value": {"id": "bbb"}},
+        {"path": "tender.items[0].additionalClassifications[1]", "value": {"id": "ccc"}},
+        {"path": "tender.items[1].additionalClassifications[0]", "value": {"id": "ddd"}},
+        {"path": "tender.items[1].additionalClassifications[1]", "value": {"id": "eee"}},
+        {"path": "tender.items[2].additionalClassifications[0]", "value": {"id": "ddd"}},
+        {"path": "tender.items[2].additionalClassifications[1]", "value": {"id": "eee"}},
     ]
 
-    assert get_values(item, "tender.items.inner_list", value_only=True) == [
-        {"aaa": "bbb"},
-        {"aaa": "ccc"},
-        {"aaa": "ddd"},
-        {"aaa": "eee"},
-        {"aaa": "ddd"},
-        {"aaa": "eee"},
+    assert get_values(item, "tender.items.additionalClassifications", value_only=True) == [
+        {"id": "bbb"},
+        {"id": "ccc"},
+        {"id": "ddd"},
+        {"id": "eee"},
+        {"id": "ddd"},
+        {"id": "eee"},
     ]
 
 

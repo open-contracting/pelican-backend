@@ -6,12 +6,10 @@ calculate = functools.partial(
     roles.calculate_path_role, path="contracts.implementation.transactions.payee", role="payee"
 )
 
-item_test_undefined1 = {"parties": [{"id": "0"}]}
-
-item_test_undefined2 = {"parties": [{"id": "0"}], "contracts": [{"implementation": {"transactions": [{"payee": {}}]}}]}
-
-item_test_undefined3 = {
-    "parties": [{"id": "0"}, {"id": "0"}],
+item_unset = {"parties": [{"id": "0"}]}
+item_empty = {"parties": [{"id": "0"}], "contracts": [{"implementation": {"transactions": [{"payee": {}}]}}]}
+item_same_id = {
+    "parties": [{"id": "0"}, {"id": "0", "name": ""}],
     "contracts": [{"implementation": {"transactions": [{"payee": {"id": "0"}}]}}],
 }
 
@@ -23,19 +21,19 @@ def test_undefined():
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no parties with id set"}
 
-    result = calculate(item_test_undefined1)
+    result = calculate(item_unset)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no values with check-specific properties"}
 
-    result = calculate(item_test_undefined2)
+    result = calculate(item_empty)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no values with check-specific properties"}
 
-    result = calculate(item_test_undefined3)
+    result = calculate(item_same_id)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None

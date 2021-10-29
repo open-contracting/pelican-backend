@@ -4,39 +4,39 @@ from tools.bootstrap import bootstrap
 version = 1.0
 bootstrap("value_realistic_test")
 
-item_undefined0 = {"date": "2019-01-10T22:00:00+01:00"}
-item_undefined1 = {"tender": {}, "date": "2019-01-10T22:00:00+01:00"}
-item_undefined2 = {"tender": {"value": {}}, "date": "2019-01-10T22:00:00+01:00"}
-item_undefined3 = {"tender": {"value": {"amount": None, "currency": "USD"}}, "date": "2019-01-10T22:00:00+01:00"}
-item_undefined4 = {"tender": {"value": {"amount": 100, "currency": "unknown"}}, "date": "2019-01-10T22:00:00+01:00"}
+item_grandparent_unset = {"date": "2019-01-10T22:00:00+01:00"}
+item_parent_unset = {"tender": {}, "date": "2019-01-10T22:00:00+01:00"}
+item_unset = {"tender": {"value": {}}, "date": "2019-01-10T22:00:00+01:00"}
+item_empty = {"tender": {"value": {"amount": None, "currency": "USD"}}, "date": "2019-01-10T22:00:00+01:00"}
+item_no_rate = {"tender": {"value": {"amount": 100, "currency": "UYW"}}, "date": "2019-01-10T22:00:00+01:00"}
 
 
 def test_undefined():
-    empty_result = calculate(item_undefined0)
+    empty_result = calculate(item_grandparent_unset)
     assert empty_result["result"] is None
     assert empty_result["application_count"] == 0
     assert empty_result["pass_count"] == 0
     assert empty_result["meta"] == {"reason": "rule could not be applied for any value"}
 
-    result = calculate(item_undefined1)
+    result = calculate(item_parent_unset)
     assert result["result"] is None
     assert result["application_count"] == 0
     assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "rule could not be applied for any value"}
 
-    result = calculate(item_undefined2)
+    result = calculate(item_unset)
     assert result["result"] is None
     assert result["application_count"] == 0
     assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "rule could not be applied for any value"}
 
-    result = calculate(item_undefined3)
+    result = calculate(item_empty)
     assert result["result"] is None
     assert result["application_count"] == 0
     assert result["pass_count"] == 0
     assert result["meta"] == {"reason": "rule could not be applied for any value"}
 
-    result = calculate(item_undefined4)
+    result = calculate(item_no_rate)
     assert result["result"] is None
     assert result["application_count"] == 0
     assert result["pass_count"] == 0
@@ -75,7 +75,7 @@ def test_passed():
 
 item_failed = {
     "contracts": [{"value": {"amount": 500, "currency": "CZK"}}, {"value": {"amount": 5.0e10, "currency": "USD"}}],
-    "planning": {"budget": {"value": {"amount": 0, "currency": "unknown"}}},
+    "planning": {"budget": {"amount": {"amount": 0, "currency": "UYW"}}},
     "date": "2019-01-10T22:00:00+01:00",
 }
 

@@ -5,10 +5,10 @@ item_ok = {
         "numberOfTenderers": 2,
         "tenderers": [
             {
-                "quantity": 4.0,
+                "name": "Acme Inc.",
             },
             {
-                "quantity": 5.0,
+                "name": "Mom and Pop",
             },
         ],
     }
@@ -20,10 +20,10 @@ item_failed = {
         "numberOfTenderers": 1,
         "tenderers": [
             {
-                "quantity": 4.0,
+                "name": "Acme Inc.",
             },
             {
-                "quantity": 5.0,
+                "name": "Mom and Pop",
             },
         ],
     }
@@ -33,10 +33,10 @@ item_undefined = {
     "tender": {
         "tenderers": [
             {
-                "quantity": 4.0,
+                "name": "Acme Inc.",
             },
             {
-                "quantity": 5.0,
+                "name": "Mom and Pop",
             },
         ],
     }
@@ -71,10 +71,10 @@ def test_failed():
         "numberOfTenderers": 1,
         "tenderers": [
             {
-                "quantity": 4.0,
+                "name": "Acme Inc.",
             },
             {
-                "quantity": 5.0,
+                "name": "Mom and Pop",
             },
         ],
     }

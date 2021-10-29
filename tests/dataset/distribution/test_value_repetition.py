@@ -1,3 +1,6 @@
+import json
+import os
+
 from dataset.distribution import value_repetition
 
 items_test_undefined_multiple = [
@@ -18,13 +21,21 @@ def test_undefined():
     assert result["meta"] == {"reason": "there are is no suitable data item for this check"}
 
 
+def get_currencies():
+    with open(os.path.join("tests", "fixtures", "release-schema.json")) as f:
+        schema = json.load(f)
+        return schema["definitions"]["Value"]["properties"]["currency"]["enum"]
+
+
+currencies = get_currencies()
+
 item_test_passed1 = {
-    "ocid": 1,
+    "ocid": "1",
     "contracts": [{"value": {"amount": amount, "currency": "USD"}} for amount in range(100)],
 }
 item_test_passed2 = {
-    "ocid": 1,
-    "contracts": [{"value": {"amount": 0, "currency": multiple * "a"}} for multiple in range(200)],
+    "ocid": "1",
+    "contracts": [{"value": {"amount": 0, "currency": currencies[i]}} for i in range(200)],
 }
 
 
@@ -50,9 +61,11 @@ def test_passed():
     assert all(el["count"] == 1 for el in result["meta"]["most_frequent"])
 
 
-items_test_failed = [{"ocid": ocid, "awards": [{"value": {"amount": 0, "currency": "USD"}}]} for ocid in range(100)]
+items_test_failed = [
+    {"ocid": str(ocid), "awards": [{"value": {"amount": 0, "currency": "USD"}}]} for ocid in range(100)
+]
 items_test_failed.extend(
-    [{"ocid": i, "awards": [{"value": {"amount": i, "currency": "USD"}}]} for i in range(100, 1000)]
+    [{"ocid": str(i), "awards": [{"value": {"amount": i, "currency": "USD"}}]} for i in range(100, 1000)]
 )
 
 
