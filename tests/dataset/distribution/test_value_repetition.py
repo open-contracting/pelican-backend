@@ -22,7 +22,7 @@ def test_undefined():
 
 
 def get_currencies():
-    with open(os.path.join("tests", "fixtures", "release-schema.json")) as f:
+    with open(os.path.join("pelican", "static", "release-schema.json")) as f:
         schema = json.load(f)
         return schema["definitions"]["Value"]["properties"]["currency"]["enum"]
 
