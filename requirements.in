@@ -1,3 +1,4 @@
+cachetools
 click
 phonenumbers
 pika
@@ -5,7 +6,6 @@ psycopg2
 pycountry
 python-dateutil
 requests
-shortuuid
 simplejson
 validate_email
 sentry-sdk

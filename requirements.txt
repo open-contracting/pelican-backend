@@ -4,6 +4,8 @@
 #
 #    pip-compile
 #
+cachetools==4.2.4
+    # via -r requirements.in
 certifi==2019.6.16
     # via
     #   requests
@@ -27,8 +29,6 @@ python-dateutil==2.8.0
 requests==2.25.1
     # via -r requirements.in
 sentry-sdk==1.3.0
-    # via -r requirements.in
-shortuuid==1.0.1
     # via -r requirements.in
 simplejson==3.16.0
     # via -r requirements.in
