@@ -1,4 +1,4 @@
-from contracting_process.field_level.checks.non_empty import calculate
+from contracting_process.field_level.present.non_empty import calculate
 from tests import is_subset_dict
 
 

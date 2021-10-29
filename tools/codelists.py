@@ -14,7 +14,7 @@ def _get(url, key):
     return tuple(row[key] for row in reader)
 
 
-def get_document_format_codelist():
+def get_media_type_codelist():
     return _get(
         "https://raw.githubusercontent.com/open-contracting/standard/1.2-dev/schema/codelists/mediaType.csv", "Code"
     )

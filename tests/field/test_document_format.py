@@ -1,4 +1,4 @@
-from contracting_process.field_level.checks.document_format_codelist import calculate
+from contracting_process.field_level.codelist.document_format import calculate
 from tests import is_subset_dict
 
 

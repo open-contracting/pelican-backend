@@ -1,4 +1,4 @@
-from contracting_process.field_level.checks.identifier_scheme import calculate
+from contracting_process.field_level.codelist.identifier_scheme import calculate
 from tests import is_subset_dict
 
 

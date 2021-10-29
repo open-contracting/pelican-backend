@@ -1,4 +1,4 @@
-from contracting_process.field_level.checks.exists import calculate
+from contracting_process.field_level.present.exists import calculate
 from tests import is_subset_dict
 
 

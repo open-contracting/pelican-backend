@@ -1,4 +1,4 @@
-from contracting_process.field_level.checks.number_checks import calculate
+from contracting_process.field_level.coherent.number import calculate
 from tests import is_subset_dict
 
 

@@ -1,4 +1,4 @@
-from contracting_process.field_level.checks import document_type
+from contracting_process.field_level.coherent import document_type
 from tests import is_subset_dict
 
 

@@ -1,4 +1,4 @@
-from contracting_process.field_level.checks.telephone import calculate
+from contracting_process.field_level.format.telephone import calculate
 from tests import is_subset_dict
 
 """

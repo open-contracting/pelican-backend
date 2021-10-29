@@ -1,4 +1,4 @@
-from contracting_process.field_level.checks.date_time import calculate
+from contracting_process.field_level.misc.date_time import calculate
 from tests import is_subset_dict
 
 
