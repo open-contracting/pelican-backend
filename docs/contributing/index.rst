@@ -36,3 +36,29 @@ You can now:
       pytest
 
 Having trouble? See :doc:`../tasks/troubleshoot`.
+
+Testing
+-------
+
+Define any OCDS data as as a dict or a list-of-dicts in the global scope. This allows the ``test_fixtures.py`` file to check its conformance to OCDS (after adding any required fields).
+
+If the OCDS data is required to be invalid, you can suffix ``__invalid_schema`` to the variable's name. However, try to make the OCDS data valid, if possible. For example:
+
+-  If you need a currency whose rate is unknown, use ``"UYW"``.
+-  If you need duplicate IDs, but the tests are failing with "… has non-unique elements", add a valid field like ``"name": ""`` or ``"title": ""`` to make the items distinct.
+
+This ensures that checks work against valid OCDS data – not artificial date created for testing.
+
+Maintenance
+~~~~~~~~~~~
+
+Check that all OCDS data is in the global scope. For each type of check, there should be …
+
+Compiled release-level checks
+  In ``tests/compiled_release/*``, no results for ``calculate\((?!\w+\)|{}\))``, and the results for ``import (?!bootstrap|calculate|functools|get_empty_result_resource)`` should be followed by a statement like ``calculate = functools.partial(roles.calculate_path_role, ...)``
+Dataset-level checks
+  No results for ``add_item\((?!\w+, \w+(\[\w+\])?, \w+( \+ \d+)?\))``
+Time-based checks
+  No results for ``\b(filter|evaluate)\((?!\w+, \w+, \w+, \w+, \w+\))``
+
+Any exceptions to the above must be moved to the global scope, or manually validated.
