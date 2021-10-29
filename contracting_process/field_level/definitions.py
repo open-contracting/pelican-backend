@@ -426,7 +426,7 @@ definitions = {
     "contracts.documents.dateModified": [(date_time.calculate, date_time.name)],
     "contracts.documents.format": [(document_format.calculate, document_format.name)],
     "contracts.documents.language": [(language.calculate, language.name)],
-    "contracts.implementation": [(document_description_length.calculate, document_description_length.name)],
+    "contracts.implementation": [],
     "contracts.implementation.transactions": [],
     "contracts.implementation.transactions.id": [],
     "contracts.implementation.transactions.source": [],
@@ -494,8 +494,8 @@ definitions = {
     "contracts.implementation.transactions.payee.contactPoint.url": [],
     "contracts.implementation.transactions.uri": [],
     "contracts.implementation.transactions.amount": [],
-    "contracts.implementation.transactions.amount.amount": [],
-    "contracts.implementation.transactions.currency": [],
+    "contracts.implementation.transactions.amount.amount": [(number.calculate, number.name)],
+    "contracts.implementation.transactions.amount.currency": [],
     "contracts.implementation.transactions.providerOrganization": [],
     "contracts.implementation.transactions.providerOrganization.scheme": [
         (identifier_scheme.calculate, identifier_scheme.name)
@@ -599,7 +599,7 @@ definitions = {
     "contracts.amendment.changes": [],
     "contracts.amendment.changes.property": [],
     "contracts.amendment.changes.former_value": [],
-    "language": [],
+    "language": [(language.calculate, language.name)],
     "relatedProcesses": [],
     "relatedProcesses.id": [],
     "relatedProcesses.relationship": [],
