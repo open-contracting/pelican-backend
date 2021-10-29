@@ -3,6 +3,14 @@ Changelog
 
 This changelog only notes major changes, to notify other developers.
 
+2021-10-29
+----------
+
+-  feat: Determine field-level checks based on release schema. :issue:`12`
+-  fix: Add missing field-level checks: ``language``, ``contracts.implementation.transactions.amount.amount``, ``contracts.implementation.transactions.amount.currency``. :commit:`2f0fd89`
+-  fix: Remove extra field-level checks: ``contracts.implementation``, ``contracts.implementation.transactions.currency``. :commit:`2f0fd89`
+-  refactor: Reduce code duplication in field-level checks. :compare:`2df8f95..7ef148f`
+
 2021-10-28
 ----------
 
@@ -10,7 +18,6 @@ This changelog only notes major changes, to notify other developers.
 -  fix: ``coherent.milestone_status`` now works (was always N/A).
 -  fix: ``coherent/value_realistic`` now uses ``planning.budget.amount`` (was ``planning.budget.value``).
 -  fix: ``distribution.value_currency`` now uses ``planning.budget.amount.currency`` (was ``planning.budget.value.currency``).
--  refactor: Reduce code duplication in field-level checks. :compare:`2df8f95..7ef148f`
 -  refactor: Re-do the CLI interface. :commit:`ef8a9bf` :commit:`75a3859` :commit:`160aaa8`
 
 2021-10-26
