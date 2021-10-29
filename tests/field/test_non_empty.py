@@ -1,5 +1,5 @@
 from contracting_process.field_level.checks.non_empty import calculate
-from tools.helpers import is_subset_dict
+from tests import is_subset_dict
 
 
 def test_non_empty():

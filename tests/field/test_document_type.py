@@ -1,5 +1,5 @@
-import contracting_process.field_level.checks.document_type as document_type
-from tools.helpers import is_subset_dict
+from contracting_process.field_level.checks import document_type
+from tests import is_subset_dict
 
 
 def test_passed():

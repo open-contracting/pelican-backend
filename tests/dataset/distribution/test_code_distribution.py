@@ -1,5 +1,5 @@
 from dataset.distribution.code_distribution import CodeDistribution
-from tools.helpers import is_subset_dict
+from tests import is_subset_dict
 
 items_multiple_items = [
     {"ocid": "0", "awards": [{"status": "pending"}, {"status": "pending"}, {"status": "active"}]},

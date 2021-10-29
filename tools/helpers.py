@@ -58,10 +58,6 @@ def parse_date(str_date):
         pass
 
 
-def is_subset_dict(subset, superset):
-    return subset.items() <= superset.items()
-
-
 class ReservoirSampler:
     def __init__(self, samples_cap):
         if samples_cap < 1:
