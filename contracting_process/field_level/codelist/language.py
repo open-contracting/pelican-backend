@@ -1,18 +1,11 @@
-from tools.checks import get_empty_result_field
+from tools.checks import field_level_check
 from tools.codelists import get_language_codelist
 
 name = "language"
 
 
-def calculate(item, key):
-    result = get_empty_result_field(name)
+def test(value):
+    return value in get_language_codelist(), "not in codelist"
 
-    value = item[key]
-    passed = value in get_language_codelist()
 
-    result["result"] = passed
-    if not passed:
-        result["value"] = value
-        result["reason"] = "not in codelist"
-
-    return result
+calculate = field_level_check(name, test)
