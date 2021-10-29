@@ -53,7 +53,7 @@ def do_work(dataset_id, logger):
                     )
                     raise
 
-            processed_count = processed_count + 1
+            processed_count += 1
             id = item["id"]
             no_item_processed = False
 
@@ -61,7 +61,7 @@ def do_work(dataset_id, logger):
                 meta_data_aggregator_scope, item["data"], item["id"]
             )
 
-        pager = pager + 1
+        pager += 1
 
         logger.info("Processed page {}".format(pager))
 

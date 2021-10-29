@@ -35,7 +35,7 @@ def calculate(item):
                         second_date = parse_date(second_date_item["value"])
 
                         if second_date:
-                            result["application_count"] = result["application_count"] + 1
+                            result["application_count"] += 1
 
                             if first_date > second_date:
                                 failed_paths.append(
@@ -47,7 +47,7 @@ def calculate(item):
                                     }
                                 )
                             else:
-                                result["pass_count"] = result["pass_count"] + 1
+                                result["pass_count"] += 1
 
     # special case for contracts[i].dateSined and contracts[i].implementation.transactions[j].date
     first_dates = get_values(item, "contracts.dateSigned")
@@ -65,7 +65,7 @@ def calculate(item):
                     second_date = parse_date(second_date_item["value"])
 
                     if second_date:
-                        result["application_count"] = result["application_count"] + 1
+                        result["application_count"] += 1
 
                         if first_date > second_date:
                             failed_paths.append(
@@ -77,7 +77,7 @@ def calculate(item):
                                 }
                             )
                         else:
-                            result["pass_count"] = result["pass_count"] + 1
+                            result["pass_count"] += 1
 
     # special case for awards[i].id = contracts[j].awardID
     if "awards" in item and "contracts" in item:
@@ -99,7 +99,7 @@ def calculate(item):
                         if not contract_date or not contract_id or contract_id != award_id:
                             continue
 
-                        result["application_count"] = result["application_count"] + 1
+                        result["application_count"] += 1
 
                         if award_date > contract_date:
                             failed_paths.append(
@@ -111,7 +111,7 @@ def calculate(item):
                                 }
                             )
                         else:
-                            result["pass_count"] = result["pass_count"] + 1
+                            result["pass_count"] += 1
 
     if result["application_count"] == 0:
         result["application_count"] = None

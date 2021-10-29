@@ -161,7 +161,7 @@ def callback(connection, channel, delivery_tag, body):
         items_count = len(ids)
         while i * page_size < items_count:
             page_ids = ids[i * page_size : (i + 1) * page_size]
-            i = i + 1
+            i += 1
 
             cursor.execute(
                 """
@@ -178,7 +178,7 @@ def callback(connection, channel, delivery_tag, body):
 
             for row in cursor.fetchall():
                 inserted_id = row[0]
-                items_inserted = items_inserted + 1
+                items_inserted += 1
                 set_item_state(dataset_id_filtered, inserted_id, state.IN_PROGRESS)
                 set_dataset_state(
                     dataset_id_filtered, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=items_inserted

@@ -109,7 +109,7 @@ def field_level_checks(data, item_id, dataset_id):
                         else:
                             field_result["path"] = path_chunks[-1]
 
-                    counter = counter + 1
+                    counter += 1
 
                     # coverage checks
                     for check, check_name in coverage_checks:

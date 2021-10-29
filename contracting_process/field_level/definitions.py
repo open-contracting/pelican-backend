@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 def _descend(value, new_path, dot_path, refs):
     if hasattr(value, "__reference__"):
-        refs = refs + (value.__reference__["$ref"][14:],)  # remove #/definitions/
+        refs += (value.__reference__["$ref"][14:],)  # remove #/definitions/
 
     yield dot_path, []
     yield from _definitions(value["properties"], path=new_path, refs=refs)

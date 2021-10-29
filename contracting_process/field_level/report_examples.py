@@ -193,10 +193,10 @@ def create(dataset_id):
 
                         report[path]["quality"]["checks"][check["name"]]["total_count"] += 1
 
-            processed_count = processed_count + 1
+            processed_count += 1
             id = row["id"]
 
-        pager = pager + 1
+        pager += 1
         logger.info("Processed page {}".format(pager))
 
     logger.info("Storing field level check report for dataset_id {}".format(dataset_id))

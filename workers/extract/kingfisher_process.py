@@ -117,7 +117,7 @@ def callback(connection, channel, delivery_tag, body):
                 for item in result[i * page_size : (i + 1) * page_size]:
                     ids.append(item[0])
 
-                i = i + 1
+                i += 1
 
                 kf_cursor.execute(
                     """
@@ -141,7 +141,7 @@ def callback(connection, channel, delivery_tag, body):
                 for row in cursor.fetchall():
                     inserted_id = row[0]
 
-                    items_inserted = items_inserted + 1
+                    items_inserted += 1
 
                     set_item_state(dataset_id, inserted_id, state.IN_PROGRESS)
 
@@ -206,7 +206,7 @@ def resend(connection, channel, dataset_id):
     items_count = len(ids)
     for entry in ids:
         set_item_state(dataset_id, entry[0], state.IN_PROGRESS)
-        items_inserted = items_inserted + 1
+        items_inserted += 1
         if items_inserted == items_count:
             set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
 

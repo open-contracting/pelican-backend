@@ -16,7 +16,7 @@ def add_item(scope, item, item_id):
                     scope[category]["count"] = 0
                     scope[category]["examples"] = []
 
-                scope[category]["count"] = scope[category]["count"] + 1
+                scope[category]["count"] += 1
                 if len(scope[category]["examples"]) < 100:
                     scope[category]["examples"].append({"item_id": item_id, "ocid": ocid})
 

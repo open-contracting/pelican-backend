@@ -124,11 +124,11 @@ def do_work(dataset_id):
                     )
                     raise
 
-            processed_count = processed_count + 1
+            processed_count += 1
             id = item[0]
             no_item_processed = False
 
-        pager = pager + 1
+        pager += 1
 
         logger.info("Processed page {}".format(pager))
 

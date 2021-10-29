@@ -90,7 +90,7 @@ def get_values(item, str_path, value_only=False):
 
                                 result.append(list_item)
 
-                index_counter = index_counter + 1
+                index_counter += 1
 
             return result
 

@@ -18,7 +18,7 @@ def calculate(item):
 
     failed_paths = []
     for contract in contracts:
-        result["application_count"] = result["application_count"] + 1
+        result["application_count"] += 1
 
         if not awards or len(awards) == 0:
             failed_paths.append(contract["path"])
@@ -35,10 +35,10 @@ def calculate(item):
                 and award["value"]["id"]
                 and award["value"]["id"] == contract["value"]["awardID"]
             ):
-                awards_found_count = awards_found_count + 1
+                awards_found_count += 1
 
         if awards_found_count == 1:
-            result["pass_count"] = result["pass_count"] + 1
+            result["pass_count"] += 1
         else:
             failed_paths.append(contract["path"])
 
