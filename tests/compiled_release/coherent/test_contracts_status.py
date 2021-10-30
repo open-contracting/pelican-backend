@@ -9,7 +9,7 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
     skipping = [
         (
             {"contracts": [{}, {"status": None}, {"status": "active"}, {"status": "terminated"}]},
-            "criteria not met",
+            "no contract is unsigned",
         )
     ]
     passing = [
@@ -24,9 +24,9 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
             },
             {
                 "processed_contracts": [
-                    {"path": "contracts[1]", "transactions_length": 0, "result": True},
-                    {"path": "contracts[2]", "transactions_length": 0, "result": True},
-                    {"path": "contracts[3]", "transactions_length": 0, "result": True},
+                    {"path": "contracts[1]", "transactions_count": 0, "result": True},
+                    {"path": "contracts[2]", "transactions_count": 0, "result": True},
+                    {"path": "contracts[3]", "transactions_count": 0, "result": True},
                 ]
             },
             3,
@@ -35,7 +35,7 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
     failing = [
         (
             {"contracts": [{"status": "pending", "implementation": {"transactions": [{"id": 0}]}}]},
-            {"processed_contracts": [{"path": "contracts[0]", "transactions_length": 1, "result": False}]},
+            {"processed_contracts": [{"path": "contracts[0]", "transactions_count": 1, "result": False}]},
             1,
             0,
         ),
@@ -49,8 +49,8 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
             },
             {
                 "processed_contracts": [
-                    {"path": "contracts[1]", "transactions_length": 0, "result": True},
-                    {"path": "contracts[2]", "transactions_length": 2, "result": False},
+                    {"path": "contracts[1]", "transactions_count": 0, "result": True},
+                    {"path": "contracts[2]", "transactions_count": 2, "result": False},
                 ]
             },
             2,

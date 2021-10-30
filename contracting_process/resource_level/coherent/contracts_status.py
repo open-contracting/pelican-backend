@@ -1,3 +1,7 @@
+"""
+If a contract's status is unsigned ('pending' or 'cancelled'), then its implementation.transactions is blank.
+"""
+
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
 
@@ -10,33 +14,22 @@ def calculate(item):
     contracts = [
         v
         for v in get_values(item, "contracts")
-        if "status" in v["value"] and v["value"]["status"] in ["pending", "cancelled"]
+        if "status" in v["value"] and v["value"]["status"] in ("pending", "cancelled")
     ]
 
-    if len(contracts) == 0:
-        result["meta"] = {"reason": "criteria not met"}
+    if not contracts:
+        result["meta"] = {"reason": "no contract is unsigned"}
         return result
 
     application_count = 0
     pass_count = 0
     result["meta"] = {"processed_contracts": []}
     for contract in contracts:
-        passed = None
-        transactions_length = None
-
-        if (
-            "implementation" in contract["value"]
-            and "transactions" in contract["value"]["implementation"]
-            and len(contract["value"]["implementation"]["transactions"]) > 0
-        ):
-            passed = False
-            transactions_length = len(contract["value"]["implementation"]["transactions"])
-        else:
-            passed = True
-            transactions_length = 0
+        transactions_count = len(get_values(contract["value"], "implementation.transactions", value_only=True))
+        passed = transactions_count == 0
 
         result["meta"]["processed_contracts"].append(
-            {"path": contract["path"], "transactions_length": transactions_length, "result": passed}
+            {"path": contract["path"], "transactions_count": transactions_count, "result": passed}
         )
 
         application_count += 1
