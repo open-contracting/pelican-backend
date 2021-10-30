@@ -20,7 +20,7 @@ def calculate(item):
     for contract in contracts:
         result["application_count"] += 1
 
-        if not awards or len(awards) == 0:
+        if not awards:
             failed_paths.append(contract["path"])
             continue
 

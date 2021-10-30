@@ -92,7 +92,7 @@ def calculate(item):
         ]
 
         # no matching contracts
-        if len(matching_contracts) == 0:
+        if not matching_contracts:
             continue
 
         award_value_amount = None
