@@ -7,6 +7,9 @@ This changelog only notes major changes, to notify other developers.
 ----------
 
 -  feat: Determine field-level checks based on release schema. :issue:`12`
+-  fix: ``coherent.tender_status`` now fails on non-zero length arrays (was passing if all entries were blank). :commit:`3444ed6`
+-  fix: ``coherent.awards_status`` now skips if the ``id`` isn't set (was failing).
+-  fix: ``coherent.awards_status`` now fails if the ``id`` matches an ``awardID`` of ``None`` (was passing).
 -  fix: Add missing field-level checks: ``language``, ``contracts.implementation.transactions.amount.amount``, ``contracts.implementation.transactions.amount.currency``. :commit:`2f0fd89`
 -  fix: Remove extra field-level checks: ``contracts.implementation``, ``contracts.implementation.transactions.currency``. :commit:`2f0fd89`
 -  refactor: Reduce code duplication in field-level checks. :compare:`2df8f95..7ef148f`
@@ -15,7 +18,7 @@ This changelog only notes major changes, to notify other developers.
 ----------
 
 -  fix: Refresh and expire external codelists appropriately. :issue:`31` :issue:`33`
--  fix: ``coherent.milestone_status`` now works (was always N/A).
+-  fix: ``coherent.milestone_status`` now works (was always skipping).
 -  fix: ``coherent/value_realistic`` now uses ``planning.budget.amount`` (was ``planning.budget.value``).
 -  fix: ``distribution.value_currency`` now uses ``planning.budget.amount.currency`` (was ``planning.budget.value.currency``).
 -  refactor: Re-do the CLI interface. :commit:`ef8a9bf` :commit:`75a3859` :commit:`160aaa8`

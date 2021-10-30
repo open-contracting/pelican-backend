@@ -8,8 +8,8 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
     module = awards_status
     skipping = [
         (
-            {"awards": [{}, {"status": None}, {"status": "active"}]},
-            "criteria not met",
+            {"awards": [{}, {"status": None}, {"status": "active"}, {"status": "pending"}]},
+            "no award with an id is inactive",
         )
     ]
     passing = [
@@ -41,6 +41,12 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
         (
             {"awards": [{"status": "pending", "id": 0}], "contracts": [{"awardID": 0}]},
             {"processed_awards": [{"path": "awards[0]", "id": 0, "result": False}]},
+            1,
+            0,
+        ),
+        (
+            {"awards": [{"status": "pending", "id": None}], "contracts": [{"awardID": None}]},
+            {"processed_awards": [{"path": "awards[0]", "id": None, "result": False}]},
             1,
             0,
         ),

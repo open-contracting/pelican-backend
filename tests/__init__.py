@@ -111,6 +111,7 @@ class FieldQualityTests:
 
 
 class CompiledReleaseTests:
+    maxDiff = None
     passing_kwargs = {}
     failing_kwargs = {}
     method = "calculate"
