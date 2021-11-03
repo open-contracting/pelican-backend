@@ -1,14 +1,12 @@
-FROM python:3
+FROM python:3.8
+
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+RUN groupadd -r runner && useradd --no-log-init -r -g runner runner
 
 WORKDIR /workdir
-
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
-RUN groupadd -r pelican && useradd --no-log-init -r -g pelican pelican
-
-USER pelican:pelican
-
-COPY --chown=pelican:pelican . .
+USER runner:runner
+COPY --chown=runner:runner . .
 
 ENTRYPOINT [ "python", "-m"]
