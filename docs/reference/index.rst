@@ -5,6 +5,7 @@ Reference
    :caption: Contents
    :maxdepth: 2
 
+   design
    overview
    workers
    services
