@@ -2,8 +2,8 @@ import simplejson as json
 
 from dataset import meta_data_aggregator
 from dataset.definitions import definitions
+from tools import settings
 from tools.db import get_cursor
-from tools.settings import CustomLogLevels
 
 page_size = 1000
 
@@ -37,7 +37,8 @@ def do_work(dataset_id, logger):
         for item in items:
             for plugin_name, plugin in definitions.items():
                 logger.log(
-                    CustomLogLevels.CHECK_TRACE, "Computing {} check for item_id {}.".format(plugin_name, item["id"])
+                    settings.CustomLogLevels.CHECK_TRACE,
+                    "Computing {} check for item_id {}.".format(plugin_name, item["id"]),
                 )
 
                 if plugin_name not in scope:

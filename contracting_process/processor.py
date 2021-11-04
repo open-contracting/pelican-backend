@@ -4,10 +4,10 @@ from psycopg2.extras import execute_values
 from contracting_process.field_level.definitions import coverage_checks
 from contracting_process.field_level.definitions import definitions as field_level_definitions
 from contracting_process.resource_level.definitions import definitions as resource_level_definitions
+from tools import settings
 from tools.db import get_cursor
 from tools.getter import get_values
 from tools.logging_helper import get_logger
-from tools.settings import CustomLogLevels
 from tools.state import set_item_state, state
 
 
@@ -34,7 +34,7 @@ def do_work(items):
 
 def resource_level_checks(data, item_id, dataset_id):
     get_logger().log(
-        CustomLogLevels.CHECK_TRACE,
+        settings.CustomLogLevels.CHECK_TRACE,
         "Computing resource level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id),
     )
 
@@ -42,7 +42,7 @@ def resource_level_checks(data, item_id, dataset_id):
 
     # perform resource level checks
     for check_name, check in resource_level_definitions.items():
-        get_logger().log(CustomLogLevels.CHECK_TRACE, "Computing {} check.".format(check_name))
+        get_logger().log(settings.CustomLogLevels.CHECK_TRACE, "Computing {} check.".format(check_name))
         try:
             result["checks"][check_name] = check(data)
         except Exception:
@@ -59,7 +59,7 @@ def resource_level_checks(data, item_id, dataset_id):
 
 def field_level_checks(data, item_id, dataset_id):
     get_logger().log(
-        CustomLogLevels.CHECK_TRACE,
+        settings.CustomLogLevels.CHECK_TRACE,
         "Computing field level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id),
     )
 
@@ -114,7 +114,8 @@ def field_level_checks(data, item_id, dataset_id):
                     # coverage checks
                     for check, check_name in coverage_checks:
                         get_logger().log(
-                            CustomLogLevels.CHECK_TRACE, "Computing {} check in {} path.".format(check_name, path)
+                            settings.CustomLogLevels.CHECK_TRACE,
+                            "Computing {} check in {} path.".format(check_name, path),
                         )
 
                         if field_result["coverage"]["check_results"] is None:
@@ -140,7 +141,8 @@ def field_level_checks(data, item_id, dataset_id):
                     if field_result["coverage"]["overall_result"]:
                         for check, check_name in checks:
                             get_logger().log(
-                                CustomLogLevels.CHECK_TRACE, "Computing {} check in {} path.".format(check_name, path)
+                                settings.CustomLogLevels.CHECK_TRACE,
+                                "Computing {} check in {} path.".format(check_name, path),
                             )
 
                             if field_result["quality"]["check_results"] is None:

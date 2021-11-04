@@ -1,6 +1,6 @@
+from tools import settings
 from tools.db import get_cursor
 from tools.logging_helper import get_logger
-from tools.settings import CustomLogLevels
 
 
 class state:
@@ -39,7 +39,7 @@ def set_dataset_state(dataset_id, state, phase, size=None):
             (dataset_id, state, phase, size, state, phase, size),
         )
         get_logger().log(
-            CustomLogLevels.STATE_TRACE,
+            settings.CustomLogLevels.STATE_TRACE,
             "Dataset state set to: state = {}, phase = {}, size = {}.".format(state, phase, size),
         )
 
@@ -56,7 +56,7 @@ def set_dataset_state(dataset_id, state, phase, size=None):
             (dataset_id, state, phase, size, state, phase),
         )
         get_logger().log(
-            CustomLogLevels.STATE_TRACE, "Dataset state set to: state = {}, phase = {}.".format(state, phase)
+            settings.CustomLogLevels.STATE_TRACE, "Dataset state set to: state = {}, phase = {}.".format(state, phase)
         )
     cursor.close()
 
@@ -82,7 +82,7 @@ def set_item_state(dataset_id, item_id, state):
         (dataset_id, item_id, state, state),
     )
     cursor.close()
-    get_logger().log(CustomLogLevels.STATE_TRACE, "Item state set to: state = {}.".format(state))
+    get_logger().log(settings.CustomLogLevels.STATE_TRACE, "Item state set to: state = {}.".format(state))
 
 
 def get_processed_items_count(dataset_id):

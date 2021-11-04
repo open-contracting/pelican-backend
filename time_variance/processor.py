@@ -3,10 +3,10 @@ import random
 import simplejson as json
 
 from time_variance.definitions import definitions
+from tools import settings
 from tools.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
 from tools.db import get_cursor
 from tools.logging_helper import get_logger
-from tools.settings import CustomLogLevels
 
 page_size = 1000
 examples_count = 50
@@ -66,7 +66,8 @@ def do_work(dataset_id):
 
             for plugin_name, plugin in definitions.items():
                 logger.log(
-                    CustomLogLevels.CHECK_TRACE, "Computing {} check for item_id {}.".format(plugin_name, item[0])
+                    settings.CustomLogLevels.CHECK_TRACE,
+                    "Computing {} check for item_id {}.".format(plugin_name, item[0]),
                 )
 
                 if plugin_name not in scope:
