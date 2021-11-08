@@ -1,10 +1,12 @@
-FROM python:3
+FROM python:3.8
 
-WORKDIR /usr/src/app
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN groupadd -r runner && useradd --no-log-init -r -g runner runner
 
-COPY . .
+WORKDIR /workdir
+USER runner:runner
+COPY --chown=runner:runner . .
 
 ENTRYPOINT [ "python", "-m"]
