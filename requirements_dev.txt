@@ -53,7 +53,7 @@ idna==2.8
     # via
     #   -r requirements.txt
     #   requests
-importlib-metadata==0.19
+importlib-metadata==4.8.1
     # via pluggy
 iniconfig==1.1.1
     # via pytest
