@@ -1,14 +1,33 @@
 name: CI
 on: [push, pull_request]
-env:
-  BASEDIR: https://raw.githubusercontent.com/open-contracting/standard-maintenance-scripts/main
 jobs:
   build:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt', 'setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - run: pip install -r requirements_dev.txt
+      - run: |
+          psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -f pelican/migrations/*.sql
+          psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -c "\copy exchange_rates (valid_on, rates) from 'pelican/static/exchange_rates_dump.csv' delimiter ',' csv header;"
+      - env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
+        run: pytest --cov contracting_process --cov dataset --cov manage --cov time_variance --cov tools --cov workers
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: coveralls --service=github
     services:
       postgres:
-        image: postgres:12
+        image: postgres:13
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -27,50 +46,28 @@ jobs:
           --health-retries 5
         ports:
           - 5672/tcp
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-        with:
-          python-version: 3.6
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements_dev.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - run: pip install -r requirements_dev.txt
-      - run: |
-          psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -f pelican/migrations/*.sql
-          psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -c "\copy exchange_rates (valid_on, rates) from 'pelican/static/exchange_rates_dump.csv' delimiter ',' csv header;"
-      - run: pytest --cov contracting_process --cov dataset --cov manage --cov time_variance --cov tools --cov workers
-        if: always()
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
-      - env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: coveralls --service=github
 
   docker:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - name: Get the tag name
-        run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
-      - name: Check out the repo
-        uses: actions/checkout@v2
-      - name: Log in to GitHub Docker Registry
-        uses: docker/login-action@v1
+      - run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      # https://github.com/docker/login-action#github-container-registry
+      - uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build container image
-        uses: docker/build-push-action@v2
+      # https://github.com/docker/setup-buildx-action#usage
+      - uses: docker/setup-buildx-action@v1
+      # https://github.com/docker/build-push-action#usage
+      - uses: docker/build-push-action@v2
         with:
-          context: .
           push: true
-          file: Dockerfile
           tags: |
-            ghcr.io/open-contracting/pelican-backend:latest
-            ghcr.io/open-contracting/pelican-backend:${{ env.TAG }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ env.TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
