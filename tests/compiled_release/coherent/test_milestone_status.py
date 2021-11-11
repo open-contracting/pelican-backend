@@ -8,18 +8,17 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
     module = milestone_status
     skipping = [
         (
-            {"id": "1"},
-            "criteria not met",
+            {},
+            "no milestone is unmet",
         ),
         (
-            {"id": "1", "tender": {"milestones": [{}]}},
-            "criteria not met",
+            {"tender": {"milestones": [{}]}},
+            "no milestone is unmet",
         ),
     ]
     passing = [
         (
             {
-                "id": "1",
                 "tender": {"milestones": [{"title": "some_milestone", "status": "notMet"}]},
                 "planning": {"milestones": [{"title": "some_milestone", "status": "notMet"}]},
                 "contracts": [
@@ -41,7 +40,6 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
         ),
         (
             {
-                "id": "1",
                 "contracts": [
                     {
                         "milestones": [
@@ -71,7 +69,6 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
     failing = [
         (
             {  # invalid
-                "id": "1",
                 "tender": {
                     "milestones": [
                         {"title": "some_milestone", "status": "scheduled", "dateMet": {"some": "thing"}},

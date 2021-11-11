@@ -4,7 +4,7 @@ award's id.
 """
 
 from tools.checks import get_empty_result_resource
-from tools.getter import get_values
+from tools.getter import deep_get, deep_has, get_values
 
 version = 1.0
 
@@ -15,9 +15,7 @@ def calculate(item):
     awards = [
         v
         for v in get_values(item, "awards")
-        if "id" in v["value"]
-        and "status" in v["value"]
-        and v["value"]["status"] in ("pending", "cancelled", "unsuccessful")
+        if deep_has(v["value"], "id") and deep_get(v["value"], "status") in ("pending", "cancelled", "unsuccessful")
     ]
 
     if not awards:

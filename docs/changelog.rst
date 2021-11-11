@@ -8,8 +8,8 @@ This changelog only notes major changes, to notify other developers.
 
 -  feat: Determine field-level checks based on release schema. :issue:`12`
 -  fix: ``coherent.tender_status`` now fails on non-zero length arrays (was passing if all entries were blank). :commit:`3444ed6`
--  fix: ``coherent.awards_status`` now skips if the ``id`` isn't set (was failing).
--  fix: ``coherent.awards_status`` now fails if the ``id`` matches an ``awardID`` of ``None`` (was passing).
+-  fix: ``coherent.awards_status`` now skips if the ``id`` isn't set (was failing). :commit:`79549e8`
+-  fix: ``coherent.awards_status`` now fails if the ``id`` matches an ``awardID`` of ``None`` and values are inconsistent (was passing). :commit:`79549e8`
 -  fix: Add missing field-level checks: ``language``, ``contracts.implementation.transactions.amount.amount``, ``contracts.implementation.transactions.amount.currency``. :commit:`2f0fd89`
 -  fix: Remove extra field-level checks: ``contracts.implementation``, ``contracts.implementation.transactions.currency``. :commit:`2f0fd89`
 -  refactor: Reduce code duplication in field-level checks. :compare:`2df8f95..7ef148f`

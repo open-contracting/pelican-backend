@@ -9,7 +9,7 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
     skipping = [
         (
             {"tender": {}},
-            "tender.status is not present",
+            "tender.status is blank",
         ),
         (
             {"tender": {"status": "complete"}},

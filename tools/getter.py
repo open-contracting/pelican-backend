@@ -3,6 +3,43 @@ import re
 regex = r"^([^[]*)\[([\d]*)\]$"
 
 
+def deep_has(value, path):
+    """
+    Returns whether a nested value exists in nested dicts, safely.
+
+    Use this instead of :func:`deep_get` to check for the presence of a key. For example,
+    ``deep_get({"id": 0}, "id")`` is falsy.
+    """
+    for part in path.split("."):
+        if type(value) is dict and part in value:
+            value = value[part]
+        else:
+            return False
+
+    return True
+
+
+def deep_get(value, path, default=None):
+    """
+    Gets a nested value from nested dicts, safely. If a default value is provided and the nested value is not of the
+    same type as the default value, returns the default value.
+
+    :param value: the value
+    :param str path: a period-separated list of keys
+    :param default: a default value, if the nested value doesn't exist
+    """
+    for part in path.split("."):
+        if type(value) is dict and part in value:
+            value = value[part]
+        else:
+            return default
+
+    if default is not None and type(value) is not type(default):
+        return default
+
+    return value
+
+
 def get_values(item, str_path, value_only=False):
     # return whole item from root
     if not str_path or str_path == "":

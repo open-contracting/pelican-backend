@@ -4,7 +4,7 @@ awards and contracts are blank.
 """
 
 from tools.checks import get_empty_result_resource
-from tools.getter import get_values
+from tools.getter import deep_get
 
 version = 1.0
 
@@ -12,18 +12,16 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    tender_status = get_values(item, "tender.status", value_only=True)
-    if not tender_status:
-        result["meta"] = {"reason": "tender.status is not present"}
+    status = deep_get(item, "tender.status")
+    if not status:
+        result["meta"] = {"reason": "tender.status is blank"}
+        return result
+    if status not in ("planning", "planned", "active", "cancelled", "unsuccessful", "withdrawn"):
+        result["meta"] = {"reason": f"tender.status is {status!r}"}
         return result
 
-    tender_status = tender_status[0]
-    if tender_status not in ("planning", "planned", "active", "cancelled", "unsuccessful", "withdrawn"):
-        result["meta"] = {"reason": f"tender.status is {tender_status!r}"}
-        return result
-
-    contracts_count = len(get_values(item, "contracts", value_only=True))
-    awards_count = len(get_values(item, "awards", value_only=True))
+    contracts_count = len(deep_get(item, "contracts", []))
+    awards_count = len(deep_get(item, "awards", []))
 
     if contracts_count or awards_count:
         result["result"] = False

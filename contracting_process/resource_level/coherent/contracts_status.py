@@ -3,7 +3,7 @@ If a contract's status is unsigned ('pending' or 'cancelled'), then its implemen
 """
 
 from tools.checks import get_empty_result_resource
-from tools.getter import get_values
+from tools.getter import deep_get, get_values
 
 version = 1.0
 
@@ -12,9 +12,7 @@ def calculate(item):
     result = get_empty_result_resource(version)
 
     contracts = [
-        v
-        for v in get_values(item, "contracts")
-        if "status" in v["value"] and v["value"]["status"] in ("pending", "cancelled")
+        v for v in get_values(item, "contracts") if deep_get(v["value"], "status") in ("pending", "cancelled")
     ]
 
     if not contracts:
@@ -25,7 +23,7 @@ def calculate(item):
     pass_count = 0
     result["meta"] = {"processed_contracts": []}
     for contract in contracts:
-        transactions_count = len(get_values(contract["value"], "implementation.transactions", value_only=True))
+        transactions_count = len(deep_get(contract["value"], "implementation.transactions", []))
         passed = transactions_count == 0
 
         result["meta"]["processed_contracts"].append(
