@@ -15,7 +15,7 @@ add
 Create a dataset.
 
 --previous-dataset INTEGER  ID of previous dataset for time-based checks.
---sample INTEGER            Number of compiled releases to extract.
+--sample INTEGER            Number of compiled releases to import.
 
 .. _manage-remove:
 

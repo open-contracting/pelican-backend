@@ -44,6 +44,8 @@ Defensive programming
 
 There are innumerable ways in which OCDS data can have structural errors. Although such data should not be submitted for processing, we nonetheless try to guard against it. Use the functions from the :mod:`tools.getter` module to access data safely.
 
+.. _testing:
+
 Testing
 -------
 
@@ -59,10 +61,12 @@ This ensures that checks work against valid OCDS data – not artificial date cr
 Maintenance
 ~~~~~~~~~~~
 
+.. _code-fixtures:
+
 Code fixtures
 ^^^^^^^^^^^^^
 
-Check that all OCDS data is in the global scope. For each type of check, there should be …
+For :ref:`test_fixtures.py<testing>` to work, check that all OCDS data is in the global scope. For each type of check, there should be …
 
 Compiled release-level checks
   In ``tests/compiled_release/*``, no results for ``calculate\((?!\w+\)|{}\))``, and the results for ``import (?!bootstrap|calculate|functools|get_empty_result_resource)`` should be followed by a statement like ``calculate = functools.partial(roles.calculate_path_role, ...)``
@@ -73,12 +77,16 @@ Time-based checks
 
 Any exceptions to the above must be moved to the global scope, or manually validated.
 
-File fixtures
+OCDS upgrades
 ^^^^^^^^^^^^^
 
-Update examples for new versions of OCDS:
+-  Update file fixtures:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   curl -sS https://raw.githubusercontent.com/open-contracting/sample-data/main/blank-template/release-template-1__1__5.json -o tests/fixtures/blank.json
-   curl -sS https://raw.githubusercontent.com/open-contracting/sample-data/main/fictional-example/1.1/record/ocds-213czf-000-00001.json | jq '.records[0].compiledRelease' > tests/fixtures/compiled-release.json
+      curl -sS https://raw.githubusercontent.com/open-contracting/sample-data/main/blank-template/release-template-1__1__5.json -o tests/fixtures/blank.json
+      curl -sS https://raw.githubusercontent.com/open-contracting/sample-data/main/fictional-example/1.1/record/ocds-213czf-000-00001.json | jq '.records[0].compiledRelease' > tests/fixtures/compiled-release.json
+
+-  Review ``definitions.py`` files, to be sure that checks account for new fields.
+-  Update :ref:`code fixtures<code-fixtures>` to use new fields.
+-  Decide whether to add new checks for new fields.
