@@ -20,6 +20,11 @@ Each check is a function, named ``calculate`` by convention, that:
 #. Determines whether the check can be calculated
 #. If not, sets ``result["meta"] = {"reason": "..."}`` and returns the ``result`` dict
 #. Determines whether the check passes
+
+   .. note::
+
+      Some ID fields allow both integer and string values. When resolving references by comparing IDs, the check should fail if the IDs are different types. It should neither succeed nor N/A (it is likely to N/A if IDs are not coerced to string).
+
 #. Sets these keys on the ``result`` object:
 
    ``result`` (boolean)
