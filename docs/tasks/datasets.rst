@@ -17,8 +17,6 @@ Create a dataset.
 --previous-dataset INTEGER  ID of previous dataset for time-based checks.
 --sample INTEGER            Number of compiled releases to extract.
 
-This command also updates the lists of OCID prefixes, identifier schemes, and document formats, used by :doc:`field-level quality checks<checks/field>`.
-
 .. _manage-remove:
 
 remove
