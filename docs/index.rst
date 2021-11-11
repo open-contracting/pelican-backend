@@ -26,4 +26,5 @@ We use "extract" instead of "import", like in the Extract-Transform-Load pattern
    tasks/index
    reference/index
    contributing/index
+   api/index
    changelog

@@ -39,6 +39,11 @@ You can now:
 
 Having trouble? See :doc:`../tasks/troubleshoot`.
 
+Defensive programming
+~~~~~~~~~~~~~~~~~~~~~
+
+There are innumerable ways in which OCDS data can have structural errors. Although such data should not be submitted for processing, we nonetheless try to guard against it. Use the functions from the :mod:`tools.getter` module to access data safely.
+
 Testing
 -------
 
