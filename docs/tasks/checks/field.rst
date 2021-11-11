@@ -6,12 +6,7 @@ Backend
 
 #. Determine the type of check (see :ref:`repository-structure`).
 #. Find a check under the corresponding ``contracting_process/field_level`` sub-directory to copy as a starting point.
-#. Assign the check to fields in the ``contracting_process/field_level/definitions.py`` file. For example:
-
-   .. literalinclude:: ../../../contracting_process/field_level/definitions.py
-      :language: python
-      :start-at: parties.contactPoint.email
-      :end-at: parties.contactPoint.faxNumber
+#. Update the ``_definitions()`` function to assign the check to fields in the ``contracting_process/field_level/definitions.py`` file.
 
    .. note::
 
@@ -34,13 +29,13 @@ An empty ``result`` dict looks like:
 
 .. literalinclude:: ../../../tools/checks.py
    :language: python
-   :start-after: _empty_field_result
+   :start-after: def _empty_field_result
    :end-at: }
 
 Example
 ~~~~~~~
 
-.. literalinclude:: ../../../contracting_process/field_level/checks/exists.py
+.. literalinclude:: ../../../contracting_process/field_level/coverage/exists.py
    :language: python
 
 Storage
