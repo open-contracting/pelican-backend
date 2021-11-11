@@ -6,6 +6,8 @@ Read the rest of the documentation to understand how Pelican backend works, and 
 Setup
 -----
 
+Create a Python 3.8 virtual environment.
+
 Install development dependencies:
 
 .. code-block:: bash
