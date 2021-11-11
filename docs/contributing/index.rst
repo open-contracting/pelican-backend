@@ -52,6 +52,9 @@ This ensures that checks work against valid OCDS data – not artificial date cr
 Maintenance
 ~~~~~~~~~~~
 
+Code fixtures
+^^^^^^^^^^^^^
+
 Check that all OCDS data is in the global scope. For each type of check, there should be …
 
 Compiled release-level checks
@@ -62,6 +65,9 @@ Time-based checks
   No results for ``\b(filter|evaluate)\((?!\w+, \w+, \w+, \w+, \w+\))``
 
 Any exceptions to the above must be moved to the global scope, or manually validated.
+
+File fixtures
+^^^^^^^^^^^^^
 
 Update examples for new versions of OCDS:
 
