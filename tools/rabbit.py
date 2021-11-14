@@ -52,7 +52,9 @@ def connect():
     query = parse_qs(parsed.query)
     query.update({"blocked_connection_timeout": 1800, "heartbeat": 100})
 
-    connection = pika.BlockingConnection(pika.URLParameters(parsed._replace(query=urlencode(query)).geturl()))
+    connection = pika.BlockingConnection(
+        pika.URLParameters(parsed._replace(query=urlencode(query, doseq=True)).geturl())
+    )
 
     global channel
     channel = connection.channel()
