@@ -48,9 +48,10 @@ def do_work(dataset_id, logger):
                     scope[plugin_name] = plugin.add_item(scope[plugin_name], item["data"], item["id"])
                 except Exception:
                     logger.error(
-                        "Something went wrong when computing dataset level check: "
-                        "check = {}, item_id = {}, dataset_id = {}."
-                        "".format(plugin_name, item["id"], dataset_id)
+                        "Something went wrong when computing dataset level check: check=%s, item_id=%s, dataset_id=%s",
+                        plugin_name,
+                        item["id"],
+                        dataset_id,
                     )
                     raise
 
@@ -64,20 +65,20 @@ def do_work(dataset_id, logger):
 
         pager += 1
 
-        logger.info("Processed page {}".format(pager))
+        logger.info("Processed page %s", pager)
 
         cursor.close()
 
     if no_item_processed:
-        logger.info("No item with dataset_id {} found. Skipping dataset checks computation.".format(dataset_id))
+        logger.info("No item with dataset_id %s found. Skipping dataset checks computation.", dataset_id)
         return
 
     for plugin_name, plugin in definitions.items():
-        logger.info("Getting result for {} dataset check.".format(plugin_name))
+        logger.info("Getting result for %s dataset check.", plugin_name)
         result = plugin.get_result(scope[plugin_name])
         save_dataset_level_check(plugin_name, result, dataset_id)
 
-    logger.info("Saving meta data for dataset_id {}".format(dataset_id))
+    logger.info("Saving meta data for dataset_id %s", dataset_id)
     meta_data = meta_data_aggregator.get_result(meta_data_aggregator_scope)
     meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 

@@ -63,9 +63,7 @@ def callback(connection, channel, delivery_tag, body):
         filter_message = input_message["filter_message"]
         max_items = int(input_message["max_items"]) if "max_items" in input_message else None
 
-        logger.info(
-            "Checking whether dataset with dataset_id {} exists and can be filtered.".format(dataset_id_original)
-        )
+        logger.info("Checking whether dataset with dataset_id %s exists and can be filtered.", dataset_id_original)
         cursor.execute(
             """
             SELECT EXISTS (
@@ -83,9 +81,7 @@ def callback(connection, channel, delivery_tag, body):
             {"dataset_id": dataset_id_original},
         )
         if not cursor.fetchone()[0]:
-            logger.warning(
-                "Dataset with dataset_id {} does not exist or cannot be filtered.".format(dataset_id_original)
-            )
+            logger.warning("Dataset with dataset_id %s does not exist or cannot be filtered.", dataset_id_original)
             ack(connection, channel, delivery_tag)
             return
 
@@ -116,7 +112,7 @@ def callback(connection, channel, delivery_tag, body):
         )
         commit()
 
-        logger.info("Filtering dataset with dataset_id {} using received filter_message".format(dataset_id_original))
+        logger.info("Filtering dataset with dataset_id %s using received filter_message", dataset_id_original)
         query = sql.SQL("SELECT id FROM data_item WHERE dataset_id = ") + sql.Literal(dataset_id_original)
         if "release_date_from" in filter_message:
             expr = sql.SQL("data->>'date' >= ") + sql.Literal(filter_message["release_date_from"])
@@ -197,21 +193,23 @@ def callback(connection, channel, delivery_tag, body):
                     batch.clear()
 
             logger.info(
-                "Inserted page {} from {}. {} items out of {} downloaded".format(
-                    i, ceil(float(items_count) / float(page_size)), items_inserted, items_count
-                )
+                "Inserted page %s from %s. %s items out of %s downloaded",
+                i,
+                ceil(float(items_count) / float(page_size)),
+                items_inserted,
+                items_count,
             )
 
         logger.info(
-            "All original items with dataset_id {} have been duplicated with dataset_id {}".format(
-                dataset_id_original, dataset_id_filtered
-            )
+            "All original items with dataset_id %s have been duplicated with dataset_id %s",
+            dataset_id_original,
+            dataset_id_filtered,
         )
 
         ack(connection, channel, delivery_tag)
 
     except Exception:
-        logger.exception("Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing %s", body)
         sys.exit()
     finally:
         cursor.close()

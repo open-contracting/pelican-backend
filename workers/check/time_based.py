@@ -34,7 +34,7 @@ def callback(connection, channel, delivery_tag, body):
 
         # mark dataset as beeing processed
         set_dataset_state(dataset_id, state.IN_PROGRESS, phase.TIME_VARIANCE)
-        logger.info("Time variance level checks calculation started for dataset_id {}".format(dataset_id))
+        logger.info("Time variance level checks calculation started for dataset_id %s", dataset_id)
         commit()
 
         # do actual calculations
@@ -42,7 +42,7 @@ def callback(connection, channel, delivery_tag, body):
 
         # all done, mark as completed
         set_dataset_state(dataset_id, state.OK, phase.TIME_VARIANCE)
-        logger.info("Time variance level checks calculated for dataset_id {}".format(dataset_id))
+        logger.info("Time variance level checks calculated for dataset_id %s", dataset_id)
         commit()
 
         # send messages into next phases
@@ -51,7 +51,7 @@ def callback(connection, channel, delivery_tag, body):
 
         ack(connection, channel, delivery_tag)
     except Exception:
-        logger.exception("Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing %s", body)
         sys.exit()
 
 

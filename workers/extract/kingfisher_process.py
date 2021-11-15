@@ -48,7 +48,7 @@ def callback(connection, channel, delivery_tag, body):
             max_items = int(input_message["max_items"]) if "max_items" in input_message else None
             ancestor_id = int(input_message["ancestor_id"]) if "ancestor_id" in input_message else None
 
-            logger.info("Reading kingfisher data started. name: {} collection_id: {}".format(name, collection_id))
+            logger.info("Reading kingfisher data started. name: %s collection_id: %s", name, collection_id)
 
             kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
 
@@ -95,7 +95,7 @@ def callback(connection, channel, delivery_tag, body):
             )
             dataset_id = cursor.fetchone()[0]
 
-            logger.info("Saving meta data for dataset_id {}".format(dataset_id))
+            logger.info("Saving meta data for dataset_id %s", dataset_id)
             meta_data = meta_data_aggregator.get_kingfisher_meta_data(collection_id)
             meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
@@ -162,12 +162,14 @@ def callback(connection, channel, delivery_tag, body):
                         batch.clear()
 
                 logger.info(
-                    "Inserted page {} from {}. {} items out of {} downloaded".format(
-                        i, ceil(float(items_count) / float(page_size)), items_inserted, items_count
-                    )
+                    "Inserted page %s from %s. %s items out of %s downloaded",
+                    i,
+                    ceil(float(items_count) / float(page_size)),
+                    items_inserted,
+                    items_count,
                 )
 
-            logger.info("All items with dataset_id {} have been downloaded".format(dataset_id))
+            logger.info("All items with dataset_id %s have been downloaded", dataset_id)
             kf_cursor.close()
             kf_connection.close()
         else:
@@ -176,7 +178,7 @@ def callback(connection, channel, delivery_tag, body):
             resend(connection, channel, dataset_id)
             ack(connection, channel, delivery_tag)
     except Exception:
-        logger.exception("Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing %s", body)
         ack(connection, channel, delivery_tag)
     finally:
         cursor.close()
@@ -184,7 +186,7 @@ def callback(connection, channel, delivery_tag, body):
 
 def resend(connection, channel, dataset_id):
     cursor = get_cursor()
-    logger.info("Resending messages for dataset_id {} started".format(dataset_id))
+    logger.info("Resending messages for dataset_id %s started", dataset_id)
     cursor.execute(
         """
             SELECT id FROM data_item
@@ -222,7 +224,7 @@ def resend(connection, channel, dataset_id):
             batch.clear()
 
     cursor.close()
-    logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
+    logger.info("Resending messages for dataset_id %s completed", dataset_id)
 
 
 def init_worker():

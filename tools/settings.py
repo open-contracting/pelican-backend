@@ -58,7 +58,7 @@ KINGFISHER_PROCESS_DATABASE_URL = os.getenv(
 
 # The connection string for RabbitMQ.
 RABBIT_URL = os.getenv("RABBIT_URL", "amqp://localhost")
-# The name of the RabbitMQ exchange. Follow the pattern `pelican_{service}_{environment}`.
+# The name of the RabbitMQ exchange. Follow the pattern `{project}_{service}_{environment}`.
 RABBIT_EXCHANGE_NAME = os.getenv("RABBIT_EXCHANGE_NAME", "pelican_development")
 
 # Third-party services

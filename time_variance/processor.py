@@ -120,8 +120,10 @@ def do_work(dataset_id):
                 except Exception:
                     logger.error(
                         "Something went wrong when computing time variance level check: "
-                        "check = {}, item_id = {}, dataset_id = {}."
-                        "".format(plugin_name, ancestor_item_id, dataset_id)
+                        "check=%s, item_id=%s, dataset_id=%s",
+                        plugin_name,
+                        ancestor_item_id,
+                        dataset_id,
                     )
                     raise
 
@@ -131,13 +133,13 @@ def do_work(dataset_id):
 
         pager += 1
 
-        logger.info("Processed page {}".format(pager))
+        logger.info("Processed page %s", pager)
 
     if no_item_processed:
-        logger.info("No item with dataset_id {} found. Skipping time variance checks computation.".format(dataset_id))
+        logger.info("No item with dataset_id %s found. Skipping time variance checks computation.", dataset_id)
 
     for plugin_name, plugin in definitions.items():
-        logger.info("Getting result for {} time variance check.".format(plugin_name))
+        logger.info("Getting result for %s time variance check.", plugin_name)
         result = get_result(scope[plugin_name], plugin.version)
         save_time_variance_level_check(plugin_name, result, dataset_id)
 

@@ -63,9 +63,9 @@ def callback(connection, channel, delivery_tag, body):
         if processed_count < total_count:
             # contracting process is not done yet
             logger.debug(
-                "There are {} remaining messages to be processed for dataset_id {}".format(
-                    total_count - processed_count, dataset_id
-                )
+                "There are %s remaining messages to be processed for dataset_id %s",
+                total_count - processed_count,
+                dataset_id,
             )
 
             logger.info("Not all messages have been processed by contracting process.")
@@ -79,8 +79,9 @@ def callback(connection, channel, delivery_tag, body):
         ):
             # set state to processing
             logger.info(
-                f"All messages for dataset_id {dataset_id} with {processed_count} items processed, "
-                "starting to calculate dataset level checks"
+                "All messages for dataset_id %s with %s items processed, starting to calculate dataset level checks",
+                dataset_id,
+                processed_count,
             )
             set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
 
@@ -94,7 +95,7 @@ def callback(connection, channel, delivery_tag, body):
 
             commit()
 
-            logger.info("Dataset level checks calculated for dataset_id {}.".format(dataset_id))
+            logger.info("Dataset level checks calculated for dataset_id %s.", dataset_id)
 
             # send message for a next phase
             message = {"dataset_id": dataset_id}
@@ -102,16 +103,16 @@ def callback(connection, channel, delivery_tag, body):
 
         else:
             logger.exception(
-                "Dataset processing for dataset_id {} is in weird state. \
-                Dataset state {}. Dataset phase {}.".format(
-                    dataset_id, dataset["state"], dataset["phase"]
-                )
+                "Dataset processing for dataset_id %s is in weird state. Dataset state %s. Dataset phase %s.",
+                dataset_id,
+                dataset["state"],
+                dataset["phase"],
             )
             sys.exit()
 
         ack(connection, channel, delivery_tag)
     except Exception:
-        logger.exception("Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing %s", body)
         sys.exit()
 
 

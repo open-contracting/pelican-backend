@@ -12,7 +12,7 @@ connected = False
 
 
 def publish(connection, channel, message, routing_key):
-    logger.debug("Publish message from channel {} with routing_key {}".format(channel, routing_key))
+    logger.debug("Publish message from channel %s with routing_key %s", channel, routing_key)
     cb = functools.partial(publish_message, channel, message, routing_key)
     connection.add_callback_threadsafe(cb)
 
@@ -84,9 +84,7 @@ def consume(target_callback, routing_key):
 
         channel.start_consuming()
 
-    logger.debug(
-        "Consuming messages from exchange {} with routing key {}".format(settings.RABBIT_EXCHANGE_NAME, routing_key)
-    )
+    logger.debug("Consuming messages from exchange %s with routing key %s", settings.RABBIT_EXCHANGE_NAME, routing_key)
 
 
 def on_message(channel, method_frame, header_frame, body, args):
@@ -97,7 +95,7 @@ def on_message(channel, method_frame, header_frame, body, args):
 
 
 def ack(connection, channel, delivery_tag):
-    logger.debug("ACK message from channel {} with delivery tag {}".format(channel, delivery_tag))
+    logger.debug("ACK message from channel %s with delivery tag %s", channel, delivery_tag)
     cb = functools.partial(ack_message, channel, delivery_tag)
     connection.add_callback_threadsafe(cb)
 

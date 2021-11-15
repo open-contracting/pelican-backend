@@ -36,7 +36,7 @@ def callback(connection, channel, delivery_tag, body):
         if "command" not in input_message:
             item_ids = input_message["item_ids"]
 
-            logger.info("Processing message for dataset_id {} and items {}".format(dataset_id, item_ids))
+            logger.info("Processing message for dataset_id %s and items %s", dataset_id, item_ids)
 
             # get item from storage
             cursor.execute(
@@ -61,7 +61,7 @@ def callback(connection, channel, delivery_tag, body):
         # acknowledge message processing
         ack(connection, channel, delivery_tag)
     except Exception:
-        logger.exception("Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing %s", body)
         sys.exit()
     finally:
         cursor.close()
@@ -70,7 +70,7 @@ def callback(connection, channel, delivery_tag, body):
 
 
 def resend(connection, channel, dataset_id):
-    logger.info("Resending messages for dataset_id {} started".format(dataset_id))
+    logger.info("Resending messages for dataset_id %s started", dataset_id)
 
     # mark dataset as done
     set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
@@ -80,7 +80,7 @@ def resend(connection, channel, dataset_id):
     message = {"dataset_id": dataset_id}
     publish(connection, channel, json.dumps(message), routing_key)
 
-    logger.info("Resending messages for dataset_id {} completed".format(dataset_id))
+    logger.info("Resending messages for dataset_id %s completed", dataset_id)
 
 
 def init_worker():

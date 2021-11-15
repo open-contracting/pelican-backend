@@ -34,16 +34,14 @@ def callback(connection, channel, delivery_tag, body):
         dataset_id = input_message["dataset_id"]
 
         # creating reports and examples
-        logger.info("Resource level checks report for dataset_id {} is being calculated".format(dataset_id))
+        logger.info("Resource level checks report for dataset_id %s is being calculated", dataset_id)
         resource_level_report.create(dataset_id)
 
-        logger.info("Resource level checks examples for dataset_id {} are being picked".format(dataset_id))
+        logger.info("Resource level checks examples for dataset_id %s are being picked", dataset_id)
         resource_level_examples.create(dataset_id)
 
         logger.info(
-            "Field level checks report for dataset_id {} is being calculated and examples are being picked".format(
-                dataset_id
-            )
+            "Field level checks report for dataset_id %s is being calculated and examples are being picked", dataset_id
         )
         field_level_report_examples.create(dataset_id)
 
@@ -54,12 +52,12 @@ def callback(connection, channel, delivery_tag, body):
 
         # mark dataset as beeing finished
         set_dataset_state(dataset_id, state.OK, phase.CHECKED)
-        logger.info("All the work done for dataset_id {}".format(dataset_id))
+        logger.info("All the work done for dataset_id %s", dataset_id)
         commit()
 
         ack(connection, channel, delivery_tag)
     except Exception:
-        logger.exception("Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing %s", body)
         sys.exit()
 
 

@@ -30,7 +30,7 @@ def callback(connection, channel, delivery_tag, body):
         dataset_id = input_message["dataset_id"]
 
         # creating reports and examples
-        logger.info("All the data for dataset_id {} will removed".format(dataset_id))
+        logger.info("All the data for dataset_id %s will removed", dataset_id)
 
         cursor.execute("delete from resource_level_check where dataset_id = %s;", (dataset_id,))
         cursor.execute("delete from field_level_check where dataset_id = %s;", (dataset_id,))
@@ -43,7 +43,7 @@ def callback(connection, channel, delivery_tag, body):
 
         ack(connection, channel, delivery_tag)
     except Exception:
-        logger.exception("Something went wrong when processing {}".format(body))
+        logger.exception("Something went wrong when processing %s", body)
         sys.exit()
     finally:
         cursor.close()

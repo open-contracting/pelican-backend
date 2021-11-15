@@ -47,9 +47,10 @@ def resource_level_checks(data, item_id, dataset_id):
             result["checks"][check_name] = check(data)
         except Exception:
             get_logger().error(
-                "Something went wrong when computing resource level check: "
-                "check = {}, item_id = {}, dataset_id = {}."
-                "".format(check_name, item_id, dataset_id)
+                "Something went wrong when computing resource level check: check=%s, item_id=%s, dataset_id=%s",
+                check_name,
+                item_id,
+                dataset_id,
             )
             raise
 
@@ -126,8 +127,11 @@ def field_level_checks(data, item_id, dataset_id):
                         except Exception:
                             get_logger().error(
                                 "Something went wrong when computing field level check: "
-                                "check = {}, path = {}, item_id = {}, dataset_id = {}."
-                                "".format(check_name, path, item_id, dataset_id)
+                                "check=%s, path=%s, item_id=%s, dataset_id=%s",
+                                check_name,
+                                path,
+                                item_id,
+                                dataset_id,
                             )
                             raise
 
@@ -153,8 +157,11 @@ def field_level_checks(data, item_id, dataset_id):
                             except Exception:
                                 get_logger().error(
                                     "Something went wrong when computing field level check: "
-                                    "check = {}, path = {}, item_id = {}, dataset_id = {}."
-                                    "".format(check_name, path, item_id, dataset_id)
+                                    "check=%s, path=%s, item_id=%s, dataset_id=%s",
+                                    check_name,
+                                    path,
+                                    item_id,
+                                    dataset_id,
                                 )
                                 raise
 

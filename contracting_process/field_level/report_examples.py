@@ -197,9 +197,9 @@ def create(dataset_id):
             id = row["id"]
 
         pager += 1
-        logger.info("Processed page {}".format(pager))
+        logger.info("Processed page %s", pager)
 
-    logger.info("Storing field level check report for dataset_id {}".format(dataset_id))
+    logger.info("Storing field level check report for dataset_id %s", dataset_id)
     # storing the report
     cursor.execute(
         """
@@ -212,7 +212,7 @@ def create(dataset_id):
     )
     commit()
 
-    logger.info("Storing examples for field level checks for dataset_id {}".format(dataset_id))
+    logger.info("Storing examples for field level checks for dataset_id %s", dataset_id)
     # storing the examples
     for path, path_checks in examples.items():
         path_checks["coverage"]["passed_examples"] = path_checks["coverage"]["passed_sampler"].retrieve_samples()
