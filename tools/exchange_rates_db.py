@@ -218,9 +218,7 @@ def update_from_fixer_io():
     max_date = query_result[0]
 
     date_now = date.today()
-    logger.info(
-        "Last available date is %s. Total of %s day(s) will be updated." % (max_date, (date_now - max_date).days)
-    )
+    logger.info("Last available date is %s. Total of %s day(s) will be updated.", max_date, (date_now - max_date).days)
 
     target_date = max_date
     while target_date < date_now:

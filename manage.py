@@ -67,7 +67,7 @@ def remove(dataset_id, filtered):
         (dataset_id,),
     )
     if not cursor.fetchall()[0][0]:
-        logger.error("Dataset with dataset_id %s does not exist." % dataset_id)
+        logger.error("Dataset with dataset_id %s does not exist.", dataset_id)
         return
 
     # checking if dataset can be deleted
@@ -82,11 +82,12 @@ def remove(dataset_id, filtered):
     rows = cursor.fetchall()
     if not rows or rows[0][0] not in (phase.CHECKED, phase.DELETED) or rows[0][1] != state.OK:
         logger.error(
-            (
-                "Dataset with dataset_id %s cannot be deleted. "
-                "For a successful deletion the dataset should be in '%s' or '%s' phase and '%s' state."
-            )
-            % (dataset_id, phase.CHECKED, phase.DELETED, state.OK)
+            "Dataset with dataset_id %s cannot be deleted. "
+            "For a successful deletion the dataset should be in '%s' or '%s' phase and '%s' state.",
+            dataset_id,
+            phase.CHECKED,
+            phase.DELETED,
+            state.OK,
         )
         return
 
@@ -121,11 +122,9 @@ def remove(dataset_id, filtered):
 
     # safely deleting dataset
     logger.info(
-        (
-            "Deleting datasets with the following dataset_ids: %s. "
-            "Only rows in the following tables will remain: dataset, dataset_filter, progress_monitor_dataset."
-        )
-        % str(delete_dataset_ids)
+        "Deleting datasets with the following dataset_ids: %s. "
+        "Only rows in the following tables will remain: dataset, dataset_filter, progress_monitor_dataset.",
+        delete_dataset_ids,
     )
     cursor.execute(
         """
@@ -168,7 +167,7 @@ def remove(dataset_id, filtered):
     )
     commit()
 
-    logger.info("Datasets with dataset_ids %s have been deleted." % str(delete_dataset_ids))
+    logger.info("Datasets with dataset_ids %s have been deleted.", delete_dataset_ids)
 
     # dropping datasets if no dependencies exist
     logger.info("Checking if some deleted datasets can be dropped entirely.")
@@ -200,7 +199,7 @@ def remove(dataset_id, filtered):
         drop_dataset_ids = new_drop_dataset_ids.copy()
 
     if drop_dataset_ids:
-        logger.info("The following datasets will be dropped entirely: %s" % str(drop_dataset_ids))
+        logger.info("The following datasets will be dropped entirely: %s", drop_dataset_ids)
         cursor.execute(
             """
             delete from dataset
