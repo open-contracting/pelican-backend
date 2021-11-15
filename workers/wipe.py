@@ -32,12 +32,12 @@ def callback(connection, channel, delivery_tag, body):
         # creating reports and examples
         logger.info("All the data for dataset_id %s will removed", dataset_id)
 
-        cursor.execute("delete from resource_level_check where dataset_id = %s;", (dataset_id,))
-        cursor.execute("delete from field_level_check where dataset_id = %s;", (dataset_id,))
-        cursor.execute("delete from progress_monitor_item where dataset_id = %s;", (dataset_id,))
-        cursor.execute("delete from progress_monitor_dataset where dataset_id = %s;", (dataset_id,))
-        cursor.execute("delete from data_item where dataset_id = %s;", (dataset_id,))
-        cursor.execute("delete from dataset where id = %s;", (dataset_id,))
+        cursor.execute("delete from resource_level_check where dataset_id = %(id)s;", {"id": dataset_id})
+        cursor.execute("delete from field_level_check where dataset_id = %(id)s;", {"id": dataset_id})
+        cursor.execute("delete from progress_monitor_item where dataset_id = %(id)s;", {"id": dataset_id})
+        cursor.execute("delete from progress_monitor_dataset where dataset_id = %(id)s;", {"id": dataset_id})
+        cursor.execute("delete from data_item where dataset_id = %(id)s;", {"id": dataset_id})
+        cursor.execute("delete from dataset where id = %(id)s;", {"id": dataset_id})
 
         commit()
 
