@@ -11,7 +11,7 @@ from tools import settings
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import consume, publish
+from tools.rabbit import create_client, publish
 from tools.state import phase, set_dataset_state, set_item_state, state
 
 consume_routing_key = "dataset_filter_extractor_init"
@@ -26,7 +26,7 @@ def start():
     Add filtered datasets.
     """
     init_worker()
-    consume(callback, consume_routing_key)
+    create_client().consume(callback, consume_routing_key)
 
 
 # input message example
@@ -43,7 +43,8 @@ def start():
 #     },
 #     "max_items": 5000
 # }
-def callback(connection, channel, delivery_tag, body):
+def callback(connection, channel, method, properties, body):
+    delivery_tag = method.delivery_tag
     cursor = get_cursor()
     try:
         input_message = json.loads(body.decode("utf8"))

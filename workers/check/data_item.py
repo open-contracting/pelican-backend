@@ -9,7 +9,7 @@ from contracting_process import processor
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import consume, publish
+from tools.rabbit import create_client, publish
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "extractor"
@@ -24,10 +24,10 @@ def start():
     """
     init_worker()
 
-    consume(callback, consume_routing_key)
+    create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, delivery_tag, body):
+def callback(connection, channel, method, properties, body):
     cursor = get_cursor()
     try:
         # parse input message
@@ -59,7 +59,7 @@ def callback(connection, channel, delivery_tag, body):
             publish(connection, channel, json.dumps(message), routing_key)
         else:
             resend(connection, channel, dataset_id)
-        ack(connection, channel, delivery_tag)
+        ack(connection, channel, method.delivery_tag)
     except Exception:
         logger.exception("Something went wrong when processing %s", body)
         sys.exit()

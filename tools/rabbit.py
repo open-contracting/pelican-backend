@@ -1,14 +1,22 @@
 import functools
-import threading
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 import pika
+from yapw import clients
 
 from tools import settings
 from tools.logging_helper import get_logger
 
 global connected
 connected = False
+
+
+class Client(clients.Threaded, clients.Durable, clients.Blocking, clients.Base):
+    pass
+
+
+def create_client():
+    return Client(url=settings.RABBIT_URL, exchange=settings.RABBIT_EXCHANGE_NAME)
 
 
 def publish(connection, channel, message, routing_key):
@@ -65,30 +73,3 @@ def connect():
     logger.info("RabbitMQ connection established")
 
     return connection
-
-
-def consume(target_callback, routing_key):
-    routing_key = f"{settings.RABBIT_EXCHANGE_NAME}_{routing_key}"
-
-    if not connected:
-        connection = connect()
-
-        channel.queue_declare(queue=routing_key, durable=True)
-
-        channel.queue_bind(exchange=settings.RABBIT_EXCHANGE_NAME, queue=routing_key, routing_key=routing_key)
-
-        channel.basic_qos(prefetch_count=1)
-
-        on_message_callback = functools.partial(on_message, args=(connection, target_callback))
-        channel.basic_consume(queue=routing_key, on_message_callback=on_message_callback)
-
-        channel.start_consuming()
-
-    logger.debug("Consuming messages from exchange %s with routing key %s", settings.RABBIT_EXCHANGE_NAME, routing_key)
-
-
-def on_message(channel, method_frame, header_frame, body, args):
-    (connection, target_callback) = args
-    delivery_tag = method_frame.delivery_tag
-    t = threading.Thread(target=target_callback, args=(connection, channel, delivery_tag, body))
-    t.start()

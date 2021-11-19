@@ -12,7 +12,7 @@ from dataset import meta_data_aggregator
 from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
-from tools.rabbit import consume
+from tools.rabbit import create_client
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "time_variance_checker"
@@ -25,10 +25,10 @@ def start():
     """
     init_worker()
 
-    consume(callback, consume_routing_key)
+    create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, delivery_tag, body):
+def callback(connection, channel, method, properties, body):
     try:
         # read and parse message
         input_message = json.loads(body.decode("utf8"))
@@ -56,7 +56,7 @@ def callback(connection, channel, delivery_tag, body):
         logger.info("All the work done for dataset_id %s", dataset_id)
         commit()
 
-        ack(connection, channel, delivery_tag)
+        ack(connection, channel, method.delivery_tag)
     except Exception:
         logger.exception("Something went wrong when processing %s", body)
         sys.exit()

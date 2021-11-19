@@ -8,7 +8,7 @@ from yapw.methods import ack
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import consume
+from tools.rabbit import create_client
 
 consume_routing_key = "wiper_init"
 
@@ -20,10 +20,10 @@ def start():
     """
     init_worker()
 
-    consume(callback, consume_routing_key)
+    create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, delivery_tag, body):
+def callback(connection, channel, method, properties, body):
     cursor = get_cursor()
     try:
         # read and parse message
@@ -42,7 +42,7 @@ def callback(connection, channel, delivery_tag, body):
 
         commit()
 
-        ack(connection, channel, delivery_tag)
+        ack(connection, channel, method.delivery_tag)
     except Exception:
         logger.exception("Something went wrong when processing %s", body)
         sys.exit()

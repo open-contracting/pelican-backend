@@ -9,7 +9,7 @@ from time_variance import processor
 from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
-from tools.rabbit import consume, publish
+from tools.rabbit import create_client, publish
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "dataset_checker"
@@ -24,10 +24,10 @@ def start():
     """
     init_worker()
 
-    consume(callback, consume_routing_key)
+    create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, delivery_tag, body):
+def callback(connection, channel, method, properties, body):
     try:
         # read and parse message
         input_message = json.loads(body.decode("utf8"))
@@ -50,7 +50,7 @@ def callback(connection, channel, delivery_tag, body):
         message = {"dataset_id": dataset_id}
         publish(connection, channel, json.dumps(message), routing_key)
 
-        ack(connection, channel, delivery_tag)
+        ack(connection, channel, method.delivery_tag)
     except Exception:
         logger.exception("Something went wrong when processing %s", body)
         sys.exit()

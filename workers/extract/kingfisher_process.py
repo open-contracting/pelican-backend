@@ -11,7 +11,7 @@ from tools import exchange_rates_db, settings
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import consume, publish
+from tools.rabbit import create_client, publish
 from tools.state import phase, set_dataset_state, set_item_state, state
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
@@ -33,10 +33,11 @@ def start():
     if settings.FIXER_IO_API_KEY:
         exchange_rates_db.update_from_fixer_io()
 
-    consume(callback, consume_routing_key)
+    create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, delivery_tag, body):
+def callback(connection, channel, method, properties, body):
+    delivery_tag = method.delivery_tag
     if settings.FIXER_IO_API_KEY:
         exchange_rates_db.update_from_fixer_io()
     cursor = get_cursor()

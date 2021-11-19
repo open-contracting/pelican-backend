@@ -9,7 +9,7 @@ from dataset import processor
 from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
-from tools.rabbit import consume, publish
+from tools.rabbit import create_client, publish
 from tools.state import get_dataset, get_processed_items_count, get_total_items_count, phase, set_dataset_state, state
 
 consume_routing_key = "contracting_process_checker"
@@ -24,10 +24,11 @@ def start():
     """
     init_worker()
 
-    consume(callback, consume_routing_key)
+    create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, delivery_tag, body):
+def callback(connection, channel, method, properties, body):
+    delivery_tag = method.delivery_tag
     try:
         # parse input message
         input_message = json.loads(body.decode("utf8"))
