@@ -179,9 +179,6 @@ def callback(connection, channel, method, properties, body):
             dataset_id = input_message["dataset_id"]
             resend(connection, channel, dataset_id)
             ack(connection, channel, delivery_tag)
-    except Exception:
-        logger.exception("Something went wrong when processing %s", body)
-        ack(connection, channel, delivery_tag)
     finally:
         cursor.close()
 

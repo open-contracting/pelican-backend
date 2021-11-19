@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import sys
-
 import click
 import simplejson as json
 from yapw.methods import ack
@@ -60,9 +58,6 @@ def callback(connection, channel, method, properties, body):
         else:
             resend(connection, channel, dataset_id)
         ack(connection, channel, method.delivery_tag)
-    except Exception:
-        logger.exception("Something went wrong when processing %s", body)
-        sys.exit()
     finally:
         cursor.close()
 

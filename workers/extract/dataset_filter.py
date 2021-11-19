@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import sys
 from math import ceil
 
 import click
@@ -209,10 +208,6 @@ def callback(connection, channel, method, properties, body):
         )
 
         ack(connection, channel, delivery_tag)
-
-    except Exception:
-        logger.exception("Something went wrong when processing %s", body)
-        sys.exit()
     finally:
         cursor.close()
 

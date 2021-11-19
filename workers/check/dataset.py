@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-import sys
-
 import click
 import simplejson as json
-from yapw.methods import ack
+from yapw.methods import ack, nack
 
 from dataset import processor
 from tools.bootstrap import bootstrap
@@ -29,93 +27,90 @@ def start():
 
 def callback(connection, channel, method, properties, body):
     delivery_tag = method.delivery_tag
-    try:
-        # parse input message
-        input_message = json.loads(body.decode("utf8"))
-        dataset_id = input_message["dataset_id"]
-        dataset = get_dataset(dataset_id)
 
-        # optimization when resending
-        if dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:
-            logger.info("Checks have been already calculated for this dataset.")
-            ack(connection, channel, delivery_tag)
-            return
+    # parse input message
+    input_message = json.loads(body.decode("utf8"))
+    dataset_id = input_message["dataset_id"]
+    dataset = get_dataset(dataset_id)
 
-        if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.DATASET:
-            # lets do nothing, calculations is already in progress
-            logger.info("Other worker probably already started with the job. Doing nothing.")
-            ack(connection, channel, delivery_tag)
-            return
-
-        if dataset["phase"] == phase.TIME_VARIANCE or dataset["phase"] == phase.CHECKED:
-            logger.info("Checks have been already calculated for this dataset.")
-            ack(connection, channel, delivery_tag)
-            return
-
-        if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.CONTRACTING_PROCESS:
-            # contracting process is not done yet
-            logger.info("Not all messages have been processed by contracting process.")
-            ack(connection, channel, delivery_tag)
-            return
-
-        processed_count = get_processed_items_count(dataset_id)
-        total_count = get_total_items_count(dataset_id)
-
-        # check whether are all items alredy processed
-        if processed_count < total_count:
-            # contracting process is not done yet
-            logger.debug(
-                "There are %s remaining messages to be processed for dataset_id %s",
-                total_count - processed_count,
-                dataset_id,
-            )
-
-            logger.info("Not all messages have been processed by contracting process.")
-            ack(connection, channel, delivery_tag)
-            return
-
-        if (
-            dataset["state"] == state.OK
-            and dataset["phase"] == phase.CONTRACTING_PROCESS
-            and processed_count == total_count
-        ):
-            # set state to processing
-            logger.info(
-                "All messages for dataset_id %s with %s items processed, starting to calculate dataset level checks",
-                dataset_id,
-                processed_count,
-            )
-            set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
-
-            commit()
-
-            # calculate all the stuff
-            processor.do_work(dataset_id, logger)
-
-            # mark dataset as done
-            set_dataset_state(dataset_id, state.OK, phase.DATASET)
-
-            commit()
-
-            logger.info("Dataset level checks calculated for dataset_id %s.", dataset_id)
-
-            # send message for a next phase
-            message = {"dataset_id": dataset_id}
-            publish(connection, channel, json.dumps(message), routing_key)
-
-        else:
-            logger.exception(
-                "Dataset processing for dataset_id %s is in weird state. Dataset state %s. Dataset phase %s.",
-                dataset_id,
-                dataset["state"],
-                dataset["phase"],
-            )
-            sys.exit()
-
+    # optimization when resending
+    if dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:
+        logger.info("Checks have been already calculated for this dataset.")
         ack(connection, channel, delivery_tag)
-    except Exception:
-        logger.exception("Something went wrong when processing %s", body)
-        sys.exit()
+        return
+
+    if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.DATASET:
+        # lets do nothing, calculations is already in progress
+        logger.info("Other worker probably already started with the job. Doing nothing.")
+        ack(connection, channel, delivery_tag)
+        return
+
+    if dataset["phase"] == phase.TIME_VARIANCE or dataset["phase"] == phase.CHECKED:
+        logger.info("Checks have been already calculated for this dataset.")
+        ack(connection, channel, delivery_tag)
+        return
+
+    if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.CONTRACTING_PROCESS:
+        # contracting process is not done yet
+        logger.info("Not all messages have been processed by contracting process.")
+        ack(connection, channel, delivery_tag)
+        return
+
+    processed_count = get_processed_items_count(dataset_id)
+    total_count = get_total_items_count(dataset_id)
+
+    # check whether are all items alredy processed
+    if processed_count < total_count:
+        # contracting process is not done yet
+        logger.debug(
+            "There are %s remaining messages to be processed for dataset_id %s",
+            total_count - processed_count,
+            dataset_id,
+        )
+
+        logger.info("Not all messages have been processed by contracting process.")
+        ack(connection, channel, delivery_tag)
+        return
+
+    if (
+        dataset["state"] == state.OK
+        and dataset["phase"] == phase.CONTRACTING_PROCESS
+        and processed_count == total_count
+    ):
+        # set state to processing
+        logger.info(
+            "All messages for dataset_id %s with %s items processed, starting to calculate dataset level checks",
+            dataset_id,
+            processed_count,
+        )
+        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
+
+        commit()
+
+        # calculate all the stuff
+        processor.do_work(dataset_id, logger)
+
+        # mark dataset as done
+        set_dataset_state(dataset_id, state.OK, phase.DATASET)
+
+        commit()
+
+        logger.info("Dataset level checks calculated for dataset_id %s.", dataset_id)
+
+        # send message for a next phase
+        message = {"dataset_id": dataset_id}
+        publish(connection, channel, json.dumps(message), routing_key)
+
+    else:
+        logger.error(
+            "Dataset processing for dataset_id %s is in weird state. Dataset state %s. Dataset phase %s.",
+            dataset_id,
+            dataset["state"],
+            dataset["phase"],
+        )
+        nack(connection, channel, delivery_tag, requeue=False)
+
+    ack(connection, channel, delivery_tag)
 
 
 def init_worker():

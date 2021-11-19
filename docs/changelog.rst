@@ -3,6 +3,12 @@ Changelog
 
 This changelog only notes major changes, to notify other developers.
 
+2021-11-19
+----------
+
+-  fix: ``sys.exit()`` in a consumer callback exits the thread, not the process. Because the message isn't acknowledged and ``prefetch_count=1``, RabbitMQ stops delivering messages and the process hangs indefinitely.
+-  refactor: Use `yapw <https://yapw.readthedocs.io/en/latest/>`__ for better error handling and signal handling with RabbitMQ.
+
 2021-10-29
 ----------
 
