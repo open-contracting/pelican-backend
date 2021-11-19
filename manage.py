@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 import click
-import simplejson as json
 
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import connect_and_publish_message
+from tools.rabbit import create_client
 from tools.state import phase, state
 
 
@@ -36,7 +35,7 @@ def add(name, collection_id, previous_dataset, sample):
         "ancestor_id": previous_dataset,
         "max_items": sample,
     }
-    connect_and_publish_message(json.dumps(message), routing_key)
+    create_client().publish(message, routing_key)
 
 
 @cli.command()
