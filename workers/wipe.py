@@ -3,11 +3,12 @@ import sys
 
 import click
 import simplejson as json
+from yapw.methods import ack
 
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import ack, consume
+from tools.rabbit import consume
 
 consume_routing_key = "wiper_init"
 

@@ -3,12 +3,13 @@ import sys
 
 import click
 import simplejson as json
+from yapw.methods import ack
 
 from dataset import processor
 from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
-from tools.rabbit import ack, consume, publish
+from tools.rabbit import consume, publish
 from tools.state import get_dataset, get_processed_items_count, get_total_items_count, phase, set_dataset_state, state
 
 consume_routing_key = "contracting_process_checker"

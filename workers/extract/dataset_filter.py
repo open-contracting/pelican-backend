@@ -5,12 +5,13 @@ from math import ceil
 import click
 import simplejson as json
 from psycopg2 import sql
+from yapw.methods import ack
 
 from tools import settings
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import ack, consume, publish
+from tools.rabbit import consume, publish
 from tools.state import phase, set_dataset_state, set_item_state, state
 
 consume_routing_key = "dataset_filter_extractor_init"

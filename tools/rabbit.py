@@ -92,13 +92,3 @@ def on_message(channel, method_frame, header_frame, body, args):
     delivery_tag = method_frame.delivery_tag
     t = threading.Thread(target=target_callback, args=(connection, channel, delivery_tag, body))
     t.start()
-
-
-def ack(connection, channel, delivery_tag):
-    logger.debug("ACK message from channel %s with delivery tag %s", channel, delivery_tag)
-    cb = functools.partial(ack_message, channel, delivery_tag)
-    connection.add_callback_threadsafe(cb)
-
-
-def ack_message(channel, delivery_tag):
-    channel.basic_ack(delivery_tag)

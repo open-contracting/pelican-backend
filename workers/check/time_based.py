@@ -3,12 +3,13 @@ import sys
 
 import click
 import simplejson as json
+from yapw.methods import ack
 
 from time_variance import processor
 from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
-from tools.rabbit import ack, consume, publish
+from tools.rabbit import consume, publish
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "dataset_checker"

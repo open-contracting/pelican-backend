@@ -3,12 +3,13 @@ import sys
 
 import click
 import simplejson as json
+from yapw.methods import ack
 
 from contracting_process import processor
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import ack, consume, publish
+from tools.rabbit import consume, publish
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "extractor"
@@ -58,7 +59,6 @@ def callback(connection, channel, delivery_tag, body):
             publish(connection, channel, json.dumps(message), routing_key)
         else:
             resend(connection, channel, dataset_id)
-        # acknowledge message processing
         ack(connection, channel, delivery_tag)
     except Exception:
         logger.exception("Something went wrong when processing %s", body)
