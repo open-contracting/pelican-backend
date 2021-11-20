@@ -25,7 +25,7 @@ def start():
     create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, method, properties, body):
+def callback(client_state, channel, method, properties, body):
     # read and parse message
     input_message = json.loads(body.decode("utf8"))
     dataset_id = input_message["dataset_id"]
@@ -45,9 +45,9 @@ def callback(connection, channel, method, properties, body):
 
     # send messages into next phases
     message = {"dataset_id": dataset_id}
-    publish(connection, channel, json.dumps(message), routing_key)
+    publish(client_state, channel, message, routing_key)
 
-    ack(connection, channel, method.delivery_tag)
+    ack(client_state, channel, method.delivery_tag)
 
 
 def init_worker():

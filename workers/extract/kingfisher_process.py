@@ -36,7 +36,7 @@ def start():
     create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, method, properties, body):
+def callback(client_state, channel, method, properties, body):
     delivery_tag = method.delivery_tag
     if settings.FIXER_IO_API_KEY:
         exchange_rates_db.update_from_fixer_io()
@@ -104,7 +104,7 @@ def callback(connection, channel, method, properties, body):
             commit()
 
             # ack message, no recovery possible after this point
-            ack(connection, channel, delivery_tag)
+            ack(client_state, channel, delivery_tag)
 
             # batch initialization
             max_batch_size = settings.EXTRACTOR_MAX_BATCH_SIZE
@@ -158,7 +158,7 @@ def callback(connection, channel, method, properties, body):
                     batch.append(inserted_id)
                     if batch_size >= max_batch_size or items_inserted == items_count:
                         message = {"item_ids": batch, "dataset_id": dataset_id}
-                        publish(connection, channel, json.dumps(message), routing_key)
+                        publish(client_state, channel, message, routing_key)
 
                         batch_size = 0
                         batch.clear()
@@ -177,13 +177,13 @@ def callback(connection, channel, method, properties, body):
         else:
             # resend messages
             dataset_id = input_message["dataset_id"]
-            resend(connection, channel, dataset_id)
-            ack(connection, channel, delivery_tag)
+            resend(client_state, channel, dataset_id)
+            ack(client_state, channel, delivery_tag)
     finally:
         cursor.close()
 
 
-def resend(connection, channel, dataset_id):
+def resend(client_state, channel, dataset_id):
     cursor = get_cursor()
     logger.info("Resending messages for dataset_id %s started", dataset_id)
     cursor.execute(
@@ -217,7 +217,7 @@ def resend(connection, channel, dataset_id):
         batch.append(entry[0])
         if batch_size >= max_batch_size or items_inserted == items_count:
             message = {"item_ids": batch, "dataset_id": dataset_id}
-            publish(connection, channel, json.dumps(message), routing_key)
+            publish(client_state, channel, message, routing_key)
 
             batch_size = 0
             batch.clear()

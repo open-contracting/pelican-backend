@@ -26,7 +26,7 @@ def start():
     create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, method, properties, body):
+def callback(client_state, channel, method, properties, body):
     # read and parse message
     input_message = json.loads(body.decode("utf8"))
     dataset_id = input_message["dataset_id"]
@@ -53,7 +53,7 @@ def callback(connection, channel, method, properties, body):
     logger.info("All the work done for dataset_id %s", dataset_id)
     commit()
 
-    ack(connection, channel, method.delivery_tag)
+    ack(client_state, channel, method.delivery_tag)
 
 
 def init_worker():

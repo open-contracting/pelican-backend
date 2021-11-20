@@ -25,7 +25,7 @@ def start():
     create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, method, properties, body):
+def callback(client_state, channel, method, properties, body):
     delivery_tag = method.delivery_tag
 
     # parse input message
@@ -36,24 +36,24 @@ def callback(connection, channel, method, properties, body):
     # optimization when resending
     if dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:
         logger.info("Checks have been already calculated for this dataset.")
-        ack(connection, channel, delivery_tag)
+        ack(client_state, channel, delivery_tag)
         return
 
     if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.DATASET:
         # lets do nothing, calculations is already in progress
         logger.info("Other worker probably already started with the job. Doing nothing.")
-        ack(connection, channel, delivery_tag)
+        ack(client_state, channel, delivery_tag)
         return
 
     if dataset["phase"] == phase.TIME_VARIANCE or dataset["phase"] == phase.CHECKED:
         logger.info("Checks have been already calculated for this dataset.")
-        ack(connection, channel, delivery_tag)
+        ack(client_state, channel, delivery_tag)
         return
 
     if dataset["state"] == state.IN_PROGRESS and dataset["phase"] == phase.CONTRACTING_PROCESS:
         # contracting process is not done yet
         logger.info("Not all messages have been processed by contracting process.")
-        ack(connection, channel, delivery_tag)
+        ack(client_state, channel, delivery_tag)
         return
 
     processed_count = get_processed_items_count(dataset_id)
@@ -69,7 +69,7 @@ def callback(connection, channel, method, properties, body):
         )
 
         logger.info("Not all messages have been processed by contracting process.")
-        ack(connection, channel, delivery_tag)
+        ack(client_state, channel, delivery_tag)
         return
 
     if (
@@ -99,7 +99,7 @@ def callback(connection, channel, method, properties, body):
 
         # send message for a next phase
         message = {"dataset_id": dataset_id}
-        publish(connection, channel, json.dumps(message), routing_key)
+        publish(client_state, channel, message, routing_key)
 
     else:
         logger.error(
@@ -108,9 +108,9 @@ def callback(connection, channel, method, properties, body):
             dataset["state"],
             dataset["phase"],
         )
-        nack(connection, channel, delivery_tag, requeue=False)
+        nack(client_state, channel, delivery_tag, requeue=False)
 
-    ack(connection, channel, delivery_tag)
+    ack(client_state, channel, delivery_tag)
 
 
 def init_worker():

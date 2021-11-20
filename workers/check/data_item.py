@@ -25,7 +25,7 @@ def start():
     create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, method, properties, body):
+def callback(client_state, channel, method, properties, body):
     cursor = get_cursor()
     try:
         # parse input message
@@ -54,17 +54,17 @@ def callback(connection, channel, method, properties, body):
 
             # send message to next phase
             message = {"dataset_id": dataset_id}
-            publish(connection, channel, json.dumps(message), routing_key)
+            publish(client_state, channel, message, routing_key)
         else:
-            resend(connection, channel, dataset_id)
-        ack(connection, channel, method.delivery_tag)
+            resend(client_state, channel, dataset_id)
+        ack(client_state, channel, method.delivery_tag)
     finally:
         cursor.close()
 
     logger.info("Processing completed.")
 
 
-def resend(connection, channel, dataset_id):
+def resend(client_state, channel, dataset_id):
     logger.info("Resending messages for dataset_id %s started", dataset_id)
 
     # mark dataset as done
@@ -73,7 +73,7 @@ def resend(connection, channel, dataset_id):
     commit()
 
     message = {"dataset_id": dataset_id}
-    publish(connection, channel, json.dumps(message), routing_key)
+    publish(client_state, channel, message, routing_key)
 
     logger.info("Resending messages for dataset_id %s completed", dataset_id)
 

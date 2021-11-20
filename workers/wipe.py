@@ -21,7 +21,7 @@ def start():
     create_client().consume(callback, consume_routing_key)
 
 
-def callback(connection, channel, method, properties, body):
+def callback(client_state, channel, method, properties, body):
     cursor = get_cursor()
     try:
         # read and parse message
@@ -40,7 +40,7 @@ def callback(connection, channel, method, properties, body):
 
         commit()
 
-        ack(connection, channel, method.delivery_tag)
+        ack(client_state, channel, method.delivery_tag)
     finally:
         cursor.close()
 

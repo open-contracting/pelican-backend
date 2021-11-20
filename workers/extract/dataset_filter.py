@@ -42,7 +42,7 @@ def start():
 #     },
 #     "max_items": 5000
 # }
-def callback(connection, channel, method, properties, body):
+def callback(client_state, channel, method, properties, body):
     delivery_tag = method.delivery_tag
     cursor = get_cursor()
     try:
@@ -57,7 +57,7 @@ def callback(connection, channel, method, properties, body):
             or len(input_message["filter_message"]) == 0
         ):
             logger.warning("Input message is malformed, will be dropped.")
-            ack(connection, channel, delivery_tag)
+            ack(client_state, channel, delivery_tag)
             return
 
         dataset_id_original = input_message["dataset_id_original"]
@@ -83,7 +83,7 @@ def callback(connection, channel, method, properties, body):
         )
         if not cursor.fetchone()[0]:
             logger.warning("Dataset with dataset_id %s does not exist or cannot be filtered.", dataset_id_original)
-            ack(connection, channel, delivery_tag)
+            ack(client_state, channel, delivery_tag)
             return
 
         logger.info("Creating row in dataset table for filtered dataset")
@@ -188,7 +188,7 @@ def callback(connection, channel, method, properties, body):
                 batch.append(inserted_id)
                 if batch_size >= max_batch_size or items_inserted == items_count:
                     message = {"item_ids": batch, "dataset_id": dataset_id_filtered}
-                    publish(connection, channel, json.dumps(message), routing_key)
+                    publish(client_state, channel, message, routing_key)
 
                     batch_size = 0
                     batch.clear()
@@ -207,7 +207,7 @@ def callback(connection, channel, method, properties, body):
             dataset_id_filtered,
         )
 
-        ack(connection, channel, delivery_tag)
+        ack(client_state, channel, delivery_tag)
     finally:
         cursor.close()
 
