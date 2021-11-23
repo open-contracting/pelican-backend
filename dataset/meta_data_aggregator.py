@@ -276,7 +276,7 @@ def get_kingfisher_meta_data(collection_id):
             extension["repositoryUrl"] = repository_url
             meta_data["collection_metadata"]["extensions"].append(extension)
 
-        except Exception:
+        except requests.RequestException:
             pass
 
     # published from, published to

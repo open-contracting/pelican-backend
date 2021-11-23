@@ -69,7 +69,7 @@ def get_result(scope):
                 ok_status_num += 1
             else:
                 sample["status"] = "ERROR"
-        except Exception:
+        except requests.RequestException:
             sample["status"] = "ERROR"
 
     result["result"] = ok_status_num == samples_num

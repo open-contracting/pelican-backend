@@ -238,7 +238,7 @@ def update_from_fixer_io():
             if response.status_code != 200:
                 break
 
-        except Exception:
+        except requests.RequestException:
             break
 
         try:
