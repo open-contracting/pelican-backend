@@ -43,16 +43,7 @@ def resource_level_checks(data, item_id, dataset_id):
     # perform resource level checks
     for check_name, check in resource_level_definitions.items():
         get_logger().log(settings.CustomLogLevels.CHECK_TRACE, "Computing {} check.".format(check_name))
-        try:
-            result["checks"][check_name] = check(data)
-        except Exception:
-            get_logger().error(
-                "Something went wrong when computing resource level check: check=%s, item_id=%s, dataset_id=%s",
-                check_name,
-                item_id,
-                dataset_id,
-            )
-            raise
+        result["checks"][check_name] = check(data)
 
     # return result
     return (json.dumps(result), item_id, dataset_id)
@@ -122,19 +113,7 @@ def field_level_checks(data, item_id, dataset_id):
                         if field_result["coverage"]["check_results"] is None:
                             field_result["coverage"]["check_results"] = []
 
-                        try:
-                            check_result = check(item, path_chunks[-1])
-                        except Exception:
-                            get_logger().error(
-                                "Something went wrong when computing field level check: "
-                                "check=%s, path=%s, item_id=%s, dataset_id=%s",
-                                check_name,
-                                path,
-                                item_id,
-                                dataset_id,
-                            )
-                            raise
-
+                        check_result = check(item, path_chunks[-1])
                         field_result["coverage"]["check_results"].append(check_result)
                         field_result["coverage"]["overall_result"] = check_result["result"]
 
@@ -152,19 +131,7 @@ def field_level_checks(data, item_id, dataset_id):
                             if field_result["quality"]["check_results"] is None:
                                 field_result["quality"]["check_results"] = []
 
-                            try:
-                                check_result = check(item, path_chunks[-1])
-                            except Exception:
-                                get_logger().error(
-                                    "Something went wrong when computing field level check: "
-                                    "check=%s, path=%s, item_id=%s, dataset_id=%s",
-                                    check_name,
-                                    path,
-                                    item_id,
-                                    dataset_id,
-                                )
-                                raise
-
+                            check_result = check(item, path_chunks[-1])
                             field_result["quality"]["check_results"].append(check_result)
                             field_result["quality"]["overall_result"] = check_result["result"]
 

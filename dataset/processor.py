@@ -44,16 +44,7 @@ def do_work(dataset_id, logger):
                 if plugin_name not in scope:
                     scope[plugin_name] = {}
 
-                try:
-                    scope[plugin_name] = plugin.add_item(scope[plugin_name], item["data"], item["id"])
-                except Exception:
-                    logger.error(
-                        "Something went wrong when computing dataset level check: check=%s, item_id=%s, dataset_id=%s",
-                        plugin_name,
-                        item["id"],
-                        dataset_id,
-                    )
-                    raise
+                scope[plugin_name] = plugin.add_item(scope[plugin_name], item["data"], item["id"])
 
             processed_count += 1
             id = item["id"]

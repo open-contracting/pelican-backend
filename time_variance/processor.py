@@ -73,59 +73,48 @@ def do_work(dataset_id):
                 if plugin_name not in scope:
                     scope[plugin_name] = get_empty_result_time_variance_scope()
 
-                try:
-                    filtering_result = plugin.filter(
-                        scope[plugin_name], ancestor_item, ancestor_item_id, new_item, new_item_id
-                    )
-                    if filtering_result:
-                        scope[plugin_name]["total_count"] += 1
+                filtering_result = plugin.filter(
+                    scope[plugin_name], ancestor_item, ancestor_item_id, new_item, new_item_id
+                )
+                if filtering_result:
+                    scope[plugin_name]["total_count"] += 1
 
-                        # Time-based checks report two numbers: "pairs found" and "pairs passed" (as a percentage of
-                        # pairs found). This if-statement serves to calculate the "pairs found".
-                        #
-                        # In general, time-based checks require the new item to be present in order to be evaluated,
-                        # which this if-statement guarantees. The `ocid` check is special, because its "pairs passed"
-                        # test is the same as this "pairs found" test. As such, its "pairs passed" result will always
-                        # be 100%. In short: this if-statement is not in error.
-                        if item[2]:
-                            scope[plugin_name]["coverage_count"] += 1
-                            scope[plugin_name], evaluation_result = plugin.evaluate(
-                                scope[plugin_name], ancestor_item, ancestor_item_id, new_item, new_item_id
-                            )
+                    # Time-based checks report two numbers: "pairs found" and "pairs passed" (as a percentage of
+                    # pairs found). This if-statement serves to calculate the "pairs found".
+                    #
+                    # In general, time-based checks require the new item to be present in order to be evaluated,
+                    # which this if-statement guarantees. The `ocid` check is special, because its "pairs passed"
+                    # test is the same as this "pairs found" test. As such, its "pairs passed" result will always
+                    # be 100%. In short: this if-statement is not in error.
+                    if item[2]:
+                        scope[plugin_name]["coverage_count"] += 1
+                        scope[plugin_name], evaluation_result = plugin.evaluate(
+                            scope[plugin_name], ancestor_item, ancestor_item_id, new_item, new_item_id
+                        )
 
-                            if evaluation_result:
-                                scope[plugin_name]["ok_count"] += 1
+                        if evaluation_result:
+                            scope[plugin_name]["ok_count"] += 1
+                        else:
+                            scope[plugin_name]["failed_count"] += 1
+
+                            if len(scope[plugin_name]["examples"]) < examples_count:
+                                scope[plugin_name]["examples"].append(
+                                    {
+                                        "item_id": ancestor_item_id,
+                                        "new_item_id": new_item_id,
+                                        "ocid": ancestor_item["ocid"],
+                                        "new_item_ocid": new_item["ocid"],
+                                    }
+                                )
                             else:
-                                scope[plugin_name]["failed_count"] += 1
-
-                                if len(scope[plugin_name]["examples"]) < examples_count:
-                                    scope[plugin_name]["examples"].append(
-                                        {
-                                            "item_id": ancestor_item_id,
-                                            "new_item_id": new_item_id,
-                                            "ocid": ancestor_item["ocid"],
-                                            "new_item_ocid": new_item["ocid"],
-                                        }
-                                    )
-                                else:
-                                    rand_int = random.randint(0, scope[plugin_name]["failed_count"])
-                                    if rand_int < examples_count:
-                                        scope[plugin_name]["examples"][rand_int] = {
-                                            "item_id": ancestor_item_id,
-                                            "new_item_id": new_item_id,
-                                            "ocid": ancestor_item["ocid"],
-                                            "new_item_ocid": new_item["ocid"],
-                                        }
-
-                except Exception:
-                    logger.error(
-                        "Something went wrong when computing time variance level check: "
-                        "check=%s, item_id=%s, dataset_id=%s",
-                        plugin_name,
-                        ancestor_item_id,
-                        dataset_id,
-                    )
-                    raise
+                                rand_int = random.randint(0, scope[plugin_name]["failed_count"])
+                                if rand_int < examples_count:
+                                    scope[plugin_name]["examples"][rand_int] = {
+                                        "item_id": ancestor_item_id,
+                                        "new_item_id": new_item_id,
+                                        "ocid": ancestor_item["ocid"],
+                                        "new_item_ocid": new_item["ocid"],
+                                    }
 
             processed_count += 1
             id = item[0]
