@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import click
-import simplejson as json
 from yapw.methods import ack
 
 from time_variance import processor
@@ -25,9 +24,7 @@ def start():
     create_client().consume(callback, consume_routing_key)
 
 
-def callback(client_state, channel, method, properties, body):
-    # read and parse message
-    input_message = json.loads(body.decode("utf8"))
+def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
     # mark dataset as beeing processed

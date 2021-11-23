@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import click
-import simplejson as json
 from yapw.methods import ack
 
 from tools.bootstrap import bootstrap
@@ -21,11 +20,9 @@ def start():
     create_client().consume(callback, consume_routing_key)
 
 
-def callback(client_state, channel, method, properties, body):
+def callback(client_state, channel, method, properties, input_message):
     cursor = get_cursor()
     try:
-        # read and parse message
-        input_message = json.loads(body.decode("utf8"))
         dataset_id = input_message["dataset_id"]
 
         # creating reports and examples

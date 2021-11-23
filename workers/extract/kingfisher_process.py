@@ -36,14 +36,12 @@ def start():
     create_client().consume(callback, consume_routing_key)
 
 
-def callback(client_state, channel, method, properties, body):
+def callback(client_state, channel, method, properties, input_message):
     delivery_tag = method.delivery_tag
     if settings.FIXER_IO_API_KEY:
         exchange_rates_db.update_from_fixer_io()
     cursor = get_cursor()
     try:
-        input_message = json.loads(body.decode("utf8"))
-
         if "command" not in input_message:
             name = input_message["name"]
             collection_id = input_message["collection_id"]

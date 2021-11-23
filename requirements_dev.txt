@@ -152,7 +152,7 @@ virtualenv==20.4.6
     # via pre-commit
 wheel==0.37.0
     # via pip-tools
-yapw==0.0.1
+yapw==0.0.5
     # via -r requirements.txt
 zipp==3.6.0
     # via importlib-metadata

@@ -2,7 +2,6 @@ cachetools
 click
 jsonref
 phonenumbers
-pika
 psycopg2
 python-dateutil
 requests

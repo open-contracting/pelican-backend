@@ -42,12 +42,10 @@ def start():
 #     },
 #     "max_items": 5000
 # }
-def callback(client_state, channel, method, properties, body):
+def callback(client_state, channel, method, properties, input_message):
     delivery_tag = method.delivery_tag
     cursor = get_cursor()
     try:
-        input_message = json.loads(body.decode("utf8"))
-
         # checking input_message correctness
         if (
             "dataset_id_original" not in input_message
