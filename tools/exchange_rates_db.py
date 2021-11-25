@@ -8,6 +8,18 @@ from tools import settings
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 
+BASE = "EUR"
+LINK = "http://data.fixer.io/api/{date_historical}?access_key={access_key}&base={base}&symbols={symbols}"
+CURRENCIES = (
+    "AED,AFN,ALL,AMD,ANG,AOA,ARS,AUD,AWG,AZN,BAM,BBD,BDT,BGN,BHD,BIF,BMD,BND,BOB,BRL,BSD,BTC,BTN,BWP,BYR,BYN,BZD,CAD,"
+    "CDF,CHF,CLF,CLP,CNY,COP,CRC,CUC,CUP,CVE,CZK,DJF,DKK,DOP,DZD,EGP,ERN,ETB,EUR,FJD,FKP,GBP,GEL,GGP,GHS,GIP,GMD,GNF,"
+    "GTQ,GYD,HKD,HNL,HRK,HTG,HUF,IDR,ILS,IMP,INR,IQD,IRR,ISK,JEP,JMD,JOD,JPY,KES,KGS,KHR,KMF,KPW,KRW,KWD,KYD,KZT,LAK,"
+    "LBP,LKR,LRD,LSL,LTL,LVL,LYD,MAD,MDL,MGA,MKD,MMK,MNT,MOP,MRO,MUR,MVR,MWK,MXN,MYR,MZN,NAD,NGN,NIO,NOK,NPR,NZD,OMR,"
+    "PAB,PEN,PGK,PHP,PKR,PLN,PYG,QAR,RON,RSD,RUB,RWF,SAR,SBD,SCR,SDG,SEK,SGD,SHP,SLL,SOS,SRD,STD,SVC,SYP,SZL,THB,TJS,"
+    "TMT,TND,TOP,TRY,TTD,TWD,TZS,UAH,UGX,USD,UYU,UZS,VEF,VND,VUV,WST,XAF,XAG,XAU,XCD,XDR,XOF,XPF,YER,ZAR,ZMK,ZMW,ZWL"
+)
+DATE_FORMAT = "%Y-%m-%d"
+
 
 def load():
     cursor = get_cursor()
@@ -26,181 +38,6 @@ def load():
 
 def update_from_fixer_io():
     logger = get_logger()
-
-    BASE = "EUR"
-    LINK = "http://data.fixer.io/api/{date_historical}?access_key={access_key}&base={base}&symbols={symbols}"
-    CURRENCIES = {
-        "AED",
-        "AFN",
-        "ALL",
-        "AMD",
-        "ANG",
-        "AOA",
-        "ARS",
-        "AUD",
-        "AWG",
-        "AZN",
-        "BAM",
-        "BBD",
-        "BDT",
-        "BGN",
-        "BHD",
-        "BIF",
-        "BMD",
-        "BND",
-        "BOB",
-        "BRL",
-        "BSD",
-        "BTC",
-        "BTN",
-        "BWP",
-        "BYR",
-        "BYN",
-        "BZD",
-        "CAD",
-        "CDF",
-        "CHF",
-        "CLF",
-        "CLP",
-        "CNY",
-        "COP",
-        "CRC",
-        "CUC",
-        "CUP",
-        "CVE",
-        "CZK",
-        "DJF",
-        "DKK",
-        "DOP",
-        "DZD",
-        "EGP",
-        "ERN",
-        "ETB",
-        "EUR",
-        "FJD",
-        "FKP",
-        "GBP",
-        "GEL",
-        "GGP",
-        "GHS",
-        "GIP",
-        "GMD",
-        "GNF",
-        "GTQ",
-        "GYD",
-        "HKD",
-        "HNL",
-        "HRK",
-        "HTG",
-        "HUF",
-        "IDR",
-        "ILS",
-        "IMP",
-        "INR",
-        "IQD",
-        "IRR",
-        "ISK",
-        "JEP",
-        "JMD",
-        "JOD",
-        "JPY",
-        "KES",
-        "KGS",
-        "KHR",
-        "KMF",
-        "KPW",
-        "KRW",
-        "KWD",
-        "KYD",
-        "KZT",
-        "LAK",
-        "LBP",
-        "LKR",
-        "LRD",
-        "LSL",
-        "LTL",
-        "LVL",
-        "LYD",
-        "MAD",
-        "MDL",
-        "MGA",
-        "MKD",
-        "MMK",
-        "MNT",
-        "MOP",
-        "MRO",
-        "MUR",
-        "MVR",
-        "MWK",
-        "MXN",
-        "MYR",
-        "MZN",
-        "NAD",
-        "NGN",
-        "NIO",
-        "NOK",
-        "NPR",
-        "NZD",
-        "OMR",
-        "PAB",
-        "PEN",
-        "PGK",
-        "PHP",
-        "PKR",
-        "PLN",
-        "PYG",
-        "QAR",
-        "RON",
-        "RSD",
-        "RUB",
-        "RWF",
-        "SAR",
-        "SBD",
-        "SCR",
-        "SDG",
-        "SEK",
-        "SGD",
-        "SHP",
-        "SLL",
-        "SOS",
-        "SRD",
-        "STD",
-        "SVC",
-        "SYP",
-        "SZL",
-        "THB",
-        "TJS",
-        "TMT",
-        "TND",
-        "TOP",
-        "TRY",
-        "TTD",
-        "TWD",
-        "TZS",
-        "UAH",
-        "UGX",
-        "USD",
-        "UYU",
-        "UZS",
-        "VEF",
-        "VND",
-        "VUV",
-        "WST",
-        "XAF",
-        "XAG",
-        "XAU",
-        "XCD",
-        "XDR",
-        "XOF",
-        "XPF",
-        "YER",
-        "ZAR",
-        "ZMK",
-        "ZMW",
-        "ZWL",
-    }
-    CURRENCIES_STR = ",".join(CURRENCIES)
-    DATE_FORMAT = "%Y-%m-%d"
 
     logger.info("Starting currency exchange rates update.")
     cursor = get_cursor()
@@ -231,20 +68,19 @@ def update_from_fixer_io():
                     date_historical=date_str,
                     access_key=settings.FIXER_IO_API_KEY,
                     base=BASE,
-                    symbols=CURRENCIES_STR,
+                    symbols=CURRENCIES,
                 ),
                 timeout=10,
             )
-            if response.status_code != 200:
-                break
-
-        except requests.RequestException:
+            response.raise_for_status()
+        except requests.RequestException as e:
+            logger.error("Couldn't connect to fixer.io: %s", e)
             break
 
         try:
             data = response.json()
             if not data["success"] or "rates" not in data:
-                logger.warning("Failed to successfully fetch exchange rates for %s.", date_str)
+                logger.error("Failed to successfully fetch exchange rates for %s.", date_str)
                 break
 
             cursor.execute(
@@ -266,7 +102,8 @@ def update_from_fixer_io():
                 },
             )
 
-        except psycopg2.Error:
+        except psycopg2.Error as e:
+            logger.error("Couldn't insert exchange rate: %s", e)
             rollback()
             break
 
