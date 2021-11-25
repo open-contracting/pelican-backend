@@ -1,8 +1,5 @@
 import logging
 
-import sentry_sdk
-from sentry_sdk.integrations.logging import LoggingIntegration
-
 from tools import settings
 
 global initialized
@@ -34,17 +31,6 @@ def init_logger(logger_name):
     ch.setLevel(settings.LOG_LEVEL)
     ch.setFormatter(formatter)
     logger.addHandler(ch)
-
-    if settings.SENTRY_DSN:
-        sentry_logging = LoggingIntegration(
-            level=logging.INFO,  # Capture info and above as breadcrumbs
-            event_level=logging.ERROR,  # Send errors as events
-        )
-
-        sentry_sdk.init(
-            dsn=settings.SENTRY_DSN,
-            integrations=[sentry_logging],
-        )
 
     global initialized
     initialized = True

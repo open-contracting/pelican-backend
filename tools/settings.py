@@ -1,6 +1,8 @@
 import logging
 import os
 
+import sentry_sdk
+
 
 class CustomLogLevels:
     MESSAGE_TRACE = 9
@@ -66,5 +68,8 @@ RABBIT_EXCHANGE_NAME = os.getenv("RABBIT_EXCHANGE_NAME", "pelican_development")
 # Do not set in development, to skip updates to exchange rates, and to save quota.
 FIXER_IO_API_KEY = os.getenv("FIXER_IO_API_KEY")
 
-SENTRY_DSN = os.getenv("SENTRY_DSN")
-SENTRY_SAMPLE_RATE = os.getenv("SENTRY_SAMPLE_RATE", 1.0)
+if "SENTRY_DSN" in os.environ:
+    sentry_sdk.init(
+        dsn=os.getenv("SENTRY_DSN"),
+        traces_sample_rate=0,  # The Sentry plan does not include Performance.
+    )
