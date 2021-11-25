@@ -83,12 +83,6 @@ def update_from_fixer_io():
                 logger.error("Failed to successfully fetch exchange rates for %s.", date_str)
                 break
 
-            args = {
-                "valid_on": date_str,
-                "rates": json.dumps(data["rates"]),
-            }
-
-            logger.debug("Inserting %r", args)
             cursor.execute(
                 """
                 update exchange_rates
@@ -102,7 +96,10 @@ def update_from_fixer_io():
                 (%(valid_on)s, %(rates)s)
                 on conflict do nothing;
                 """,
-                args,
+                {
+                    "valid_on": date_str,
+                    "rates": json.dumps(data["rates"]),
+                },
             )
 
         except psycopg2.Error as e:
