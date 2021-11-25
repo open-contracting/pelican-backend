@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import click
-from yapw.methods.blocking import ack
+from yapw.methods.blocking import ack, publish
 
 from time_variance import processor
 from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
-from tools.rabbit import create_client, publish
+from tools.rabbit import create_client
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "dataset_checker"

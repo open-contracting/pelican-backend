@@ -4,14 +4,14 @@ from math import ceil
 import click
 import psycopg2.extras
 import simplejson as json
-from yapw.methods.blocking import ack
+from yapw.methods.blocking import ack, publish
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from tools import exchange_rates_db, settings
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
-from tools.rabbit import create_client, publish
+from tools.rabbit import create_client
 from tools.state import phase, set_dataset_state, set_item_state, state
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
