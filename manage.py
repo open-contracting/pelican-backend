@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import click
 
+from tools import exchange_rates_db, settings
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
 from tools.logging_helper import get_logger
@@ -11,6 +12,15 @@ from tools.state import phase, state
 @click.group()
 def cli():
     pass
+
+
+@cli.command()
+def update_exchange_rates():
+    """
+    Update the exchange rates.
+    """
+    if settings.FIXER_IO_API_KEY:
+        exchange_rates_db.update_from_fixer_io()
 
 
 @cli.command()

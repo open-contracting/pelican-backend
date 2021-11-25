@@ -30,9 +30,6 @@ def start():
     """
     init_worker()
 
-    if settings.FIXER_IO_API_KEY:
-        exchange_rates_db.update_from_fixer_io()
-
     create_client().consume(callback, consume_routing_key)
 
 

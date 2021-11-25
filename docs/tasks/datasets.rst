@@ -31,3 +31,14 @@ Delete a dataset.
 --include-filtered  Delete any filtered datasets based on this dataset.
 
 The dataset must be in either the ``CHECKED`` or ``DELETED`` phase and the ``OK`` state.
+
+.. _manage-update-exchange-rates:
+
+update-exchange-rates
+---------------------
+
+.. code-block:: bash
+
+   ./manage.py update-exchange-rates
+
+Update the exchange rates.

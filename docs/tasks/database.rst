@@ -34,6 +34,10 @@ Instead, load a file:
 
    psql pelican_backend -c "\copy exchange_rates (valid_on, rates) from 'pelican/static/exchange_rates_dump.csv' delimiter ',' csv header;"
 
+.. note::
+
+   The :ref:`extract-kingfisher-process` worker fetches missing exchange rates when it receives a message. To avoid duplication across processes and/or threads, you can run the :ref:`manage-update-exchange-rates` command periodically.
+
 Dump exchange rates
 -------------------
 
