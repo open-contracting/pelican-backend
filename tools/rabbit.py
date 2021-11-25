@@ -8,7 +8,7 @@ def encode(message, content_type):
     return json.dumps(message).encode()
 
 
-def decode(state, channel, method, properties, body):
+def decode(body, content_type):
     return json.loads(body.decode("utf-8"))
 
 
