@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-from yapw.methods import ack
+from yapw.methods.blocking import ack
 
 import contracting_process.field_level.report_examples as field_level_report_examples
 import contracting_process.resource_level.examples as resource_level_examples

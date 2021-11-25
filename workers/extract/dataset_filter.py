@@ -4,7 +4,7 @@ from math import ceil
 import click
 import simplejson as json
 from psycopg2 import sql
-from yapw.methods import ack
+from yapw.methods.blocking import ack
 
 from tools import settings
 from tools.bootstrap import bootstrap

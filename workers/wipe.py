@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-from yapw.methods import ack
+from yapw.methods.blocking import ack
 
 from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor

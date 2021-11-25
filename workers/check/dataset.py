@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-from yapw.methods import ack, nack
+from yapw.methods.blocking import ack, nack
 
 from dataset import processor
 from tools.bootstrap import bootstrap

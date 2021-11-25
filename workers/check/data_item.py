@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-from yapw.methods import ack
+from yapw.methods.blocking import ack
 
 from contracting_process import processor
 from tools.bootstrap import bootstrap

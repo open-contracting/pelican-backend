@@ -4,7 +4,7 @@ from math import ceil
 import click
 import psycopg2.extras
 import simplejson as json
-from yapw.methods import ack
+from yapw.methods.blocking import ack
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from tools import exchange_rates_db, settings
