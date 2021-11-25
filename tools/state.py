@@ -99,7 +99,7 @@ def get_processed_items_count(dataset_id):
                        SELECT count(*) as cnt FROM progress_monitor_item
                        WHERE
                        dataset_id = %s
-                       AND state IN (%s, %s);
+                       AND state = %s;
                        """,
         (dataset_id, state.OK),
     )
