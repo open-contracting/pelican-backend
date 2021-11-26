@@ -1,7 +1,7 @@
 from tools.checks import get_empty_result_resource
 from tools.getter import get_values
 
-version = "1.0"
+version = 1.0
 
 """
 author: Iaroslav Kolodka

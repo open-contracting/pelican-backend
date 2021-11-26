@@ -1,4 +1,7 @@
-def get_empty_result_resource(version=1.0):
+from typing import Any, Callable, Optional, Tuple, Type
+
+
+def get_empty_result_resource(version: float = 1.0) -> dict:
     return {
         "result": None,
         "meta": None,
@@ -8,7 +11,7 @@ def get_empty_result_resource(version=1.0):
     }
 
 
-def get_empty_result_dataset(version=1.0):
+def get_empty_result_dataset(version: float = 1.0) -> dict:
     return {
         "result": None,
         "value": None,
@@ -17,7 +20,7 @@ def get_empty_result_dataset(version=1.0):
     }
 
 
-def get_empty_result_time_variance(version=1.0):
+def get_empty_result_time_variance(version: float = 1.0) -> dict:
     return {
         "check_result": None,
         "check_value": None,
@@ -28,7 +31,7 @@ def get_empty_result_time_variance(version=1.0):
     }
 
 
-def get_empty_result_time_variance_scope():
+def get_empty_result_time_variance_scope() -> dict:
     return {
         "total_count": 0,
         "coverage_count": 0,
@@ -38,12 +41,12 @@ def get_empty_result_time_variance_scope():
     }
 
 
-def field_coverage_check(name, test, version=1.0):
+def field_coverage_check(name: str, test, version: float = 1.0):
     """
-    :param str name: the machine name of the check
+    :param name: the machine name of the check
     :param test: a function that accepts a value and returns a tuple of a boolean (whether the test passed) and a
                  string (the reason for any failed test)
-    :param float version: the version number of the check
+    :param version: the version number of the check
     """
 
     def method(item, key):
@@ -56,13 +59,19 @@ def field_coverage_check(name, test, version=1.0):
     return method
 
 
-def field_quality_check(name, test, version=1.0, require_type=None, return_value=None):
+def field_quality_check(
+    name: str,
+    test: Callable[[Any], Tuple[bool, str]],
+    version: float = 1.0,
+    require_type: Optional[Type] = None,
+    return_value: Callable[[Any], Any] = None,
+):
     """
-    :param str name: the machine name of the check
+    :param name: the machine name of the check
     :param test: a function that accepts a value and returns a tuple of a boolean (whether the test passed) and a
                  string (the reason for any failed test)
-    :param float version: the version number of the check
-    :param bool require_type: the type that the value must have for the test to run without error
+    :param version: the version number of the check
+    :param require_type: the type that the value must have for the test to run without error
     :param return_value: a function that accepts a value and returns the value to set in the returned object
     """
 
@@ -84,7 +93,7 @@ def field_quality_check(name, test, version=1.0, require_type=None, return_value
     return method
 
 
-def _empty_field_result(name, version=1.0):
+def _empty_field_result(name: str, version: float = 1.0):
     return {
         "name": name,
         "result": None,
@@ -94,7 +103,7 @@ def _empty_field_result(name, version=1.0):
     }
 
 
-def _prepare_field_result(obj, passed, value, reason, return_value=None):
+def _prepare_field_result(obj: dict, passed: bool, value: Any, reason: str, return_value: Callable[[Any], Any] = None):
     obj["result"] = passed
     if not passed:
         if return_value:
