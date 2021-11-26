@@ -1,7 +1,7 @@
 from contracting_process.resource_level.consistent.contracts_value import calculate
 from tools.currency_converter import bootstrap
 
-bootstrap("contracts_value_test")
+bootstrap()
 
 
 item_no_contracts = {"date": "2019-01-10T22:00:00+01:00", "contracts": []}

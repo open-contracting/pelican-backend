@@ -1,7 +1,7 @@
 from dataset.meta_data_aggregator import add_item, get_result
 from tools.currency_converter import bootstrap
 
-bootstrap("meta_data_aggregator_test")
+bootstrap()
 
 
 items_test_compiled_releases = [

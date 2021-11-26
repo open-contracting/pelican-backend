@@ -1,7 +1,7 @@
 from dataset.distribution import value
 from tools.currency_converter import bootstrap
 
-bootstrap("contracts_value_test")
+bootstrap()
 contracts_value = value.ModuleType("contracts.value")
 
 item_unset1 = {"ocid": "1"}

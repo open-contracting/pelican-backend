@@ -1,7 +1,7 @@
 from dataset.distribution import value
 from tools.currency_converter import bootstrap
 
-bootstrap("awards_value_test")
+bootstrap()
 awards_value = value.ModuleType("awards.value")
 
 item_unset1 = {"ocid": "1"}

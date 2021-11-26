@@ -1,7 +1,7 @@
 from contracting_process.resource_level.consistent.tender_value import calculate
 from tools.currency_converter import bootstrap
 
-bootstrap("tender_value_test")
+bootstrap()
 
 
 item_test_undefined1 = {"tender": {}, "planning": {"budget": {}}}

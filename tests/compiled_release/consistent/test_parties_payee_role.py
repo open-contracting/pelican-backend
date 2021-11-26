@@ -12,7 +12,7 @@ The file contain tests for a 'function contracting_process.resource_level.consis
 
 """
 
-version = "1.0"
+version = 1.0
 
 item_with_no_correct_parties = {
     "parties": [

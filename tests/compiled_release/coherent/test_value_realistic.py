@@ -2,7 +2,7 @@ from contracting_process.resource_level.coherent.value_realistic import calculat
 from tools.currency_converter import bootstrap
 
 version = 1.0
-bootstrap("value_realistic_test")
+bootstrap()
 
 item_grandparent_unset = {"date": "2019-01-10T22:00:00+01:00"}
 item_parent_unset = {"tender": {}, "date": "2019-01-10T22:00:00+01:00"}
