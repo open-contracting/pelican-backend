@@ -1,6 +1,5 @@
-from currency_converter import bootstrap
-
 from dataset.distribution import value
+from tools.currency_converter import bootstrap
 
 bootstrap("tender_value_test")
 tender_value = value.ModuleType("tender.value")

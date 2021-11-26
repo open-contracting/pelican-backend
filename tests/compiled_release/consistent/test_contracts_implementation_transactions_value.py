@@ -1,6 +1,5 @@
-from currency_converter import bootstrap
-
 from contracting_process.resource_level.consistent.contracts_implementation_transactions_value import calculate
+from tools.currency_converter import bootstrap
 
 bootstrap("contracts_implementation_transactions_value_test")
 
