@@ -1,3 +1,5 @@
+from typing import Any
+
 import psycopg2.extras
 import simplejson as json
 from yapw import clients
@@ -12,11 +14,11 @@ class Client(clients.Threaded, clients.Durable, clients.Blocking, clients.Base):
     pass
 
 
-def encode(message, content_type):
+def encode(message: Any, content_type: str) -> bytes:
     return json.dumps(message).encode()
 
 
-def decode(body, content_type):
+def decode(body: bytes, content_type: str) -> Any:
     return json.loads(body.decode("utf-8"))
 
 

@@ -1,6 +1,7 @@
 import json
 import logging
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from typing import Dict, List, Tuple
 
 import psycopg2
 import requests
@@ -16,13 +17,17 @@ logger = logging.getLogger("pelican.tools.exchange_rates_db")
 FIXER_IO_URL = "https://data.fixer.io/api/{date}?access_key={access_key}&base=EUR&symbols={symbols}"
 
 
-def load():
+class EmptyExchangeRatesTable(Exception):
+    pass
+
+
+def load() -> List[Tuple[datetime, Dict[str, float]]]:
     with get_cursor() as cursor:
         cursor.execute("SELECT valid_on, rates FROM exchange_rates")
         return cursor.fetchall()
 
 
-def update_from_fixer_io():
+def update_from_fixer_io() -> None:
     logger.info("Starting currency exchange rates update.")
 
     with get_cursor() as cursor:
@@ -102,7 +107,3 @@ def update_from_fixer_io():
             target_date += timedelta(days=1)
 
         logger.info("Exchange rates update finished.")
-
-
-class EmptyExchangeRatesTable(Exception):
-    pass

@@ -1,9 +1,10 @@
 import random
 import re
-from datetime import datetime
+from datetime import date, datetime
+from typing import Any, List, Optional
 
 
-def parse_datetime(str_datetime):
+def parse_datetime(str_datetime: Optional[str]) -> Optional[datetime]:
     """
     the following are valid dates according to ocds:
 
@@ -45,12 +46,12 @@ def parse_datetime(str_datetime):
         pass
 
 
-def parse_date(str_date):
+def parse_date(str_date: Optional[str]) -> Optional[date]:
     """
     Parse string to valid date.
     """
     if str_date is None or not isinstance(str_date, str):
-        return
+        return None
 
     try:
         return datetime.strptime(str_date[:10], "%Y-%m-%d").date()
@@ -59,15 +60,15 @@ def parse_date(str_date):
 
 
 class ReservoirSampler:
-    def __init__(self, samples_cap):
+    def __init__(self, samples_cap: int):
         if samples_cap < 1:
             raise ValueError("samples_cap must be a positive integer")
 
         self._samples_cap = samples_cap
-        self._samples = []
+        self._samples = []  # type: list
         self._index = 0
 
-    def process(self, value):
+    def process(self, value: Any) -> None:
         if self._index < self._samples_cap:
             self._samples.append(value)
         else:
@@ -77,5 +78,5 @@ class ReservoirSampler:
 
         self._index += 1
 
-    def retrieve_samples(self):
+    def retrieve_samples(self) -> List[Any]:
         return self._samples

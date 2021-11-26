@@ -1,9 +1,10 @@
 import re
+from typing import Any, List, Optional
 
 regex = r"^([^[]*)\[([\d]*)\]$"
 
 
-def deep_has(value, path):
+def deep_has(value: Any, path: str) -> bool:
     """
     Returns whether a nested value exists in nested dicts, safely.
 
@@ -19,7 +20,7 @@ def deep_has(value, path):
     return True
 
 
-def deep_get(value, path, default=None):
+def deep_get(value: Any, path: str, default: Any = None) -> Any:
     """
     Gets a nested value from nested dicts, safely. If a default value is provided and the nested value is not of the
     same type as the default value, returns the default value.
@@ -40,7 +41,9 @@ def deep_get(value, path, default=None):
     return value
 
 
-def get_values(item, str_path, value_only=False):
+def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> List:
+    index: Optional[int]
+
     # return whole item from root
     if not str_path or str_path == "":
         if value_only:

@@ -1,5 +1,6 @@
 from datetime import date
 
+# Exchange rates for 2019.
 DATA = [
     (
         date(2019, 1, 31),
