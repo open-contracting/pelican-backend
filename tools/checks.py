@@ -1,7 +1,7 @@
-from typing import Any, Callable, Optional, Tuple, Type
+from typing import Any, Callable, Dict, Optional, Tuple, Type
 
 
-def get_empty_result_resource(version: float = 1.0) -> dict:
+def get_empty_result_resource(version: float = 1.0) -> Dict[str, Any]:
     return {
         "result": None,
         "meta": None,
@@ -11,7 +11,7 @@ def get_empty_result_resource(version: float = 1.0) -> dict:
     }
 
 
-def get_empty_result_dataset(version: float = 1.0) -> dict:
+def get_empty_result_dataset(version: float = 1.0) -> Dict[str, Any]:
     return {
         "result": None,
         "value": None,
@@ -20,7 +20,7 @@ def get_empty_result_dataset(version: float = 1.0) -> dict:
     }
 
 
-def get_empty_result_time_variance(version: float = 1.0) -> dict:
+def get_empty_result_time_variance(version: float = 1.0) -> Dict[str, Any]:
     return {
         "check_result": None,
         "check_value": None,
@@ -31,7 +31,7 @@ def get_empty_result_time_variance(version: float = 1.0) -> dict:
     }
 
 
-def get_empty_result_time_variance_scope() -> dict:
+def get_empty_result_time_variance_scope() -> Dict[str, Any]:
     return {
         "total_count": 0,
         "coverage_count": 0,
@@ -41,11 +41,13 @@ def get_empty_result_time_variance_scope() -> dict:
     }
 
 
-def field_coverage_check(name: str, test, version: float = 1.0):
+def field_coverage_check(
+    name: str, test: Callable[[Dict[str, Any], str], Tuple[bool, str]], version: float = 1.0
+) -> Callable[[Dict[str, Any], str], Dict[str, Any]]:
     """
     :param name: the machine name of the check
-    :param test: a function that accepts a value and returns a tuple of a boolean (whether the test passed) and a
-                 string (the reason for any failed test)
+    :param test: a function that accepts a dict and a key and returns a tuple of a boolean (whether the test passed)
+                 and a string (the reason for any failed test)
     :param version: the version number of the check
     """
 
@@ -65,7 +67,7 @@ def field_quality_check(
     version: float = 1.0,
     require_type: Optional[Type] = None,
     return_value: Callable[[Any], Any] = None,
-):
+) -> Callable[[Dict[str, Any], str], Dict[str, Any]]:
     """
     :param name: the machine name of the check
     :param test: a function that accepts a value and returns a tuple of a boolean (whether the test passed) and a
@@ -103,7 +105,9 @@ def _empty_field_result(name: str, version: float = 1.0):
     }
 
 
-def _prepare_field_result(obj: dict, passed: bool, value: Any, reason: str, return_value: Callable[[Any], Any] = None):
+def _prepare_field_result(
+    obj: Dict[str, Any], passed: bool, value: Any, reason: str, return_value: Callable[[Any], Any] = None
+) -> Dict[str, Any]:
     obj["result"] = passed
     if not passed:
         if return_value:
