@@ -6,7 +6,7 @@ import psycopg2
 import requests
 
 from tools import settings
-from tools.db import commit, get_cursor, rollback
+from tools.services import commit, get_cursor, rollback
 
 logger = logging.getLogger("pelican.tools.exchange_rates_db")
 

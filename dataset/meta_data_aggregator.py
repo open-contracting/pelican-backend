@@ -7,9 +7,9 @@ from dateutil.relativedelta import relativedelta
 
 from tools import settings
 from tools.currency_converter import convert
-from tools.db import get_cursor
 from tools.getter import get_values
 from tools.helpers import parse_datetime
+from tools.services import get_cursor
 
 EMPTY_SCOPE = {
     "compiled_releases": {"total_unique_ocids": None, "_ocid_set": set()},

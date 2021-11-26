@@ -5,8 +5,7 @@ import click
 from yapw.methods.blocking import ack, publish
 
 from time_variance import processor
-from tools.db import commit
-from tools.rabbit import create_client
+from tools.services import commit, create_client
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "dataset_checker"

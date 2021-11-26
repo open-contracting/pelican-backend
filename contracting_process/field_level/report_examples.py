@@ -3,8 +3,8 @@ import logging
 import simplejson as json
 
 from contracting_process.field_level.definitions import coverage_checks, definitions
-from tools.db import commit, get_cursor
 from tools.helpers import ReservoirSampler
+from tools.services import commit, get_cursor
 
 logger = logging.getLogger("pelican.contracting_process.field_level.report_examples")
 

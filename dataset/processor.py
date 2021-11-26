@@ -3,7 +3,7 @@ import simplejson as json
 from dataset import meta_data_aggregator
 from dataset.definitions import definitions
 from tools import settings
-from tools.db import get_cursor
+from tools.services import get_cursor
 
 page_size = 1000
 

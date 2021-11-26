@@ -1,6 +1,6 @@
 from typing import Optional
 
-from tools.db import get_cursor
+from tools.services import get_cursor
 
 
 class state:

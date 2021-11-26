@@ -4,8 +4,7 @@ import logging
 import click
 from yapw.methods.blocking import ack
 
-from tools.db import commit, get_cursor
-from tools.rabbit import create_client
+from tools.services import commit, create_client, get_cursor
 
 consume_routing_key = "wiper_init"
 logger = logging.getLogger("pelican.workers.wipe")

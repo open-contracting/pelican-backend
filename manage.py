@@ -4,8 +4,7 @@ import logging
 import click
 
 from tools import exchange_rates_db, settings
-from tools.db import commit, get_cursor
-from tools.rabbit import create_client
+from tools.services import commit, create_client, get_cursor
 from tools.state import phase, state
 
 

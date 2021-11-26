@@ -6,7 +6,7 @@ import simplejson as json
 from time_variance.definitions import definitions
 from tools import settings
 from tools.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
-from tools.db import get_cursor
+from tools.services import get_cursor
 
 logger = logging.getLogger("pelican.time_variance.processor")
 

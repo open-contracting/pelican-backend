@@ -9,8 +9,7 @@ from yapw.methods.blocking import ack, publish
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from tools import exchange_rates_db, settings
-from tools.db import commit, get_cursor
-from tools.rabbit import create_client
+from tools.services import commit, create_client, get_cursor
 from tools.state import phase, set_dataset_state, set_item_state, state
 
 consume_routing_key = "ocds_kingfisher_extractor_init"

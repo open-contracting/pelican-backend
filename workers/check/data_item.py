@@ -6,8 +6,7 @@ from yapw.methods.blocking import ack, publish
 
 from contracting_process import processor
 from tools.currency_converter import bootstrap
-from tools.db import commit, get_cursor
-from tools.rabbit import create_client
+from tools.services import commit, create_client, get_cursor
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "extractor"

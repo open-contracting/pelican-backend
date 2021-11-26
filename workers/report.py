@@ -8,8 +8,7 @@ import contracting_process.field_level.report_examples as field_level_report_exa
 import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
 from dataset import meta_data_aggregator
-from tools.db import commit
-from tools.rabbit import create_client
+from tools.services import commit, create_client
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "time_variance_checker"

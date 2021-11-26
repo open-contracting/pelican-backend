@@ -7,8 +7,8 @@ from contracting_process.field_level.definitions import coverage_checks
 from contracting_process.field_level.definitions import definitions as field_level_definitions
 from contracting_process.resource_level.definitions import definitions as resource_level_definitions
 from tools import settings
-from tools.db import get_cursor
 from tools.getter import get_values
+from tools.services import get_cursor
 from tools.state import set_item_state, state
 
 logger = logging.getLogger("pelican.contracting_process.processor")
