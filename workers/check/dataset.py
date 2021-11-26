@@ -7,7 +7,14 @@ from tools.bootstrap import bootstrap
 from tools.db import commit
 from tools.logging_helper import get_logger
 from tools.rabbit import create_client
-from tools.state import get_dataset, get_processed_items_count, get_total_items_count, phase, set_dataset_state, state
+from tools.state import (
+    get_dataset_progress,
+    get_processed_items_count,
+    get_total_items_count,
+    phase,
+    set_dataset_state,
+    state,
+)
 
 consume_routing_key = "contracting_process_checker"
 
@@ -28,7 +35,7 @@ def callback(client_state, channel, method, properties, input_message):
     delivery_tag = method.delivery_tag
 
     dataset_id = input_message["dataset_id"]
-    dataset = get_dataset(dataset_id)
+    dataset = get_dataset_progress(dataset_id)
 
     # optimization when resending
     if dataset["state"] == state.OK and dataset["phase"] == phase.DATASET:

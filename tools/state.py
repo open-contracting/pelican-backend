@@ -1,6 +1,6 @@
-from tools import settings
+from typing import Optional
+
 from tools.db import get_cursor
-from tools.logging_helper import get_logger
 
 
 class state:
@@ -16,140 +16,84 @@ class phase:
     DELETED = "DELETED"
 
 
-def set_dataset_state(dataset_id, state, phase, size=None):
-    """Upserts dataset to provided state and phase.
-
-    Args:
-        dataset_id: id of dataset to be updated
-        state: state to be set
-        phase: phase to be set
-        size: amount of contract process items to be processed
+def set_dataset_state(dataset_id: int, state: str, phase: str, size: Optional[int] = None) -> None:
     """
-    cursor = get_cursor()
+    Upsert a dataset's progress to the given state and phase.
+
+    :param dataset_id: the dataset's ID
+    :param state: the state to set
+    :param phase: the phase to be set
+    :param size: number of data items to process
+    """
     if size:
-        cursor.execute(
-            """
-                       INSERT INTO progress_monitor_dataset
-                       (dataset_id, state, phase, size)
-                       VALUES
-                       (%s, %s, %s, %s)
-                       ON CONFLICT ON CONSTRAINT unique_dataset_id
-                       DO UPDATE SET state = %s, phase = %s, size = %s, modified = now();
-                       """,
-            (dataset_id, state, phase, size, state, phase, size),
-        )
-        get_logger().log(
-            settings.CustomLogLevels.STATE_TRACE,
-            "Dataset state set to: state = {}, phase = {}, size = {}.".format(state, phase, size),
-        )
-
+        sql = """
+            INSERT INTO progress_monitor_dataset (dataset_id, state, phase, size)
+            VALUES (%(dataset_id)s, %(state)s, %(phase)s, %(size)s)
+            ON CONFLICT ON CONSTRAINT unique_dataset_id
+            DO UPDATE SET state = %(state)s, phase = %(phase)s, size = %(size)s, modified = NOW()
+        """
     else:
+        sql = """
+            INSERT INTO progress_monitor_dataset (dataset_id, state, phase, size)
+            VALUES (%(dataset_id)s, %(state)s, %(phase)s, %(size)s)
+            ON CONFLICT ON CONSTRAINT unique_dataset_id
+            DO UPDATE SET state = %(state)s, phase = %(phase)s, modified = NOW()
+        """
+    with get_cursor() as cursor:
+        cursor.execute(sql, {"dataset_id": dataset_id, "state": state, "phase": phase, "size": size})
+
+
+def set_item_state(dataset_id: int, item_id: int, state: str) -> None:
+    """
+    Upsert a data item's progress to the given state.
+
+    :param dataset_id: the dataset's ID
+    :param item_id: the data item's iD
+    :param state: the state to set
+    """
+    with get_cursor() as cursor:
         cursor.execute(
             """
-                       INSERT INTO progress_monitor_dataset
-                       (dataset_id, state, phase, size)
-                       VALUES
-                       (%s, %s, %s, %s)
-                       ON CONFLICT ON CONSTRAINT unique_dataset_id
-                       DO UPDATE SET state = %s, phase = %s, modified = now();
-                       """,
-            (dataset_id, state, phase, size, state, phase),
+                INSERT INTO progress_monitor_item (dataset_id, item_id, state)
+                VALUES (%(dataset_id)s, %(item_id)s, %(state)s)
+                ON CONFLICT ON CONSTRAINT unique_dataset_id_item_id
+                DO UPDATE SET state = %(state)s, modified = NOW()
+            """,
+            {"dataset_id": dataset_id, "item_id": item_id, "state": state},
         )
-        get_logger().log(
-            settings.CustomLogLevels.STATE_TRACE, "Dataset state set to: state = {}, phase = {}.".format(state, phase)
+
+
+def get_processed_items_count(dataset_id: int) -> int:
+    """
+    Return the number of items processed.
+
+    :param dataset_id: the dataset's ID
+    """
+    with get_cursor() as cursor:
+        cursor.execute(
+            "SELECT COUNT(*) as cnt FROM progress_monitor_item WHERE dataset_id = %(id)s AND state = %(state)s",
+            {"id": dataset_id, "state": state.OK},
         )
-    cursor.close()
+        return cursor.fetchone()["cnt"]
 
 
-def set_item_state(dataset_id, item_id, state):
-    """Upserts dataset item to provided state.
-
-    Args:
-        dataset_id: id of dataset to be updated
-        item_id: id of item to be updated
-        state: state to be set
+def get_total_items_count(dataset_id: int) -> int:
     """
-    cursor = get_cursor()
-    cursor.execute(
-        """
-                       INSERT INTO progress_monitor_item
-                       (dataset_id, item_id, state)
-                       VALUES
-                       (%s, %s, %s)
-                       ON CONFLICT ON CONSTRAINT unique_dataset_id_item_id
-                       DO UPDATE SET state = %s, modified = now();
-                       """,
-        (dataset_id, item_id, state, state),
-    )
-    cursor.close()
-    get_logger().log(settings.CustomLogLevels.STATE_TRACE, "Item state set to: state = {}.".format(state))
+    Return the number of items to process.
 
-
-def get_processed_items_count(dataset_id):
-    """Checks how many items were processed already.
-
-    Args:
-        dataset_id: id of dataset to be checked
-    Returns:
-        get number of processed items
+    :param dataset_id: the dataset's ID
     """
-    cursor = get_cursor()
-    cursor.execute(
-        """
-                       SELECT count(*) as cnt FROM progress_monitor_item
-                       WHERE
-                       dataset_id = %s
-                       AND state = %s;
-                       """,
-        (dataset_id, state.OK),
-    )
-
-    result = cursor.fetchone()
-    cursor.close()
-    return result["cnt"]
+    with get_cursor() as cursor:
+        cursor.execute("SELECT size FROM progress_monitor_dataset WHERE dataset_id = %(id)s", {"id": dataset_id})
+        return cursor.fetchone()["size"]
 
 
-def get_total_items_count(dataset_id):
-    """Checks how many items were processed already.
-
-    Args:
-        dataset_id: id of dataset to be checked
-    Returns:
-        get number of processed items
+def get_dataset_progress(dataset_id: int) -> tuple:
     """
-    cursor = get_cursor()
-    cursor.execute(
-        """
-                       SELECT size as size FROM progress_monitor_dataset
-                       WHERE
-                       dataset_id = %s;
-                    """,
-        (dataset_id,),
-    )
+    Return the dataset's progress.
 
-    result = cursor.fetchone()
-    cursor.close()
-    return result["size"]
-
-
-def get_dataset(dataset_id):
-    """Returns dataset identified by its id
-
-    Args:
-        dataset_id: id of dataset to be retrieved
-    Returns:
-        dataset
+    :param dataset_id: the dataset's ID
     """
-    cursor = get_cursor()
-    cursor.execute(
-        """
-                       SELECT * FROM progress_monitor_dataset
-                       WHERE
-                       dataset_id = %s;
-                    """,
-        (dataset_id,),
-    )
-
-    result = cursor.fetchone()
-    cursor.close()
-    return result
+    with get_cursor() as cursor:
+        cursor.execute("SELECT * FROM progress_monitor_dataset WHERE dataset_id = %(id)s", {"id": dataset_id})
+        return cursor.fetchone()
