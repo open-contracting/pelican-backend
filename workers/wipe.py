@@ -26,12 +26,12 @@ def callback(client_state, channel, method, properties, input_message):
         cursor.execute(
             """
                 DELETE FROM field_level_check WHERE dataset_id = %(id)s;
-                DELETE FROM field_level_check_examples WHERE dataset_id IN %(id)s;
+                DELETE FROM field_level_check_examples WHERE dataset_id = %(id)s;
                 DELETE FROM resource_level_check WHERE dataset_id = %(id)s;
-                DELETE FROM resource_level_check_examples WHERE dataset_id IN %(id)s;
-                DELETE FROM report WHERE dataset_id IN %(id)s;
-                DELETE FROM dataset_level_check WHERE dataset_id IN %(id)s;
-                DELETE FROM time_variance_level_check WHERE dataset_id IN %(id)s;
+                DELETE FROM resource_level_check_examples WHERE dataset_id = %(id)s;
+                DELETE FROM report WHERE dataset_id = %(id)s;
+                DELETE FROM dataset_level_check WHERE dataset_id = %(id)s;
+                DELETE FROM time_variance_level_check WHERE dataset_id = %(id)s;
                 DELETE FROM progress_monitor_item WHERE dataset_id = %(id)s;
                 DELETE FROM progress_monitor_dataset WHERE dataset_id = %(id)s;
                 DELETE FROM data_item WHERE dataset_id = %(id)s;
