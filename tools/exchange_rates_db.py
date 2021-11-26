@@ -8,7 +8,6 @@ from tools import settings
 from tools.db import commit, get_cursor, rollback
 from tools.logging_helper import get_logger
 
-BASE = "EUR"
 LINK = "http://data.fixer.io/api/{date_historical}?access_key={access_key}&base={base}&symbols={symbols}"
 CURRENCIES = (
     "AED,AFN,ALL,AMD,ANG,AOA,ARS,AUD,AWG,AZN,BAM,BBD,BDT,BGN,BHD,BIF,BMD,BND,BOB,BRL,BSD,BTC,BTN,BWP,BYR,BYN,BZD,CAD,"
@@ -18,102 +17,78 @@ CURRENCIES = (
     "PAB,PEN,PGK,PHP,PKR,PLN,PYG,QAR,RON,RSD,RUB,RWF,SAR,SBD,SCR,SDG,SEK,SGD,SHP,SLL,SOS,SRD,STD,SVC,SYP,SZL,THB,TJS,"
     "TMT,TND,TOP,TRY,TTD,TWD,TZS,UAH,UGX,USD,UYU,UZS,VEF,VND,VUV,WST,XAF,XAG,XAU,XCD,XDR,XOF,XPF,YER,ZAR,ZMK,ZMW,ZWL"
 )
-DATE_FORMAT = "%Y-%m-%d"
 
 
 def load():
-    cursor = get_cursor()
-
-    cursor.execute(
-        """
-        select valid_on, rates
-        from exchange_rates;
-        """
-    )
-
-    all_rates = cursor.fetchall()
-    cursor.close()
-    return all_rates
+    with get_cursor() as cursor:
+        cursor.execute("SELECT valid_on, rates FROM exchange_rates")
+        return cursor.fetchall()
 
 
 def update_from_fixer_io():
     logger = get_logger()
-
     logger.info("Starting currency exchange rates update.")
-    cursor = get_cursor()
-    cursor.execute(
-        """
-        select max(valid_on)
-        from exchange_rates;
-        """
-    )
-    query_result = cursor.fetchone()
 
-    if query_result is None:
-        raise EmptyExchangeRatesTable()
+    with get_cursor() as cursor:
+        cursor.execute("SELECT max(valid_on) FROM exchange_rates")
+        query_result = cursor.fetchone()
 
-    max_date = query_result[0]
+        if query_result is None:
+            raise EmptyExchangeRatesTable
 
-    date_now = date.today()
-    logger.info("Last available date is %s. Total of %s day(s) will be updated.", max_date, (date_now - max_date).days)
+        max_date = query_result[0]
+        date_now = date.today()
+        logger.info("Last available date is %s. %s day(s) will be updated.", max_date, (date_now - max_date).days)
 
-    target_date = max_date
-    while target_date < date_now:
-        try:
-            date_str = target_date.strftime(DATE_FORMAT)
-            logger.info("Fetching exchange rates for %s.", date_str)
+        target_date = max_date
+        while target_date < date_now:
+            try:
+                date_str = target_date.strftime("%Y-%m-%d")
+                logger.info("Fetching exchange rates for %s.", date_str)
 
-            response = requests.get(
-                LINK.format(
-                    date_historical=date_str,
-                    access_key=settings.FIXER_IO_API_KEY,
-                    base=BASE,
-                    symbols=CURRENCIES,
-                ),
-                timeout=10,
-            )
-            response.raise_for_status()
-        except requests.RequestException as e:
-            logger.error("Couldn't connect to fixer.io: %s", e)
-            break
-
-        try:
-            data = response.json()
-            if not data["success"] or "rates" not in data:
-                logger.error("Failed to successfully fetch exchange rates for %s.", date_str)
+                response = requests.get(
+                    LINK.format(
+                        date_historical=date_str,
+                        access_key=settings.FIXER_IO_API_KEY,
+                        base="EUR",
+                        symbols=CURRENCIES,
+                    ),
+                    timeout=10,
+                )
+                response.raise_for_status()
+            except requests.RequestException as e:
+                logger.error("Couldn't connect to fixer.io: %s", e)
                 break
 
-            cursor.execute(
-                """
-                update exchange_rates
-                set rates = %(rates)s,
-                    modified = current_timestamp
-                where valid_on = %(valid_on)s;
+            try:
+                data = response.json()
+                if not data["success"] or "rates" not in data:
+                    logger.error("Failed to successfully fetch exchange rates for %s.", date_str)
+                    break
 
-                insert into exchange_rates
-                (valid_on, rates)
-                values
-                (%(valid_on)s, %(rates)s)
-                on conflict do nothing;
-                """,
-                {
-                    "valid_on": date_str,
-                    "rates": json.dumps(data["rates"]),
-                },
-            )
+                cursor.execute(
+                    """
+                        UPDATE exchange_rates
+                        SET rates = %(rates)s, modified = current_timestamp
+                        WHERE valid_on = %(valid_on)s;
 
-        except psycopg2.Error as e:
-            logger.error("Couldn't insert exchange rate: %s", e)
-            rollback()
-            break
+                        INSERT INTO exchange_rates (valid_on, rates)
+                        VALUES (%(valid_on)s, %(rates)s)
+                        ON CONFLICT DO NOTHING;
+                    """,
+                    {"valid_on": date_str, "rates": json.dumps(data["rates"])},
+                )
+            except psycopg2.Error as e:
+                logger.error("Couldn't insert exchange rate: %s", e)
+                rollback()
+                break
 
-        else:
-            commit()
+            else:
+                commit()
 
-        target_date += timedelta(days=1)
+            target_date += timedelta(days=1)
 
-    cursor.close()
-    logger.info("Exchange rates update finished.")
+        logger.info("Exchange rates update finished.")
 
 
 class EmptyExchangeRatesTable(Exception):
