@@ -65,31 +65,14 @@ def remove(dataset_id, filtered):
     logger.info("Script initialized")
 
     # checking if dataset exists
-    cursor.execute(
-        """
-        select exists (
-            select 1
-            from dataset
-            where id = %s
-        );
-        """,
-        (dataset_id,),
-    )
-    if not cursor.fetchall()[0][0]:
+    cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s)", {"id", dataset_id})
+    if not cursor.fetchone()[0]:
         logger.error("Dataset with dataset_id %s does not exist.", dataset_id)
         return
 
-    # checking if dataset can be deleted
-    cursor.execute(
-        """
-        select phase, state
-        from progress_monitor_dataset
-        where dataset_id = %s;
-        """,
-        (dataset_id,),
-    )
-    rows = cursor.fetchall()
-    if not rows or rows[0][0] not in (phase.CHECKED, phase.DELETED) or rows[0][1] != state.OK:
+    cursor.execute("SELECT phase, state FROM progress_monitor_dataset WHERE dataset_id = %(id)s", {"id": dataset_id})
+    row = cursor.fetchone()
+    if not row or row[0] not in (phase.CHECKED, phase.DELETED) or row[1] != state.OK:
         logger.error(
             "Dataset with dataset_id %s cannot be deleted. "
             "For a successful deletion the dataset should be in '%s' or '%s' phase and '%s' state.",
@@ -106,16 +89,13 @@ def remove(dataset_id, filtered):
         while True:
             cursor.execute(
                 """
-                select p.dataset_id
-                from progress_monitor_dataset as p
-                where p.phase in %(phases)s and
-                    p.state = %(state)s and
-                    exists (
-                        select 1
-                        from dataset_filter
-                        where dataset_id_original in %(dataset_ids)s and
-                            dataset_id_filtered = p.dataset_id
-                    );
+                    SELECT p.dataset_id
+                    FROM progress_monitor_dataset p
+                    WHERE p.phase IN %(phases)s AND p.state = %(state)s AND EXISTS (
+                        SELECT 1
+                        FROM dataset_filter
+                        WHERE dataset_id_original IN %(dataset_ids)s AND dataset_id_filtered = p.dataset_id
+                    )
                 """,
                 {
                     "phases": (phase.CHECKED, phase.DELETED),
@@ -137,36 +117,19 @@ def remove(dataset_id, filtered):
     )
     cursor.execute(
         """
-        delete from report
-        where dataset_id in %(dataset_ids)s;
+        DELETE FROM field_level_check WHERE dataset_id IN %(dataset_ids)s;
+        DELETE FROM field_level_check_examples WHERE dataset_id IN %(dataset_ids)s;
+        DELETE FROM resource_level_check WHERE dataset_id IN %(dataset_ids)s;
+        DELETE FROM resource_level_check_examples WHERE dataset_id IN %(dataset_ids)s;
+        DELETE FROM report WHERE dataset_id IN %(dataset_ids)s;
+        DELETE FROM dataset_level_check WHERE dataset_id IN %(dataset_ids)s;
+        DELETE FROM time_variance_level_check WHERE dataset_id IN %(dataset_ids)s;
+        DELETE FROM progress_monitor_item WHERE dataset_id IN %(dataset_ids)s;
+        DELETE FROM data_item WHERE dataset_id IN %(dataset_ids)s;
 
-        delete from progress_monitor_item
-        where dataset_id in %(dataset_ids)s;
-
-        delete from data_item
-        where dataset_id in %(dataset_ids)s;
-
-        delete from field_level_check
-        where dataset_id in %(dataset_ids)s;
-
-        delete from field_level_check_examples
-        where dataset_id in %(dataset_ids)s;
-
-        delete from resource_level_check
-        where dataset_id in %(dataset_ids)s;
-
-        delete from resource_level_check_examples
-        where dataset_id in %(dataset_ids)s;
-
-        delete from dataset_level_check
-        where dataset_id in %(dataset_ids)s;
-
-        delete from time_variance_level_check
-        where dataset_id in %(dataset_ids)s;
-
-        update progress_monitor_dataset
-        set phase = %(phase)s, state = %(state)s, modified = now()
-        where dataset_id in %(dataset_ids)s;
+        UPDATE progress_monitor_dataset
+        SET phase = %(phase)s, state = %(state)s, modified = NOW()
+        WHERE dataset_id IN %(dataset_ids)s;
         """,
         {
             "dataset_ids": tuple(delete_dataset_ids),
@@ -184,16 +147,13 @@ def remove(dataset_id, filtered):
     while True:
         cursor.execute(
             """
-            select p.dataset_id
-            from progress_monitor_dataset as p
-            where p.phase = %(phase)s and
-                p.state = %(state)s and
-                not exists (
-                    select 1
-                    from dataset_filter
-                    where dataset_id_original = p.dataset_id and
-                        not dataset_id_filtered in %(dataset_ids)s
-                );
+                SELECT p.dataset_id
+                FROM progress_monitor_dataset p
+                WHERE p.phase = %(phase)s AND p.state = %(state)s AND NOT EXISTS (
+                    SELECT 1
+                    FROM dataset_filter
+                    WHERE dataset_id_original = p.dataset_id AND NOT dataset_id_filtered IN %(dataset_ids)s
+                )
             """,
             {
                 "phase": phase.DELETED,
@@ -211,15 +171,12 @@ def remove(dataset_id, filtered):
         logger.info("The following datasets will be dropped entirely: %s", drop_dataset_ids)
         cursor.execute(
             """
-            delete from dataset
-            where id in %(dataset_ids)s;
+                DELETE FROM dataset WHERE id IN %(dataset_ids)s;
 
-            delete from dataset_filter
-            where dataset_id_original in %(dataset_ids)s or
-                dataset_id_filtered in %(dataset_ids)s;
+                DELETE FROM dataset_filter
+                WHERE dataset_id_original IN %(dataset_ids)s OR dataset_id_filtered IN %(dataset_ids)s;
 
-            delete from progress_monitor_dataset
-            where dataset_id in %(dataset_ids)s;
+                DELETE FROM progress_monitor_dataset WHERE dataset_id IN %(dataset_ids)s;
             """,
             {"dataset_ids": tuple(drop_dataset_ids)},
         )
