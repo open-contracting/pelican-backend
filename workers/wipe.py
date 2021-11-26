@@ -21,25 +21,29 @@ def start():
 
 
 def callback(client_state, channel, method, properties, input_message):
-    cursor = get_cursor()
-    try:
-        dataset_id = input_message["dataset_id"]
+    dataset_id = input_message["dataset_id"]
+    logger.info("All the data for dataset_id %s will removed", dataset_id)
 
-        # creating reports and examples
-        logger.info("All the data for dataset_id %s will removed", dataset_id)
+    with get_cursor() as cursor:
+        cursor.execute(
+            """
+                DELETE FROM field_level_check WHERE dataset_id = %(id)s;
+                DELETE FROM field_level_check_examples WHERE dataset_id IN %(id)s;
+                DELETE FROM resource_level_check WHERE dataset_id = %(id)s;
+                DELETE FROM resource_level_check_examples WHERE dataset_id IN %(id)s;
+                DELETE FROM report WHERE dataset_id IN %(id)s;
+                DELETE FROM dataset_level_check WHERE dataset_id IN %(id)s;
+                DELETE FROM time_variance_level_check WHERE dataset_id IN %(id)s;
+                DELETE FROM progress_monitor_item WHERE dataset_id = %(id)s;
+                DELETE FROM progress_monitor_dataset WHERE dataset_id = %(id)s;
+                DELETE FROM data_item WHERE dataset_id = %(id)s;
+                DELETE FROM dataset WHERE id = %(id)s;
+            """,
+            {"id": dataset_id},
+        )
 
-        cursor.execute("delete from resource_level_check where dataset_id = %(id)s;", {"id": dataset_id})
-        cursor.execute("delete from field_level_check where dataset_id = %(id)s;", {"id": dataset_id})
-        cursor.execute("delete from progress_monitor_item where dataset_id = %(id)s;", {"id": dataset_id})
-        cursor.execute("delete from progress_monitor_dataset where dataset_id = %(id)s;", {"id": dataset_id})
-        cursor.execute("delete from data_item where dataset_id = %(id)s;", {"id": dataset_id})
-        cursor.execute("delete from dataset where id = %(id)s;", {"id": dataset_id})
-
-        commit()
-
-        ack(client_state, channel, method.delivery_tag)
-    finally:
-        cursor.close()
+    commit()
+    ack(client_state, channel, method.delivery_tag)
 
 
 def init_worker():
