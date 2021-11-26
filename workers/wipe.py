@@ -15,7 +15,12 @@ def start():
     """
     Delete datasets.
     """
-    init_worker()
+    bootstrap("workers.wipe")
+
+    global logger
+    logger = get_logger()
+
+    logger.debug("Wiper worker started.")
 
     create_client().consume(callback, consume_routing_key)
 
@@ -44,15 +49,6 @@ def callback(client_state, channel, method, properties, input_message):
 
     commit()
     ack(client_state, channel, method.delivery_tag)
-
-
-def init_worker():
-    bootstrap("workers.wipe")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Wiper worker started.")
 
 
 if __name__ == "__main__":

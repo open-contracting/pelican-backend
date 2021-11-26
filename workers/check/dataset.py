@@ -26,7 +26,12 @@ def start():
     """
     Perform the dataset-level checks.
     """
-    init_worker()
+    bootstrap("workers.check.dataset")
+
+    global logger
+    logger = get_logger()
+
+    logger.debug("Dataset checker started.")
 
     create_client().consume(callback, consume_routing_key)
 
@@ -115,15 +120,6 @@ def callback(client_state, channel, method, properties, input_message):
         nack(client_state, channel, delivery_tag, requeue=False)
 
     ack(client_state, channel, delivery_tag)
-
-
-def init_worker():
-    bootstrap("workers.check.dataset")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Dataset checker started.")
 
 
 if __name__ == "__main__":

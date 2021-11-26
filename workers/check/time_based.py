@@ -19,7 +19,12 @@ def start():
     """
     Perform the time-based checks.
     """
-    init_worker()
+    bootstrap("workers.check.time_based")
+
+    global logger
+    logger = get_logger()
+
+    logger.debug("Time variance checker started.")
 
     create_client().consume(callback, consume_routing_key)
 
@@ -45,15 +50,6 @@ def callback(client_state, channel, method, properties, input_message):
     publish(client_state, channel, message, routing_key)
 
     ack(client_state, channel, method.delivery_tag)
-
-
-def init_worker():
-    bootstrap("workers.check.time_based")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Time variance checker started.")
 
 
 if __name__ == "__main__":

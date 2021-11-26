@@ -28,7 +28,12 @@ def start():
     """
     Import collections from Kingfisher Process.
     """
-    init_worker()
+    bootstrap("workers.extract.kingfisher_process")
+
+    global logger
+    logger = get_logger()
+
+    logger.debug("OCDS Kingfisher extractor initialized.")
 
     create_client().consume(callback, consume_routing_key)
 
@@ -219,15 +224,6 @@ def resend(client_state, channel, dataset_id):
 
     cursor.close()
     logger.info("Resending messages for dataset_id %s completed", dataset_id)
-
-
-def init_worker():
-    bootstrap("workers.extract.kingfisher_process")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("OCDS Kingfisher extractor initialized.")
 
 
 if __name__ == "__main__":

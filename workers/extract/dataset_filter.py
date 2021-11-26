@@ -24,7 +24,13 @@ def start():
     """
     Add filtered datasets.
     """
-    init_worker()
+    bootstrap("workers.extract.dataset_filter")
+
+    global logger
+    logger = get_logger()
+
+    logger.debug("Dataset filter extractor initialized.")
+
     create_client().consume(callback, consume_routing_key)
 
 
@@ -208,15 +214,6 @@ def callback(client_state, channel, method, properties, input_message):
         ack(client_state, channel, delivery_tag)
     finally:
         cursor.close()
-
-
-def init_worker():
-    bootstrap("workers.extract.dataset_filter")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Dataset filter extractor initialized.")
 
 
 if __name__ == "__main__":

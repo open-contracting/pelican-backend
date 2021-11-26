@@ -19,7 +19,12 @@ def start():
     """
     Perform the field-level and compiled release-level checks.
     """
-    init_worker()
+    bootstrap("workers.check.data_item")
+
+    global logger
+    logger = get_logger()
+
+    logger.info("Contracting process checker initialised")
 
     create_client().consume(callback, consume_routing_key)
 
@@ -73,15 +78,6 @@ def resend(client_state, channel, dataset_id):
     publish(client_state, channel, message, routing_key)
 
     logger.info("Resending messages for dataset_id %s completed", dataset_id)
-
-
-def init_worker():
-    bootstrap("workers.check.data_item")
-
-    global logger
-    logger = get_logger()
-
-    logger.info("Contracting process checker initialised")
 
 
 if __name__ == "__main__":

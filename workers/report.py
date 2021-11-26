@@ -20,7 +20,12 @@ def start():
     """
     Create reports, pick examples, and update dataset metadata.
     """
-    init_worker()
+    bootstrap("workers.report")
+
+    global logger
+    logger = get_logger()
+
+    logger.debug("Finisher worker started.")
 
     create_client().consume(callback, consume_routing_key)
 
@@ -51,15 +56,6 @@ def callback(client_state, channel, method, properties, input_message):
     commit()
 
     ack(client_state, channel, method.delivery_tag)
-
-
-def init_worker():
-    bootstrap("workers.report")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Finisher worker started.")
 
 
 if __name__ == "__main__":
