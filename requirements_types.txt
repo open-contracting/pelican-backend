@@ -1,0 +1,6 @@
+mypy
+types-cachetools
+types-certifi
+types-python-dateutil
+types-requests
+types-simplejson
