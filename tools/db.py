@@ -1,15 +1,16 @@
+import logging
+
 import psycopg2.extras
 
 from tools import settings
-from tools.logging_helper import get_logger
+
+logger = logging.getLogger("pelican.tools.db")
 
 global connected
 connected = False
 
 
 def get_cursor():
-    global logger
-    logger = get_logger()
     if not connected:
         connect()
     cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -18,8 +19,6 @@ def get_cursor():
 
 
 def get_connection():
-    global logger
-    logger = get_logger()
     if not connected:
         connect()
     return connection

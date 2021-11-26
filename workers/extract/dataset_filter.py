@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import logging
 from math import ceil
 
 import click
@@ -7,16 +8,14 @@ from psycopg2 import sql
 from yapw.methods.blocking import ack, publish
 
 from tools import settings
-from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
-from tools.logging_helper import get_logger
 from tools.rabbit import create_client
 from tools.state import phase, set_dataset_state, set_item_state, state
 
 consume_routing_key = "dataset_filter_extractor_init"
 routing_key = "extractor"
 page_size = 1000
-logger = None
+logger = logging.getLogger("pelican.workers.extract.dataset_filter")
 
 
 @click.command()
@@ -24,13 +23,6 @@ def start():
     """
     Add filtered datasets.
     """
-    bootstrap("workers.extract.dataset_filter")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Dataset filter extractor initialized.")
-
     create_client().consume(callback, consume_routing_key)
 
 

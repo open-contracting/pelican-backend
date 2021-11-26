@@ -1,3 +1,4 @@
+import logging
 import random
 
 import simplejson as json
@@ -6,14 +7,14 @@ from time_variance.definitions import definitions
 from tools import settings
 from tools.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
 from tools.db import get_cursor
-from tools.logging_helper import get_logger
+
+logger = logging.getLogger("pelican.time_variance.processor")
 
 page_size = 1000
 examples_count = 50
 
 
 def do_work(dataset_id):
-    logger = get_logger()
     processed_count = 1000
     id = -1
     no_item_processed = True

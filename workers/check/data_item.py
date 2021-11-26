@@ -1,17 +1,18 @@
 #!/usr/bin/env python
+import logging
+
 import click
 from yapw.methods.blocking import ack, publish
 
 from contracting_process import processor
-from tools.bootstrap import bootstrap
+from tools.currency_converter import bootstrap
 from tools.db import commit, get_cursor
-from tools.logging_helper import get_logger
 from tools.rabbit import create_client
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "extractor"
-
 routing_key = "contracting_process_checker"
+logger = logging.getLogger("pelican.workers.check.data_item")
 
 
 @click.command()
@@ -19,13 +20,7 @@ def start():
     """
     Perform the field-level and compiled release-level checks.
     """
-    bootstrap("workers.check.data_item")
-
-    global logger
-    logger = get_logger()
-
-    logger.info("Contracting process checker initialised")
-
+    bootstrap()
     create_client().consume(callback, consume_routing_key)
 
 

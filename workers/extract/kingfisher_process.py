@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import logging
 from math import ceil
 
 import click
@@ -8,19 +9,14 @@ from yapw.methods.blocking import ack, publish
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from tools import exchange_rates_db, settings
-from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
-from tools.logging_helper import get_logger
 from tools.rabbit import create_client
 from tools.state import phase, set_dataset_state, set_item_state, state
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
-
 routing_key = "extractor"
-
 page_size = 1000
-
-logger = None
+logger = logging.getLogger("pelican.workers.extract.kingfisher_process")
 
 
 @click.command()
@@ -28,13 +24,6 @@ def start():
     """
     Import collections from Kingfisher Process.
     """
-    bootstrap("workers.extract.kingfisher_process")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("OCDS Kingfisher extractor initialized.")
-
     create_client().consume(callback, consume_routing_key)
 
 

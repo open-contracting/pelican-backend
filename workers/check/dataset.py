@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+import logging
+
 import click
 from yapw.methods.blocking import ack, nack, publish
 
 from dataset import processor
-from tools.bootstrap import bootstrap
+from tools.currency_converter import bootstrap
 from tools.db import commit
-from tools.logging_helper import get_logger
 from tools.rabbit import create_client
 from tools.state import (
     get_dataset_progress,
@@ -17,8 +18,8 @@ from tools.state import (
 )
 
 consume_routing_key = "contracting_process_checker"
-
 routing_key = "dataset_checker"
+logger = logging.getLogger("pelican.workers.check.dataset")
 
 
 @click.command()
@@ -26,13 +27,7 @@ def start():
     """
     Perform the dataset-level checks.
     """
-    bootstrap("workers.check.dataset")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Dataset checker started.")
-
+    bootstrap()
     create_client().consume(callback, consume_routing_key)
 
 

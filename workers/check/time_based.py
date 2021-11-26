@@ -1,17 +1,17 @@
 #!/usr/bin/env python
+import logging
+
 import click
 from yapw.methods.blocking import ack, publish
 
 from time_variance import processor
-from tools.bootstrap import bootstrap
 from tools.db import commit
-from tools.logging_helper import get_logger
 from tools.rabbit import create_client
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "dataset_checker"
-
 routing_key = "time_variance_checker"
+logger = logging.getLogger("pelican.workers.check.time_based")
 
 
 @click.command()
@@ -19,13 +19,6 @@ def start():
     """
     Perform the time-based checks.
     """
-    bootstrap("workers.check.time_based")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Time variance checker started.")
-
     create_client().consume(callback, consume_routing_key)
 
 

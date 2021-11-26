@@ -1,3 +1,5 @@
+import logging
+
 import simplejson as json
 from psycopg2.extras import execute_values
 
@@ -7,8 +9,9 @@ from contracting_process.resource_level.definitions import definitions as resour
 from tools import settings
 from tools.db import get_cursor
 from tools.getter import get_values
-from tools.logging_helper import get_logger
 from tools.state import set_item_state, state
+
+logger = logging.getLogger("pelican.contracting_process.processor")
 
 
 # item: (data, item_id, dataset_id)
@@ -29,11 +32,11 @@ def do_work(items):
     save_field_level_checks(field_level_check_results, items_count)
     save_resource_level_check(resource_level_check_results, items_count)
 
-    get_logger().debug("Work done.")
+    logger.debug("Work done.")
 
 
 def resource_level_checks(data, item_id, dataset_id):
-    get_logger().log(
+    logger.log(
         settings.CustomLogLevels.CHECK_TRACE,
         "Computing resource level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id),
     )
@@ -42,7 +45,7 @@ def resource_level_checks(data, item_id, dataset_id):
 
     # perform resource level checks
     for check_name, check in resource_level_definitions.items():
-        get_logger().log(settings.CustomLogLevels.CHECK_TRACE, "Computing {} check.".format(check_name))
+        logger.log(settings.CustomLogLevels.CHECK_TRACE, "Computing {} check.".format(check_name))
         result["checks"][check_name] = check(data)
 
     # return result
@@ -50,7 +53,7 @@ def resource_level_checks(data, item_id, dataset_id):
 
 
 def field_level_checks(data, item_id, dataset_id):
-    get_logger().log(
+    logger.log(
         settings.CustomLogLevels.CHECK_TRACE,
         "Computing field level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id),
     )
@@ -105,7 +108,7 @@ def field_level_checks(data, item_id, dataset_id):
 
                     # coverage checks
                     for check, check_name in coverage_checks:
-                        get_logger().log(
+                        logger.log(
                             settings.CustomLogLevels.CHECK_TRACE,
                             "Computing {} check in {} path.".format(check_name, path),
                         )
@@ -123,7 +126,7 @@ def field_level_checks(data, item_id, dataset_id):
                     # quality checks
                     if field_result["coverage"]["overall_result"]:
                         for check, check_name in checks:
-                            get_logger().log(
+                            logger.log(
                                 settings.CustomLogLevels.CHECK_TRACE,
                                 "Computing {} check in {} path.".format(check_name, path),
                             )
@@ -157,7 +160,7 @@ def save_field_level_checks(result_items, items_count):
 
     execute_values(cursor, sql, result_items, page_size=items_count)
 
-    get_logger().debug("Field level checks saved.")
+    logger.debug("Field level checks saved.")
 
     cursor.close()
 
@@ -177,4 +180,4 @@ def save_resource_level_check(result_items, items_count):
 
     cursor.close()
 
-    get_logger().debug("Resource level checks saved.")
+    logger.debug("Resource level checks saved.")

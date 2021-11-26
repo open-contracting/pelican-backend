@@ -8,7 +8,7 @@ import requests
 from tools import settings
 from tools.db import commit, get_cursor, rollback
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("pelican.tools.exchange_rates_db")
 
 # Datlab had already downloaded the exchange rates to EUR from another project. Changing the base would require
 # re-downloading decades of exchange rates. It makes no difference to the application's logic, as all currency

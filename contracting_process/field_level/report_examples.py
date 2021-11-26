@@ -1,9 +1,12 @@
+import logging
+
 import simplejson as json
 
 from contracting_process.field_level.definitions import coverage_checks, definitions
 from tools.db import commit, get_cursor
 from tools.helpers import ReservoirSampler
-from tools.logging_helper import get_logger
+
+logger = logging.getLogger("pelican.contracting_process.field_level.report_examples")
 
 examples_cap = 20
 page_size = 2000
@@ -11,7 +14,6 @@ page_size = 2000
 
 def create(dataset_id):
     # initialization
-    logger = get_logger()
     cursor = get_cursor()
 
     # house-keeping

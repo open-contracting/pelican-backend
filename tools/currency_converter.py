@@ -1,10 +1,21 @@
 import datetime
+import os
 
 from tools import settings
+
+# https://docs.pytest.org/en/latest/example/simple.html#pytest-current-test-environment-variable
+if "PYTEST_CURRENT_TEST" in os.environ:
+    import tools.exchange_rates_db as exchange_rates
+else:
+    import tools.exchange_rates_file as exchange_rates
 
 rates = dict()
 bounds = dict()
 currencies = set()
+
+
+def bootstrap():
+    import_data(exchange_rates.load())
 
 
 def import_data(data):

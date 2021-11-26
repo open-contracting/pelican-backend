@@ -1,13 +1,14 @@
 #!/usr/bin/env python
+import logging
+
 import click
 from yapw.methods.blocking import ack
 
-from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
-from tools.logging_helper import get_logger
 from tools.rabbit import create_client
 
 consume_routing_key = "wiper_init"
+logger = logging.getLogger("pelican.workers.wipe")
 
 
 @click.command()
@@ -15,13 +16,6 @@ def start():
     """
     Delete datasets.
     """
-    bootstrap("workers.wipe")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Wiper worker started.")
-
     create_client().consume(callback, consume_routing_key)
 
 

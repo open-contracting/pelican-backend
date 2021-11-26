@@ -1,10 +1,10 @@
 #!/usr/bin/env python
+import logging
+
 import click
 
 from tools import exchange_rates_db, settings
-from tools.bootstrap import bootstrap
 from tools.db import commit, get_cursor
-from tools.logging_helper import get_logger
 from tools.rabbit import create_client
 from tools.state import phase, state
 
@@ -32,20 +32,8 @@ def add(name, collection_id, previous_dataset, sample):
     """
     Create a dataset.
     """
-    bootstrap("pelican.add")
-
-    global logger
-    logger = get_logger()
-
-    routing_key = "ocds_kingfisher_extractor_init"
-
-    message = {
-        "name": name,
-        "collection_id": collection_id,
-        "ancestor_id": previous_dataset,
-        "max_items": sample,
-    }
-    create_client().publish(message, routing_key)
+    message = {"name": name, "collection_id": collection_id, "ancestor_id": previous_dataset, "max_items": sample}
+    create_client().publish(message, "ocds_kingfisher_extractor_init")
 
 
 @cli.command()
@@ -55,14 +43,9 @@ def remove(dataset_id, filtered):
     """
     Delete a dataset.
     """
-    bootstrap("pelican.remove")
-
-    global logger
-    logger = get_logger()
+    logger = logging.getLogger("pelican.remove")
 
     cursor = get_cursor()
-
-    logger.info("Script initialized")
 
     # checking if dataset exists
     cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s)", {"id", dataset_id})

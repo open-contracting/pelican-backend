@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import logging
+
 import click
 from yapw.methods.blocking import ack
 
@@ -6,13 +8,12 @@ import contracting_process.field_level.report_examples as field_level_report_exa
 import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
 from dataset import meta_data_aggregator
-from tools.bootstrap import bootstrap
 from tools.db import commit
-from tools.logging_helper import get_logger
 from tools.rabbit import create_client
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "time_variance_checker"
+logger = logging.getLogger("pelican.workers.report")
 
 
 @click.command()
@@ -20,13 +21,6 @@ def start():
     """
     Create reports, pick examples, and update dataset metadata.
     """
-    bootstrap("workers.report")
-
-    global logger
-    logger = get_logger()
-
-    logger.debug("Finisher worker started.")
-
     create_client().consume(callback, consume_routing_key)
 
 
