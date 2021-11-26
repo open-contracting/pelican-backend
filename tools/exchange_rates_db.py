@@ -50,6 +50,9 @@ def update_from_fixer_io():
                     LINK.format(
                         date_historical=date_str,
                         access_key=settings.FIXER_IO_API_KEY,
+                        # Datlab had already downloaded the exchange rates to EUR from another project. Changing the
+                        # base would require re-downloading decades of exchange rates. It makes no difference to the
+                        # application's logic, as all currency operations are performed in USD.
                         base="EUR",
                         symbols=CURRENCIES,
                     ),
