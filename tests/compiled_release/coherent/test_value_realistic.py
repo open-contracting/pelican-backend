@@ -1,5 +1,6 @@
+from currency_converter import bootstrap
+
 from contracting_process.resource_level.coherent.value_realistic import calculate
-from tools.bootstrap import bootstrap
 
 version = 1.0
 bootstrap("value_realistic_test")

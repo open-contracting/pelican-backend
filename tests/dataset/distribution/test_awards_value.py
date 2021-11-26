@@ -1,5 +1,6 @@
+from currency_converter import bootstrap
+
 from dataset.distribution import value
-from tools.bootstrap import bootstrap
 
 bootstrap("awards_value_test")
 awards_value = value.ModuleType("awards.value")

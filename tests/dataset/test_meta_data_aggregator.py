@@ -1,5 +1,6 @@
+from currency_converter import bootstrap
+
 from dataset.meta_data_aggregator import add_item, get_result
-from tools.bootstrap import bootstrap
 
 bootstrap("meta_data_aggregator_test")
 
