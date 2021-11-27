@@ -20,11 +20,6 @@ def bootstrap() -> None:
 
 
 def import_data(data: List[Tuple[datetime.datetime, Dict[str, float]]]) -> None:
-    """
-    data must be in following form [(date, rates)]
-    rates must be in following form {'currency': rate}
-    """
-
     global rates
     global bounds
     global currencies

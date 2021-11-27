@@ -31,8 +31,6 @@ def callback(client_state, channel, method, properties, input_message):
         if "command" not in input_message:
             item_ids = input_message["item_ids"]
 
-            logger.info("Processing message for dataset_id %s and items %s", dataset_id, item_ids)
-
             # get item from storage
             cursor.execute(
                 """

@@ -20,7 +20,6 @@ def start():
 
 def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
-    logger.info("All the data for dataset_id %s will removed", dataset_id)
 
     with get_cursor() as cursor:
         cursor.execute(
