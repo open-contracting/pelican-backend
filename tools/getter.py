@@ -41,7 +41,7 @@ def deep_get(value: Any, path: str, default: Any = None) -> Any:
     return value
 
 
-def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> List:
+def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> List[Any]:
     index: Optional[int]
 
     # return whole item from root

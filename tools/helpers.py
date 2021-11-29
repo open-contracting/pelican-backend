@@ -65,7 +65,7 @@ class ReservoirSampler:
             raise ValueError("samples_cap must be a positive integer")
 
         self._samples_cap = samples_cap
-        self._samples = []  # type: list
+        self._samples = []  # type: List[Any]
         self._index = 0
 
     def process(self, value: Any) -> None:

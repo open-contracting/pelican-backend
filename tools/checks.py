@@ -51,7 +51,7 @@ def field_coverage_check(
     :param version: the version number of the check
     """
 
-    def method(item, key):
+    def method(item: Dict[str, Any], key: str) -> Dict[str, Any]:
         obj = _empty_field_result(name, version=version)
 
         passed, reason = test(item, key)
@@ -65,8 +65,8 @@ def field_quality_check(
     name: str,
     test: Callable[[Any], Tuple[bool, str]],
     version: float = 1.0,
-    require_type: Optional[Type] = None,
-    return_value: Callable[[Any], Any] = None,
+    require_type: Optional[Type[Any]] = None,
+    return_value: Optional[Callable[[Any], Any]] = None,
 ) -> Callable[[Dict[str, Any], str], Dict[str, Any]]:
     """
     :param name: the machine name of the check
@@ -77,7 +77,7 @@ def field_quality_check(
     :param return_value: a function that accepts a value and returns the value to set in the returned object
     """
 
-    def method(item, key, **kwargs):
+    def method(item: Dict[str, Any], key: str, **kwargs: Any) -> Dict[str, Any]:
         obj = _empty_field_result(name, version=version)
 
         value = item[key]
@@ -95,7 +95,7 @@ def field_quality_check(
     return method
 
 
-def _empty_field_result(name: str, version: float = 1.0):
+def _empty_field_result(name: str, version: float = 1.0) -> Dict[str, Any]:
     return {
         "name": name,
         "result": None,
@@ -106,7 +106,7 @@ def _empty_field_result(name: str, version: float = 1.0):
 
 
 def _prepare_field_result(
-    obj: Dict[str, Any], passed: bool, value: Any, reason: str, return_value: Callable[[Any], Any] = None
+    obj: Dict[str, Any], passed: bool, value: Any, reason: str, return_value: Optional[Callable[[Any], Any]] = None
 ) -> Dict[str, Any]:
     obj["result"] = passed
     if not passed:
