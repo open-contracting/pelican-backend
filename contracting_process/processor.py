@@ -15,7 +15,7 @@ logger = logging.getLogger("pelican.contracting_process.processor")
 
 
 # item: (data, item_id, dataset_id)
-def do_work(items):
+def do_work(items, do_field_level_checks=True, do_resource_level_checks=False):
     field_level_check_results = []
     resource_level_check_results = []
 
@@ -23,14 +23,17 @@ def do_work(items):
     for item in items:
         items_count += 1
 
-        field_level_check_results.append(field_level_checks(*item))
-
-        resource_level_check_results.append(resource_level_checks(*item))
+        if do_field_level_checks:
+            field_level_check_results.append(field_level_checks(*item))
+        if do_resource_level_checks:
+            resource_level_check_results.append(resource_level_checks(*item))
 
         set_item_state(item[2], item[1], state.OK)
 
-    save_field_level_checks(field_level_check_results, items_count)
-    save_resource_level_check(resource_level_check_results, items_count)
+    if do_field_level_checks:
+        save_field_level_checks(field_level_check_results, items_count)
+    if do_resource_level_checks:
+        save_resource_level_check(resource_level_check_results, items_count)
 
     logger.debug("Work done.")
 

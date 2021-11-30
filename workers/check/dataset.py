@@ -5,7 +5,9 @@ import click
 from yapw.methods.blocking import ack, nack, publish
 
 from dataset import processor
+from tools import settings
 from tools.currency_converter import bootstrap
+from tools.helpers import is_step_required
 from tools.services import commit, create_client
 from tools.state import (
     get_dataset_progress,
@@ -31,9 +33,16 @@ def start():
 
 
 def callback(client_state, channel, method, properties, input_message):
+    dataset_id = input_message["dataset_id"]
+
+    if not is_step_required(settings.DATASET_STEP):
+        # send message for a next phase
+        message = {"dataset_id": dataset_id}
+        publish(client_state, channel, message, routing_key)
+        return
+
     delivery_tag = method.delivery_tag
 
-    dataset_id = input_message["dataset_id"]
     dataset = get_dataset_progress(dataset_id)
 
     # optimization when resending

@@ -5,6 +5,8 @@ import click
 from yapw.methods.blocking import ack, publish
 
 from time_variance import processor
+from tools import settings
+from tools.helpers import is_step_required
 from tools.services import commit, create_client
 from tools.state import phase, set_dataset_state, state
 
@@ -23,6 +25,12 @@ def start():
 
 def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
+
+    if not is_step_required(settings.TIME_BASED_STEP):
+        # send message for a next phase
+        message = {"dataset_id": dataset_id}
+        publish(client_state, channel, message, routing_key)
+        return
 
     # mark dataset as beeing processed
     set_dataset_state(dataset_id, state.IN_PROGRESS, phase.TIME_VARIANCE)

@@ -75,6 +75,16 @@ CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK = int(
     os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", 180)
 )
 
+FIELD_COVERAGE_STEP = "field_coverage"
+FIELD_QUALITY_STEP = "field_quality"
+DATASET_STEP = "dataset"
+TIME_BASED_STEP = "time_based"
+REPORT_STEP = "report"
+
+# A comma-separated list of steps to process. Default to all.
+PELICAN_STEPS = os.getenv(
+    "PELICAN_STEPS", f"{FIELD_COVERAGE_STEP},{FIELD_QUALITY_STEP},{DATASET_STEP},{TIME_BASED_STEP},{REPORT_STEP}"
+)
 
 # Dependency configuration
 

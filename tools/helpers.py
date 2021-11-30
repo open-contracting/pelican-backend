@@ -1,7 +1,10 @@
+import os
 import random
 import re
 from datetime import date, datetime
 from typing import Any, List, Optional
+
+from tools import settings
 
 
 def parse_datetime(str_datetime: Optional[str]) -> Optional[datetime]:
@@ -80,3 +83,7 @@ class ReservoirSampler:
 
     def retrieve_samples(self) -> List[Any]:
         return self._samples
+
+
+def is_step_required(step_name: str):
+    return step_name in settings.PELICAN_STEPS
