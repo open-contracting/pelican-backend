@@ -1,6 +1,8 @@
 from typing import Optional
 
-from tools.services import get_cursor
+from yapw.methods.blocking import ack, publish
+
+from tools.services import commit, get_cursor
 
 
 class state:
@@ -97,3 +99,20 @@ def get_dataset_progress(dataset_id: int) -> tuple:
     with get_cursor() as cursor:
         cursor.execute("SELECT * FROM progress_monitor_dataset WHERE dataset_id = %(id)s", {"id": dataset_id})
         return cursor.fetchone()
+
+
+def finish_worker(
+    client_state, channel, method, dataset_id, phase, routing_key=None, logger_message=None, logger=None
+):
+    """
+    Changes the dataset step status, publishes a message for the next phase and ack the received message.
+    """
+    set_dataset_state(dataset_id, state.OK, phase)
+    commit()
+    if logger and logger_message:
+        logger.info(logger_message)
+    if routing_key:
+        # send message for a next phase
+        message = {"dataset_id": dataset_id}
+        publish(client_state, channel, message, routing_key)
+    ack(client_state, channel, method.delivery_tag)

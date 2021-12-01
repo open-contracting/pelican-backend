@@ -2,14 +2,15 @@
 import logging
 
 import click
-from yapw.methods.blocking import ack, nack, publish
+from yapw.methods.blocking import ack, nack
 
 from dataset import processor
 from tools import settings
 from tools.currency_converter import bootstrap
 from tools.helpers import is_step_required
-from tools.services import commit, create_client, finish_worker
+from tools.services import commit, create_client
 from tools.state import (
+    finish_worker,
     get_dataset_progress,
     get_processed_items_count,
     get_total_items_count,
@@ -36,7 +37,7 @@ def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
     if not is_step_required(settings.Steps.DATASET):
-        finish_worker(client_state, channel, method, dataset_id, state.OK, phase.DATASET)
+        finish_worker(client_state, channel, method, dataset_id, phase.DATASET)
         return
 
     delivery_tag = method.delivery_tag
@@ -100,8 +101,15 @@ def callback(client_state, channel, method, properties, input_message):
         # calculate all the stuff
         processor.do_work(dataset_id, logger)
 
-        finish_worker(client_state, channel, method, dataset_id, state.OK, phase.DATASET, logger=logger,
-                      logger_message=f"Dataset level checks calculated for dataset_id {dataset_id}")
+        finish_worker(
+            client_state,
+            channel,
+            method,
+            dataset_id,
+            phase.DATASET,
+            logger=logger,
+            logger_message=f"Dataset level checks calculated for dataset_id {dataset_id}",
+        )
 
     else:
         logger.error(
