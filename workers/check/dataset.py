@@ -7,10 +7,9 @@ from yapw.methods.blocking import ack, nack
 from dataset import processor
 from tools import settings
 from tools.currency_converter import bootstrap
-from tools.helpers import is_step_required
+from tools.helpers import finish_worker, is_step_required
 from tools.services import commit, create_client
 from tools.state import (
-    finish_worker,
     get_dataset_progress,
     get_processed_items_count,
     get_total_items_count,

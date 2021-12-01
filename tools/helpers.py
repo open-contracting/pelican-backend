@@ -3,7 +3,11 @@ import re
 from datetime import date, datetime
 from typing import Any, List, Optional
 
+from yapw.methods.blocking import ack, publish
+
 from tools import settings
+from tools.services import commit
+from tools.state import set_dataset_state, state
 
 
 def parse_datetime(str_datetime: Optional[str]) -> Optional[datetime]:
@@ -86,3 +90,20 @@ class ReservoirSampler:
 
 def is_step_required(step_name: str) -> bool:
     return step_name in settings.STEPS
+
+
+def finish_worker(
+    client_state, channel, method, dataset_id, phase, routing_key=None, logger_message=None, logger=None
+):
+    """
+    Changes the dataset step status, publishes a message for the next phase and ack the received message.
+    """
+    set_dataset_state(dataset_id, state.OK, phase)
+    commit()
+    if logger and logger_message:
+        logger.info(logger_message)
+    if routing_key:
+        # send message for a next phase
+        message = {"dataset_id": dataset_id}
+        publish(client_state, channel, message, routing_key)
+    ack(client_state, channel, method.delivery_tag)

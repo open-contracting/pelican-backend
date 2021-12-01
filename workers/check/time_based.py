@@ -5,9 +5,9 @@ import click
 
 from time_variance import processor
 from tools import settings
-from tools.helpers import is_step_required
+from tools.helpers import finish_worker, is_step_required
 from tools.services import commit, create_client
-from tools.state import finish_worker, phase, set_dataset_state, state
+from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "dataset_checker"
 routing_key = "time_variance_checker"
