@@ -1,60 +1,31 @@
 import random
-import re
 from datetime import date, datetime
 from typing import Any, List, Optional
 
+from dateutil.parser import isoparse
 
-def parse_datetime(str_datetime: Optional[str]) -> Optional[datetime]:
-    """
-    the following are valid dates according to ocds:
 
-    ‘2014-10-21T09:30:00Z’ - 9:30 am on the 21st October 2014, UTC
-    ‘2014-11-18T18:00:00-06:00’ - 6pm on 18th November 2014 CST (Central Standard Time)
+# https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
+def parse_datetime(string: Optional[str]) -> Optional[datetime]:
     """
-    if str_datetime is None or not isinstance(str_datetime, str):
+    Parse a string to a datetime.
+    """
+    if string is None or not isinstance(string, str):
         return None
-
-    # limit to microseconds
-    str_datetime = re.sub(r"(?<=T\d\d:\d\d:\d\d\.)(\d+)", lambda m: m.group(1)[:6], str_datetime)
-
-    str_datetime = str_datetime.replace("Z", "+00:00")
-
     try:
-        return datetime.strptime(str_datetime, "%Y-%m-%dT%H:%M:%SZ")
-    except ValueError:
-        pass
-
-    try:
-        return datetime.strptime(str_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
-    except ValueError:
-        pass
-
-    if len(str_datetime) < 25:
-        return None
-
-    str_timezone = str_datetime[-6:].replace(":", "")
-    str_datetime = str_datetime[:-6] + str_timezone
-
-    try:
-        return datetime.strptime(str_datetime, "%Y-%m-%dT%H:%M:%S%z")
-    except ValueError:
-        pass
-
-    try:
-        return datetime.strptime(str_datetime, "%Y-%m-%dT%H:%M:%S.%f%z")
+        return isoparse(string)
     except ValueError:
         pass
 
 
-def parse_date(str_date: Optional[str]) -> Optional[date]:
+def parse_date(string: Optional[str]) -> Optional[date]:
     """
-    Parse string to valid date.
+    Parse a string to a date.
     """
-    if str_date is None or not isinstance(str_date, str):
+    if not string or not isinstance(string, str):
         return None
-
     try:
-        return datetime.strptime(str_date[:10], "%Y-%m-%d").date()
+        return isoparse(string[:10]).date()
     except ValueError:
         pass
 
