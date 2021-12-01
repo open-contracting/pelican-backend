@@ -10,7 +10,7 @@ import contracting_process.resource_level.report as resource_level_report
 from dataset import meta_data_aggregator
 from tools import settings
 from tools.helpers import is_step_required
-from tools.services import commit, create_client
+from tools.services import commit, create_client, finish_worker
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "time_variance_checker"
@@ -28,8 +28,8 @@ def start():
 def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
-    if not is_step_required(settings.REPORT_STEP):
-        finish(dataset_id, client_state, channel, method)
+    if not is_step_required(settings.Steps.REPORT):
+        finish_worker(client_state, channel, method, dataset_id, state.OK, phase.CHECKED)
         return
 
     # creating reports and examples
@@ -49,16 +49,8 @@ def callback(client_state, channel, method, properties, input_message):
     meta_data = meta_data_aggregator.get_dqt_meta_data(dataset_id)
     meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
-    finish(dataset_id, client_state, channel, method)
-
-
-def finish(dataset_id, client_state, channel, method):
-    # mark dataset as finished
-    set_dataset_state(dataset_id, state.OK, phase.CHECKED)
-    logger.info("All the work done for dataset_id %s", dataset_id)
-    commit()
-
-    ack(client_state, channel, method.delivery_tag)
+    finish_worker(client_state, channel, method, dataset_id, state.OK, phase.CHECKED, logger=logger,
+                  logger_message=f"All the work done for dataset_id {dataset_id}")
 
 
 if __name__ == "__main__":

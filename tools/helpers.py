@@ -84,5 +84,5 @@ class ReservoirSampler:
         return self._samples
 
 
-def is_step_required(step_name: str):
-    return step_name in settings.PELICAN_STEPS
+def is_step_required(step_name: str) -> bool:
+    return step_name in settings.STEPS
