@@ -3,7 +3,9 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from tests import is_subset_dict
-from tools.helpers import ReservoirSampler, parse_date, parse_datetime
+from tools import settings
+from tools.helpers import ReservoirSampler, parse_date, parse_datetime, is_step_required
+from tools.settings import Steps
 
 
 def test_parse_datetime():
@@ -60,3 +62,12 @@ def test_reservoir_sampler():
     samples = sampler.retrieve_samples()
     assert len(samples) == 5
     assert all([s in range(10) for s in samples])
+
+
+@pytest.mark.parametrize('step_list,step,expected', [
+    ([Steps.FIELD_COVERAGE], Steps.FIELD_COVERAGE, True),
+    ([Steps.DATASET], Steps.TIME_BASED, False),
+])
+def test_is_step_required(step_list, step, expected):
+    settings.STEPS = step_list
+    assert is_step_required(step) is expected
