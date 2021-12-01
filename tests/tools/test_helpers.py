@@ -19,7 +19,7 @@ def test_parse_datetime_type(value):
     assert parse_datetime(value) is None
 
 
-@pytest.mark.parametrize("value", ["x", "2001-02-03T04:05:06+00:00:00"])
+@pytest.mark.parametrize("value", ["x", "200101", "2001-02-03T04:05:06+00:00:00"])
 def test_parse_datetime_invalid(value):
     assert parse_datetime(value) is None
 
