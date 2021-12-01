@@ -16,6 +16,10 @@ def parse_datetime(string: Optional[str]) -> Optional[datetime]:
         return isoparse(string)
     except ValueError:
         pass
+    try:
+        return datetime.strptime(string, "%Y-%m-%dT%H:%M:%S%z")
+    except ValueError:
+        pass
 
 
 def parse_date(string: Optional[str]) -> Optional[date]:
@@ -26,6 +30,10 @@ def parse_date(string: Optional[str]) -> Optional[date]:
         return None
     try:
         return isoparse(string[:10]).date()
+    except ValueError:
+        pass
+    try:
+        return datetime.strptime(string[:10], "%Y-%m-%d").date()
     except ValueError:
         pass
 

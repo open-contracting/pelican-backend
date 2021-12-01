@@ -19,7 +19,7 @@ def test_parse_datetime_type(value):
     assert parse_datetime(value) is None
 
 
-@pytest.mark.parametrize("value", ["x", "200101", "2001-02-03T04:05:06+00:00:00"])
+@pytest.mark.parametrize("value", ["x", "200101"])
 def test_parse_datetime_invalid(value):
     assert parse_datetime(value) is None
 
@@ -84,8 +84,33 @@ def test_parse_datetime_date(value, components):
         ("2001-02-03T24", (2001, 2, 4, 0, 0)),
     ],
 )
-def test_parse_datetime(value, components, suffix, tz):
+def test_parse_datetime_dateutil(value, components, suffix, tz):
     assert parse_datetime(value + suffix) == datetime(*components, tzinfo=tz)
+
+
+# The datetime library can handle short components and long timezones.
+@pytest.mark.parametrize(
+    "suffix,tz",
+    [
+        ("Z", timezone.utc),
+        # UTC.
+        ("+0000", timezone.utc),
+        ("-0000", timezone.utc),
+        ("+00:00", timezone.utc),
+        ("-00:00", timezone.utc),
+        ("+00:00:00", timezone.utc),
+        ("-00:00:00", timezone.utc),
+        # Non-UTC.
+        ("+0708", timezone(timedelta(seconds=25680))),
+        ("-0708", timezone(timedelta(seconds=-25680))),
+        ("+07:08", timezone(timedelta(seconds=25680))),
+        ("-07:08", timezone(timedelta(seconds=-25680))),
+        ("+07:08:09", timezone(timedelta(seconds=25689))),
+        ("-07:08:09", timezone(timedelta(seconds=-25689))),
+    ],
+)
+def test_parse_datetime_library(suffix, tz):
+    assert parse_datetime("1000-2-3T4:5:6" + suffix) == datetime(1000, 2, 3, 4, 5, 6, tzinfo=tz)
 
 
 @pytest.mark.parametrize("value", EMPTY)
@@ -111,6 +136,8 @@ def test_parse_date_invalid(value):
         ("2001-02", (2001, 2, 1)),
         ("2001-02-03", (2001, 2, 3)),
         ("20010203", (2001, 2, 3)),
+        # Truncated components.
+        ("1000-2-3", (1000, 2, 3)),
         # Extra components.
         ("2001-02-03xxx", (2001, 2, 3)),
         ("2001-02-03T04:05:06Z", (2001, 2, 3)),
