@@ -3,7 +3,7 @@ from typing import Any
 import psycopg2.extras
 import simplejson as json
 from yapw import clients
-from yapw.methods.blocking import publish, ack
+from yapw.methods.blocking import ack, publish
 
 from tools import settings
 from tools.state import set_dataset_state
@@ -46,8 +46,9 @@ def rollback():
     db_connection.rollback()
 
 
-def finish_worker(client_state, channel, method, dataset_id, state, phase, routing_key=None, logger_message=None,
-                  logger=None):
+def finish_worker(
+    client_state, channel, method, dataset_id, state, phase, routing_key=None, logger_message=None, logger=None
+):
     """
     Changes the dataset step status, publishes a message for the next phase and ack the received message.
     """

@@ -100,8 +100,16 @@ def callback(client_state, channel, method, properties, input_message):
         # calculate all the stuff
         processor.do_work(dataset_id, logger)
 
-        finish_worker(client_state, channel, method, dataset_id, state.OK, phase.DATASET, logger=logger,
-                      logger_message=f"Dataset level checks calculated for dataset_id {dataset_id}")
+        finish_worker(
+            client_state,
+            channel,
+            method,
+            dataset_id,
+            state.OK,
+            phase.DATASET,
+            logger=logger,
+            logger_message=f"Dataset level checks calculated for dataset_id {dataset_id}",
+        )
 
     else:
         logger.error(
