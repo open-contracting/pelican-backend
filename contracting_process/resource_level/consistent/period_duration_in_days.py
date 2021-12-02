@@ -1,10 +1,12 @@
 import math
 
 from tools.checks import get_empty_result_resource
-from tools.getter import get_values
+from tools.getter import deep_get, get_values
 from tools.helpers import parse_datetime
 
 version = 1.0
+
+SECONDS_PER_DAY = 24 * 60 * 60
 
 
 def calculate(item):
@@ -37,7 +39,10 @@ def calculate(item):
         if "maxExtentDate" in period["value"]:
             max_extent_day = parse_datetime(period["value"]["maxExtentDate"])
 
-        duration_in_days = period["value"]["durationInDays"] if "durationInDays" in period["value"] else None
+        if "durationInDays" in period["value"]:
+            duration_in_days = deep_get(period, "value.durationInDays", float)
+        else:
+            duration_in_days = None
 
         # this check cannot be applied
         if start_date is None or duration_in_days is None or (end_date is None and max_extent_day is None):
@@ -46,12 +51,12 @@ def calculate(item):
         passed = False
         if end_date is not None:
             duration_in_days_computed = (
-                (end_date - start_date).days * 24 * 60 * 60 + (end_date - start_date).seconds
-            ) / (24 * 60 * 60)
+                (end_date - start_date).days * SECONDS_PER_DAY + (end_date - start_date).seconds
+            ) / SECONDS_PER_DAY
         else:
             duration_in_days_computed = (
-                (max_extent_day - start_date).days * 24 * 60 * 60 + (max_extent_day - start_date).seconds
-            ) / (24 * 60 * 60)
+                (max_extent_day - start_date).days * SECONDS_PER_DAY + (max_extent_day - start_date).seconds
+            ) / SECONDS_PER_DAY
 
         passed = math.floor(duration_in_days_computed) <= duration_in_days <= math.ceil(duration_in_days_computed)
 

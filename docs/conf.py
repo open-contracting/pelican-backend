@@ -71,7 +71,7 @@ autodoc_default_options = {
 }
 
 extlinks = {
-    "issue": ("https://github.com/open-contracting/pelican-backend/issues/%s", "#%s"),
-    "commit": ("https://github.com/open-contracting/pelican-backend/commit/%s", "%s"),
-    "compare": ("https://github.com/open-contracting/pelican-backend/compare/%s", "%s"),
+    "issue": ("https://github.com/open-contracting/pelican-backend/issues/%s", "#"),
+    "commit": ("https://github.com/open-contracting/pelican-backend/commit/%s", ""),
+    "compare": ("https://github.com/open-contracting/pelican-backend/compare/%s", ""),
 }

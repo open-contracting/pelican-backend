@@ -57,11 +57,11 @@ def test_missing_dates():
 
 
 item_test_ill_formatted_dates1__invalid_schema = {
-    "tender": {"enquiryPeriod": {"startDate": "2014-10-21", "endDate": "2014-10-21"}}
+    "tender": {"enquiryPeriod": {"startDate": "201410", "endDate": "2015-12-31T00:00:00-06:00"}}
 }
 
 item_test_ill_formatted_dates2__invalid_schema = {
-    "tender": {"enquiryPeriod": {"startDate": "2014-11-18T18:00:00", "endDate": "2015-12-31T00:00:00-06:00"}}
+    "tender": {"enquiryPeriod": {"startDate": "2014-10-31T00:00:00-06:00", "endDate": "201512"}}
 }
 
 

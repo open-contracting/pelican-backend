@@ -38,12 +38,10 @@ def callback(client_state, channel, method, properties, input_message):
             max_items = int(input_message["max_items"]) if "max_items" in input_message else None
             ancestor_id = int(input_message["ancestor_id"]) if "ancestor_id" in input_message else None
 
-            logger.info("Reading kingfisher data started. name: %s collection_id: %s", name, collection_id)
-
             kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
 
             kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            logger.info("King fisher DB connection established")
+            logger.info("Kingfisher Process database connection established.")
 
             if max_items is None:
                 kf_cursor.execute(

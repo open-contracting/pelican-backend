@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from typing import Dict, List, Tuple
 
 import psycopg2
@@ -14,6 +14,12 @@ logger = logging.getLogger("pelican.tools.exchange_rates_db")
 # Datlab had already downloaded the exchange rates to EUR from another project. Changing the base would require
 # re-downloading decades of exchange rates. It makes no difference to the application's logic, as all currency
 # operations are performed in USD.
+#
+# The Basic plan is required to request rates for all base currencies. The Professional plan supports the Time-Series
+# Endpoint, which can request rates for multiple dates at once. https://fixer.io/documentation
+#
+# "The Fixer API delivers EOD / End of Day historical exchange rates, which become available at 00:05am GMT for the
+# previous day and are time stamped at one second before midnight." https://fixer.io/faq
 FIXER_IO_URL = "https://data.fixer.io/api/{date}?access_key={access_key}&base=EUR&symbols={symbols}"
 
 
@@ -21,7 +27,7 @@ class EmptyExchangeRatesTable(Exception):
     pass
 
 
-def load() -> List[Tuple[datetime, Dict[str, float]]]:
+def load() -> List[Tuple[date, Dict[str, float]]]:
     with get_cursor() as cursor:
         cursor.execute("SELECT valid_on, rates FROM exchange_rates")
         return cursor.fetchall()
@@ -49,6 +55,8 @@ def update_from_fixer_io() -> None:
         access_key = settings.FIXER_IO_API_KEY
 
         try:
+            # To get the list of currencies for testing:
+            # curl 'https://data.fixer.io/api/symbols?access_key=' | jq '.symbols | keys | join(",")'
             response = requests.get(f"https://data.fixer.io/api/symbols?access_key={access_key}")
             response.raise_for_status()
         except requests.RequestException as e:

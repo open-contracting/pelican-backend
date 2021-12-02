@@ -1,8 +1,8 @@
 import random
-import re
 from datetime import date, datetime
 from typing import Any, List, Optional
 
+from dateutil.parser import isoparse
 from yapw.methods.blocking import ack, publish
 
 from tools import settings
@@ -10,57 +10,35 @@ from tools.services import commit
 from tools.state import set_dataset_state, state
 
 
-def parse_datetime(str_datetime: Optional[str]) -> Optional[datetime]:
+# https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
+def parse_datetime(string: Optional[str]) -> Optional[datetime]:
     """
-    the following are valid dates according to ocds:
-
-    ‘2014-10-21T09:30:00Z’ - 9:30 am on the 21st October 2014, UTC
-    ‘2014-11-18T18:00:00-06:00’ - 6pm on 18th November 2014 CST (Central Standard Time)
+    Parse a string to a datetime.
     """
-    if str_datetime is None or not isinstance(str_datetime, str):
+    if string is None or not isinstance(string, str):
         return None
-
-    # limit to microseconds
-    str_datetime = re.sub(r"(?<=T\d\d:\d\d:\d\d\.)(\d+)", lambda m: m.group(1)[:6], str_datetime)
-
-    str_datetime = str_datetime.replace("Z", "+00:00")
-
     try:
-        return datetime.strptime(str_datetime, "%Y-%m-%dT%H:%M:%SZ")
+        return isoparse(string)
     except ValueError:
         pass
-
     try:
-        return datetime.strptime(str_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
-    except ValueError:
-        pass
-
-    if len(str_datetime) < 25:
-        return None
-
-    str_timezone = str_datetime[-6:].replace(":", "")
-    str_datetime = str_datetime[:-6] + str_timezone
-
-    try:
-        return datetime.strptime(str_datetime, "%Y-%m-%dT%H:%M:%S%z")
-    except ValueError:
-        pass
-
-    try:
-        return datetime.strptime(str_datetime, "%Y-%m-%dT%H:%M:%S.%f%z")
+        return datetime.strptime(string, "%Y-%m-%dT%H:%M:%S%z")
     except ValueError:
         pass
 
 
-def parse_date(str_date: Optional[str]) -> Optional[date]:
+def parse_date(string: Optional[str]) -> Optional[date]:
     """
-    Parse string to valid date.
+    Parse a string to a date.
     """
-    if str_date is None or not isinstance(str_date, str):
+    if not string or not isinstance(string, str):
         return None
-
     try:
-        return datetime.strptime(str_date[:10], "%Y-%m-%d").date()
+        return isoparse(string[:10]).date()
+    except ValueError:
+        pass
+    try:
+        return datetime.strptime(string[:10], "%Y-%m-%d").date()
     except ValueError:
         pass
 
@@ -71,7 +49,7 @@ class ReservoirSampler:
             raise ValueError("samples_cap must be a positive integer")
 
         self._samples_cap = samples_cap
-        self._samples = []  # type: list
+        self._samples = []  # type: List[Any]
         self._index = 0
 
     def process(self, value: Any) -> None:

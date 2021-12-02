@@ -23,7 +23,7 @@ def calculate(item):
     pass_count = 0
     result["meta"] = {"processed_contracts": []}
     for contract in contracts:
-        transactions_count = len(deep_get(contract["value"], "implementation.transactions", []))
+        transactions_count = len(deep_get(contract["value"], "implementation.transactions", list))
         passed = transactions_count == 0
 
         result["meta"]["processed_contracts"].append(

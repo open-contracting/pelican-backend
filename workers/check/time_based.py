@@ -30,7 +30,6 @@ def callback(client_state, channel, method, properties, input_message):
         return
 
     set_dataset_state(dataset_id, state.IN_PROGRESS, phase.TIME_VARIANCE)
-    logger.info("Time variance level checks calculation started for dataset_id %s", dataset_id)
     commit()
 
     processor.do_work(dataset_id)

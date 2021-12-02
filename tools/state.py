@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional, Tuple
 
 from tools.services import get_cursor
 
@@ -88,7 +88,7 @@ def get_total_items_count(dataset_id: int) -> int:
         return cursor.fetchone()["size"]
 
 
-def get_dataset_progress(dataset_id: int) -> tuple:
+def get_dataset_progress(dataset_id: int) -> Tuple[Any, ...]:
     """
     Return the dataset's progress.
 

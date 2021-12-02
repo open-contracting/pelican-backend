@@ -20,8 +20,8 @@ def calculate(item):
         result["meta"] = {"reason": f"tender.status is {status!r}"}
         return result
 
-    contracts_count = len(deep_get(item, "contracts", []))
-    awards_count = len(deep_get(item, "awards", []))
+    contracts_count = len(deep_get(item, "contracts", list))
+    awards_count = len(deep_get(item, "awards", list))
 
     if contracts_count or awards_count:
         result["result"] = False

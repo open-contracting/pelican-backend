@@ -1,5 +1,8 @@
 import re
-from typing import Any, List, Optional
+from datetime import date, datetime
+from typing import Any, List, Optional, Type
+
+from tools.helpers import parse_date, parse_datetime
 
 regex = r"^([^[]*)\[([\d]*)\]$"
 
@@ -20,28 +23,49 @@ def deep_has(value: Any, path: str) -> bool:
     return True
 
 
-def deep_get(value: Any, path: str, default: Any = None) -> Any:
+def deep_get(value: Any, path: str, force: Type[Any] = None) -> Any:
     """
-    Gets a nested value from nested dicts, safely. If a default value is provided and the nested value is not of the
-    same type as the default value, returns the default value.
+    Gets a nested value from nested dicts, safely. If ``force`` is provided and the nested value is not of that type,
+    then if ``force`` is ...
+
+    -  ``datetime.date``, ``datetime.datetime``: Parse as ISO 8601. On failure, return ``None``.
+    -  ``dict``, ``list``: Return an empty ``dict`` or ``list``, respectively.
+    -  ``float``, ``int``, ``str``: Past the value to that type. On failure, return ``None``.
+
+    If the path is not set, if ``force`` is provided, and ``force`` is ``dict``, ``list`` or ``str``, return an empty
+    ``dict``, ``list`` or ``str``, respectively. Otherwise, if the path is not set, return ``None``.
 
     :param value: the value
-    :param str path: a period-separated list of keys
-    :param default: a default value, if the nested value doesn't exist
+    :param path: a period-separated list of keys
+    :param force: the type to which to coerce the value, if possible
     """
     for part in path.split("."):
         if type(value) is dict and part in value:
             value = value[part]
+        elif force in (dict, list, str):
+            return force()
         else:
-            return default
+            return None
 
-    if default is not None and type(value) is not type(default):
-        return default
+    if force and type(value) is not force:
+        if force is date:
+            return parse_date(value)
+        elif force is datetime:
+            return parse_datetime(value)
+        elif force in (dict, list):
+            value = force()
+        elif force in (float, int, str):
+            try:
+                value = force(value)
+            except ValueError:
+                return None
+        else:
+            raise NotImplementedError
 
     return value
 
 
-def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> List:
+def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> List[Any]:
     index: Optional[int]
 
     # return whole item from root
@@ -136,10 +160,11 @@ def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> 
 
         # "primitive" value, return it
         if key in item:
+            if key != path[-1]:
+                return []
             if value_only:
                 return [item[key]]
-            else:
-                return [{"path": key, "value": item[key]}]
+            return [{"path": key, "value": item[key]}]
 
     # indexing used
     field = None
