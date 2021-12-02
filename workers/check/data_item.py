@@ -48,8 +48,7 @@ def callback(client_state, channel, method, properties, input_message):
             # perform actual action with items
             processor.do_work(
                 cursor.fetchall(),
-                do_field_level_checks=is_step_required(settings.Steps.FIELD_COVERAGE)
-                or is_step_required(settings.Steps.FIELD_QUALITY),
+                do_field_level_checks=is_step_required(settings.Steps.FIELD_COVERAGE, settings.Steps.FIELD_QUALITY),
                 do_resource_level_checks=is_step_required(settings.Steps.COMPILED_RELEASE),
             )
 

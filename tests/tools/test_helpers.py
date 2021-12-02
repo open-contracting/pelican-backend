@@ -64,12 +64,13 @@ def test_reservoir_sampler():
 
 
 @pytest.mark.parametrize(
-    "steps,step,expected",
+    "steps,values,expected",
     [
-        ([settings.Steps.FIELD_COVERAGE], settings.Steps.FIELD_COVERAGE, True),
-        ([settings.Steps.DATASET], settings.Steps.TIME_BASED, False),
+        ([settings.Steps.FIELD_COVERAGE], (settings.Steps.FIELD_COVERAGE,), True),
+        ([settings.Steps.FIELD_COVERAGE], (settings.Steps.FIELD_QUALITY,), False),
+        ([settings.Steps.FIELD_COVERAGE], (settings.Steps.FIELD_COVERAGE, settings.Steps.FIELD_QUALITY), True),
     ],
 )
-def test_is_step_required(steps, step, expected):
+def test_is_step_required(steps, values, expected):
     with override_settings(STEPS=steps):
-        assert is_step_required(step) is expected
+        assert is_step_required(*values) is expected

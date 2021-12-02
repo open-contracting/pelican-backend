@@ -88,22 +88,18 @@ class ReservoirSampler:
         return self._samples
 
 
-def is_step_required(step_name: str) -> bool:
-    return step_name in settings.STEPS
+def is_step_required(*steps: str) -> bool:
+    return any(step in settings.STEPS for step in steps)
 
 
 def finish_worker(
-    client_state, channel, method, dataset_id, phase, routing_key=None, logger_message=None, logger=None
-):
+    client_state, channel, method, dataset_id: int, phase: str, routing_key: Optional[str] = None
+) -> None:
     """
-    Changes the dataset step status, publishes a message for the next phase and ack the received message.
+    Update the dataset's state, publish a message if a routing key is provided, and ack the message.
     """
     set_dataset_state(dataset_id, state.OK, phase)
     commit()
-    if logger and logger_message:
-        logger.info(logger_message)
     if routing_key:
-        # send message for a next phase
-        message = {"dataset_id": dataset_id}
-        publish(client_state, channel, message, routing_key)
+        publish(client_state, channel, {"dataset_id": dataset_id}, routing_key)
     ack(client_state, channel, method.delivery_tag)
