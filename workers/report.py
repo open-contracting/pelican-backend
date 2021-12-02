@@ -27,29 +27,21 @@ def start():
 def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
-    if not is_step_required(settings.Steps.REPORT):
-        finish_worker(client_state, channel, method, dataset_id, phase.CHECKED)
-        return
+    if is_step_required(settings.Steps.REPORT):
+        logger.info("Calculating report for compiled release-level checks of dataset_id %s", dataset_id)
+        resource_level_report.create(dataset_id)
 
-    # creating reports and examples
-    logger.info("Resource level checks report for dataset_id %s is being calculated", dataset_id)
-    resource_level_report.create(dataset_id)
+        logger.info("Picking examples for compiled release-level checks of dataset_id %s", dataset_id)
+        resource_level_examples.create(dataset_id)
 
-    logger.info("Resource level checks examples for dataset_id %s are being picked", dataset_id)
-    resource_level_examples.create(dataset_id)
+        logger.info("Calculating report and picking examples for field-level checks of dataset_id %s", dataset_id)
+        field_level_report_examples.create(dataset_id)
 
-    logger.info(
-        "Field level checks report for dataset_id %s is being calculated and examples are being picked", dataset_id
-    )
-    field_level_report_examples.create(dataset_id)
-
-    # adding final meta data for current dataset
-    logger.info("Saving processing info to dataset table.")
-    meta_data = meta_data_aggregator.get_dqt_meta_data(dataset_id)
-    meta_data_aggregator.update_meta_data(meta_data, dataset_id)
+        logger.info("Saving Pelican metadata")
+        meta_data = meta_data_aggregator.get_dqt_meta_data(dataset_id)
+        meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
     finish_worker(client_state, channel, method, dataset_id, phase.CHECKED)
-    logger.info("All the work done for dataset_id %s", dataset_id)
 
 
 if __name__ == "__main__":

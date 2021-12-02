@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import logging
-
 import click
 from yapw.methods.blocking import ack, publish
 
@@ -12,7 +10,6 @@ from tools.services import commit, create_client, get_cursor
 
 consume_routing_key = "extractor"
 routing_key = "contracting_process_checker"
-logger = logging.getLogger("pelican.workers.check.data_item")
 
 
 @click.command()

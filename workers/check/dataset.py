@@ -69,9 +69,8 @@ def callback(client_state, channel, method, properties, input_message):
     processed_count = get_processed_items_count(dataset_id)
     total_count = get_total_items_count(dataset_id)
 
-    # check whether are all items alredy processed
+    # check whether all items are processed
     if processed_count < total_count:
-        # contracting process is not done yet
         logger.debug(
             "There are %s remaining messages to be processed for dataset_id %s",
             total_count - processed_count,
@@ -87,7 +86,6 @@ def callback(client_state, channel, method, properties, input_message):
         and dataset["phase"] == phase.CONTRACTING_PROCESS
         and processed_count == total_count
     ):
-        # set state to processing
         logger.info(
             "All messages for dataset_id %s with %s items processed, starting to calculate dataset level checks",
             dataset_id,
@@ -97,11 +95,9 @@ def callback(client_state, channel, method, properties, input_message):
 
         commit()
 
-        # calculate all the stuff
         processor.do_work(dataset_id, logger)
 
         finish_worker(client_state, channel, method, dataset_id, phase.DATASET, routing_key=routing_key)
-        logger.info("Dataset level checks calculated for dataset_id %s", dataset_id)
     else:
         logger.error(
             "Dataset processing for dataset_id %s is in weird state. Dataset state %s. Dataset phase %s.",

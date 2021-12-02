@@ -109,7 +109,6 @@ def field_level_checks(data, item_id, dataset_id):
 
                     counter += 1
 
-                    # coverage checks
                     for check, check_name in coverage_checks:
                         logger.log(
                             settings.CustomLogLevels.CHECK_TRACE,
@@ -126,7 +125,6 @@ def field_level_checks(data, item_id, dataset_id):
                         if check_result["result"] is False:
                             break
 
-                    # quality checks
                     if field_result["coverage"]["overall_result"]:
                         for check, check_name in checks:
                             logger.log(

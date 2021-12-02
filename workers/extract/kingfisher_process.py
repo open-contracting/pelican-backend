@@ -142,8 +142,7 @@ def callback(client_state, channel, method, properties, input_message):
                 batch_size += 1
                 batch.append(inserted_id)
                 if batch_size >= max_batch_size or items_inserted == items_count:
-                    message = {"item_ids": batch, "dataset_id": dataset_id}
-                    publish(client_state, channel, message, routing_key)
+                    publish(client_state, channel, {"item_ids": batch, "dataset_id": dataset_id}, routing_key)
 
                     batch_size = 0
                     batch.clear()

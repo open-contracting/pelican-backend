@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-import logging
-
 import click
 from yapw.methods.blocking import ack
 
 from tools.services import commit, create_client, get_cursor
 
 consume_routing_key = "wiper_init"
-logger = logging.getLogger("pelican.workers.wipe")
 
 
 @click.command()
@@ -40,6 +37,7 @@ def callback(client_state, channel, method, properties, input_message):
         )
 
     commit()
+
     ack(client_state, channel, method.delivery_tag)
 
 
