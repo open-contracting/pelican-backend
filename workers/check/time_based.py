@@ -29,24 +29,14 @@ def callback(client_state, channel, method, properties, input_message):
         finish_worker(client_state, channel, method, dataset_id, phase.TIME_VARIANCE, routing_key=routing_key)
         return
 
-    # mark dataset as been processed
     set_dataset_state(dataset_id, state.IN_PROGRESS, phase.TIME_VARIANCE)
     logger.info("Time variance level checks calculation started for dataset_id %s", dataset_id)
     commit()
 
-    # do actual calculations
     processor.do_work(dataset_id)
 
-    finish_worker(
-        client_state,
-        channel,
-        method,
-        dataset_id,
-        phase.TIME_VARIANCE,
-        logger,
-        f"Time variance level checks calculated for dataset_id {dataset_id}",
-        routing_key,
-    )
+    finish_worker(client_state, channel, method, dataset_id, phase.TIME_VARIANCE, routing_key=routing_key)
+    logger.info("Time variance level checks calculated for dataset_id %s", dataset_id)
 
 
 if __name__ == "__main__":

@@ -48,15 +48,8 @@ def callback(client_state, channel, method, properties, input_message):
     meta_data = meta_data_aggregator.get_dqt_meta_data(dataset_id)
     meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
-    finish_worker(
-        client_state,
-        channel,
-        method,
-        dataset_id,
-        phase.CHECKED,
-        logger=logger,
-        logger_message=f"All the work done for dataset_id {dataset_id}",
-    )
+    finish_worker(client_state, channel, method, dataset_id, phase.CHECKED)
+    logger.info("All the work done for dataset_id %s", dataset_id)
 
 
 if __name__ == "__main__":

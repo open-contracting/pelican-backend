@@ -36,7 +36,7 @@ def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
     if not is_step_required(settings.Steps.DATASET):
-        finish_worker(client_state, channel, method, dataset_id, phase.DATASET)
+        finish_worker(client_state, channel, method, dataset_id, phase.DATASET, routing_key=routing_key)
         return
 
     delivery_tag = method.delivery_tag
@@ -100,16 +100,8 @@ def callback(client_state, channel, method, properties, input_message):
         # calculate all the stuff
         processor.do_work(dataset_id, logger)
 
-        finish_worker(
-            client_state,
-            channel,
-            method,
-            dataset_id,
-            phase.DATASET,
-            logger=logger,
-            logger_message=f"Dataset level checks calculated for dataset_id {dataset_id}",
-        )
-
+        finish_worker(client_state, channel, method, dataset_id, phase.DATASET, routing_key=routing_key)
+        logger.info("Dataset level checks calculated for dataset_id %s", dataset_id)
     else:
         logger.error(
             "Dataset processing for dataset_id %s is in weird state. Dataset state %s. Dataset phase %s.",
@@ -118,8 +110,6 @@ def callback(client_state, channel, method, properties, input_message):
             dataset["phase"],
         )
         nack(client_state, channel, delivery_tag, requeue=False)
-
-        ack(client_state, channel, delivery_tag)
 
 
 if __name__ == "__main__":
