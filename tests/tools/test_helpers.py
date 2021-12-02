@@ -2,8 +2,9 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from tests import is_subset_dict
-from tools.helpers import ReservoirSampler, parse_date, parse_datetime
+from tests import is_subset_dict, override_settings
+from tools import settings
+from tools.helpers import ReservoirSampler, is_step_required, parse_date, parse_datetime
 
 EMPTY = [None, "", 0, 0.0, False, set(), (), [], {}]
 NON_STR = [None, 1, 1.0, True, {1}, (1,), [1], {1}]
@@ -182,3 +183,16 @@ def test_reservoir_sampler():
     samples = sampler.retrieve_samples()
     assert len(samples) == 5
     assert all([s in range(10) for s in samples])
+
+
+@pytest.mark.parametrize(
+    "steps,values,expected",
+    [
+        ([settings.Steps.FIELD_COVERAGE], (settings.Steps.FIELD_COVERAGE,), True),
+        ([settings.Steps.FIELD_COVERAGE], (settings.Steps.FIELD_QUALITY,), False),
+        ([settings.Steps.FIELD_COVERAGE], (settings.Steps.FIELD_COVERAGE, settings.Steps.FIELD_QUALITY), True),
+    ],
+)
+def test_is_step_required(steps, values, expected):
+    with override_settings(STEPS=steps):
+        assert is_step_required(*values) is expected

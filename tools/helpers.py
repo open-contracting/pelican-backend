@@ -3,6 +3,11 @@ from datetime import date, datetime
 from typing import Any, List, Optional
 
 from dateutil.parser import isoparse
+from yapw.methods.blocking import ack, publish
+
+from tools import settings
+from tools.services import commit
+from tools.state import set_dataset_state, state
 
 
 # https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
@@ -59,3 +64,20 @@ class ReservoirSampler:
 
     def retrieve_samples(self) -> List[Any]:
         return self._samples
+
+
+def is_step_required(*steps: str) -> bool:
+    return any(step in settings.STEPS for step in steps)
+
+
+def finish_worker(
+    client_state, channel, method, dataset_id: int, phase: str, routing_key: Optional[str] = None
+) -> None:
+    """
+    Update the dataset's state, publish a message if a routing key is provided, and ack the message.
+    """
+    set_dataset_state(dataset_id, state.OK, phase)
+    commit()
+    if routing_key:
+        publish(client_state, channel, {"dataset_id": dataset_id}, routing_key)
+    ack(client_state, channel, method.delivery_tag)

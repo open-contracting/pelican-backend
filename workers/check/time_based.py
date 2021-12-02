@@ -2,9 +2,10 @@
 import logging
 
 import click
-from yapw.methods.blocking import ack, publish
 
 from time_variance import processor
+from tools import settings
+from tools.helpers import finish_worker, is_step_required
 from tools.services import commit, create_client
 from tools.state import phase, set_dataset_state, state
 
@@ -24,22 +25,17 @@ def start():
 def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
-    # mark dataset as beeing processed
+    if not is_step_required(settings.Steps.TIME_BASED):
+        finish_worker(client_state, channel, method, dataset_id, phase.TIME_VARIANCE, routing_key=routing_key)
+        return
+
     set_dataset_state(dataset_id, state.IN_PROGRESS, phase.TIME_VARIANCE)
     commit()
 
-    # do actual calculations
     processor.do_work(dataset_id)
 
-    # all done, mark as completed
-    set_dataset_state(dataset_id, state.OK, phase.TIME_VARIANCE)
-    commit()
-
-    # send messages into next phases
-    message = {"dataset_id": dataset_id}
-    publish(client_state, channel, message, routing_key)
-
-    ack(client_state, channel, method.delivery_tag)
+    finish_worker(client_state, channel, method, dataset_id, phase.TIME_VARIANCE, routing_key=routing_key)
+    logger.info("Time variance level checks calculated for dataset_id %s", dataset_id)
 
 
 if __name__ == "__main__":

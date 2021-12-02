@@ -5,7 +5,9 @@ import click
 from yapw.methods.blocking import ack, publish
 
 from contracting_process import processor
+from tools import settings
 from tools.currency_converter import bootstrap
+from tools.helpers import is_step_required
 from tools.services import commit, create_client, get_cursor
 from tools.state import phase, set_dataset_state, state
 
@@ -42,7 +44,11 @@ def callback(client_state, channel, method, properties, input_message):
             )
 
             # perform actual action with items
-            processor.do_work(cursor.fetchall())
+            processor.do_work(
+                cursor.fetchall(),
+                do_field_level_checks=is_step_required(settings.Steps.FIELD_COVERAGE, settings.Steps.FIELD_QUALITY),
+                do_resource_level_checks=is_step_required(settings.Steps.COMPILED_RELEASE),
+            )
 
             commit()
 

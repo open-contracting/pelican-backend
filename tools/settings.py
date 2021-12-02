@@ -7,6 +7,15 @@ import sentry_sdk
 # Basic configuration
 
 
+class Steps:
+    FIELD_COVERAGE = "field_coverage"
+    FIELD_QUALITY = "field_quality"
+    COMPILED_RELEASE = "compiled_release"
+    DATASET = "dataset"
+    TIME_BASED = "time_based"
+    REPORT = "report"
+
+
 class CustomLogLevels:
     CHECK_TRACE = 8
 
@@ -75,6 +84,11 @@ CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK = int(
     os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", 180)
 )
 
+# A comma-separated list of steps to run. Default to all.
+STEPS = os.getenv(
+    "PELICAN_BACKEND_STEPS",
+    ",".join(getattr(Steps, attr) for attr in dir(Steps) if not attr.startswith("__")),
+).split(",")
 
 # Dependency configuration
 

@@ -2,10 +2,12 @@
 import logging
 
 import click
-from yapw.methods.blocking import ack, nack, publish
+from yapw.methods.blocking import ack, nack
 
 from dataset import processor
+from tools import settings
 from tools.currency_converter import bootstrap
+from tools.helpers import finish_worker, is_step_required
 from tools.services import commit, create_client
 from tools.state import (
     get_dataset_progress,
@@ -31,9 +33,14 @@ def start():
 
 
 def callback(client_state, channel, method, properties, input_message):
+    dataset_id = input_message["dataset_id"]
+
+    if not is_step_required(settings.Steps.DATASET):
+        finish_worker(client_state, channel, method, dataset_id, phase.DATASET, routing_key=routing_key)
+        return
+
     delivery_tag = method.delivery_tag
 
-    dataset_id = input_message["dataset_id"]
     dataset = get_dataset_progress(dataset_id)
 
     # optimization when resending
@@ -93,17 +100,8 @@ def callback(client_state, channel, method, properties, input_message):
         # calculate all the stuff
         processor.do_work(dataset_id, logger)
 
-        # mark dataset as done
-        set_dataset_state(dataset_id, state.OK, phase.DATASET)
-
-        commit()
-
-        logger.info("Dataset level checks calculated for dataset_id %s.", dataset_id)
-
-        # send message for a next phase
-        message = {"dataset_id": dataset_id}
-        publish(client_state, channel, message, routing_key)
-
+        finish_worker(client_state, channel, method, dataset_id, phase.DATASET, routing_key=routing_key)
+        logger.info("Dataset level checks calculated for dataset_id %s", dataset_id)
     else:
         logger.error(
             "Dataset processing for dataset_id %s is in weird state. Dataset state %s. Dataset phase %s.",
@@ -112,8 +110,6 @@ def callback(client_state, channel, method, properties, input_message):
             dataset["phase"],
         )
         nack(client_state, channel, delivery_tag, requeue=False)
-
-    ack(client_state, channel, delivery_tag)
 
 
 if __name__ == "__main__":
