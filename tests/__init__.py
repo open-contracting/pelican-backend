@@ -1,5 +1,8 @@
 import json
 import os
+from contextlib import AbstractContextManager
+
+from tools import settings
 
 
 def is_subset_dict(subset, superset):
@@ -11,8 +14,25 @@ def read(basename):
         return json.load(f)
 
 
-# I'm not sure if this can be accomplished with pytest, so using unittest with pytest-subtests. At first glance, we
-# would need to auto-generate parametrized `test_` functions, with the module as a bound variable.
+class override_settings(AbstractContextManager):
+    def __init__(self, **kwargs):
+        self.new = kwargs
+        self.old = {}
+
+        for key, value in self.new.items():
+            self.old[key] = getattr(settings, key)
+
+    def __enter__(self):
+        for key, value in self.new.items():
+            setattr(settings, key, value)
+
+    def __exit__(self, *args):
+        for key, value in self.old.items():
+            setattr(settings, key, value)
+
+
+# I'm not sure if the below can be accomplished with pytest, so using unittest with pytest-subtests. At first glance,
+# we would need to auto-generate parametrized `test_` functions, with the module as a bound variable.
 
 
 class FieldCoverageTests:
