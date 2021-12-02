@@ -18,22 +18,11 @@ def create(dataset_id):
 
     # house-keeping
     cursor.execute(
-        """
-        delete
-        from report
-        where dataset_id = %s and type = %s;
-        """,
-        [dataset_id, "field_level_check"],
+        "DELETE FROM report WHERE dataset_id = %(dataset_id)s AND type = 'field_level_check'",
+        {"dataset_id": dataset_id},
     )
     cursor.execute(
-        """
-        delete
-        from field_level_check_examples
-        where dataset_id = %s;
-        """,
-        [
-            dataset_id,
-        ],
+        "DELETE FROM field_level_check_examples WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
     )
 
     # creating report and examples
@@ -126,14 +115,15 @@ def create(dataset_id):
 
         cursor.execute(
             """
-            SELECT id, result FROM field_level_check
+            SELECT id, result
+            FROM field_level_check
             WHERE
-                id > %s
-                and dataset_id = %s
-            ORDER BY ID
-            LIMIT %s
-        """,
-            (id, dataset_id, page_size),
+                id > %(id)s
+                AND dataset_id = %(dataset_id)s
+            ORDER BY id
+            LIMIT %(limit)s
+            """,
+            {"id": id, "dataset_id": dataset_id, "limit": page_size},
         )
 
         rows = cursor.fetchall()
@@ -204,13 +194,8 @@ def create(dataset_id):
     logger.info("Storing field level check report for dataset_id %s", dataset_id)
     # storing the report
     cursor.execute(
-        """
-        insert into report
-        (dataset_id, type, data)
-        values
-        (%s, 'field_level_check', %s);
-        """,
-        [dataset_id, json.dumps(report)],
+        "INSERT INTO report (dataset_id, type, data) VALUES (%(dataset_id)s, 'field_level_check', %(data)s)",
+        {"dataset_id": dataset_id, "data": json.dumps(report)},
     )
     commit()
 
@@ -243,12 +228,10 @@ def create(dataset_id):
 
         cursor.execute(
             """
-            insert into field_level_check_examples
-            (dataset_id, path, data)
-            values
-            (%s, %s, %s);
+            INSERT INTO field_level_check_examples (dataset_id, path, data)
+            VALUES (%(dataset_id)s, %(path)s, %(data)s)
             """,
-            [dataset_id, path, json.dumps(path_checks)],
+            {"dataset_id": dataset_id, "path": path, "data": json.dumps(path_checks)},
         )
     commit()
 

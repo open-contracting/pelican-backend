@@ -10,12 +10,7 @@ examples_cap = 20
 def create(dataset_id):
     cursor = get_cursor()
     cursor.execute(
-        """
-        delete
-        from resource_level_check_examples
-        where dataset_id = %s;
-        """,
-        [dataset_id],
+        "DELETE FROM resource_level_check_examples WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
     )
 
     check_samplers = {
@@ -29,11 +24,11 @@ def create(dataset_id):
 
     cursor.execute(
         """
-        select result->'meta' as meta, d.value as result, d.key as check_name
-        from resource_level_check, jsonb_each(result->'checks') d
-        where dataset_id = %s;
+        SELECT result->'meta' AS meta, d.value AS result, d.key AS check_name
+        FROM resource_level_check, jsonb_each(result->'checks') d
+        WHERE dataset_id = %(dataset_id)s
         """,
-        [dataset_id],
+        {"dataset_id": dataset_id},
     )
 
     while True:
@@ -62,12 +57,10 @@ def create(dataset_id):
 
         cursor.execute(
             """
-            insert into resource_level_check_examples
-            (dataset_id, check_name, data)
-            values
-            (%s, %s, %s);
+            INSERT INTO resource_level_check_examples (dataset_id, check_name, data)
+            VALUES (%(dataset_id)s, %(check_name)s, %(data)s)
             """,
-            [dataset_id, check_name, json.dumps(data)],
+            {"dataset_id": dataset_id, "check_name": check_name, "data": json.dumps(data)},
         )
     commit()
 

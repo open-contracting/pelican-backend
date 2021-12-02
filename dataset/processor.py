@@ -21,15 +21,8 @@ def do_work(dataset_id, logger):
         cursor = get_cursor()
 
         cursor.execute(
-            """
-            SELECT * FROM data_item
-            WHERE
-                id > %s
-                and dataset_id = %s
-            ORDER BY ID
-            LIMIT %s
-        """,
-            (id, dataset_id, page_size),
+            "SELECT * FROM data_item WHERE id > %(id)s AND dataset_id = %(dataset_id)s ORDER BY id LIMIT %(limit)s",
+            {"id": id, "dataset_id": dataset_id, "limit": page_size},
         )
 
         items = cursor.fetchall()
@@ -84,10 +77,14 @@ def save_dataset_level_check(check_name, result, dataset_id):
     with get_cursor() as cursor:
         cursor.execute(
             """
-                INSERT INTO dataset_level_check
-                (check_name, result, value, meta, dataset_id)
-                VALUES
-                (%s, %s, %s, %s, %s)
+            INSERT INTO dataset_level_check (check_name, result, value, meta, dataset_id)
+            VALUES (%(check_name)s, %(result)s, %(value)s, %(meta)s, %(dataset_id)s)
             """,
-            (check_name, result["result"], result["value"], meta, dataset_id),
+            {
+                "check_name": check_name,
+                "result": result["result"],
+                "value": result["value"],
+                "meta": meta,
+                "dataset_id": dataset_id,
+            },
         )

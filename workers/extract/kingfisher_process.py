@@ -47,25 +47,25 @@ def callback(client_state, channel, method, properties, input_message):
                 """
                 SELECT compiled_release.data_id
                 FROM compiled_release
-                JOIN data
-                ON compiled_release.data_id = data.id
-                WHERE compiled_release.collection_id = %s
-                AND pg_column_size(data.data) < %s;
+                JOIN data ON compiled_release.data_id = data.id
+                WHERE
+                    compiled_release.collection_id = %(collection_id)s
+                    AND pg_column_size(data.data) < %(max_size)s
                 """,
-                (collection_id, settings.KINGFISHER_PROCESS_MAX_SIZE),
+                {"collection_id": collection_id, "max_size": settings.KINGFISHER_PROCESS_MAX_SIZE},
             )
         else:
             kf_cursor.execute(
                 """
                 SELECT compiled_release.data_id
                 FROM compiled_release
-                JOIN data
-                ON compiled_release.data_id = data.id
-                WHERE compiled_release.collection_id = %s
-                AND pg_column_size(data.data) < %s
-                LIMIT %s;
+                JOIN data ON compiled_release.data_id = data.id
+                WHERE
+                    compiled_release.collection_id = %(collection_id)s
+                    AND pg_column_size(data.data) < %(max_size)s
+                LIMIT %(limit)s
                 """,
-                (collection_id, settings.KINGFISHER_PROCESS_MAX_SIZE, max_items),
+                {"collection_id": collection_id, "max_size": settings.KINGFISHER_PROCESS_MAX_SIZE, "limit": max_items},
             )
 
         result = kf_cursor.fetchall()
@@ -73,12 +73,11 @@ def callback(client_state, channel, method, properties, input_message):
         logger.info("Creating row in dataset table for incoming collection")
         cursor.execute(
             """
-            INSERT INTO dataset
-            (name, meta, ancestor_id)
-            VALUES
-            (%s, %s, %s) RETURNING id;
+            INSERT INTO dataset (name, meta, ancestor_id)
+            VALUES (%(name)s, %(meta)s, %(ancestor_id)s)
+            RETURNING id
             """,
-            (name, json.dumps({}), ancestor_id),
+            {"name": name, "meta": json.dumps({}), "ancestor_id": ancestor_id},
         )
         dataset_id = cursor.fetchone()[0]
 
@@ -106,22 +105,10 @@ def callback(client_state, channel, method, properties, input_message):
 
             i += 1
 
-            kf_cursor.execute(
-                """
-                SELECT data
-                FROM data
-                WHERE data.id IN %s;
-                """,
-                (tuple(ids),),
-            )
+            kf_cursor.execute("SELECT data FROM data WHERE data.id IN %(ids)s", {"ids": tuple(ids)})
 
             data_items = [(json.dumps(row[0]), dataset_id) for row in kf_cursor.fetchall()]
-            sql = """
-                INSERT INTO data_item
-                (data, dataset_id)
-                VALUES %s
-                RETURNING id;
-            """
+            sql = "INSERT INTO data_item (data, dataset_id) VALUES %s RETURNING id"
             psycopg2.extras.execute_values(cursor, sql, data_items, page_size=page_size)
             commit()
 

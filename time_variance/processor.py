@@ -35,26 +35,18 @@ def do_work(dataset_id):
 
         cursor.execute(
             """
-            SELECT
-                ancestor_data_item.id,
-                ancestor_data_item.data,
-                new_data_item.id,
-                new_data_item.data
-            FROM
-                data_item ancestor_data_item
-            LEFT JOIN
-                data_item new_data_item
-                ON
-                    ancestor_data_item.data->>'ocid' = new_data_item.data->>'ocid'
-                    AND new_data_item.dataset_id = %s
+            SELECT ancestor_data_item.id, ancestor_data_item.data, new_data_item.id, new_data_item.data
+            FROM data_item ancestor_data_item
+            LEFT JOIN data_item new_data_item ON
+                ancestor_data_item.data->>'ocid' = new_data_item.data->>'ocid'
+                AND new_data_item.dataset_id = %(dataset_id)s
             WHERE
-                ancestor_data_item.dataset_id = %s
-                AND ancestor_data_item.id > %s
-            ORDER BY
-                ancestor_data_item.id
-            LIMIT %s;
+                ancestor_data_item.dataset_id = %(ancestor_id)s
+                AND ancestor_data_item.id > %(id)s
+            ORDER BY ancestor_data_item.id
+            LIMIT %(limit)s
         """,
-            (dataset_id, ancestor_id, id, page_size),
+            {"dataset_id": dataset_id, "ancestor_id": ancestor_id, "id": id, "limit": page_size},
         )
 
         items = cursor.fetchall()
@@ -150,33 +142,31 @@ def save_time_variance_level_check(check_name, result, dataset_id):
         """
         INSERT INTO time_variance_level_check
         (check_name, coverage_result, coverage_value, check_result, check_value, dataset_id, meta)
-        VALUES
-        (%s, %s, %s, %s, %s, %s, %s)
+        VALUES (
+            %(check_name)s,
+            %(coverage_result)s,
+            %(coverage_value)s,
+            %(check_result)s,
+            %(check_value)s,
+            %(dataset_id)s,
+            %(meta)s
+        )
         """,
-        (
-            check_name,
-            result["coverage_result"],
-            result["coverage_value"],
-            result["check_result"],
-            result["check_value"],
-            dataset_id,
-            meta,
-        ),
+        {
+            "check_name": check_name,
+            "coverage_result": result["coverage_result"],
+            "coverage_value": result["coverage_value"],
+            "check_result": result["check_result"],
+            "check_value": result["check_value"],
+            "dataset_id": dataset_id,
+            "meta": meta,
+        },
     )
 
 
 def get_ancestor_id(dataset_id, cursor):
-    cursor.execute(
-        """
-            SELECT * FROM dataset
-            WHERE id = %s
-        """,
-        (dataset_id,),
-    )
-
-    dataset = cursor.fetchone()
-
-    return dataset["ancestor_id"]
+    cursor.execute("SELECT * FROM dataset WHERE id = %(id)s", {"id": dataset_id})
+    return cursor.fetchone()["ancestor_id"]
 
 
 def get_result(scope, version):

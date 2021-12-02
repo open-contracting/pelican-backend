@@ -7,12 +7,8 @@ from tools.services import commit, get_cursor
 def create(dataset_id):
     cursor = get_cursor()
     cursor.execute(
-        """
-        delete
-        from report
-        where dataset_id = %s and type = %s;
-        """,
-        [dataset_id, "resource_level_check"],
+        "DELETE FROM report WHERE dataset_id = %(dataset_id)s and type = 'resource_level_check'",
+        {"dataset_id": dataset_id},
     )
 
     report = {}
@@ -36,22 +32,22 @@ def create(dataset_id):
     # total counts
     cursor.execute(
         """
-        select sub.check_name, sub.result, count(*) as count
-        from (
-            select
-                d.key as check_name,
+        SELECT sub.check_name, sub.result, count(*) AS count
+        FROM (
+            SELECT
+                d.key AS check_name,
                 (
-                    case
-                        when d.value->'result' is null then null
-                        else (d.value->>'result')::boolean
-                    end
-                ) as result
-            from resource_level_check, jsonb_each(result->'checks') d
-            where dataset_id = %s
-        ) as sub
-        group by sub.check_name, sub.result;
+                    CASE
+                        WHEN d.value->'result' IS NULL THEN NULL
+                        ELSE (d.value->>'result')::boolean
+                    END
+                ) AS result
+            FROM resource_level_check, jsonb_each(result->'checks') d
+            WHERE dataset_id = %(dataset_id)s
+        ) AS sub
+        GROUP BY sub.check_name, sub.result
         """,
-        [dataset_id],
+        {"dataset_id": dataset_id},
     )
 
     for row in cursor.fetchall():
@@ -69,26 +65,28 @@ def create(dataset_id):
     # individual counts
     cursor.execute(
         """
-        select sub.check_name,
-               sum(sub.pass_count) as pass_count,
-               sum(sub.application_count) as application_count
-        from (
-            select
-                d.key as check_name,
-                (d.value->>'pass_count')::int as pass_count,
-                (d.value->>'application_count')::int as application_count
-            from resource_level_check, jsonb_each(result->'checks') d
-            where dataset_id = %s and
-                  (
-                    case
-                        when d.value->'result' is null then null
-                        else (d.value->>'result')::boolean
-                    end
-                  ) is not null
-        ) as sub
-        group by sub.check_name;
+        SELECT
+            sub.check_name,
+            sum(sub.pass_count) AS pass_count,
+            sum(sub.application_count) AS application_count
+        FROM (
+            SELECT
+                d.key AS check_name,
+                (d.value->>'pass_count')::int AS pass_count,
+                (d.value->>'application_count')::int AS application_count
+            FROM resource_level_check, jsonb_each(result->'checks') d
+            WHERE
+                dataset_id = %(dataset_id)s
+                AND (
+                  CASE
+                      WHEN d.value->'result' IS NULL THEN NULL
+                      ELSE (d.value->>'result')::boolean
+                  END
+                ) IS NOT NULL
+        ) AS sub
+        GROUP BY sub.check_name
         """,
-        [dataset_id],
+        {"dataset_id": dataset_id},
     )
 
     for row in cursor.fetchall():
@@ -96,15 +94,9 @@ def create(dataset_id):
         report[row["check_name"]]["individual_failed_count"] = row["application_count"] - row["pass_count"]
         report[row["check_name"]]["individual_application_count"] = row["application_count"]
 
-    # storing the report
     cursor.execute(
-        """
-        insert into report
-        (dataset_id, type, data)
-        values
-        (%s, 'resource_level_check', %s);
-        """,
-        [dataset_id, json.dumps(report)],
+        "INSERT INTO report (dataset_id, type, data) VALUES (%(dataset_id)s, 'resource_level_check', %(data)s)",
+        {"dataset_id": dataset_id, "data": json.dumps(report)},
     )
     commit()
 

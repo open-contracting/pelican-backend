@@ -72,7 +72,7 @@ def callback(client_state, channel, method, properties, input_message):
                 FROM progress_monitor_dataset
                 WHERE dataset_id = %(dataset_id)s
                 AND phase = 'CHECKED'
-            );
+            )
             """,
             {"dataset_id": dataset_id_original},
         )
@@ -84,14 +84,11 @@ def callback(client_state, channel, method, properties, input_message):
         logger.info("Creating row in dataset table for filtered dataset")
         cursor.execute(
             """
-            INSERT INTO dataset
-            (name, meta, ancestor_id)
-            SELECT name, meta, null
-            FROM dataset
-            WHERE id = %s
-            RETURNING id;
+            INSERT INTO dataset (name, meta, ancestor_id)
+            SELECT name, meta, NULL FROM dataset WHERE id = %(ancestor_id)s
+            RETURNING id
             """,
-            (dataset_id_original,),
+            {"ancestor_id": dataset_id_original},
         )
         dataset_id_filtered = cursor.fetchone()[0]
         commit()
@@ -99,12 +96,14 @@ def callback(client_state, channel, method, properties, input_message):
         logger.info("Creating row in dataset_filter table")
         cursor.execute(
             """
-            INSERT INTO dataset_filter
-            (dataset_id_original, dataset_id_filtered, filter_message)
-            VALUES
-            (%s, %s, %s);
+            INSERT INTO dataset_filter (dataset_id_original, dataset_id_filtered, filter_message)
+            VALUES (%(dataset_id_original)s, %(dataset_id_filtered)s, %(filter_message)s)
             """,
-            (dataset_id_original, dataset_id_filtered, json.dumps(filter_message)),
+            {
+                "dataset_id_original": dataset_id_original,
+                "dataset_id_filtered": dataset_id_filtered,
+                "filter_message": json.dumps(filter_message),
+            },
         )
         commit()
 
@@ -157,14 +156,11 @@ def callback(client_state, channel, method, properties, input_message):
 
             cursor.execute(
                 """
-                INSERT INTO data_item
-                (data, dataset_id)
-                SELECT data, %s
-                FROM data_item
-                WHERE id IN %s
-                RETURNING id;
+                INSERT INTO data_item (data, dataset_id)
+                SELECT data, %(dataset_id)s FROM data_item WHERE id IN %(ids)s
+                RETURNING id
                 """,
-                (dataset_id_filtered, tuple(page_ids)),
+                {"dataset_id": dataset_id_filtered, "ids": tuple(page_ids)},
             )
             commit()
 

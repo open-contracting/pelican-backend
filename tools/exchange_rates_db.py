@@ -94,13 +94,13 @@ def update_from_fixer_io() -> None:
 
                 cursor.execute(
                     """
-                        UPDATE exchange_rates
-                        SET rates = %(rates)s, modified = current_timestamp
-                        WHERE valid_on = %(valid_on)s;
+                    UPDATE exchange_rates
+                    SET rates = %(rates)s, modified = current_timestamp
+                    WHERE valid_on = %(valid_on)s;
 
-                        INSERT INTO exchange_rates (valid_on, rates)
-                        VALUES (%(valid_on)s, %(rates)s)
-                        ON CONFLICT DO NOTHING;
+                    INSERT INTO exchange_rates (valid_on, rates)
+                    VALUES (%(valid_on)s, %(rates)s)
+                    ON CONFLICT DO NOTHING;
                     """,
                     {"valid_on": date_str, "rates": json.dumps(data["rates"])},
                 )

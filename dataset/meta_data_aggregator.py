@@ -157,7 +157,7 @@ def get_kingfisher_meta_data(collection_id):
         WITH RECURSIVE tree(id, parent, root, deep) AS (
             SELECT c.id, c.transform_from_collection_id AS parent, c.id AS root, 1 AS deep
             FROM collection c
-            LEFT JOIN collection c2 ON (c2.transform_from_collection_id = c.id)
+            LEFT JOIN collection c2 ON c2.transform_from_collection_id = c.id
             WHERE c2 IS NULL
         UNION ALL
             SELECT c.id, c.transform_from_collection_id, t.root, t.deep + 1
@@ -166,11 +166,11 @@ def get_kingfisher_meta_data(collection_id):
         )
         SELECT c.id, c.store_start_at, c.store_end_at
         FROM tree t
-        JOIN collection c on (t.id = c.id)
-        WHERE t.root = %s
-        ORDER BY deep ASC;
+        JOIN collection c on t.id = c.id
+        WHERE t.root = %(root)s
+        ORDER BY deep ASC
         """,
-        (collection_id,),
+        {"root": collection_id},
     )
     result = kf_cursor.fetchall()
 
@@ -192,24 +192,12 @@ def get_kingfisher_meta_data(collection_id):
 
     # with collection
     kf_cursor.execute(
-        """
-        SELECT *
-        FROM release
-        WHERE collection_id = %s
-        LIMIT 1;
-        """,
-        (proprietary_id,),
+        "SELECT * FROM release WHERE collection_id = %(collection_id)s LIMIT 1", {"collection_id": proprietary_id}
     )
     result = kf_cursor.fetchone()
     if result is None:
         kf_cursor.execute(
-            """
-            SELECT *
-            FROM record
-            WHERE collection_id = %s
-            LIMIT 1;
-            """,
-            (proprietary_id,),
+            "SELECT * FROM record WHERE collection_id = %(collection_id)s LIMIT 1", {"collection_id": proprietary_id}
         )
         result = kf_cursor.fetchone()
 
@@ -218,15 +206,9 @@ def get_kingfisher_meta_data(collection_id):
 
     with_collection = result
 
-    # package data
     kf_cursor.execute(
-        """
-        SELECT *
-        FROM package_data
-        WHERE id = %s
-        LIMIT 1;
-        """,
-        (with_collection["package_data_id"],),
+        "SELECT * FROM package_data WHERE id = %(id)s LIMIT 1",
+        {"id": with_collection["package_data_id"]},
     )
     package_data = kf_cursor.fetchone()
     package_data = package_data if package_data else {}
@@ -278,15 +260,15 @@ def get_kingfisher_meta_data(collection_id):
         """
         SELECT MIN(data.data->>'date'), MAX(data.data->>'date')
         FROM compiled_release
-        JOIN data
-        ON compiled_release.data_id = data.id
-        WHERE compiled_release.collection_id = %s AND
-            data.data ? 'date' AND
-            data.data->>'date' is not null AND
-            data.data->>'date' <> ''
-        LIMIT 1;
+        JOIN data ON compiled_release.data_id = data.id
+        WHERE
+            compiled_release.collection_id = %(collection_id)s
+            AND data.data ? 'date'
+            AND data.data->>'date' IS NOT NULL
+            AND data.data->>'date' <> ''
+        LIMIT 1
         """,
-        (collection_id,),
+        {"collection_id": collection_id},
     )
     result = kf_cursor.fetchone()
 
@@ -322,10 +304,6 @@ def get_dqt_meta_data(dataset_id):
 def update_meta_data(meta_data, dataset_id):
     with get_cursor() as cursor:
         cursor.execute(
-            """
-                UPDATE dataset
-                SET meta = meta || %(meta)s, modified = now()
-                WHERE id = %(id)s
-            """,
+            "UPDATE dataset SET meta = meta || %(meta)s, modified = now() WHERE id = %(id)s",
             {"meta": json.dumps(meta_data), "id": dataset_id},
         )
