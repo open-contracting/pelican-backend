@@ -160,10 +160,11 @@ def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> 
 
         # "primitive" value, return it
         if key in item:
+            if key != path[-1]:
+                return []
             if value_only:
                 return [item[key]]
-            else:
-                return [{"path": key, "value": item[key]}]
+            return [{"path": key, "value": item[key]}]
 
     # indexing used
     field = None

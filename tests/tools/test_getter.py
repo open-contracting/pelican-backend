@@ -15,6 +15,10 @@ item = {
 }
 
 
+def test_get_values_invalid():
+    assert get_values({"tender": {"tenderers": "string"}}, "tender.tenderers.contactPoint.name") == []
+
+
 def test_get_value_simple():
     assert get_values(item, "id") == [{"path": "id", "value": item["id"]}]
     assert get_values(item, "") == [{"path": "", "value": item}]

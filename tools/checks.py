@@ -54,9 +54,14 @@ def field_coverage_check(
     def method(item: Dict[str, Any], key: str) -> Dict[str, Any]:
         obj = _empty_field_result(name, version=version)
 
-        passed, reason = test(item, key)
+        if type(item) is not dict:
+            passed, reason = False, f"ancestor is a {type(item).__name__}, not an object"
+            value = item
+        else:
+            passed, reason = test(item, key)
+            value = item.get(key)
 
-        return _prepare_field_result(obj, passed, item.get(key), reason)
+        return _prepare_field_result(obj, passed, value, reason)
 
     return method
 

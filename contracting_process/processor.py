@@ -82,7 +82,7 @@ def field_level_checks(data, item_id, dataset_id):
                 list_result = True
 
                 # create list from plain values
-                if type(value["value"]) is dict:
+                if type(value["value"]) is not list:
                     value["value"] = [value["value"]]
                     list_result = False
 

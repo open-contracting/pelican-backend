@@ -12,4 +12,5 @@ class TestCase(FieldCoverageTests, unittest.TestCase):
     failing = [
         ({}, "not set"),
         ({"other": None}, "not set"),
+        ("string", "ancestor is a str, not an object", "string"),
     ]
