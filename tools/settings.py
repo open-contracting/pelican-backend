@@ -84,7 +84,8 @@ CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK = int(
     os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", 180)
 )
 
-# A comma-separated list of steps to run. Default to all.
+# A comma-separated list of steps to run (default all). Note: If field_quality is set, then field_coverage is run,
+# because it is a dependency.
 STEPS = os.getenv(
     "PELICAN_BACKEND_STEPS",
     ",".join(getattr(Steps, attr) for attr in dir(Steps) if not attr.startswith("__")),

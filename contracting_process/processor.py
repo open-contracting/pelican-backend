@@ -8,6 +8,7 @@ from contracting_process.field_level.definitions import definitions as field_lev
 from contracting_process.resource_level.definitions import definitions as resource_level_definitions
 from tools import settings
 from tools.getter import get_values
+from tools.helpers import is_step_required
 from tools.services import get_cursor
 from tools.state import set_item_state, state
 
@@ -15,27 +16,29 @@ logger = logging.getLogger("pelican.contracting_process.processor")
 
 
 # item: (data, item_id, dataset_id)
-def do_work(items, do_field_level_checks=True, do_resource_level_checks=True):
+def do_work(items):
     field_level_check_results = []
     resource_level_check_results = []
+
+    do_field_level = is_step_required(settings.Steps.FIELD_COVERAGE, settings.Steps.FIELD_QUALITY)
+    do_resource_level = is_step_required(settings.Steps.COMPILED_RELEASE)
+    do_field_quality = is_step_required(settings.Steps.FIELD_QUALITY)
 
     items_count = 0
     for item in items:
         items_count += 1
 
-        if do_field_level_checks:
-            field_level_check_results.append(field_level_checks(*item))
-        if do_resource_level_checks:
+        if do_field_level:
+            field_level_check_results.append(field_level_checks(*item, do_field_quality=do_field_quality))
+        if do_resource_level:
             resource_level_check_results.append(resource_level_checks(*item))
 
         set_item_state(item[2], item[1], state.OK)
 
-    if do_field_level_checks:
+    if do_field_level:
         save_field_level_checks(field_level_check_results, items_count)
-    if do_resource_level_checks:
+    if do_resource_level:
         save_resource_level_check(resource_level_check_results, items_count)
-
-    logger.debug("Work done.")
 
 
 def resource_level_checks(data, item_id, dataset_id):
@@ -55,7 +58,7 @@ def resource_level_checks(data, item_id, dataset_id):
     return (json.dumps(result), item_id, dataset_id)
 
 
-def field_level_checks(data, item_id, dataset_id):
+def field_level_checks(data, item_id, dataset_id, do_field_quality=True):
     logger.log(
         settings.CustomLogLevels.CHECK_TRACE,
         "Computing field level checks for item_id = {}, dataset_id = {}.".format(item_id, dataset_id),
@@ -63,7 +66,6 @@ def field_level_checks(data, item_id, dataset_id):
 
     result = {"meta": {"ocid": data["ocid"], "item_id": item_id}, "checks": {}}
 
-    # perform field level checks
     for path, checks in field_level_definitions.items():
         # get the parent/parents
         path_chunks = path.split(".")
@@ -125,7 +127,7 @@ def field_level_checks(data, item_id, dataset_id):
                         if check_result["result"] is False:
                             break
 
-                    if field_result["coverage"]["overall_result"]:
+                    if do_field_quality and field_result["coverage"]["overall_result"]:
                         for check, check_name in checks:
                             logger.log(
                                 settings.CustomLogLevels.CHECK_TRACE,

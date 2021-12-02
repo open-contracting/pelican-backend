@@ -3,9 +3,7 @@ import click
 from yapw.methods.blocking import ack, publish
 
 from contracting_process import processor
-from tools import settings
 from tools.currency_converter import bootstrap
-from tools.helpers import is_step_required
 from tools.services import commit, create_client, get_cursor
 
 consume_routing_key = "extractor"
@@ -28,11 +26,7 @@ def callback(client_state, channel, method, properties, input_message):
     with get_cursor() as cursor:
         cursor.execute("SELECT data, id, dataset_id FROM data_item WHERE id IN %(ids)s", {"ids": tuple(item_ids)})
 
-    processor.do_work(
-        cursor.fetchall(),
-        do_field_level_checks=is_step_required(settings.Steps.FIELD_COVERAGE, settings.Steps.FIELD_QUALITY),
-        do_resource_level_checks=is_step_required(settings.Steps.COMPILED_RELEASE),
-    )
+    processor.do_work(cursor.fetchall())
 
     commit()
 
