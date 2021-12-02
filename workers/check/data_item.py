@@ -9,7 +9,6 @@ from tools import settings
 from tools.currency_converter import bootstrap
 from tools.helpers import is_step_required
 from tools.services import commit, create_client, get_cursor
-from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "extractor"
 routing_key = "contracting_process_checker"
@@ -26,56 +25,23 @@ def start():
 
 
 def callback(client_state, channel, method, properties, input_message):
-    cursor = get_cursor()
-    try:
-        dataset_id = input_message["dataset_id"]
+    dataset_id = input_message["dataset_id"]
+    item_ids = input_message["item_ids"]
 
-        if "command" not in input_message:
-            item_ids = input_message["item_ids"]
+    with get_cursor() as cursor:
+        cursor.execute("SELECT data, id, dataset_id FROM data_item WHERE id IN %s", (tuple(item_ids),))
 
-            # get item from storage
-            cursor.execute(
-                """
-                SELECT data, id, dataset_id
-                FROM data_item
-                WHERE id IN %s;
-                """,
-                (tuple(item_ids),),
-            )
-
-            # perform actual action with items
-            processor.do_work(
-                cursor.fetchall(),
-                do_field_level_checks=is_step_required(settings.Steps.FIELD_COVERAGE, settings.Steps.FIELD_QUALITY),
-                do_resource_level_checks=is_step_required(settings.Steps.COMPILED_RELEASE),
-            )
-
-            commit()
-
-            # send message to next phase
-            message = {"dataset_id": dataset_id}
-            publish(client_state, channel, message, routing_key)
-        else:
-            resend(client_state, channel, dataset_id)
-        ack(client_state, channel, method.delivery_tag)
-    finally:
-        cursor.close()
-
-    logger.info("Processing completed.")
-
-
-def resend(client_state, channel, dataset_id):
-    logger.info("Resending messages for dataset_id %s started", dataset_id)
-
-    # mark dataset as done
-    set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
+    processor.do_work(
+        cursor.fetchall(),
+        do_field_level_checks=is_step_required(settings.Steps.FIELD_COVERAGE, settings.Steps.FIELD_QUALITY),
+        do_resource_level_checks=is_step_required(settings.Steps.COMPILED_RELEASE),
+    )
 
     commit()
 
-    message = {"dataset_id": dataset_id}
-    publish(client_state, channel, message, routing_key)
+    publish(client_state, channel, {"dataset_id": dataset_id}, routing_key)
 
-    logger.info("Resending messages for dataset_id %s completed", dataset_id)
+    ack(client_state, channel, method.delivery_tag)
 
 
 if __name__ == "__main__":
