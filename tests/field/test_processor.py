@@ -24,7 +24,7 @@ def test_field_level_checks_invalid():
                 "check_results": [
                     {
                         "name": "exists",
-                        "reason": "ancestor is a str, not an object",
+                        "reason": "parent is a str, not an object",
                         "result": False,
                         "value": "string",
                         "version": 1.0,

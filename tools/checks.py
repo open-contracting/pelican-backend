@@ -54,8 +54,9 @@ def field_coverage_check(
     def method(item: Dict[str, Any], key: str) -> Dict[str, Any]:
         obj = _empty_field_result(name, version=version)
 
+        # This is not a separate check, as checks ought to be able to assume the basic structure.
         if type(item) is not dict:
-            passed, reason = False, f"ancestor is a {type(item).__name__}, not an object"
+            passed, reason = False, f"parent is a {type(item).__name__}, not an object"
             value = item
         else:
             passed, reason = test(item, key)

@@ -17,6 +17,7 @@ class TestCase(FieldCoverageTests, unittest.TestCase):
     failing = [
         ({}, "not set"),
         ({"other": None}, "not set"),
+        ("string", "parent is a str, not an object", "string"),
         ({"key": {}}, "empty object", {}),
         ({"key": []}, "empty array", []),
         ({"key": ""}, "empty string", ""),
