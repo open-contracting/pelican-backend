@@ -144,41 +144,20 @@ def field_level_checks(data, item_id, dataset_id):
 
                     result["checks"][path].append(field_result)
 
-    # return result
     return (json.dumps(result), item_id, dataset_id)
 
 
-# result_item: (result, item_id, dataset_id)
 def save_field_level_checks(result_items, items_count):
-    cursor = get_cursor()
-
-    sql = """
-        INSERT INTO field_level_check
-        (result, data_item_id, dataset_id)
-        VALUES
-        %s;
-    """
-
-    execute_values(cursor, sql, result_items, page_size=items_count)
+    with get_cursor() as cursor:
+        sql = "INSERT INTO field_level_check (result, data_item_id, dataset_id) VALUES %s"
+        execute_values(cursor, sql, result_items, page_size=items_count)
 
     logger.debug("Field level checks saved.")
 
-    cursor.close()
 
-
-# result_item: (result, item_id, dataset_id)
 def save_resource_level_check(result_items, items_count):
-    cursor = get_cursor()
-
-    sql = """
-        INSERT INTO resource_level_check
-        (result, data_item_id, dataset_id)
-        VALUES
-        %s;
-    """
-
-    execute_values(cursor, sql, result_items, page_size=items_count)
-
-    cursor.close()
+    with get_cursor() as cursor:
+        sql = "INSERT INTO resource_level_check (result, data_item_id, dataset_id) VALUES %s"
+        execute_values(cursor, sql, result_items, page_size=items_count)
 
     logger.debug("Resource level checks saved.")

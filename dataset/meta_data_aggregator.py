@@ -1,5 +1,3 @@
-import copy
-
 import psycopg2.extras
 import requests
 import simplejson as json
@@ -11,30 +9,30 @@ from tools.getter import get_values
 from tools.helpers import parse_datetime
 from tools.services import get_cursor
 
-EMPTY_SCOPE = {
-    "compiled_releases": {"total_unique_ocids": None, "_ocid_set": set()},
-    "tender_lifecycle": {"planning": 0, "tender": 0, "award": 0, "contract": 0, "implementation": 0},
-    "prices": {
-        "total_volume_positive": 0,
-        "contracts_positive": 0,
-        "total_volume_negative": 0,
-        "contracts_negative": 0,
-        "price_category_positive": {
-            "0_10000": {"contracts": 0, "volume": 0, "share": None},
-            "10001_100000": {"contracts": 0, "volume": 0, "share": None},
-            "100001_1000000": {"contracts": 0, "volume": 0, "share": None},
-            "1000001+": {"contracts": 0, "volume": 0, "share": None},
-        },
-    },
-    "_period_dict": dict(),
-    "period": None,
-}
 DATE_STR_FORMAT = "%b-%-y"
+DATETIME_STR_FORMAT = "%Y-%m-%d %H.%M.%S"
 
 
 def add_item(scope, item, item_id):
     if not scope:
-        scope = copy.deepcopy(EMPTY_SCOPE)
+        scope = {
+            "compiled_releases": {"total_unique_ocids": None, "_ocid_set": set()},
+            "tender_lifecycle": {"planning": 0, "tender": 0, "award": 0, "contract": 0, "implementation": 0},
+            "prices": {
+                "total_volume_positive": 0,
+                "contracts_positive": 0,
+                "total_volume_negative": 0,
+                "contracts_negative": 0,
+                "price_category_positive": {
+                    "0_10000": {"contracts": 0, "volume": 0, "share": None},
+                    "10001_100000": {"contracts": 0, "volume": 0, "share": None},
+                    "100001_1000000": {"contracts": 0, "volume": 0, "share": None},
+                    "1000001+": {"contracts": 0, "volume": 0, "share": None},
+                },
+            },
+            "_period_dict": dict(),
+            "period": None,
+        }
 
     # compiled releases
     scope["compiled_releases"]["_ocid_set"].add(item["ocid"])
@@ -129,28 +127,24 @@ def get_result(scope):
     return scope
 
 
-EMPTY_KINGFISHER_META_DATA = {
-    "kingfisher_metadata": {"collection_id": None, "processing_start": None, "processing_end": None},
-    "collection_metadata": {
-        "publisher": None,
-        "url": None,
-        "ocid_prefix": None,
-        "data_license": None,
-        "publication_policy": None,
-        "extensions": [],
-        "published_from": None,
-        "published_to": None,
-    },
-}
-DATETIME_STR_FORMAT = "%Y-%m-%d %H.%M.%S"
-
-
 def get_kingfisher_meta_data(collection_id):
     kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
 
     kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    meta_data = copy.deepcopy(EMPTY_KINGFISHER_META_DATA)
+    meta_data = {
+        "kingfisher_metadata": {"collection_id": None, "processing_start": None, "processing_end": None},
+        "collection_metadata": {
+            "publisher": None,
+            "url": None,
+            "ocid_prefix": None,
+            "data_license": None,
+            "publication_policy": None,
+            "extensions": [],
+            "published_from": None,
+            "published_to": None,
+        },
+    }
 
     #######################
     # kingfisher metadata #
@@ -312,41 +306,26 @@ def get_kingfisher_meta_data(collection_id):
     return meta_data
 
 
-EMPTY_DQT_META_DATA = {"data_quality_tool_metadata": {"processing_start": None, "processing_end": None}}
-
-
 def get_dqt_meta_data(dataset_id):
-    cursor = get_cursor()
+    meta_data = {"data_quality_tool_metadata": {"processing_start": None, "processing_end": None}}
 
-    meta_data = copy.deepcopy(EMPTY_DQT_META_DATA)
+    with get_cursor() as cursor:
+        cursor.execute("SELECT created, now() FROM dataset WHERE id = %(id)s", {"id": dataset_id})
+        row = cursor.fetchone()
 
-    cursor.execute(
-        """
-        SELECT created, now()
-        FROM dataset
-        WHERE id = %s;
-        """,
-        (dataset_id,),
-    )
-
-    row = cursor.fetchone()
     meta_data["data_quality_tool_metadata"]["processing_start"] = row[0].strftime(DATETIME_STR_FORMAT)
     meta_data["data_quality_tool_metadata"]["processing_end"] = row[1].strftime(DATETIME_STR_FORMAT)
-
-    cursor.close()
 
     return meta_data
 
 
 def update_meta_data(meta_data, dataset_id):
-    cursor = get_cursor()
-    cursor.execute(
-        """
-        UPDATE dataset
-        SET meta = meta || %s, modified = now()
-        WHERE id = %s;
-        """,
-        (json.dumps(meta_data), dataset_id),
-    )
-
-    cursor.close()
+    with get_cursor() as cursor:
+        cursor.execute(
+            """
+                UPDATE dataset
+                SET meta = meta || %(meta)s, modified = now()
+                WHERE id = %(id)s
+            """,
+            {"meta": json.dumps(meta_data), "id": dataset_id},
+        )
