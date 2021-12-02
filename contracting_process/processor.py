@@ -15,7 +15,7 @@ logger = logging.getLogger("pelican.contracting_process.processor")
 
 
 # item: (data, item_id, dataset_id)
-def do_work(items, do_field_level_checks=True, do_resource_level_checks=False):
+def do_work(items, do_field_level_checks=True, do_resource_level_checks=True):
     field_level_check_results = []
     resource_level_check_results = []
 
