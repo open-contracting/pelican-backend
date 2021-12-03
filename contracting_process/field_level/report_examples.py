@@ -13,19 +13,17 @@ page_size = 2000
 
 
 def create(dataset_id):
-    # initialization
     cursor = get_cursor()
 
-    # house-keeping
+    # Delete existing data in case of duplicate messages.
     cursor.execute(
-        "DELETE FROM report WHERE dataset_id = %(dataset_id)s AND type = 'field_level_check'",
+        """
+        DELETE FROM report WHERE dataset_id = %(dataset_id)s AND type = 'field_level_check';
+        DELETE FROM field_level_check_examples WHERE dataset_id = %(dataset_id)s;
+        """,
         {"dataset_id": dataset_id},
     )
-    cursor.execute(
-        "DELETE FROM field_level_check_examples WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
-    )
 
-    # creating report and examples
     report = {}
     examples = {}
 
@@ -192,15 +190,14 @@ def create(dataset_id):
         logger.info("Processed page %s", pager)
 
     logger.info("Storing field level check report for dataset_id %s", dataset_id)
-    # storing the report
     cursor.execute(
         "INSERT INTO report (dataset_id, type, data) VALUES (%(dataset_id)s, 'field_level_check', %(data)s)",
         {"dataset_id": dataset_id, "data": json.dumps(report)},
     )
+
     commit()
 
     logger.info("Storing examples for field level checks for dataset_id %s", dataset_id)
-    # storing the examples
     for path, path_checks in examples.items():
         path_checks["coverage"]["passed_examples"] = path_checks["coverage"]["passed_sampler"].retrieve_samples()
         path_checks["coverage"]["failed_examples"] = path_checks["coverage"]["failed_sampler"].retrieve_samples()
@@ -233,6 +230,7 @@ def create(dataset_id):
             """,
             {"dataset_id": dataset_id, "path": path, "data": json.dumps(path_checks)},
         )
+
     commit()
 
     cursor.close()

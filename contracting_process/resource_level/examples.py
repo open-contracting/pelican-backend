@@ -9,6 +9,8 @@ examples_cap = 20
 
 def create(dataset_id):
     cursor = get_cursor()
+
+    # Delete existing data in case of duplicate messages.
     cursor.execute(
         "DELETE FROM resource_level_check_examples WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
     )
@@ -45,9 +47,8 @@ def create(dataset_id):
         elif example["result"]["result"] is None:
             check_samplers[row[2]]["undefined"].process(example)
         else:
-            raise ValueError()
+            raise ValueError
 
-    # saving examples
     for check_name, samplers in check_samplers.items():
         data = {
             "passed_examples": samplers["passed"].retrieve_samples(),
@@ -62,6 +63,7 @@ def create(dataset_id):
             """,
             {"dataset_id": dataset_id, "check_name": check_name, "data": json.dumps(data)},
         )
+
     commit()
 
     cursor.close()

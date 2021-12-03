@@ -6,6 +6,8 @@ from tools.services import commit, get_cursor
 
 def create(dataset_id):
     cursor = get_cursor()
+
+    # Delete existing data in case of duplicate messages.
     cursor.execute(
         "DELETE FROM report WHERE dataset_id = %(dataset_id)s and type = 'resource_level_check'",
         {"dataset_id": dataset_id},
@@ -98,6 +100,7 @@ def create(dataset_id):
         "INSERT INTO report (dataset_id, type, data) VALUES (%(dataset_id)s, 'resource_level_check', %(data)s)",
         {"dataset_id": dataset_id, "data": json.dumps(report)},
     )
+
     commit()
 
     cursor.close()

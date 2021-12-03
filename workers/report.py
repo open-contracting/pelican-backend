@@ -8,7 +8,7 @@ import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
 from dataset import meta_data_aggregator
 from tools import settings
-from tools.helpers import finish_worker, is_step_required
+from tools.helpers import finish_callback, is_step_required
 from tools.services import create_client
 from tools.state import phase
 
@@ -41,7 +41,7 @@ def callback(client_state, channel, method, properties, input_message):
         meta_data = meta_data_aggregator.get_dqt_meta_data(dataset_id)
         meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
-    finish_worker(client_state, channel, method, dataset_id, phase.CHECKED)
+    finish_callback(client_state, channel, method, dataset_id, phase.CHECKED)
 
 
 if __name__ == "__main__":

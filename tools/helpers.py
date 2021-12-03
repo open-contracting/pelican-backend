@@ -70,7 +70,7 @@ def is_step_required(*steps: str) -> bool:
     return any(step in settings.STEPS for step in steps)
 
 
-def finish_worker(
+def finish_callback(
     client_state, channel, method, dataset_id: int, phase: str, routing_key: Optional[str] = None
 ) -> None:
     """

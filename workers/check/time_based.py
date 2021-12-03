@@ -3,7 +3,7 @@ import click
 
 from time_variance import processor
 from tools import settings
-from tools.helpers import finish_worker, is_step_required
+from tools.helpers import finish_callback, is_step_required
 from tools.services import commit, create_client
 from tools.state import phase, set_dataset_state, state
 
@@ -28,7 +28,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         processor.do_work(dataset_id)
 
-    finish_worker(client_state, channel, method, dataset_id, phase.TIME_VARIANCE, routing_key=routing_key)
+    finish_callback(client_state, channel, method, dataset_id, phase.TIME_VARIANCE, routing_key=routing_key)
 
 
 if __name__ == "__main__":
