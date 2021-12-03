@@ -51,7 +51,7 @@ def callback(client_state, channel, method, properties, input_message):
             or not isinstance(input_message["filter_message"], dict)
             or len(input_message["filter_message"]) == 0
         ):
-            logger.warning("Input message is malformed, will be dropped.")
+            logger.error("Input message is malformed, will be dropped.")
             ack(client_state, channel, delivery_tag)
             return
 
@@ -77,7 +77,7 @@ def callback(client_state, channel, method, properties, input_message):
             {"dataset_id": dataset_id_original},
         )
         if not cursor.fetchone()[0]:
-            logger.warning("Dataset with dataset_id %s does not exist or cannot be filtered.", dataset_id_original)
+            logger.error("Dataset with dataset_id %s does not exist or cannot be filtered.", dataset_id_original)
             ack(client_state, channel, delivery_tag)
             return
 
@@ -142,6 +142,9 @@ def callback(client_state, channel, method, properties, input_message):
         cursor.execute(query)
         ids = [row[0] for row in cursor.fetchall()]
 
+        # ack message, no recovery possible after this point
+        ack(client_state, channel, delivery_tag)
+
         # batch initialization
         max_batch_size = settings.EXTRACTOR_MAX_BATCH_SIZE
         batch_size = 0
@@ -196,8 +199,6 @@ def callback(client_state, channel, method, properties, input_message):
             dataset_id_original,
             dataset_id_filtered,
         )
-
-        ack(client_state, channel, delivery_tag)
     finally:
         cursor.close()
 
