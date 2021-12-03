@@ -19,7 +19,7 @@ Workers can be daemonized and run in parallel. The pipeline is:
 Workers are `Click <https://click.palletsprojects.com/>`__ programs that are:
 
 -  as stateless as possible, since messages can arrive in any order
--  as idempotent as possible, since messages can be re-delivered
+-  as idempotent as possible, since messages can be redelivered
 -  able to run in parallel, to maximize throughput
 
 .. _repository-structure:

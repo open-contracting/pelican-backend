@@ -19,7 +19,6 @@ Run the files in the ``pelican/migrations/`` directory in numerical order. For e
    psql pelican_backend -f pelican/migrations/*.sql
 
 ..
-
    Bash filename expansion is alphabetically sorted.
    https://www.gnu.org/software/bash/manual/bash.html#Filename-Expansion
 

@@ -5,7 +5,7 @@ import click
 
 from tools import exchange_rates_db, settings
 from tools.services import commit, create_client, get_cursor
-from tools.state import phase, state
+from tools.state import phase, set_dataset_state, state
 
 
 @click.group()
@@ -24,7 +24,7 @@ def update_exchange_rates():
 
 @cli.command()
 @click.argument("name")
-@click.argument("collection_id")
+@click.argument("collection_id", type=int)
 @click.option("--previous-dataset", type=int, help="ID of previous dataset for time-based checks.")
 @click.option("--sample", type=int, help="Number of compiled releases to import.")
 def add(name, collection_id, previous_dataset, sample):
@@ -179,6 +179,25 @@ def remove(dataset_id, filtered):
 
     cursor.close()
     logger.info("Successful deletion executed.")
+
+
+@cli.group()
+def dev():
+    """
+    Commands for administrators and developers of Pelican backend.
+    """
+    pass
+
+
+@dev.command()
+@click.argument("dataset_id", type=int)
+def restart_dataset_check(dataset_id):
+    """
+    Restart the dataset check if the worker failed.
+    """
+    set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
+    commit()
+    create_client().publish({"dataset_id": dataset_id}, "contracting_process_checker")
 
 
 if __name__ == "__main__":
