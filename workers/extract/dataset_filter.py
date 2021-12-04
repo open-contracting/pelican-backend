@@ -9,7 +9,7 @@ from yapw.methods.blocking import ack, publish
 
 from tools import settings
 from tools.services import commit, create_client, get_cursor
-from tools.state import phase, set_dataset_state, set_item_state, state
+from tools.state import phase, set_dataset_state, set_items_state, state
 
 consume_routing_key = "dataset_filter_extractor_init"
 routing_key = "extractor"
@@ -151,7 +151,7 @@ def callback(client_state, channel, method, properties, input_message):
         batch = []
 
         i = 0
-        items_inserted = 0
+        inserts = 0
         items_count = len(ids)
         while i * page_size < items_count:
             page_ids = ids[i * page_size : (i + 1) * page_size]
@@ -169,18 +169,22 @@ def callback(client_state, channel, method, properties, input_message):
 
             for row in cursor.fetchall():
                 inserted_id = row[0]
-                items_inserted += 1
-                set_item_state(dataset_id_filtered, inserted_id, state.IN_PROGRESS)
-                set_dataset_state(
-                    dataset_id_filtered, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=items_inserted
-                )
-                if items_inserted == items_count:
-                    set_dataset_state(dataset_id_filtered, state.OK, phase.CONTRACTING_PROCESS)
-                commit()
-
-                batch_size += 1
                 batch.append(inserted_id)
-                if batch_size >= max_batch_size or items_inserted == items_count:
+                batch_size += 1
+                inserts += 1
+
+                if batch_size >= max_batch_size or inserts == items_count:
+                    set_items_state(dataset_id_filtered, batch, state.IN_PROGRESS)
+
+                    if inserts == items_count:
+                        set_dataset_state(dataset_id_filtered, state.OK, phase.CONTRACTING_PROCESS)
+                    else:
+                        set_dataset_state(
+                            dataset_id_filtered, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=inserts
+                        )
+
+                    commit()
+
                     publish(client_state, channel, {"item_ids": batch, "dataset_id": dataset_id_filtered}, routing_key)
 
                     batch_size = 0
@@ -190,15 +194,11 @@ def callback(client_state, channel, method, properties, input_message):
                 "Inserted page %s from %s. %s items out of %s downloaded",
                 i,
                 ceil(float(items_count) / float(page_size)),
-                items_inserted,
+                inserts,
                 items_count,
             )
 
-        logger.info(
-            "All original items with dataset_id %s have been duplicated with dataset_id %s",
-            dataset_id_original,
-            dataset_id_filtered,
-        )
+        logger.info("Done filtering dataset %s to dataset %s", dataset_id_original, dataset_id_filtered)
     finally:
         cursor.close()
 

@@ -1,4 +1,6 @@
-from typing import Any, Optional, Tuple
+from typing import Any, List, Optional, Tuple
+
+from psycopg2.extras import execute_values
 
 from tools.services import get_cursor
 
@@ -29,38 +31,36 @@ def set_dataset_state(dataset_id: int, state: str, phase: str, size: Optional[in
         sql = """\
             INSERT INTO progress_monitor_dataset (dataset_id, state, phase, size)
             VALUES (%(dataset_id)s, %(state)s, %(phase)s, %(size)s)
-            ON CONFLICT ON CONSTRAINT unique_dataset_id
+            ON CONFLICT (dataset_id)
             DO UPDATE SET state = %(state)s, phase = %(phase)s, size = %(size)s, modified = now()
         """
     else:
         sql = """\
             INSERT INTO progress_monitor_dataset (dataset_id, state, phase, size)
             VALUES (%(dataset_id)s, %(state)s, %(phase)s, %(size)s)
-            ON CONFLICT ON CONSTRAINT unique_dataset_id
+            ON CONFLICT (dataset_id)
             DO UPDATE SET state = %(state)s, phase = %(phase)s, modified = now()
         """
     with get_cursor() as cursor:
         cursor.execute(sql, {"dataset_id": dataset_id, "state": state, "phase": phase, "size": size})
 
 
-def set_item_state(dataset_id: int, item_id: int, state: str) -> None:
+def set_items_state(dataset_id: int, item_ids: List[int], state: str) -> None:
     """
-    Upsert a data item's progress to the given state.
+    Upsert data items' progress to the given state.
 
     :param dataset_id: the dataset's ID
-    :param item_id: the data item's iD
+    :param item_ids: the data items' IDs
     :param state: the state to set
     """
     with get_cursor() as cursor:
-        cursor.execute(
-            """\
+        sql = """\
             INSERT INTO progress_monitor_item (dataset_id, item_id, state)
-            VALUES (%(dataset_id)s, %(item_id)s, %(state)s)
-            ON CONFLICT ON CONSTRAINT unique_dataset_id_item_id
-            DO UPDATE SET state = %(state)s, modified = now()
-            """,
-            {"dataset_id": dataset_id, "item_id": item_id, "state": state},
-        )
+            VALUES %s
+            ON CONFLICT (dataset_id, item_id)
+            DO UPDATE SET state = excluded.state, modified = now()
+        """
+        execute_values(cursor, sql, [(dataset_id, item_id, state) for item_id in item_ids])
 
 
 def get_processed_items_count(dataset_id: int) -> int:

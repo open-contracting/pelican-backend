@@ -10,13 +10,13 @@ from tools import settings
 from tools.getter import get_values
 from tools.helpers import is_step_required
 from tools.services import get_cursor
-from tools.state import set_item_state, state
+from tools.state import set_items_state, state
 
 logger = logging.getLogger("pelican.contracting_process.processor")
 
 
-# item: (data, item_id, dataset_id)
-def do_work(items):
+# item: (data, item_id)
+def do_work(dataset_id, items):
     field_level_check_results = []
     resource_level_check_results = []
 
@@ -29,11 +29,11 @@ def do_work(items):
         items_count += 1
 
         if do_field_level:
-            field_level_check_results.append(field_level_checks(*item, do_field_quality=do_field_quality))
+            field_level_check_results.append(field_level_checks(*item, dataset_id, do_field_quality=do_field_quality))
         if do_resource_level:
-            resource_level_check_results.append(resource_level_checks(*item))
+            resource_level_check_results.append(resource_level_checks(*item, dataset_id))
 
-        set_item_state(item[2], item[1], state.OK)
+    set_items_state(dataset_id, [item[1] for item in items], state.OK)
 
     if do_field_level:
         save_field_level_checks(field_level_check_results, items_count)
