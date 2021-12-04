@@ -73,7 +73,7 @@ def remove(dataset_id, filtered):
     if filtered:
         while True:
             cursor.execute(
-                """
+                """\
                 SELECT p.dataset_id
                 FROM progress_monitor_dataset p
                 WHERE
@@ -106,7 +106,7 @@ def remove(dataset_id, filtered):
         delete_dataset_ids,
     )
     cursor.execute(
-        """
+        """\
         DELETE FROM field_level_check WHERE dataset_id IN %(dataset_ids)s;
         DELETE FROM field_level_check_examples WHERE dataset_id IN %(dataset_ids)s;
         DELETE FROM resource_level_check WHERE dataset_id IN %(dataset_ids)s;
@@ -136,7 +136,7 @@ def remove(dataset_id, filtered):
     drop_dataset_ids = []
     while True:
         cursor.execute(
-            """
+            """\
             SELECT p.dataset_id
             FROM progress_monitor_dataset p
             WHERE
@@ -165,7 +165,7 @@ def remove(dataset_id, filtered):
     if drop_dataset_ids:
         logger.info("The following datasets will be dropped entirely: %s", drop_dataset_ids)
         cursor.execute(
-            """
+            """\
             DELETE FROM dataset WHERE id IN %(dataset_ids)s;
 
             DELETE FROM dataset_filter

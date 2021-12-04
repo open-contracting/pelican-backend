@@ -61,7 +61,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         logger.info("Checking whether dataset with dataset_id %s exists and can be filtered.", dataset_id_original)
         cursor.execute(
-            """
+            """\
             SELECT EXISTS (
                 SELECT 1
                 FROM dataset
@@ -83,7 +83,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         logger.info("Creating row in dataset table for filtered dataset")
         cursor.execute(
-            """
+            """\
             INSERT INTO dataset (name, meta, ancestor_id)
             SELECT name, meta, NULL FROM dataset WHERE id = %(ancestor_id)s
             RETURNING id
@@ -95,7 +95,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         logger.info("Creating row in dataset_filter table")
         cursor.execute(
-            """
+            """\
             INSERT INTO dataset_filter (dataset_id_original, dataset_id_filtered, filter_message)
             VALUES (%(dataset_id_original)s, %(dataset_id_filtered)s, %(filter_message)s)
             """,
@@ -158,7 +158,7 @@ def callback(client_state, channel, method, properties, input_message):
             i += 1
 
             cursor.execute(
-                """
+                """\
                 INSERT INTO data_item (data, dataset_id)
                 SELECT data, %(dataset_id)s FROM data_item WHERE id IN %(ids)s
                 RETURNING id

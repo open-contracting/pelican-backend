@@ -17,7 +17,7 @@ def create(dataset_id):
 
     # Delete existing data in case of duplicate messages.
     cursor.execute(
-        """
+        """\
         DELETE FROM report WHERE dataset_id = %(dataset_id)s AND type = 'field_level_check';
         DELETE FROM field_level_check_examples WHERE dataset_id = %(dataset_id)s;
         """,
@@ -112,7 +112,7 @@ def create(dataset_id):
         cursor = get_cursor()
 
         cursor.execute(
-            """
+            """\
             SELECT id, result
             FROM field_level_check
             WHERE
@@ -224,7 +224,7 @@ def create(dataset_id):
             del check["failed_sampler"]
 
         cursor.execute(
-            """
+            """\
             INSERT INTO field_level_check_examples (dataset_id, path, data)
             VALUES (%(dataset_id)s, %(path)s, %(data)s)
             """,

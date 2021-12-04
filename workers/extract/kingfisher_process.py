@@ -44,7 +44,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         if max_items is None:
             kf_cursor.execute(
-                """
+                """\
                 SELECT compiled_release.data_id
                 FROM compiled_release
                 JOIN data ON compiled_release.data_id = data.id
@@ -56,7 +56,7 @@ def callback(client_state, channel, method, properties, input_message):
             )
         else:
             kf_cursor.execute(
-                """
+                """\
                 SELECT compiled_release.data_id
                 FROM compiled_release
                 JOIN data ON compiled_release.data_id = data.id
@@ -72,7 +72,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         logger.info("Creating row in dataset table for incoming collection")
         cursor.execute(
-            """
+            """\
             INSERT INTO dataset (name, meta, ancestor_id)
             VALUES (%(name)s, %(meta)s, %(ancestor_id)s)
             RETURNING id

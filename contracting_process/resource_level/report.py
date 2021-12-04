@@ -33,7 +33,7 @@ def create(dataset_id):
 
     # total counts
     cursor.execute(
-        """
+        """\
         SELECT sub.check_name, sub.result, count(*) AS count
         FROM (
             SELECT
@@ -66,7 +66,7 @@ def create(dataset_id):
 
     # individual counts
     cursor.execute(
-        """
+        """\
         SELECT
             sub.check_name,
             sum(sub.pass_count) AS pass_count,

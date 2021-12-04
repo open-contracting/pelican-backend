@@ -153,7 +153,7 @@ def get_kingfisher_meta_data(collection_id):
 
     # Select whole chain of ascendants of the given child (inclusive). This child must be last in the chain.
     kf_cursor.execute(
-        """
+        """\
         WITH RECURSIVE tree(id, parent, root, deep) AS (
             SELECT c.id, c.transform_from_collection_id AS parent, c.id AS root, 1 AS deep
             FROM collection c
@@ -257,7 +257,7 @@ def get_kingfisher_meta_data(collection_id):
 
     # published from, published to
     kf_cursor.execute(
-        """
+        """\
         SELECT MIN(data.data->>'date'), MAX(data.data->>'date')
         FROM compiled_release
         JOIN data ON compiled_release.data_id = data.id

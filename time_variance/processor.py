@@ -34,7 +34,7 @@ def do_work(dataset_id):
         processed_count = 0
 
         cursor.execute(
-            """
+            """\
             SELECT ancestor_data_item.id, ancestor_data_item.data, new_data_item.id, new_data_item.data
             FROM data_item ancestor_data_item
             LEFT JOIN data_item new_data_item ON
@@ -139,7 +139,7 @@ def save_time_variance_level_check(check_name, result, dataset_id):
     meta = json.dumps(result["meta"])
 
     cursor.execute(
-        """
+        """\
         INSERT INTO time_variance_level_check
         (check_name, coverage_result, coverage_value, check_result, check_value, dataset_id, meta)
         VALUES (

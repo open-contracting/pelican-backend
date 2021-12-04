@@ -26,14 +26,14 @@ def set_dataset_state(dataset_id: int, state: str, phase: str, size: Optional[in
     :param size: number of data items to process
     """
     if size:
-        sql = """
+        sql = """\
             INSERT INTO progress_monitor_dataset (dataset_id, state, phase, size)
             VALUES (%(dataset_id)s, %(state)s, %(phase)s, %(size)s)
             ON CONFLICT ON CONSTRAINT unique_dataset_id
             DO UPDATE SET state = %(state)s, phase = %(phase)s, size = %(size)s, modified = now()
         """
     else:
-        sql = """
+        sql = """\
             INSERT INTO progress_monitor_dataset (dataset_id, state, phase, size)
             VALUES (%(dataset_id)s, %(state)s, %(phase)s, %(size)s)
             ON CONFLICT ON CONSTRAINT unique_dataset_id
@@ -53,7 +53,7 @@ def set_item_state(dataset_id: int, item_id: int, state: str) -> None:
     """
     with get_cursor() as cursor:
         cursor.execute(
-            """
+            """\
             INSERT INTO progress_monitor_item (dataset_id, item_id, state)
             VALUES (%(dataset_id)s, %(item_id)s, %(state)s)
             ON CONFLICT ON CONSTRAINT unique_dataset_id_item_id

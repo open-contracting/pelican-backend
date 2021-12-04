@@ -25,7 +25,7 @@ def create(dataset_id):
     }
 
     cursor.execute(
-        """
+        """\
         SELECT result->'meta' AS meta, d.value AS result, d.key AS check_name
         FROM resource_level_check, jsonb_each(result->'checks') d
         WHERE dataset_id = %(dataset_id)s
@@ -57,7 +57,7 @@ def create(dataset_id):
         }
 
         cursor.execute(
-            """
+            """\
             INSERT INTO resource_level_check_examples (dataset_id, check_name, data)
             VALUES (%(dataset_id)s, %(check_name)s, %(data)s)
             """,

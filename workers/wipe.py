@@ -20,7 +20,7 @@ def callback(client_state, channel, method, properties, input_message):
 
     with get_cursor() as cursor:
         cursor.execute(
-            """
+            """\
             DELETE FROM field_level_check WHERE dataset_id = %(dataset_id)s;
             DELETE FROM field_level_check_examples WHERE dataset_id = %(dataset_id)s;
             DELETE FROM resource_level_check WHERE dataset_id = %(dataset_id)s;
