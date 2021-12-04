@@ -47,8 +47,8 @@ logging.config.dictConfig(
 
 # Project configuration
 
-# Extractors collect this number of items before publishing a message.
-EXTRACTOR_MAX_BATCH_SIZE = int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", 100))
+# Extractors collect this number of items before publishing a message. This can't exceed the page size (1000).
+EXTRACTOR_MAX_BATCH_SIZE = min(1000, int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", 100)))
 
 # Do not import compiled releases whose size is larger than this number of bytes.
 #
