@@ -25,7 +25,7 @@ def callback(client_state, channel, method, properties, input_message):
 
     with get_cursor() as cursor:
         cursor.execute("SELECT data, id FROM data_item WHERE id IN %(ids)s", {"ids": tuple(item_ids)})
-        processor.do_work(cursor.fetchall())
+        processor.do_work(dataset_id, cursor.fetchall())
 
     commit()
 
