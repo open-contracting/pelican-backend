@@ -33,14 +33,9 @@ def start():
 
 
 def callback(client_state, channel, method, properties, input_message):
-    dataset_id = input_message["dataset_id"]
-
-    if not is_step_required(settings.Steps.DATASET):
-        finish_callback(client_state, channel, method, dataset_id, phase.DATASET, routing_key=routing_key)
-        return
-
     delivery_tag = method.delivery_tag
 
+    dataset_id = input_message["dataset_id"]
     dataset = get_dataset_progress(dataset_id)
 
     if dataset["phase"] == phase.CONTRACTING_PROCESS and dataset["state"] == state.IN_PROGRESS:
@@ -64,6 +59,10 @@ def callback(client_state, channel, method, properties, input_message):
     if difference:
         logger.info("CONTRACTING_PROCESS phase has %s messages left for dataset_id %s", difference, dataset_id)
         ack(client_state, channel, delivery_tag)
+        return
+
+    if not is_step_required(settings.Steps.DATASET):
+        finish_callback(client_state, channel, method, dataset_id, phase.DATASET, routing_key=routing_key)
         return
 
     if dataset["phase"] == phase.CONTRACTING_PROCESS and dataset["state"] == state.OK and not difference:
