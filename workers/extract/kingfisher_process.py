@@ -122,7 +122,7 @@ def callback(client_state, channel, method, properties, input_message):
                     set_items_state(dataset_id, batch, state.IN_PROGRESS)
 
                     if inserts == items_count:
-                        set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
+                        set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS, size=inserts)
                     else:
                         set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=inserts)
 
