@@ -65,7 +65,7 @@ def update_from_fixer_io() -> None:
 
         data = response.json()
         if not data["success"] or "symbols" not in data:
-            logger.error("API request for currency symbols did not succeed.")
+            logger.error("API request for currency symbols did not succeed: %r", data)
             return
 
         symbols = ",".join(data["symbols"])
