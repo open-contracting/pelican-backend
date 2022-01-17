@@ -29,4 +29,4 @@ def test_get(get, func):
     for i in range(10):
         func()
 
-    assert len(get.mock_calls) <= 1
+    assert get.call_count <= 1
