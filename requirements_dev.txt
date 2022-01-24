@@ -75,7 +75,7 @@ pep517==0.10.0
     # via pip-tools
 phonenumbers==8.10.17
     # via -r requirements.txt
-pika==1.1.0
+pika==1.2.0
     # via
     #   -r requirements.txt
     #   yapw
@@ -153,7 +153,7 @@ virtualenv==20.4.6
     # via pre-commit
 wheel==0.37.0
     # via pip-tools
-yapw==0.0.5
+yapw==0.0.10
     # via -r requirements.txt
 zipp==3.6.0
     # via importlib-metadata
