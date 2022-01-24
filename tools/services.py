@@ -11,7 +11,11 @@ global db_connected
 db_connected = False
 
 
-class Client(clients.Threaded, clients.Durable, clients.Blocking, clients.Base):
+class Consumer(clients.Threaded, clients.Durable, clients.Blocking, clients.Base):
+    pass
+
+
+class Publisher(clients.Durable, clients.Blocking, clients.Base):
     pass
 
 
@@ -23,8 +27,16 @@ def decode(body: bytes, content_type: Optional[str]) -> Any:
     return json.loads(body.decode("utf-8"))
 
 
-def create_client():
-    return Client(url=settings.RABBIT_URL, exchange=settings.RABBIT_EXCHANGE_NAME, encode=encode, decode=decode)
+def get_client(klass, **kwargs):
+    return klass(url=settings.RABBIT_URL, exchange=settings.RABBIT_EXCHANGE_NAME, encode=encode, **kwargs)
+
+
+def get_consumer():
+    return get_client(Consumer, decode=decode)
+
+
+def get_publisher():
+    return get_client(Publisher)
 
 
 def get_cursor() -> psycopg2.extensions.cursor:

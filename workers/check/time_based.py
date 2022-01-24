@@ -4,7 +4,7 @@ import click
 from time_variance import processor
 from tools import settings
 from tools.helpers import finish_callback, is_step_required
-from tools.services import commit, create_client
+from tools.services import commit, get_consumer
 from tools.state import phase, set_dataset_state, state
 
 consume_routing_key = "dataset_checker"
@@ -16,7 +16,7 @@ def start():
     """
     Perform the time-based checks.
     """
-    create_client().consume(callback, consume_routing_key)
+    get_consumer().consume(callback, consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):

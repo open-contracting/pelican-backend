@@ -8,7 +8,7 @@ from dataset import processor
 from tools import settings
 from tools.currency_converter import bootstrap
 from tools.helpers import finish_callback, is_step_required
-from tools.services import commit, create_client
+from tools.services import commit, get_consumer
 from tools.state import (
     get_dataset_progress,
     get_processed_items_count,
@@ -29,7 +29,7 @@ def start():
     Perform the dataset-level checks.
     """
     bootstrap()
-    create_client().consume(callback, consume_routing_key)
+    get_consumer().consume(callback, consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):

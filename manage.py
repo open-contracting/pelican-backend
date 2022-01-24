@@ -4,7 +4,7 @@ import logging
 import click
 
 from tools import exchange_rates_db, settings
-from tools.services import commit, create_client, get_cursor
+from tools.services import commit, get_cursor, get_publisher
 from tools.state import phase, set_dataset_state, state
 
 
@@ -32,7 +32,7 @@ def add(name, collection_id, previous_dataset, sample):
     Create a dataset.
     """
     message = {"name": name, "collection_id": collection_id, "ancestor_id": previous_dataset, "max_items": sample}
-    create_client().publish(message, "ocds_kingfisher_extractor_init")
+    get_publisher().publish(message, "ocds_kingfisher_extractor_init")
 
 
 @cli.command()
@@ -197,7 +197,7 @@ def restart_dataset_check(dataset_id):
     """
     set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
     commit()
-    create_client().publish({"dataset_id": dataset_id}, "contracting_process_checker")
+    get_publisher().publish({"dataset_id": dataset_id}, "contracting_process_checker")
 
 
 if __name__ == "__main__":

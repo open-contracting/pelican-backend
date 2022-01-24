@@ -9,7 +9,7 @@ import contracting_process.resource_level.report as resource_level_report
 from dataset import meta_data_aggregator
 from tools import settings
 from tools.helpers import finish_callback, is_step_required
-from tools.services import create_client
+from tools.services import get_consumer
 from tools.state import phase
 
 consume_routing_key = "time_variance_checker"
@@ -21,7 +21,7 @@ def start():
     """
     Create reports, pick examples, and update dataset metadata.
     """
-    create_client().consume(callback, consume_routing_key)
+    get_consumer().consume(callback, consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):
