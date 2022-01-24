@@ -8,4 +8,4 @@ requests
 simplejson
 validate_email
 sentry-sdk
-yapw
+yapw[perf]
