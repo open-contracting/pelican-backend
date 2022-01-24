@@ -31,10 +31,9 @@ def add(name, collection_id, previous_dataset, sample):
     """
     Create a dataset.
     """
-    message = {"name": name, "collection_id": collection_id, "ancestor_id": previous_dataset, "max_items": sample}
-    client = get_publisher()
-    client.publish(message, "ocds_kingfisher_extractor_init")
-    client.close()
+    with get_publisher() as client:
+        message = {"name": name, "collection_id": collection_id, "ancestor_id": previous_dataset, "max_items": sample}
+        client.publish(message, "ocds_kingfisher_extractor_init")
 
 
 @cli.command()
@@ -200,10 +199,9 @@ def restart_dataset_check(dataset_id):
     set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
     commit()
 
-    message = {"dataset_id": dataset_id}
-    client = get_publisher()
-    client.publish(message, "contracting_process_checker")
-    client.close()
+    with get_publisher() as client:
+        message = {"dataset_id": dataset_id}
+        client.publish(message, "contracting_process_checker")
 
 
 if __name__ == "__main__":

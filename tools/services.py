@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from typing import Any, Optional
 
 import psycopg2.extensions
@@ -35,8 +36,13 @@ def get_consumer():
     return get_client(Consumer, decode=decode)
 
 
+@contextmanager
 def get_publisher():
-    return get_client(Publisher)
+    client = get_client(Publisher)
+    try:
+        yield client
+    finally:
+        client.close()
 
 
 def get_cursor() -> psycopg2.extensions.cursor:
