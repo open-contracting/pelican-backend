@@ -2,7 +2,7 @@
 import click
 from yapw.methods.blocking import ack
 
-from tools.services import commit, get_consumer, get_cursor
+from tools.services import commit, consume, get_cursor
 
 consume_routing_key = "wiper_init"
 
@@ -12,7 +12,7 @@ def start():
     """
     Delete datasets.
     """
-    get_consumer().consume(callback, consume_routing_key)
+    consume(callback, consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):

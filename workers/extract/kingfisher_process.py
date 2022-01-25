@@ -9,7 +9,7 @@ from yapw.methods.blocking import ack, publish
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from tools import exchange_rates_db, settings
-from tools.services import commit, get_consumer, get_cursor
+from tools.services import commit, consume, get_cursor
 from tools.state import phase, set_dataset_state, set_items_state, state
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
@@ -23,7 +23,7 @@ def start():
     """
     Import collections from Kingfisher Process.
     """
-    get_consumer().consume(callback, consume_routing_key)
+    consume(callback, consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):

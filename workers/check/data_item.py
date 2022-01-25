@@ -4,7 +4,7 @@ from yapw.methods.blocking import ack, publish
 
 from contracting_process import processor
 from tools.currency_converter import bootstrap
-from tools.services import commit, get_consumer, get_cursor
+from tools.services import commit, consume, get_cursor
 
 consume_routing_key = "extractor"
 routing_key = "contracting_process_checker"
@@ -16,7 +16,7 @@ def start():
     Perform the field-level and compiled release-level checks.
     """
     bootstrap()
-    get_consumer().consume(callback, consume_routing_key)
+    consume(callback, consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):

@@ -1,5 +1,7 @@
+import logging
 from typing import Any, Optional
 
+import pika.exceptions
 import psycopg2.extensions
 import psycopg2.extras
 import simplejson as json
@@ -9,6 +11,8 @@ from tools import settings
 
 global db_connected
 db_connected = False
+
+logger = logging.getLogger(__name__)
 
 
 class Consumer(clients.Threaded, clients.Durable, clients.Blocking, clients.Base):
@@ -31,8 +35,21 @@ def get_client(klass, **kwargs):
     return klass(url=settings.RABBIT_URL, exchange=settings.RABBIT_EXCHANGE_NAME, encode=encode, **kwargs)
 
 
-def consume():
-    return get_client(Consumer, decode=decode)
+# https://github.com/pika/pika/blob/master/examples/blocking_consume_recover_multiple_hosts.py
+def consume(*args, **kwargs):
+    while True:
+        try:
+            client = get_client(Consumer, decode=decode)
+            client.consume(*args, **kwargs)
+            break
+        # Do not recover if the connection was closed by the broker.
+        except pika.exceptions.ConnectionClosedByBroker as e:  # subclass of AMQPConnectionError
+            logger.warning(e)
+            break
+        # Recover from "Connection reset by peer".
+        except pika.exceptions.StreamLostError as e:  # subclass of AMQPConnectionError
+            logger.warning(e)
+            continue
 
 
 def publish(*args, **kwargs):

@@ -8,7 +8,7 @@ from psycopg2 import sql
 from yapw.methods.blocking import ack, publish
 
 from tools import settings
-from tools.services import commit, get_consumer, get_cursor
+from tools.services import commit, consume, get_cursor
 from tools.state import phase, set_dataset_state, set_items_state, state
 
 consume_routing_key = "dataset_filter_extractor_init"
@@ -22,7 +22,7 @@ def start():
     """
     Add filtered datasets.
     """
-    get_consumer().consume(callback, consume_routing_key)
+    consume(callback, consume_routing_key)
 
 
 # input message example
