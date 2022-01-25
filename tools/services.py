@@ -1,4 +1,3 @@
-from contextlib import contextmanager
 from typing import Any, Optional
 
 import psycopg2.extensions
@@ -32,15 +31,14 @@ def get_client(klass, **kwargs):
     return klass(url=settings.RABBIT_URL, exchange=settings.RABBIT_EXCHANGE_NAME, encode=encode, **kwargs)
 
 
-def get_consumer():
+def consume():
     return get_client(Consumer, decode=decode)
 
 
-@contextmanager
-def get_publisher():
+def publish(*args, **kwargs):
     client = get_client(Publisher)
     try:
-        yield client
+        client.publish(*args, **kwargs)
     finally:
         client.close()
 
