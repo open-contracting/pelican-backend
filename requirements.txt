@@ -44,5 +44,5 @@ urllib3==1.26.5
     #   sentry-sdk
 validate-email==1.3
     # via -r requirements.in
-yapw[perf]==0.0.11
+yapw[perf]==0.0.12
     # via -r requirements.in
