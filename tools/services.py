@@ -39,7 +39,7 @@ def get_client(klass, **kwargs):
 def consume(*args, **kwargs):
     while True:
         try:
-            client = get_client(Consumer, decode=decode)
+            client = get_client(Consumer, prefetch_count=20, decode=decode)
             client.consume(*args, **kwargs)
             break
         # Do not recover if the connection was closed by the broker.
