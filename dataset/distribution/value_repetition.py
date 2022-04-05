@@ -22,7 +22,7 @@ def add_item(scope, item, item_id, path):
 
     ocid = get_values(item, "ocid", value_only=True)[0]
 
-    values = get_values(item, "{}.value".format(path), value_only=True)
+    values = get_values(item, f"{path}.value", value_only=True)
     if not values:
         return scope
 
@@ -40,7 +40,7 @@ def add_item(scope, item, item_id, path):
             scope[key] = {
                 "amount": value["amount"],
                 "currency": value["currency"],
-                "value_str": "{} {}".format(value["amount"], value["currency"]),
+                "value_str": f"{value['amount']} {value['currency']}",
                 "count": 0,
                 "examples": [],
             }

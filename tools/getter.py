@@ -83,7 +83,7 @@ def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> 
                 if value_only:
                     values.append(item[str_path][index])
                 else:
-                    values.append({"path": "{}[{}]".format(str_path, index), "value": item[str_path][index]})
+                    values.append({"path": f"{str_path}[{index}]", "value": item[str_path][index]})
 
             return values
         else:
@@ -108,7 +108,7 @@ def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> 
             if value_only:
                 values = [item[field][index]]
             else:
-                values = [{"path": "{}[{}]".format(field, index), "value": item[field][index]}]
+                values = [{"path": f"{field}[{index}]", "value": item[field][index]}]
 
             return values
 
@@ -133,7 +133,7 @@ def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> 
 
             for list_item in values:
                 if not value_only and list_item and "path" in list_item:
-                    list_item["path"] = "{}.{}".format(key, list_item["path"])
+                    list_item["path"] = f"{key}.{list_item['path']}"
             return values
 
         # inner value is an array { "key" : [{"aaa":"bbb"}, {"ccc": "ddd"}]}
@@ -150,7 +150,7 @@ def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> 
                             result.append(list_item)
                         else:
                             if list_item and "path" in list_item:
-                                list_item["path"] = "{}[{}].{}".format(key, index_counter, list_item["path"])
+                                list_item["path"] = f"{key}[{index_counter}].{list_item['path']}"
 
                                 result.append(list_item)
 
@@ -189,7 +189,7 @@ def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> 
                         result.append(list_item)
                     else:
                         if list_item and "path" in list_item:
-                            list_item["path"] = "{}[{}].{}".format(field, index, list_item["path"])
+                            list_item["path"] = f"{field}[{index}].{list_item['path']}"
 
                             result.append(list_item)
 

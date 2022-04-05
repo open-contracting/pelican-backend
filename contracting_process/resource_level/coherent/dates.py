@@ -104,9 +104,9 @@ def calculate(item):
                         if award_date > contract_date:
                             failed_paths.append(
                                 {
-                                    "path_1": "{}.date".format(award["path"]),
+                                    "path_1": f"{award['path']}.date",
                                     "value_1": award["value"]["date"],
-                                    "path_2": "{}.dateSigned".format(contract["path"]),
+                                    "path_2": f"{contract['path']}.dateSigned",
                                     "value_2": contract["value"]["dateSigned"],
                                 }
                             )

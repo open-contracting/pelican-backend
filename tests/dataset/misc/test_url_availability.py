@@ -19,18 +19,14 @@ def test_undefined():
     result = url_availability.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {
-        "reason": "there is less than {} URLs in the dataset".format(url_availability.samples_num)
-    }
+    assert result["meta"] == {"reason": f"there is less than {url_availability.samples_num} URLs in the dataset"}
 
     scope = {}
     scope = url_availability.add_item(scope, item_test_undefined, 0)
     result = url_availability.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {
-        "reason": "there is less than {} URLs in the dataset".format(url_availability.samples_num)
-    }
+    assert result["meta"] == {"reason": f"there is less than {url_availability.samples_num} URLs in the dataset"}
 
 
 item_test_passed = {

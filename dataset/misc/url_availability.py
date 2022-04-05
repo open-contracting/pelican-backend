@@ -56,7 +56,7 @@ def get_result(scope):
 
     # not enough urls
     if len(scope["samples"]) < samples_num:
-        result["meta"] = {"reason": "there is less than {} URLs in the dataset".format(samples_num)}
+        result["meta"] = {"reason": f"there is less than {samples_num} URLs in the dataset"}
         return result
 
     # checking url status

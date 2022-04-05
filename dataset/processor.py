@@ -31,7 +31,9 @@ def do_work(dataset_id, logger):
             for plugin_name, plugin in definitions.items():
                 logger.log(
                     settings.CustomLogLevels.CHECK_TRACE,
-                    "Computing {} check for item_id {}.".format(plugin_name, item["id"]),
+                    "Computing %s check for item_id %s.",
+                    plugin_name,
+                    item["id"],
                 )
 
                 if plugin_name not in scope:
