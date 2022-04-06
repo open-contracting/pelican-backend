@@ -9,19 +9,22 @@ jobs:
       - uses: actions/setup-python@v3
         with:
           python-version: 3.8
-      - uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt', 'setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          cache: pip
+          cache-dependency-path: '**/requirements*.txt'
       - run: pip install -r requirements_dev.txt
       - run: |
           psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -f pelican/migrations/*.sql
           psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -c "\copy exchange_rates (valid_on, rates) from 'pelican/static/exchange_rates_dump.csv' delimiter ',' csv header;"
       - env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
-        run: pytest --cov contracting_process --cov dataset --cov manage --cov time_variance --cov tools --cov workers
+        run: |
+          pytest -W error \
+            --cov contracting_process \
+            --cov dataset \
+            --cov manage \
+            --cov time_variance \
+            --cov tools \
+            --cov workers
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: coveralls --service=github
