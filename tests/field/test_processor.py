@@ -1,9 +1,13 @@
 import json
 
+import pytest
+
 from contracting_process.processor import field_level_checks
 from tests import read
 
 
+# https://requests-cache.readthedocs.io/en/stable/user_guide/troubleshooting.html#common-error-messages
+@pytest.mark.filterwarnings("ignore:unclosed <ssl.SSLSocket fd=:ResourceWarning")
 def test_field_level_checks():
     string, item_id, dataset_id = field_level_checks(read("compiled-release"), 123, 1)
     result = json.loads(string)
