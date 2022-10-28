@@ -57,7 +57,7 @@ iniconfig==1.1.1
     # via pytest
 isort==5.8.0
     # via -r requirements_dev.in
-jsonref==0.2
+jsonref==1.0.0.post1
     # via -r requirements.txt
 jsonschema==4.0.0
     # via -r requirements_dev.in
