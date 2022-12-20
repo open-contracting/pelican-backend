@@ -6,7 +6,7 @@
 #
 cachetools==4.2.4
     # via -r requirements.in
-certifi==2019.6.16
+certifi==2022.12.7
     # via
     #   requests
     #   sentry-sdk

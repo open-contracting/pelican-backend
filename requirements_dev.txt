@@ -15,7 +15,7 @@ black==21.12b0
     # via -r requirements_dev.in
 cachetools==4.2.4
     # via -r requirements.txt
-certifi==2019.6.16
+certifi==2022.12.7
     # via
     #   -r requirements.txt
     #   requests
