@@ -10,9 +10,9 @@ if "PYTEST_CURRENT_TEST" in os.environ:
 else:
     import tools.exchange_rates_file as exchange_rates
 
-rates = dict()  # type: Dict[datetime.date, Dict[str, float]]
-bounds = dict()  # type: Dict[str, Tuple[datetime.date, datetime.date]]
-currencies = set()  # type: Set[str]
+rates: Dict[datetime.date, Dict[str, float]] = dict()
+bounds: Dict[str, Tuple[datetime.date, datetime.date]] = dict()
+currencies: Set[str] = set()
 
 
 def bootstrap() -> None:
@@ -33,7 +33,7 @@ def import_data(data: List[Tuple[datetime.date, Dict[str, float]]]) -> None:
     data.sort(key=lambda k: k[0])
 
     if settings.CURRENCY_CONVERTER_INTERPOLATION:
-        real_data_dates = {currency: [] for currency in currencies}  # type: Dict[str, List[datetime.date]]
+        real_data_dates: Dict[str, List[datetime.date]] = {currency: [] for currency in currencies}
 
         for item in data:
             rates[item[0]] = item[1]
