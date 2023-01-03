@@ -68,6 +68,9 @@ def deep_get(value: Any, path: str, force: Type[Any] = None) -> Any:
 def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> List[Any]:
     index: Optional[int]
 
+    if item is None:
+        return []
+
     # return whole item from root
     if not str_path or str_path == "":
         if value_only:
