@@ -26,7 +26,7 @@ ancestor_no_title_2 = {
 ancestor_no_title_3 = {"ocid": "3", "tender": {"title": ""}}
 
 
-ancestor_title_1 = {"ocid": "4", "tender": {"title": "titel"}}
+ancestor_title_1 = {"ocid": "4", "tender": {"title": "title"}}
 
 
 def test_filter():
