@@ -126,7 +126,7 @@ def get_result(scope):
 
             return result
         else:
-            result["meta"] = {"reason": "unsufficient amount of values (at least 100 required)"}
+            result["meta"] = {"reason": "insufficient amount of values (at least 100 required)"}
             return result
     else:
         return result

@@ -29,7 +29,7 @@ def calculate(item) -> dict:
     -----------
     result: dict
         {
-            "result" - if successed
+            "result" - if succeeded
             "application_count" - application count
             "pass_count" - pass count
             "meta" -

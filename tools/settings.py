@@ -76,7 +76,7 @@ CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK = int(
 )
 
 # Extrapolation refers to the behavior when the date is outside dates with known rates. if disabled, the value is not
-# converted. Otherwise, the reate is determined by copying the rate of the closest date ("closest").
+# converted. Otherwise, the rate is determined by copying the rate of the closest date ("closest").
 CURRENCY_CONVERTER_EXTRAPOLATION = os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION", "closest")
 # If the distance to the closest date is greater than this number of days, the value is not converted. Set to -1 to
 # set the limit to infinity.

@@ -28,5 +28,5 @@ def calculate(item):
 
     # unable to compare, undefined
     result["result"] = None
-    result["meta"] = {"reason": "incomplete data for comparsion"}
+    result["meta"] = {"reason": "incomplete data for comparision"}
     return result

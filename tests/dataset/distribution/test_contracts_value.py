@@ -16,7 +16,7 @@ def test_empty():
     assert type(result) == dict
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "unsufficient amount of values (at least 100 required)"}
+    assert result["meta"] == {"reason": "insufficient amount of values (at least 100 required)"}
 
 
 first = {
@@ -54,7 +54,7 @@ def test_undefined():
     assert type(result) == dict
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "unsufficient amount of values (at least 100 required)"}
+    assert result["meta"] == {"reason": "insufficient amount of values (at least 100 required)"}
 
 
 def test_failed():

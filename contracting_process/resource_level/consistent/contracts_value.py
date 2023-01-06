@@ -33,7 +33,7 @@ def calculate(item):
 
         matching_award = matching_awards[0]
 
-        # checking whether amout or curreny fields are set
+        # checking whether amount or currency fields are set
         if (
             "value" not in contract
             or "value" not in matching_award
