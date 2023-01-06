@@ -86,4 +86,4 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "incomplete data for comparision"}
+    assert result["meta"] == {"reason": "incomplete data for comparison"}
