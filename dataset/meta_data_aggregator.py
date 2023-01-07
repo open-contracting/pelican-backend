@@ -30,7 +30,7 @@ def add_item(scope, item, item_id):
                     "1000001+": {"contracts": 0, "volume": 0, "share": None},
                 },
             },
-            "_period_dict": dict(),
+            "_period_dict": {},
             "period": None,
         }
 

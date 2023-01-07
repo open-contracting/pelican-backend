@@ -10,8 +10,8 @@ examples_cap = 100
 def add_item(scope, item, item_id):
     if not scope:
         scope = {
-            "original_ocid": dict(),
-            "related_processes": dict(),
+            "original_ocid": {},
+            "related_processes": {},
             "meta": {
                 "total_processed": 0,
                 "total_passed": 0,

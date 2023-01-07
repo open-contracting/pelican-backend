@@ -18,7 +18,7 @@ def test_compiled_releases():
     result = get_result(scope)
 
     assert result["compiled_releases"]["total_unique_ocids"] == 2
-    assert sum([value for value in result["tender_lifecycle"].values()]) == 0
+    assert sum(result["tender_lifecycle"].values()) == 0
     assert result["period"] == [{"date_str": "Jan-19", "count": 3}]
 
 
@@ -142,7 +142,7 @@ def test_prices_period():
     result = get_result(scope)
 
     assert result["compiled_releases"]["total_unique_ocids"] == 1
-    assert sum([value for value in result["tender_lifecycle"].values()]) == 0
+    assert sum(result["tender_lifecycle"].values()) == 0
     assert result["period"] == [
         {"date_str": "Dec-18", "count": 1},
         {"date_str": "Jan-19", "count": 2},

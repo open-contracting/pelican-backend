@@ -10,8 +10,8 @@ if "PYTEST_CURRENT_TEST" in os.environ:
 else:
     import tools.exchange_rates_file as exchange_rates
 
-rates: Dict[datetime.date, Dict[str, float]] = dict()
-bounds: Dict[str, Tuple[datetime.date, datetime.date]] = dict()
+rates: Dict[datetime.date, Dict[str, float]] = {}
+bounds: Dict[str, Tuple[datetime.date, datetime.date]] = {}
 currencies: Set[str] = set()
 
 

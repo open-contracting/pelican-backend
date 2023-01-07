@@ -22,7 +22,7 @@ def calculate(item):
         result["meta"] = {"reason": "no award with an id is inactive"}
         return result
 
-    contracts_award_ids = [v for v in get_values(item, "contracts.awardID", value_only=True)]
+    contracts_award_ids = get_values(item, "contracts.awardID", value_only=True)
 
     application_count = 0
     pass_count = 0

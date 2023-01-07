@@ -11,7 +11,7 @@ import requests
 def _get(url: str) -> List[Dict[str, str]]:
     response = requests.get(url)
     response.raise_for_status()
-    return [row for row in csv.DictReader(StringIO(response.text))]
+    return list(csv.DictReader(StringIO(response.text)))
 
 
 def _codes(url: str, key: str) -> Tuple[str, ...]:
