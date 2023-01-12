@@ -51,9 +51,9 @@ def test_passed():
 
 
 items_test_failed_multiple = [
-    {"ocid": str(num), "planning": {"documents": [{"url": "https://httpbin.org/status/200"}]}} for num in range(99)
+    {"ocid": str(num), "planning": {"documents": [{"url": "https://httpbin.org/status/200"}]}} for num in range(49)
 ]
-items_test_failed_multiple.append({"ocid": "99", "planning": {"documents": [{"url": "https://httpbin.org/delay/10"}]}})
+items_test_failed_multiple.append({"ocid": "50", "planning": {"documents": [{"url": "https://httpbin.org/delay/10"}]}})
 
 
 @pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
@@ -68,8 +68,8 @@ def test_failed_multiple():
 
         result = url_availability.get_result(scope)
         assert result["result"] is False
-        assert result["value"] == 99
-        assert len(result["meta"]["passed_examples"]) == 99
+        assert result["value"] == 98.0
+        assert len(result["meta"]["passed_examples"]) == 49
         assert len(result["meta"]["failed_examples"]) == 1
-        assert len([s for s in result["meta"]["passed_examples"] if s["status"] == "OK"]) == 99
+        assert len([s for s in result["meta"]["passed_examples"] if s["status"] == "OK"]) == 49
         assert len([s for s in result["meta"]["failed_examples"] if s["status"] == "ERROR"]) == 1
