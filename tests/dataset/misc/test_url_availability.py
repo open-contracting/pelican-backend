@@ -68,7 +68,7 @@ def test_failed_multiple():
 
         result = url_availability.get_result(scope)
         assert result["result"] is False
-        assert result["value"] == 99
+        assert result["value"] == 99, result["meta"]["failed_examples"]
         assert len(result["meta"]["passed_examples"]) == 99
         assert len(result["meta"]["failed_examples"]) == 1
         assert len([s for s in result["meta"]["passed_examples"] if s["status"] == "OK"]) == 99
