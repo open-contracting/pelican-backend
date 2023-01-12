@@ -17,6 +17,7 @@ jobs:
           psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -c "\copy exchange_rates (valid_on, rates) from 'pelican/static/exchange_rates_dump.csv' delimiter ',' csv header;"
       - env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
+          CI: true
         run: |
           pytest -W error -rs \
             --cov contracting_process \
