@@ -244,11 +244,11 @@ def get_kingfisher_meta_data(collection_id):
     repository_urls = get_values(package_data, "data.extensions", value_only=True)
     for repository_url in repository_urls:
         try:
-            request = requests.get(repository_url, timeout=30)
-            if request.status_code != 200:
+            response = requests.get(repository_url, timeout=30)
+            if response.status_code != 200:
                 continue
 
-            extension = request.json()
+            extension = response.json()
             extension["repositoryUrl"] = repository_url
             meta_data["collection_metadata"]["extensions"].append(extension)
 
