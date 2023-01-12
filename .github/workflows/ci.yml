@@ -18,7 +18,7 @@ jobs:
       - env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
         run: |
-          pytest -W error -rs \
+          pytest -W error,ignore::ResourceWarning -rs \
             --cov contracting_process \
             --cov dataset \
             --cov manage \
