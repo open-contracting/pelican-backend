@@ -16,11 +16,8 @@ Run the files in the ``pelican/migrations/`` directory in numerical order. For e
 
 .. code-block:: bash
 
-   psql pelican_backend -f pelican/migrations/*.sql
-
-..
-   Bash filename expansion is alphabetically sorted.
-   https://www.gnu.org/software/bash/manual/bash.html#Filename-Expansion
+   psql pelican_backend -f pelican/migrations/001_base.sql
+   psql pelican_backend -f pelican/migrations/002_constraints.sql
 
 Load exchange rates
 -------------------
