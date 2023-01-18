@@ -15,7 +15,7 @@ Getter
    :undoc-members:
 
 Services
-------
+--------
 
 .. automodule:: tools.services
    :members:
