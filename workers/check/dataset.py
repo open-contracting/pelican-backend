@@ -8,8 +8,9 @@ from dataset import processor
 from tools import settings
 from tools.currency_converter import bootstrap
 from tools.helpers import finish_callback, is_step_required
-from tools.services import commit, consume
-from tools.state import (
+from tools.services import (
+    commit,
+    consume,
     get_dataset_progress,
     get_processed_items_count,
     get_total_items_count,

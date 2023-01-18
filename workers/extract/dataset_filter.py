@@ -8,8 +8,7 @@ from psycopg2 import sql
 from yapw.methods.blocking import ack, nack, publish
 
 from tools import settings
-from tools.services import commit, consume, get_cursor
-from tools.state import phase, set_dataset_state, set_items_state, state
+from tools.services import commit, consume, get_cursor, phase, set_dataset_state, set_items_state, state
 
 consume_routing_key = "dataset_filter_extractor_init"
 routing_key = "extractor"

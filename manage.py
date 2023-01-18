@@ -4,8 +4,7 @@ import logging
 import click
 
 from tools import exchange_rates_db, settings
-from tools.services import commit, get_cursor, publish
-from tools.state import phase, set_dataset_state, state
+from tools.services import commit, get_cursor, phase, publish, set_dataset_state, state
 
 
 @click.group()

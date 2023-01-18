@@ -1,11 +1,7 @@
 import random
-from typing import Any, List, Optional
-
-from yapw.methods.blocking import ack, publish
+from typing import Any, List
 
 from tools import settings
-from tools.services import commit
-from tools.state import set_dataset_state, state
 
 
 class ReservoirSampler:
@@ -33,18 +29,3 @@ class ReservoirSampler:
 
 def is_step_required(*steps: str) -> bool:
     return any(step in settings.STEPS for step in steps)
-
-
-# Has affinity with services.py, but would result in circular dependency due to `set_dataset_state()`.
-def finish_callback(
-    client_state, channel, method, dataset_id: int, phase: Optional[str] = None, routing_key: Optional[str] = None
-) -> None:
-    """
-    Update the dataset's state, publish a message if a routing key is provided, and ack the message.
-    """
-    if phase:
-        set_dataset_state(dataset_id, state.OK, phase)
-    commit()
-    if routing_key:
-        publish(client_state, channel, {"dataset_id": dataset_id}, routing_key)
-    ack(client_state, channel, method.delivery_tag)
