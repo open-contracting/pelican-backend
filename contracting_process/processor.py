@@ -16,28 +16,25 @@ logger = logging.getLogger("pelican.contracting_process.processor")
 
 # item: (data, item_id)
 def do_work(dataset_id, items):
-    field_level_check_results = []
-    resource_level_check_results = []
+    field_level_check_arglist = []
+    resource_level_check_arglist = []
 
     do_field_level = is_step_required(settings.Steps.FIELD_COVERAGE, settings.Steps.FIELD_QUALITY)
     do_resource_level = is_step_required(settings.Steps.COMPILED_RELEASE)
     do_field_quality = is_step_required(settings.Steps.FIELD_QUALITY)
 
-    items_count = 0
     for item in items:
-        items_count += 1
-
         if do_field_level:
-            field_level_check_results.append(field_level_checks(*item, dataset_id, do_field_quality=do_field_quality))
+            field_level_check_arglist.append(field_level_checks(*item, dataset_id, do_field_quality=do_field_quality))
         if do_resource_level:
-            resource_level_check_results.append(resource_level_checks(*item, dataset_id))
+            resource_level_check_arglist.append(resource_level_checks(*item, dataset_id))
 
     update_items_state(dataset_id, (item[1] for item in items), state.OK)
 
     if do_field_level:
-        save_field_level_checks(field_level_check_results, items_count)
+        save_field_level_checks(field_level_check_arglist)
     if do_resource_level:
-        save_resource_level_check(resource_level_check_results, items_count)
+        save_resource_level_check(resource_level_check_arglist)
 
 
 def resource_level_checks(data, item_id, dataset_id):
@@ -50,12 +47,10 @@ def resource_level_checks(data, item_id, dataset_id):
 
     result = {"meta": {"ocid": data["ocid"], "item_id": item_id}, "checks": {}}
 
-    # perform resource level checks
     for check_name, check in resource_level_definitions.items():
         logger.log(settings.CustomLogLevels.CHECK_TRACE, "Computing %s check.", check_name)
         result["checks"][check_name] = check(data)
 
-    # return result
     return (json.dumps(result), item_id, dataset_id)
 
 
@@ -156,17 +151,13 @@ def field_level_checks(data, item_id, dataset_id, do_field_quality=True):
     return (json.dumps(result), item_id, dataset_id)
 
 
-def save_field_level_checks(result_items, items_count):
+def save_field_level_checks(arglist):
     with get_cursor() as cursor:
         sql = "INSERT INTO field_level_check (result, data_item_id, dataset_id) VALUES %s"
-        execute_values(cursor, sql, result_items, page_size=items_count)
-
-    logger.debug("Field level checks saved.")
+        execute_values(cursor, sql, arglist)
 
 
-def save_resource_level_check(result_items, items_count):
+def save_resource_level_check(arglist):
     with get_cursor() as cursor:
         sql = "INSERT INTO resource_level_check (result, data_item_id, dataset_id) VALUES %s"
-        execute_values(cursor, sql, result_items, page_size=items_count)
-
-    logger.debug("Resource level checks saved.")
+        execute_values(cursor, sql, arglist)
