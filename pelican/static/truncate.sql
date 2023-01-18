@@ -1,4 +1,4 @@
-TRUNCATE TABLE dataset;
+TRUNCATE TABLE dataset CASCADE;
 
 TRUNCATE TABLE report;
 
@@ -6,7 +6,7 @@ TRUNCATE TABLE progress_monitor_dataset;
 
 TRUNCATE TABLE progress_monitor_item;
 
-TRUNCATE TABLE data_item;
+TRUNCATE TABLE data_item CASCADE;
 
 TRUNCATE TABLE field_level_check;
 

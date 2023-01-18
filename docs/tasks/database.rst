@@ -16,8 +16,7 @@ Run the files in the ``pelican/migrations/`` directory in numerical order. For e
 
 .. code-block:: bash
 
-   psql pelican_backend -f pelican/migrations/001_base.sql
-   psql pelican_backend -f pelican/migrations/002_constraints.sql
+   psql pelican_backend -f pelican/migrations/001_base.sql -f pelican/migrations/002_constraints.sql
 
 Load exchange rates
 -------------------
@@ -48,4 +47,4 @@ Truncate all tables in the database. For example:
 
 .. code-block:: bash
 
-   psql pelican_backend -f pelican/migrations/truncate.sql
+   psql pelican_backend -f pelican/static/truncate.sql
