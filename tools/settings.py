@@ -38,7 +38,7 @@ logging.config.dictConfig(
         "loggers": {
             "pelican": {
                 "handlers": ["console"],
-                "level": os.getenv("LOG_LEVEL", "DEBUG"),
+                "level": os.getenv("LOG_LEVEL", "INFO"),
             },
         },
     }
