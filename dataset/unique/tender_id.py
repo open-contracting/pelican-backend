@@ -1,9 +1,8 @@
 import random
 from collections import defaultdict
 
-from tools.checks import get_empty_result_dataset
+from tools.checks import ReservoirSampler, get_empty_result_dataset
 from tools.getter import get_values
-from tools.helpers import ReservoirSampler
 
 version = 2.0
 

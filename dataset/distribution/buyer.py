@@ -1,6 +1,5 @@
-from tools.checks import get_empty_result_dataset
+from tools.checks import ReservoirSampler, get_empty_result_dataset
 from tools.getter import get_values
-from tools.helpers import ReservoirSampler
 
 version = 1.0
 min_resources_num = 1000

@@ -8,8 +8,8 @@ from contracting_process.field_level.definitions import definitions as field_lev
 from contracting_process.resource_level.definitions import definitions as resource_level_definitions
 from tools import settings
 from tools.getter import get_values
-from tools.helpers import is_step_required
 from tools.services import get_cursor, set_items_state, state
+from tools.workers import is_step_required
 
 logger = logging.getLogger("pelican.contracting_process.processor")
 

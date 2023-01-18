@@ -7,10 +7,10 @@ from yapw.methods.blocking import ack, nack
 from dataset import processor
 from tools import settings
 from tools.currency_converter import bootstrap
-from tools.helpers import finish_callback, is_step_required
 from tools.services import (
     commit,
     consume,
+    finish_callback,
     get_dataset_progress,
     get_processed_items_count,
     get_total_items_count,
@@ -18,6 +18,7 @@ from tools.services import (
     set_dataset_state,
     state,
 )
+from tools.workers import is_step_required
 
 consume_routing_key = "contracting_process_checker"
 routing_key = "dataset_checker"
