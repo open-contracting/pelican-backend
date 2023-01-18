@@ -59,7 +59,6 @@ def callback(client_state, channel, method, properties, input_message):
         filter_message = input_message["filter_message"]
         max_items = int(input_message["max_items"]) if "max_items" in input_message else None
 
-        logger.info("Checking whether dataset with dataset_id %s exists and can be filtered.", dataset_id_original)
         cursor.execute(
             """\
             SELECT EXISTS (
@@ -81,7 +80,6 @@ def callback(client_state, channel, method, properties, input_message):
             ack(client_state, channel, delivery_tag)
             return
 
-        logger.info("Creating row in dataset table for filtered dataset")
         cursor.execute(
             """\
             INSERT INTO dataset (name, meta, ancestor_id)
@@ -93,7 +91,6 @@ def callback(client_state, channel, method, properties, input_message):
         dataset_id_filtered = cursor.fetchone()[0]
         commit()
 
-        logger.info("Creating row in dataset_filter table")
         cursor.execute(
             """\
             INSERT INTO dataset_filter (dataset_id_original, dataset_id_filtered, filter_message)
@@ -107,7 +104,6 @@ def callback(client_state, channel, method, properties, input_message):
         )
         commit()
 
-        logger.info("Filtering dataset with dataset_id %s using received filter_message", dataset_id_original)
         query = sql.SQL("SELECT id FROM data_item WHERE dataset_id = ") + sql.Literal(dataset_id_original)
         if "release_date_from" in filter_message:
             expr = sql.SQL("data->>'date' >= ") + sql.Literal(filter_message["release_date_from"])
@@ -191,14 +187,13 @@ def callback(client_state, channel, method, properties, input_message):
                     batch.clear()
 
             logger.info(
-                "Inserted page %s from %s. %s items out of %s downloaded",
+                "Inserted %s/%s pages (%s/%s items) for dataset %s",
                 i,
                 ceil(float(items_count) / float(page_size)),
                 inserts,
                 items_count,
+                dataset_id_filtered,
             )
-
-        logger.info("Done filtering dataset %s to dataset %s", dataset_id_original, dataset_id_filtered)
     finally:
         cursor.close()
 

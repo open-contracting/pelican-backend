@@ -1,3 +1,5 @@
+import logging
+
 import psycopg2.extras
 import requests
 import simplejson as json
@@ -11,6 +13,8 @@ from tools.services import get_cursor
 
 DATE_STR_FORMAT = "%b-%-y"
 DATETIME_STR_FORMAT = "%Y-%m-%d %H.%M.%S"
+
+logger = logging.getLogger(__name__)
 
 
 def add_item(scope, item, item_id):
@@ -174,7 +178,8 @@ def get_kingfisher_meta_data(collection_id):
     )
     result = kf_cursor.fetchall()
 
-    if result is None:
+    if not result:
+        logger.warning("No rows found in `collection` where id = %s", settings.KINGFISHER_PROCESS_DATABASE_URL)
         return meta_data
 
     meta_data["kingfisher_metadata"]["collection_id"] = collection_id
@@ -187,10 +192,7 @@ def get_kingfisher_meta_data(collection_id):
     # retrieving additional database entries #
     ##########################################
     proprietary_id = result[-1][0]
-    with_collection = None
-    package_data = None
 
-    # with collection
     kf_cursor.execute(
         "SELECT * FROM release WHERE collection_id = %(collection_id)s LIMIT 1", {"collection_id": proprietary_id}
     )
@@ -202,16 +204,14 @@ def get_kingfisher_meta_data(collection_id):
         result = kf_cursor.fetchone()
 
     if result is None:
+        logger.warning("No rows found in `release` or `record` where collection_id = %s", proprietary_id)
         return meta_data
-
-    with_collection = result
 
     kf_cursor.execute(
         "SELECT * FROM package_data WHERE id = %(id)s LIMIT 1",
-        {"id": with_collection["package_data_id"]},
+        {"id": result["package_data_id"]},
     )
-    package_data = kf_cursor.fetchone()
-    package_data = package_data if package_data else {}
+    package_data = kf_cursor.fetchone() or {}
 
     #######################
     # collection metadata #
@@ -226,7 +226,7 @@ def get_kingfisher_meta_data(collection_id):
     meta_data["collection_metadata"]["url"] = "The URL where the data can be downloaded isn't presently available."
 
     # ocid prefix
-    values = get_values(with_collection, "ocid", value_only=True)
+    values = get_values(result, "ocid", value_only=True)
     if values and type(values[0]) == str:
         meta_data["collection_metadata"]["ocid_prefix"] = values[0][:11]
 

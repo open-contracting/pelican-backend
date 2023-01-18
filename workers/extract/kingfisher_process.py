@@ -34,13 +34,12 @@ def callback(client_state, channel, method, properties, input_message):
     try:
         name = input_message["name"]
         collection_id = input_message["collection_id"]
-        max_items = int(input_message["max_items"]) if "max_items" in input_message else None
-        ancestor_id = int(input_message["ancestor_id"]) if "ancestor_id" in input_message else None
+        max_items = input_message["max_items"]
+        ancestor_id = input_message["ancestor_id"]
 
         kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
 
         kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        logger.info("Kingfisher Process database connection established.")
 
         if max_items is None:
             kf_cursor.execute(
@@ -70,7 +69,6 @@ def callback(client_state, channel, method, properties, input_message):
 
         result = kf_cursor.fetchall()
 
-        logger.info("Creating row in dataset table for incoming collection")
         cursor.execute(
             """\
             INSERT INTO dataset (name, meta, ancestor_id)
@@ -81,7 +79,6 @@ def callback(client_state, channel, method, properties, input_message):
         )
         dataset_id = cursor.fetchone()[0]
 
-        logger.info("Saving meta data for dataset_id %s", dataset_id)
         meta_data = meta_data_aggregator.get_kingfisher_meta_data(collection_id)
         meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
@@ -134,14 +131,14 @@ def callback(client_state, channel, method, properties, input_message):
                     batch.clear()
 
             logger.info(
-                "Inserted page %s from %s. %s items out of %s downloaded",
+                "Inserted %s/%s pages (%s/%s items) for dataset %s",
                 i,
                 ceil(float(items_count) / float(page_size)),
                 inserts,
                 items_count,
+                dataset_id,
             )
 
-        logger.info("Done extracting data to dataset %s", dataset_id)
         kf_cursor.close()
         kf_connection.close()
     finally:
