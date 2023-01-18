@@ -36,13 +36,26 @@ logging.config.dictConfig(
             },
         },
         "loggers": {
+            "": {
+                "handlers": ["console"],
+                "level": os.getenv("LOG_LEVEL", logging.INFO),
+            },
+            "urllib3.connectionpool": {
+                "handlers": ["console"],
+                "level": "INFO",
+                "propagate": False,
+            },
             "pelican": {
                 "handlers": ["console"],
-                "level": os.getenv("LOG_LEVEL", "INFO"),
+                "level": os.getenv("LOG_LEVEL", logging.INFO),
+                "propagate": False,
             },
         },
     }
 )
+
+# Pika is verbose.
+logging.getLogger("pika").setLevel(logging.WARNING)
 
 
 # Project configuration

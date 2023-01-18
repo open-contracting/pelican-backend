@@ -31,6 +31,15 @@ The default values in the ``settings.py`` file should be appropriate as-is. You 
 You can now:
 
 -  :doc:`Start workers<../reference/workers>`
+
+   .. tip::
+
+      Set the ``LOG_LEVEL`` environment variable to ``DEBUG`` to see log messages about message processing. For example:
+
+      .. code-block:: bash
+
+         env LOG_LEVEL=DEBUG python -m workers.extract.kingfisher_process
+
 -  Run tests:
 
    .. code-block:: bash
