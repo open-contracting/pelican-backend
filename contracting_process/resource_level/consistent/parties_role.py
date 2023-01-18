@@ -18,27 +18,6 @@ testing_roles = {
 
 
 def calculate(item) -> dict:
-    """Method is designed to test items from parties on existing refereced items.
-
-    Paramtertes
-    ------------
-    item: dict
-        testing JSON
-
-    Returns
-    -----------
-    result: dict
-        {
-            "result" - if succeeded
-            "application_count" - application count
-            "pass_count" - pass count
-            "meta" -
-                "party_path": identification of a resource,
-                "examined_role": party role that was examined
-                "resource_identification" - identification of a resource
-        }
-
-    """
     result = get_empty_result_resource(version)
     parties = get_values(item, "parties")
     parties_roles = []
@@ -80,8 +59,16 @@ def calculate(item) -> dict:
         application_count += 1
         if passed:
             pass_count += 1
+
         result["meta"]["references"].append(
-            {"party_path": party["path"], "examined_role": party["role"], "resource_identification": party["id"]}
+            {
+                # identification of a resource
+                "party_path": party["path"],
+                # role that was examined
+                "examined_role": party["role"],
+                # identification of a resource
+                "resource_identification": party["id"],
+            }
         )
 
     result["application_count"] = application_count
