@@ -71,12 +71,13 @@ def is_step_required(*steps: str) -> bool:
 
 
 def finish_callback(
-    client_state, channel, method, dataset_id: int, phase: str, routing_key: Optional[str] = None
+    client_state, channel, method, dataset_id: int, phase: Optional[str] = None, routing_key: Optional[str] = None
 ) -> None:
     """
     Update the dataset's state, publish a message if a routing key is provided, and ack the message.
     """
-    set_dataset_state(dataset_id, state.OK, phase)
+    if phase:
+        set_dataset_state(dataset_id, state.OK, phase)
     commit()
     if routing_key:
         publish(client_state, channel, {"dataset_id": dataset_id}, routing_key)

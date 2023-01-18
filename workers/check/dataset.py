@@ -62,7 +62,7 @@ def callback(client_state, channel, method, properties, input_message):
         return
 
     if not is_step_required(settings.Steps.DATASET):
-        finish_callback(client_state, channel, method, dataset_id, phase.DATASET, routing_key=routing_key)
+        finish_callback(client_state, channel, method, dataset_id, phase=phase.DATASET, routing_key=routing_key)
         return
 
     if dataset["phase"] == phase.CONTRACTING_PROCESS and dataset["state"] == state.OK and not difference:
@@ -77,7 +77,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         processor.do_work(dataset_id, logger)
 
-        finish_callback(client_state, channel, method, dataset_id, phase.DATASET, routing_key=routing_key)
+        finish_callback(client_state, channel, method, dataset_id, phase=phase.DATASET, routing_key=routing_key)
     else:
         logger.error(
             "Dataset processing for dataset_id %s is in weird state. Dataset state %s. Dataset phase %s.",
