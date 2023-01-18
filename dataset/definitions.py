@@ -23,14 +23,26 @@ definitions = {
     "distribution.awards_value_repetition": value_repetition.ModuleType("awards"),
     "distribution.contracts_value_repetition": value_repetition.ModuleType("contracts"),
     "distribution.tender_procurement_method": code_distribution.CodeDistribution(
-        ["tender.procurementMethod"], ["open"]
+        ["tender.procurementMethod"],
+        ["open"],
     ),
-    "distribution.tender_status": code_distribution.CodeDistribution(["tender.status"], ["active", "complete"]),
-    "distribution.tender_award_criteria": code_distribution.CodeDistribution(["tender.awardCriteria"]),
-    "distribution.tender_submission_method": code_distribution.CodeDistribution(["tender.submissionMethod"]),
-    "distribution.awards_status": code_distribution.CodeDistribution(["awards.status"], ["active"]),
+    "distribution.tender_status": code_distribution.CodeDistribution(
+        ["tender.status"],
+        ["active", "complete"],
+    ),
+    "distribution.tender_award_criteria": code_distribution.CodeDistribution(
+        ["tender.awardCriteria"],
+    ),
+    "distribution.tender_submission_method": code_distribution.CodeDistribution(
+        ["tender.submissionMethod"],
+    ),
+    "distribution.awards_status": code_distribution.CodeDistribution(
+        ["awards.status"],
+        ["active"],
+    ),
     "distribution.contracts_status": code_distribution.CodeDistribution(
-        ["contracts.status"], ["active", "terminated"]
+        ["contracts.status"],
+        ["active", "terminated"],
     ),
     "distribution.milestone_status": code_distribution.CodeDistribution(
         [
