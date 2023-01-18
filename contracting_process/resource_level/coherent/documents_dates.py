@@ -1,6 +1,5 @@
 from tools.checks import get_empty_result_resource
-from tools.getter import get_values
-from tools.helpers import parse_date
+from tools.getter import get_values, parse_date
 
 version = 1.0
 

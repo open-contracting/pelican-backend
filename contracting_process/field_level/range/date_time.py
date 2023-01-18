@@ -1,7 +1,7 @@
 from datetime import date
 
 from tools.checks import field_quality_check
-from tools.helpers import parse_date
+from tools.getter import parse_date
 
 name = "date_time"
 lower_bound = date(1990, 1, 1)

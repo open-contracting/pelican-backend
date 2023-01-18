@@ -2,9 +2,42 @@ import re
 from datetime import date, datetime
 from typing import Any, List, Optional, Type
 
-from tools.helpers import parse_date, parse_datetime
+from dateutil.parser import isoparse
 
 regex = r"^([^[]*)\[([\d]*)\]$"
+
+
+# https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
+def parse_datetime(string: Optional[str]) -> Optional[datetime]:
+    """
+    Parse a string to a datetime.
+    """
+    if string is None or not isinstance(string, str):
+        return None
+    try:
+        return isoparse(string)
+    except ValueError:
+        pass
+    try:
+        return datetime.strptime(string, "%Y-%m-%dT%H:%M:%S%z")
+    except ValueError:
+        pass
+
+
+def parse_date(string: Optional[str]) -> Optional[date]:
+    """
+    Parse a string to a date.
+    """
+    if not string or not isinstance(string, str):
+        return None
+    try:
+        return isoparse(string[:10]).date()
+    except ValueError:
+        pass
+    try:
+        return datetime.strptime(string[:10], "%Y-%m-%d").date()
+    except ValueError:
+        pass
 
 
 def deep_has(value: Any, path: str) -> bool:
