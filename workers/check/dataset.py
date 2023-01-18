@@ -14,8 +14,8 @@ from tools.services import (
     get_processed_items_count,
     get_total_items_count,
     phase,
-    set_dataset_state,
     state,
+    update_dataset_state,
 )
 from tools.workers import finish_callback, is_step_required
 
@@ -72,7 +72,7 @@ def callback(client_state, channel, method, properties, input_message):
             dataset_id,
             processed_count,
         )
-        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.DATASET)
+        update_dataset_state(dataset_id, phase.DATASET, state.IN_PROGRESS)
 
         commit()
 
@@ -81,10 +81,10 @@ def callback(client_state, channel, method, properties, input_message):
         finish_callback(client_state, channel, method, dataset_id, phase=phase.DATASET, routing_key=routing_key)
     else:
         logger.error(
-            "Dataset processing for dataset_id %s is in weird state. Dataset state %s. Dataset phase %s.",
+            "Dataset processing for dataset_id %s is in unexpected state (phase=%s, state=%s).",
             dataset_id,
-            dataset["state"],
             dataset["phase"],
+            dataset["state"],
         )
         nack(client_state, channel, delivery_tag, requeue=False)
 

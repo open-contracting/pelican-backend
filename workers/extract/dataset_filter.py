@@ -143,13 +143,13 @@ def callback(client_state, channel, method, properties, input_message):
             cursors={"default": cursor},
             dataset_id=dataset_id_filtered,
             ids=ids,
-            insert_data_items=insert_data_items,
+            insert_items=insert_items,
         )
     finally:
         cursor.close()
 
 
-def insert_data_items(cursors, dataset_id, ids):
+def insert_items(cursors, dataset_id, ids):
     cursors["default"].execute(
         """\
         INSERT INTO data_item (data, dataset_id)

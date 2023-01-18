@@ -4,7 +4,7 @@ import logging
 import click
 
 from tools import exchange_rates_db, settings
-from tools.services import commit, get_cursor, phase, publish, set_dataset_state, state
+from tools.services import commit, get_cursor, phase, publish, state, update_dataset_state
 
 
 @click.group()
@@ -192,9 +192,9 @@ def dev():
 @click.argument("dataset_id", type=int)
 def restart_dataset_check(dataset_id):
     """
-    Restart the dataset check if the worker failed.
+    Restart the dataset check if the check.dataset worker failed.
     """
-    set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS)
+    update_dataset_state(dataset_id, phase.CONTRACTING_PROCESS, state.OK)
     commit()
 
     message = {"dataset_id": dataset_id}

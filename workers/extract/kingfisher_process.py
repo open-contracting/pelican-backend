@@ -85,7 +85,7 @@ def callback(client_state, channel, method, properties, input_message):
             cursors={"default": cursor, "kingfisher_process": kf_cursor},
             dataset_id=dataset_id,
             ids=ids,
-            insert_data_items=insert_data_items,
+            insert_items=insert_items,
         )
     finally:
         kf_cursor.close()
@@ -93,11 +93,11 @@ def callback(client_state, channel, method, properties, input_message):
         cursor.close()
 
 
-def insert_data_items(cursors, dataset_id, ids):
+def insert_items(cursors, dataset_id, ids):
     cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id IN %(ids)s", {"ids": tuple(ids)})
-    data_items = [(json.dumps(row[0]), dataset_id) for row in cursors["kingfisher_process"].fetchall()]
+    argslist = [(json.dumps(row[0]), dataset_id) for row in cursors["kingfisher_process"].fetchall()]
     sql = "INSERT INTO data_item (data, dataset_id) VALUES %s RETURNING id"
-    psycopg2.extras.execute_values(cursors["default"], sql, data_items, page_size=settings.EXTRACTOR_PAGE_SIZE)
+    psycopg2.extras.execute_values(cursors["default"], sql, argslist, page_size=settings.EXTRACTOR_PAGE_SIZE)
 
 
 if __name__ == "__main__":

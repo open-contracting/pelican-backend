@@ -3,7 +3,7 @@ import click
 
 from time_variance import processor
 from tools import settings
-from tools.services import commit, consume, phase, set_dataset_state, state
+from tools.services import commit, consume, phase, state, update_dataset_state
 from tools.workers import finish_callback, is_step_required
 
 consume_routing_key = "dataset_checker"
@@ -22,7 +22,7 @@ def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
     if is_step_required(settings.Steps.TIME_BASED):
-        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.TIME_VARIANCE)
+        update_dataset_state(dataset_id, phase.TIME_VARIANCE, state.IN_PROGRESS)
         commit()
 
         processor.do_work(dataset_id)

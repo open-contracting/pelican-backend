@@ -96,31 +96,44 @@ class phase:
     DELETED = "DELETED"
 
 
-def set_dataset_state(dataset_id: int, state: str, phase: str, size: Optional[int] = None) -> None:
+def initialize_dataset_state(dataset_id: int) -> None:
     """
-    Upsert a dataset's progress to the given state and phase.
+    Initialize a dataset's progress.
 
     :param dataset_id: the dataset's ID
-    :param state: the state to set
+    """
+    sql = """\
+        INSERT INTO progress_monitor_dataset (dataset_id, phase, state, size)
+        VALUES (%(dataset_id)s, %(phase)s, %(state)s, 0)
+    """
+    with get_cursor() as cursor:
+        cursor.execute(sql, {"dataset_id": dataset_id, "phase": phase.CONTRACTING_PROCESS, "state": state.IN_PROGRESS})
+
+
+def update_dataset_state(dataset_id: int, phase: str, state: str, size: Optional[int] = None) -> None:
+    """
+    Update a dataset's progress to the given phase and state.
+
+    :param dataset_id: the dataset's ID
     :param phase: the phase to be set
+    :param state: the state to set
     :param size: number of data items to process
     """
+    variables = {"phase": phase, "state": state, "dataset_id": dataset_id}
+    sql = """\
+        UPDATE progress_monitor_dataset
+        SET phase = %(phase)s, state = %(state)s, modified = now()
+        WHERE dataset_id = %(dataset_id)s
+    """
     if size:
+        variables["size"] = size
         sql = """\
-            INSERT INTO progress_monitor_dataset (dataset_id, state, phase, size)
-            VALUES (%(dataset_id)s, %(state)s, %(phase)s, %(size)s)
-            ON CONFLICT (dataset_id)
-            DO UPDATE SET state = %(state)s, phase = %(phase)s, size = %(size)s, modified = now()
-        """
-    else:
-        sql = """\
-            INSERT INTO progress_monitor_dataset (dataset_id, state, phase, size)
-            VALUES (%(dataset_id)s, %(state)s, %(phase)s, %(size)s)
-            ON CONFLICT (dataset_id)
-            DO UPDATE SET state = %(state)s, phase = %(phase)s, modified = now()
+            UPDATE progress_monitor_dataset
+            SET phase = %(phase)s, state = %(state)s, modified = now(), size = %(size)s
+            WHERE dataset_id = %(dataset_id)s
         """
     with get_cursor() as cursor:
-        cursor.execute(sql, {"dataset_id": dataset_id, "state": state, "phase": phase, "size": size})
+        cursor.execute(sql, variables)
 
 
 def set_items_state(dataset_id: int, item_ids: List[int], state: str) -> None:
@@ -131,13 +144,13 @@ def set_items_state(dataset_id: int, item_ids: List[int], state: str) -> None:
     :param item_ids: the data items' IDs
     :param state: the state to set
     """
+    sql = """\
+        INSERT INTO progress_monitor_item (dataset_id, item_id, state)
+        VALUES %s
+        ON CONFLICT (dataset_id, item_id)
+        DO UPDATE SET state = excluded.state, modified = now()
+    """
     with get_cursor() as cursor:
-        sql = """\
-            INSERT INTO progress_monitor_item (dataset_id, item_id, state)
-            VALUES %s
-            ON CONFLICT (dataset_id, item_id)
-            DO UPDATE SET state = excluded.state, modified = now()
-        """
         psycopg2.extras.execute_values(cursor, sql, [(dataset_id, item_id, state) for item_id in item_ids])
 
 
