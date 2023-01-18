@@ -17,31 +17,26 @@ def is_step_required(*steps: str) -> bool:
 def process_items(client_state, channel, method, routing_key, cursors, dataset_id, ids, insert_data_items):
     ack(client_state, channel, method.delivery_tag)
 
-    item_ids_batch = []
     items_inserted = 0
 
-    for page_number, index in enumerate(range(0, len(ids), settings.EXTRACTOR_PAGE_SIZE)):
-        insert_data_items(cursors, dataset_id, ids[index : index + settings.EXTRACTOR_PAGE_SIZE])
+    for page_number, i in enumerate(range(0, len(ids), settings.EXTRACTOR_PAGE_SIZE)):
+        insert_data_items(cursors, dataset_id, ids[i : i + settings.EXTRACTOR_PAGE_SIZE])
         commit()
 
         # insert_data_items() returns the id's of the rows inserted into the data_item table.
-        for row in cursors["default"].fetchall():
-            item_ids_batch.append(row[0])
-            items_inserted += 1
+        data_item_ids = [row[0] for row in cursors["default"].fetchall()]
+        for j in range(0, len(data_item_ids), settings.EXTRACTOR_MAX_BATCH_SIZE):
+            item_ids_batch = data_item_ids[j : j + settings.EXTRACTOR_MAX_BATCH_SIZE]
+            items_inserted += len(item_ids_batch)
 
-            if len(item_ids_batch) >= settings.EXTRACTOR_MAX_BATCH_SIZE or items_inserted == len(ids):
-                set_items_state(dataset_id, item_ids_batch, state.IN_PROGRESS)
+            set_items_state(dataset_id, item_ids_batch, state.IN_PROGRESS)
+            if items_inserted >= len(ids):
+                set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS, size=items_inserted)
+            else:
+                set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=items_inserted)
+            commit()
 
-                if items_inserted == len(ids):
-                    set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS, size=items_inserted)
-                else:
-                    set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=items_inserted)
-
-                commit()
-
-                publish(client_state, channel, {"item_ids": item_ids_batch, "dataset_id": dataset_id}, routing_key)
-
-                item_ids_batch.clear()
+            publish(client_state, channel, {"item_ids": item_ids_batch, "dataset_id": dataset_id}, routing_key)
 
         logger.info(
             "Inserted %s/%s pages (%s/%s items) for dataset %s",
