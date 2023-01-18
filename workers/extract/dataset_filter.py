@@ -5,7 +5,7 @@ from math import ceil
 import click
 import simplejson as json
 from psycopg2 import sql
-from yapw.methods.blocking import ack, publish
+from yapw.methods.blocking import ack, nack, publish
 
 from tools import settings
 from tools.services import commit, consume, get_cursor
@@ -51,8 +51,8 @@ def callback(client_state, channel, method, properties, input_message):
             or not isinstance(input_message["filter_message"], dict)
             or len(input_message["filter_message"]) == 0
         ):
-            logger.error("Input message is malformed, will be dropped.")
-            ack(client_state, channel, delivery_tag)
+            logger.error("Message is malformed, skipping (%r)", input_message)
+            nack(client_state, channel, delivery_tag, requeue=False)
             return
 
         dataset_id_original = input_message["dataset_id_original"]
@@ -76,8 +76,8 @@ def callback(client_state, channel, method, properties, input_message):
             {"dataset_id": dataset_id_original},
         )
         if not cursor.fetchone()[0]:
-            logger.error("Dataset with dataset_id %s does not exist or cannot be filtered.", dataset_id_original)
-            ack(client_state, channel, delivery_tag)
+            logger.error("No dataset in phase CHECKED with id %s, skipping", dataset_id_original)
+            nack(client_state, channel, delivery_tag, requeue=False)
             return
 
         cursor.execute(
