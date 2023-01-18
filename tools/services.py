@@ -6,7 +6,6 @@ import psycopg2.extensions
 import psycopg2.extras
 import simplejson as json
 from yapw import clients
-from yapw.methods import blocking
 
 from tools import settings
 
@@ -62,23 +61,6 @@ def publish(*args, **kwargs):
         client.publish(*args, **kwargs)
     finally:
         client.close()
-
-
-# RabbitMQ + PostgreSQL
-
-
-def finish_callback(
-    client_state, channel, method, dataset_id: int, phase: Optional[str] = None, routing_key: Optional[str] = None
-) -> None:
-    """
-    Update the dataset's state, publish a message if a routing key is provided, and ack the message.
-    """
-    if phase:
-        set_dataset_state(dataset_id, state.OK, phase)
-    commit()
-    if routing_key:
-        blocking.publish(client_state, channel, {"dataset_id": dataset_id}, routing_key)
-    blocking.ack(client_state, channel, method.delivery_tag)
 
 
 # PostgreSQL

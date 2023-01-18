@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 import logging
-from math import ceil
 
 import click
 import simplejson as json
 from psycopg2 import sql
-from yapw.methods.blocking import ack, nack, publish
+from yapw.methods.blocking import nack
 
-from tools import settings
-from tools.services import commit, consume, get_cursor, phase, set_dataset_state, set_items_state, state
+from tools.services import commit, consume, get_cursor
+from tools.workers import process_items
 
 consume_routing_key = "dataset_filter_extractor_init"
 routing_key = "extractor"
-page_size = 1000
 logger = logging.getLogger("pelican.workers.extract.dataset_filter")
 
 
@@ -39,8 +37,8 @@ def start():
 #     "max_items": 5000
 # }
 def callback(client_state, channel, method, properties, input_message):
-    delivery_tag = method.delivery_tag
     cursor = get_cursor()
+
     try:
         # checking input_message correctness
         if (
@@ -51,7 +49,7 @@ def callback(client_state, channel, method, properties, input_message):
             or len(input_message["filter_message"]) == 0
         ):
             logger.error("Message is malformed, skipping (%r)", input_message)
-            nack(client_state, channel, delivery_tag, requeue=False)
+            nack(client_state, channel, method.delivery_tag, requeue=False)
             return
 
         dataset_id_original = input_message["dataset_id_original"]
@@ -76,7 +74,7 @@ def callback(client_state, channel, method, properties, input_message):
         )
         if not cursor.fetchone()[0]:
             logger.error("No dataset in phase CHECKED with id %s, skipping", dataset_id_original)
-            nack(client_state, channel, delivery_tag, requeue=False)
+            nack(client_state, channel, method.delivery_tag, requeue=False)
             return
 
         cursor.execute(
@@ -137,64 +135,29 @@ def callback(client_state, channel, method, properties, input_message):
         cursor.execute(query)
         ids = [row[0] for row in cursor.fetchall()]
 
-        # ack message, no recovery possible after this point
-        ack(client_state, channel, delivery_tag)
-
-        # batch initialization
-        max_batch_size = settings.EXTRACTOR_MAX_BATCH_SIZE
-        batch_size = 0
-        batch = []
-
-        i = 0
-        inserts = 0
-        items_count = len(ids)
-        while i * page_size < items_count:
-            page_ids = ids[i * page_size : (i + 1) * page_size]
-            i += 1
-
-            cursor.execute(
-                """\
-                INSERT INTO data_item (data, dataset_id)
-                SELECT data, %(dataset_id)s FROM data_item WHERE id IN %(ids)s
-                RETURNING id
-                """,
-                {"dataset_id": dataset_id_filtered, "ids": tuple(page_ids)},
-            )
-            commit()
-
-            for row in cursor.fetchall():
-                inserted_id = row[0]
-                batch.append(inserted_id)
-                batch_size += 1
-                inserts += 1
-
-                if batch_size >= max_batch_size or inserts == items_count:
-                    set_items_state(dataset_id_filtered, batch, state.IN_PROGRESS)
-
-                    if inserts == items_count:
-                        set_dataset_state(dataset_id_filtered, state.OK, phase.CONTRACTING_PROCESS)
-                    else:
-                        set_dataset_state(
-                            dataset_id_filtered, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=inserts
-                        )
-
-                    commit()
-
-                    publish(client_state, channel, {"item_ids": batch, "dataset_id": dataset_id_filtered}, routing_key)
-
-                    batch_size = 0
-                    batch.clear()
-
-            logger.info(
-                "Inserted %s/%s pages (%s/%s items) for dataset %s",
-                i,
-                ceil(float(items_count) / float(page_size)),
-                inserts,
-                items_count,
-                dataset_id_filtered,
-            )
+        process_items(
+            client_state=client_state,
+            channel=channel,
+            method=method,
+            routing_key=routing_key,
+            cursors={"default": cursor},
+            dataset_id=dataset_id_filtered,
+            ids=ids,
+            insert_data_items=insert_data_items,
+        )
     finally:
         cursor.close()
+
+
+def insert_data_items(cursors, dataset_id, ids):
+    cursors["default"].execute(
+        """\
+        INSERT INTO data_item (data, dataset_id)
+        SELECT data, %(dataset_id)s FROM data_item WHERE id IN %(ids)s
+        RETURNING id
+        """,
+        {"dataset_id": dataset_id, "ids": tuple(ids)},
+    )
 
 
 if __name__ == "__main__":

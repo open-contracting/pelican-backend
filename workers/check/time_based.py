@@ -3,8 +3,8 @@ import click
 
 from time_variance import processor
 from tools import settings
-from tools.services import commit, consume, finish_callback, phase, set_dataset_state, state
-from tools.workers import is_step_required
+from tools.services import commit, consume, phase, set_dataset_state, state
+from tools.workers import finish_callback, is_step_required
 
 consume_routing_key = "dataset_checker"
 routing_key = "time_variance_checker"

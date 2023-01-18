@@ -13,3 +13,10 @@ Getter
 .. automodule:: tools.getter
    :members:
    :undoc-members:
+
+Services
+------
+
+.. automodule:: tools.services
+   :members:
+   :undoc-members:

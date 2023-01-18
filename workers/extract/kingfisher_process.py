@@ -1,20 +1,15 @@
 #!/usr/bin/env python
-import logging
-from math import ceil
-
 import click
 import psycopg2.extras
 import simplejson as json
-from yapw.methods.blocking import ack, publish
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from tools import exchange_rates_db, settings
-from tools.services import commit, consume, get_cursor, phase, set_dataset_state, set_items_state, state
+from tools.services import commit, consume, get_cursor
+from tools.workers import process_items
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
 routing_key = "extractor"
-page_size = 1000
-logger = logging.getLogger("pelican.workers.extract.kingfisher_process")
 
 
 @click.command()
@@ -26,19 +21,18 @@ def start():
 
 
 def callback(client_state, channel, method, properties, input_message):
-    delivery_tag = method.delivery_tag
     if settings.FIXER_IO_API_KEY:
         exchange_rates_db.update_from_fixer_io()
+
     cursor = get_cursor()
+    kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
+    kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
     try:
         name = input_message["name"]
         collection_id = input_message["collection_id"]
         max_items = input_message["max_items"]
         ancestor_id = input_message["ancestor_id"]
-
-        kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
-
-        kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         if max_items is None:
             kf_cursor.execute(
@@ -66,7 +60,7 @@ def callback(client_state, channel, method, properties, input_message):
                 {"collection_id": collection_id, "max_size": settings.KINGFISHER_PROCESS_MAX_SIZE, "limit": max_items},
             )
 
-        result = kf_cursor.fetchall()
+        ids = [row[0] for row in kf_cursor.fetchall()]
 
         cursor.execute(
             """\
@@ -83,65 +77,27 @@ def callback(client_state, channel, method, properties, input_message):
 
         commit()
 
-        # ack message, no recovery possible after this point
-        ack(client_state, channel, delivery_tag)
-
-        # batch initialization
-        max_batch_size = settings.EXTRACTOR_MAX_BATCH_SIZE
-        batch_size = 0
-        batch = []
-
-        i = 0
-        inserts = 0
-        items_count = len(result)
-        while i * page_size < items_count:
-            ids = []
-            for item in result[i * page_size : (i + 1) * page_size]:
-                ids.append(item[0])
-
-            i += 1
-
-            kf_cursor.execute("SELECT data FROM data WHERE data.id IN %(ids)s", {"ids": tuple(ids)})
-
-            data_items = [(json.dumps(row[0]), dataset_id) for row in kf_cursor.fetchall()]
-            sql = "INSERT INTO data_item (data, dataset_id) VALUES %s RETURNING id"
-            psycopg2.extras.execute_values(cursor, sql, data_items, page_size=page_size)
-            commit()
-
-            for row in cursor.fetchall():
-                inserted_id = row[0]
-                batch.append(inserted_id)
-                batch_size += 1
-                inserts += 1
-
-                if batch_size >= max_batch_size or inserts == items_count:
-                    set_items_state(dataset_id, batch, state.IN_PROGRESS)
-
-                    if inserts == items_count:
-                        set_dataset_state(dataset_id, state.OK, phase.CONTRACTING_PROCESS, size=inserts)
-                    else:
-                        set_dataset_state(dataset_id, state.IN_PROGRESS, phase.CONTRACTING_PROCESS, size=inserts)
-
-                    commit()
-
-                    publish(client_state, channel, {"item_ids": batch, "dataset_id": dataset_id}, routing_key)
-
-                    batch_size = 0
-                    batch.clear()
-
-            logger.info(
-                "Inserted %s/%s pages (%s/%s items) for dataset %s",
-                i,
-                ceil(float(items_count) / float(page_size)),
-                inserts,
-                items_count,
-                dataset_id,
-            )
-
+        process_items(
+            client_state=client_state,
+            channel=channel,
+            method=method,
+            routing_key=routing_key,
+            cursors={"default": cursor, "kingfisher_process": kf_cursor},
+            dataset_id=dataset_id,
+            ids=ids,
+            insert_data_items=insert_data_items,
+        )
+    finally:
         kf_cursor.close()
         kf_connection.close()
-    finally:
         cursor.close()
+
+
+def insert_data_items(cursors, dataset_id, ids):
+    cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id IN %(ids)s", {"ids": tuple(ids)})
+    data_items = [(json.dumps(row[0]), dataset_id) for row in cursors["kingfisher_process"].fetchall()]
+    sql = "INSERT INTO data_item (data, dataset_id) VALUES %s RETURNING id"
+    psycopg2.extras.execute_values(cursors["default"], sql, data_items, page_size=settings.EXTRACTOR_PAGE_SIZE)
 
 
 if __name__ == "__main__":

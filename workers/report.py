@@ -8,8 +8,8 @@ import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
 from dataset import meta_data_aggregator
 from tools import settings
-from tools.services import consume, finish_callback, phase
-from tools.workers import is_step_required
+from tools.services import consume, phase
+from tools.workers import finish_callback, is_step_required
 
 consume_routing_key = "time_variance_checker"
 logger = logging.getLogger("pelican.workers.report")
