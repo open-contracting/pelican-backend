@@ -81,7 +81,10 @@ definitions = {
         ]
     ),
     "distribution.related_process_relation": code_distribution.CodeDistribution(
-        ["relatedProcesses.relationship", "contracts.relatedProcesses.relationship"]
+        [
+            "relatedProcesses.relationship",
+            "contracts.relatedProcesses.relationship",
+        ]
     ),
     "misc.url_availability": url_availability,
     "consistent.related_process_title": related_process_title,
