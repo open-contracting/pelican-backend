@@ -61,16 +61,16 @@ def deep_get(value: Any, path: str, force: Type[Any] = None) -> Any:
     Gets a nested value from nested dicts, safely. If ``force`` is provided and the nested value is not of that type,
     then if ``force`` is ...
 
-    -  ``datetime.date``, ``datetime.datetime``: Parse as ISO 8601. On failure, return ``None``.
+    -  ``datetime.date``, ``datetime.datetime``: Parse the nested value as ISO 8601. On failure, return ``None``.
     -  ``dict``, ``list``: Return an empty ``dict`` or ``list``, respectively.
-    -  ``float``, ``int``, ``str``: Past the value to that type. On failure, return ``None``.
+    -  ``float``, ``int``, ``str``: Cast the nested value to that type. On failure, return ``None``.
 
-    If the path is not set, if ``force`` is provided, and ``force`` is ``dict``, ``list`` or ``str``, return an empty
-    ``dict``, ``list`` or ``str``, respectively. Otherwise, if the path is not set, return ``None``.
+    If the nested value is not set, if ``force`` is provided, and ``force`` is ``dict``, ``list`` or ``str``, return an
+    empty ``dict``, ``list`` or ``str``, respectively. Otherwise, if the nested value is not set, return ``None``.
 
     :param value: the value
     :param path: a period-separated list of keys
-    :param force: the type to which to coerce the value, if possible
+    :param force: the type to which to coerce the nested value, if possible
     """
     for part in path.split("."):
         if type(value) is dict and part in value:

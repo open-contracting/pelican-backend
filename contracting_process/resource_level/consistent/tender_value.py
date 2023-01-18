@@ -1,6 +1,6 @@
 from tools.checks import get_empty_result_resource
 from tools.currency_converter import convert
-from tools.getter import get_values, parse_date
+from tools.getter import deep_get, get_values, parse_date
 
 version = 1.0
 
@@ -30,26 +30,26 @@ def calculate(item):
         result["meta"] = {"reason": "amount or currency is not set"}
         return result
 
+    tender_value_amount = deep_get(tender_value, "amount", force=float)
+    planning_budget_amount_amount = deep_get(planning_budget_amount, "amount", force=float)
+
     # None fields
     if (
-        tender_value["amount"] is None
+        tender_value_amount is None
         or tender_value["currency"] is None
-        or planning_budget_amount["amount"] is None
+        or planning_budget_amount_amount is None
         or planning_budget_amount["currency"] is None
     ):
 
-        result["meta"] = {"reason": "amount or currency is null"}
+        result["meta"] = {"reason": "amount is not a number or currency is null"}
         return result
 
     # currency conversion if necessary
-    if tender_value["currency"] == planning_budget_amount["currency"]:
-        tender_value_amount = tender_value["amount"]
-        planning_budget_amount_amount = planning_budget_amount["amount"]
-    else:
+    if tender_value["currency"] != planning_budget_amount["currency"]:
         ref_date = parse_date(get_values(item, "date", value_only=True)[0])
-        tender_value_amount = convert(tender_value["amount"], tender_value["currency"], "USD", ref_date)
+        tender_value_amount = convert(tender_value_amount, tender_value["currency"], "USD", ref_date)
         planning_budget_amount_amount = convert(
-            planning_budget_amount["amount"], planning_budget_amount["currency"], "USD", ref_date
+            planning_budget_amount_amount, planning_budget_amount["currency"], "USD", ref_date
         )
 
     # non-convertible values
