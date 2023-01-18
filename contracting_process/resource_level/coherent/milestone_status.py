@@ -2,7 +2,7 @@
 If a milestone's status is unmet ('scheduled' or 'notMet'), then its dateMet is blank.
 """
 
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import deep_get, get_values
 
 version = 1.0
@@ -14,11 +14,9 @@ def calculate(item):
     milestones = []
     for path in ("planning", "tender", "contracts", "contracts.implementation"):
         milestones.extend(
-            [
-                v
-                for v in get_values(item, f"{path}.milestones")
-                if deep_get(v["value"], "status") in ("scheduled", "notMet")
-            ]
+            v
+            for v in get_values(item, f"{path}.milestones")
+            if deep_get(v["value"], "status") in ("scheduled", "notMet")
         )
 
     if not milestones:
@@ -39,8 +37,4 @@ def calculate(item):
         if passed:
             pass_count += 1
 
-    result["result"] = application_count == pass_count
-    result["application_count"] = application_count
-    result["pass_count"] = pass_count
-
-    return result
+    return complete_result_resource(result, application_count, pass_count)

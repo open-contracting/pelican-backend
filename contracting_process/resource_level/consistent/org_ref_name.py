@@ -1,13 +1,11 @@
 from collections import Counter
 
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import get_values
 
 
 def calculate(item, path):
     result = get_empty_result_resource()
-    result["application_count"] = 0
-    result["pass_count"] = 0
 
     parties = [
         party
@@ -33,8 +31,9 @@ def calculate(item, path):
         if ("id" in value["value"] and value["value"]["id"] and "name" in value["value"] and value["value"]["name"])
     ]
 
+    application_count = 0
+    pass_count = 0
     result["meta"] = {"references": []}
-
     for value in test_values:
         if value["value"]["id"] not in parties_mapping:
             continue
@@ -42,9 +41,9 @@ def calculate(item, path):
         party = parties_mapping[value["value"]["id"]]
 
         passed = value["value"]["name"] == party["value"]["name"]
-        result["application_count"] += 1
+        application_count += 1
         if passed:
-            result["pass_count"] += 1
+            pass_count += 1
 
         result["meta"]["references"].append(
             {
@@ -54,9 +53,4 @@ def calculate(item, path):
             }
         )
 
-    if result["application_count"] > 0:
-        result["result"] = result["pass_count"] == result["application_count"]
-    else:
-        result["meta"] = {"reason": "there are no values with check-specific properties"}
-
-    return result
+    return complete_result_resource(result, application_count, pass_count, reason="insufficient data for check")

@@ -36,20 +36,20 @@ item_test_undefined3 = {
 def test_undefined():
     result = calculate_buyer(item_test_undefined1)
     assert result["result"] is None
-    assert result["application_count"] == 0
-    assert result["pass_count"] == 0
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no parties with unique id and name set"}
 
     result = calculate_buyer(item_test_undefined2)
     assert result["result"] is None
-    assert result["application_count"] == 0
-    assert result["pass_count"] == 0
-    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
     result = calculate_buyer(item_test_undefined3)
     assert result["result"] is None
-    assert result["application_count"] == 0
-    assert result["pass_count"] == 0
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
     assert result["meta"] == {"reason": "there are no parties with unique id and name set"}
 
 

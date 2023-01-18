@@ -3,6 +3,11 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 
 
 def get_empty_result_resource(version: float = 1.0) -> Dict[str, Any]:
+    """
+    Initialize a compiled release-level check result.
+
+    :param version: the check's version
+    """
     return {
         "result": None,
         "meta": None,
@@ -13,6 +18,11 @@ def get_empty_result_resource(version: float = 1.0) -> Dict[str, Any]:
 
 
 def get_empty_result_dataset(version: float = 1.0) -> Dict[str, Any]:
+    """
+    Initialize a dataset-level check result.
+
+    :param version: the check's version
+    """
     return {
         "result": None,
         "value": None,
@@ -22,6 +32,11 @@ def get_empty_result_dataset(version: float = 1.0) -> Dict[str, Any]:
 
 
 def get_empty_result_time_variance(version: float = 1.0) -> Dict[str, Any]:
+    """
+    Initialize a time-based check result.
+
+    :param version: the check's version
+    """
     return {
         "check_result": None,
         "check_value": None,
@@ -33,6 +48,9 @@ def get_empty_result_time_variance(version: float = 1.0) -> Dict[str, Any]:
 
 
 def get_empty_result_time_variance_scope() -> Dict[str, Any]:
+    """
+    Initialize a time-based check result accumulator.
+    """
     return {
         "total_count": 0,
         "coverage_count": 0,
@@ -40,6 +58,58 @@ def get_empty_result_time_variance_scope() -> Dict[str, Any]:
         "ok_count": 0,
         "examples": [],
     }
+
+
+def complete_result_resource(
+    result: Dict[str, Any],
+    application_count: int,
+    pass_count: int,
+    reason: Optional[str] = None,
+    meta: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """
+    Build a compiled release-level check result.
+
+    :param result: the check result
+    :param application_count: the number of times the check was applied
+    :param pass_count: the number of times the check passed
+    :param reason: the reason to provide if the check was not applied
+    :param meta: the additional data to provide if the check failed
+    """
+    if reason and application_count == 0:
+        result["meta"] = {"reason": reason}
+        return result
+
+    passed = application_count == pass_count
+
+    result["result"] = passed
+    result["application_count"] = application_count
+    result["pass_count"] = pass_count
+
+    if meta and not passed:
+        result["meta"] = meta
+
+    return result
+
+
+def complete_result_resource_pass_fail(
+    result: Dict[str, Any], passed: bool, meta: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """
+    Build a compiled release-level check result, for a pass-fail check.
+
+    :param result: the check result
+    :param passed: whether the check passed
+    :param meta: the additional data to provide if the check failed
+    """
+    result["result"] = passed
+    result["application_count"] = 1
+    result["pass_count"] = int(passed)
+
+    if meta and not passed:
+        result["meta"] = meta
+
+    return result
 
 
 def field_coverage_check(

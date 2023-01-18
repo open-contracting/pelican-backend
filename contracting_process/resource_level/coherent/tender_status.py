@@ -3,7 +3,7 @@ If tender.status is incomplete ('planning', 'planned', 'active', 'cancelled', 'u
 awards and contracts are blank.
 """
 
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource_pass_fail, get_empty_result_resource
 from tools.getter import deep_get
 
 version = 1.0
@@ -23,15 +23,8 @@ def calculate(item):
     contracts_count = len(deep_get(item, "contracts", list))
     awards_count = len(deep_get(item, "awards", list))
 
-    if contracts_count or awards_count:
-        result["result"] = False
-        result["application_count"] = 1
-        result["pass_count"] = 0
-        result["meta"] = {"contracts_count": contracts_count, "awards_count": awards_count}
-        return result
-
-    result["result"] = True
-    result["application_count"] = 1
-    result["pass_count"] = 1
-    result["meta"] = None
-    return result
+    return complete_result_resource_pass_fail(
+        result,
+        not contracts_count and not awards_count,
+        {"contracts_count": contracts_count, "awards_count": awards_count},
+    )

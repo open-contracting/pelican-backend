@@ -1,4 +1,4 @@
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.currency_converter import convert
 from tools.getter import parse_datetime
 
@@ -7,8 +7,6 @@ version = 1.0
 
 def calculate(item):
     result = get_empty_result_resource(version)
-    result["application_count"] = 0
-    result["pass_count"] = 0
 
     contracts = item["contracts"] if "contracts" in item else None
     if not contracts:
@@ -20,6 +18,8 @@ def calculate(item):
         result["meta"] = {"reason": "there are no awards"}
         return result
 
+    application_count = 0
+    pass_count = 0
     non_applicable_award_ids = set()
     for contract in contracts:
         matching_awards = [
@@ -114,9 +114,9 @@ def calculate(item):
         ratio = abs(award_value_amount - contracts_value_amount_sum) / abs(award_value_amount)
         passed = ratio <= 0.5
 
-        result["application_count"] += 1
+        application_count += 1
         if passed:
-            result["pass_count"] += 1
+            pass_count += 1
 
         if result["meta"] is None:
             result["meta"] = {"awards": []}
@@ -125,10 +125,4 @@ def calculate(item):
             {"awardID": award["id"], "awards.value": award["value"], "contracts.value_sum": contracts_value_amount_sum}
         )
 
-    if result["application_count"] > 0:
-        result["result"] = result["application_count"] == result["pass_count"]
-    else:
-        result["result"] = None
-        result["meta"] = {"reason": "rule could not be applied for any award - contracts group"}
-
-    return result
+    return complete_result_resource(result, application_count, pass_count, reason="insufficient data for check")

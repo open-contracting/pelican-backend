@@ -1,4 +1,4 @@
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import get_values
 
 version = 1.0
@@ -24,7 +24,7 @@ def calculate_path_role(item, path, role):
     ]
 
     if not check_values:
-        result["meta"] = {"reason": "there are no values with check-specific properties"}
+        result["meta"] = {"reason": "insufficient data for check"}
         return result
 
     result["meta"] = {"references": []}
@@ -54,8 +54,4 @@ def calculate_path_role(item, path, role):
             }
         )
 
-    result["result"] = application_count == pass_count
-    result["application_count"] = application_count
-    result["pass_count"] = pass_count
-
-    return result
+    return complete_result_resource(result, application_count, pass_count)

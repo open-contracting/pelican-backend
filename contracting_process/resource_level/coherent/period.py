@@ -1,4 +1,4 @@
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import get_values, parse_datetime
 
 version = 1.0
@@ -16,8 +16,8 @@ def calculate(item):
         "contracts.period",
     ]
 
-    application_count = None
-    pass_count = None
+    application_count = 0
+    pass_count = 0
     failed_paths = []
     for path in period_paths:
         periods = get_values(item, path)
@@ -43,23 +43,16 @@ def calculate(item):
 
             passed = startDate <= endDate
 
-            if application_count is None:
-                application_count = 0
-            if pass_count is None:
-                pass_count = 0
-
             application_count += 1
             if passed:
                 pass_count += 1
+            else:
+                failed_paths.append(period["path"])
 
-            failed_paths.append({"path": period["path"], "result": passed})
-
-    result["application_count"] = application_count
-    result["pass_count"] = pass_count
-    if application_count is not None and pass_count is not None:
-        result["result"] = application_count == pass_count
-    else:
-        result["meta"] = {"reason": "incomplete data for check"}
-    if failed_paths:
-        result["meta"] = {"failed_paths": failed_paths}
-    return result
+    return complete_result_resource(
+        result,
+        application_count,
+        pass_count,
+        reason="insufficient data for check",
+        meta={"failed_paths": failed_paths},
+    )

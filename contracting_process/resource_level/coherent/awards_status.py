@@ -3,7 +3,7 @@ If an award's status is inactive ('pending', 'cancelled', 'unsuccessful'), then 
 award's id.
 """
 
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import deep_get, deep_has, get_values
 
 version = 1.0
@@ -39,8 +39,4 @@ def calculate(item):
         if passed:
             pass_count += 1
 
-    result["result"] = application_count == pass_count
-    result["application_count"] = application_count
-    result["pass_count"] = pass_count
-
-    return result
+    return complete_result_resource(result, application_count, pass_count)

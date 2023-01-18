@@ -7,7 +7,7 @@ def test_undefined():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "incomplete data for check"}
+    assert empty_result["meta"] == {"reason": "insufficient data for check"}
 
 
 item_test_multiple_contracts = {
@@ -31,13 +31,7 @@ def test_multiple_contracts():
     assert result["result"] is True
     assert result["application_count"] == 3
     assert result["pass_count"] == 3
-    assert result["meta"] == {
-        "failed_paths": [
-            {"path": "contracts[0].period", "result": True},
-            {"path": "contracts[1].period", "result": True},
-            {"path": "contracts[2].period", "result": True},
-        ]
-    }
+    assert result["meta"] is None
 
 
 item_test_missing_dates = {
@@ -53,7 +47,7 @@ def test_missing_dates():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "incomplete data for check"}
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
 
 item_test_ill_formatted_dates1__invalid_schema = {
@@ -71,14 +65,14 @@ def test_ill_formatted_dates():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "incomplete data for check"}
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
     result = calculate(item_test_ill_formatted_dates2__invalid_schema)
     assert type(result) == dict
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "incomplete data for check"}
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
 
 item_test_one_fail = {
@@ -92,7 +86,7 @@ def test_one_fail():
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
-    assert result["meta"] == {"failed_paths": [{"path": "tender.awardPeriod", "result": False}]}
+    assert result["meta"] == {"failed_paths": ["tender.awardPeriod"]}
 
 
 item_test_mixed_time_zones = {
@@ -106,7 +100,7 @@ def test_mixed_time_zones():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {"failed_paths": [{"path": "tender.tenderPeriod", "result": True}]}
+    assert result["meta"] is None
 
 
 item_test_multiple_fails_and_passes = {
@@ -126,10 +120,4 @@ def test_multiple_fails_and_passes():
     assert result["result"] is False
     assert result["application_count"] == 3
     assert result["pass_count"] == 2
-    assert result["meta"] == {
-        "failed_paths": [
-            {"path": "awards[0].contractPeriod", "result": True},
-            {"path": "awards[1].contractPeriod", "result": True},
-            {"path": "awards[2].contractPeriod", "result": False},
-        ]
-    }
+    assert result["meta"] == {"failed_paths": ["awards[2].contractPeriod"]}

@@ -1,4 +1,4 @@
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import get_values
 
 version = 1.0
@@ -10,15 +10,15 @@ def calculate(item):
         result["meta"] = {"reason": "insufficient data for check"}
         return result
 
-    result["application_count"] = 0
-    result["pass_count"] = 0
+    application_count = 0
+    pass_count = 0
 
     awards = get_values(item, "awards")
     contracts = get_values(item, "contracts")
 
     failed_paths = []
     for contract in contracts:
-        result["application_count"] += 1
+        application_count += 1
 
         if not awards:
             failed_paths.append(contract["path"])
@@ -38,20 +38,14 @@ def calculate(item):
                 awards_found_count += 1
 
         if awards_found_count == 1:
-            result["pass_count"] += 1
+            pass_count += 1
         else:
             failed_paths.append(contract["path"])
 
-    if result["application_count"] == 0:
-        result["application_count"] = None
-        result["pass_count"] = None
-        result["meta"] = {"reason": "insufficient data for check"}
-        return result
-
-    if result["application_count"] > result["pass_count"]:
-        result["result"] = False
-        result["meta"] = {"failed_paths": failed_paths}
-    else:
-        result["result"] = True
-
-    return result
+    return complete_result_resource(
+        result,
+        application_count,
+        pass_count,
+        reason="insufficient data for check",
+        meta={"failed_paths": failed_paths},
+    )

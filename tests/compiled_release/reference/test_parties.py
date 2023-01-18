@@ -10,9 +10,9 @@ item_test_undefined = {"parties": [{"id": "1"}]}
 def test_undefined():
     result = calculate_buyer(item_test_undefined)
     assert result["result"] is None
-    assert result["application_count"] == 0
-    assert result["pass_count"] == 0
-    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
 
 calculate_tender_tenderers = functools.partial(calculate_path, path="tender.tenderers")
@@ -37,13 +37,13 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {"failed": []}
+    assert result["meta"] is None
 
     result = calculate_tender_tenderers(item_test_passed2)
     assert result["result"] is True
     assert result["application_count"] == 2
     assert result["pass_count"] == 2
-    assert result["meta"] == {"failed": []}
+    assert result["meta"] is None
 
 
 calculate_awards_suppliers = functools.partial(calculate_path, path="awards.suppliers")
@@ -90,14 +90,14 @@ def test_failed():
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
-    assert result["meta"] == {"failed": [{"path": "awards[0].suppliers[0]", "reason": "id missing"}]}
+    assert result["meta"] == {"failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "id missing"}]}
 
     result = calculate_awards_suppliers(item_test_failed2)
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "failed": [{"path": "awards[0].suppliers[0]", "reason": "party with specified id is not present"}]
+        "failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "party with specified id is not present"}]
     }
 
     result = calculate_awards_suppliers(item_same_id)
@@ -105,7 +105,7 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "failed": [{"path": "awards[0].suppliers[0]", "reason": "there are multiple parties with specified id"}]
+        "failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "there are multiple parties with specified id"}]
     }
 
     result = calculate_awards_suppliers(item_test_failed4)
@@ -113,5 +113,5 @@ def test_failed():
     assert result["application_count"] == 2
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        "failed": [{"path": "awards[1].suppliers[0]", "reason": "party with specified id is not present"}]
+        "failed_paths": [{"path": "awards[1].suppliers[0]", "reason": "party with specified id is not present"}]
     }

@@ -1,4 +1,4 @@
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource_pass_fail, get_empty_result_resource
 from tools.currency_converter import convert
 from tools.getter import deep_get, get_values, parse_date
 
@@ -83,11 +83,7 @@ def calculate(item):
         return result
 
     ratio = abs(tender_value_amount - planning_budget_amount_amount) / abs(tender_value_amount)
-    passed = ratio <= 0.5
 
-    result["result"] = passed
-    result["application_count"] = 1
-    result["pass_count"] = int(passed)
     result["meta"] = {"tender.value": tender_value, "planning.budget.amount": planning_budget_amount}
 
-    return result
+    return complete_result_resource_pass_fail(result, ratio <= 0.5)

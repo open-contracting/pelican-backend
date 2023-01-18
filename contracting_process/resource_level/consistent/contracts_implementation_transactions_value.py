@@ -1,4 +1,4 @@
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.currency_converter import convert
 from tools.getter import get_values, parse_datetime
 
@@ -10,8 +10,8 @@ def calculate(item):
 
     contracts = get_values(item, "contracts")
 
-    result["application_count"] = 0
-    result["pass_count"] = 0
+    application_count = 0
+    pass_count = 0
     result["meta"] = {"contracts": []}
     for contract in contracts:
         transactions = get_values(contract["value"], "implementation.transactions", value_only=True)
@@ -81,9 +81,9 @@ def calculate(item):
         # contract is applicable for this check
         passed = transactions_amount_sum <= contract_amount
 
-        result["application_count"] += 1
+        application_count += 1
         if passed:
-            result["pass_count"] += 1
+            pass_count += 1
         result["meta"]["contracts"].append(
             {
                 "path": contract["path"],
@@ -93,11 +93,4 @@ def calculate(item):
             }
         )
 
-    if result["application_count"] == 0:
-        result["application_count"] = None
-        result["pass_count"] = None
-        result["meta"] = {"reason": "there are no values with check-specific properties"}
-    else:
-        result["result"] = result["application_count"] == result["pass_count"]
-
-    return result
+    return complete_result_resource(result, application_count, pass_count, reason="insufficient data for check")

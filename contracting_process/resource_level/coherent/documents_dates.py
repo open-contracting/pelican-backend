@@ -1,4 +1,4 @@
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import get_values, parse_date
 
 version = 1.0
@@ -20,9 +20,9 @@ def calculate(item):
     for path in document_paths:
         documents.extend(get_values(item, path))
 
+    application_count = 0
+    pass_count = 0
     failed_paths = []
-    result["application_count"] = 0
-    result["pass_count"] = 0
     for document in documents:
         date_published = {
             "value": document["value"]["datePublished"] if "datePublished" in document["value"] else None,
@@ -37,10 +37,10 @@ def calculate(item):
         first_date = parse_date(date_published["value"])
         second_date = parse_date(date_modified["value"])
         if first_date and second_date:
-            result["application_count"] += 1
+            application_count += 1
 
             if first_date <= second_date:
-                result["pass_count"] += 1
+                pass_count += 1
             else:
                 failed_paths.append(
                     {
@@ -55,10 +55,10 @@ def calculate(item):
         first_date = parse_date(date_published["value"])
         second_date = parse_date(date["value"])
         if first_date and second_date:
-            result["application_count"] += 1
+            application_count += 1
 
             if first_date <= second_date:
-                result["pass_count"] += 1
+                pass_count += 1
             else:
                 failed_paths.append(
                     {
@@ -73,10 +73,10 @@ def calculate(item):
         first_date = parse_date(date_modified["value"])
         second_date = parse_date(date["value"])
         if first_date and second_date:
-            result["application_count"] += 1
+            application_count += 1
 
             if first_date <= second_date:
-                result["pass_count"] += 1
+                pass_count += 1
             else:
                 failed_paths.append(
                     {
@@ -87,13 +87,10 @@ def calculate(item):
                     }
                 )
 
-    if result["application_count"] == 0:
-        result["application_count"] = None
-        result["pass_count"] = None
-        result["meta"] = {"reason": "insufficient data for check"}
-    else:
-        result["result"] = result["application_count"] == result["pass_count"]
-        if not result["result"]:
-            result["meta"] = {"failed_paths": failed_paths}
-
-    return result
+    return complete_result_resource(
+        result,
+        application_count,
+        pass_count,
+        reason="insufficient data for check",
+        meta={"failed_paths": failed_paths},
+    )

@@ -2,7 +2,7 @@
 If a contract's status is unsigned ('pending' or 'cancelled'), then its implementation.transactions is blank.
 """
 
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import deep_get, get_values
 
 version = 1.0
@@ -34,8 +34,4 @@ def calculate(item):
         if passed:
             pass_count += 1
 
-    result["result"] = application_count == pass_count
-    result["application_count"] = application_count
-    result["pass_count"] = pass_count
-
-    return result
+    return complete_result_resource(result, application_count, pass_count)

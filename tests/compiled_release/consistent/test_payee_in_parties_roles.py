@@ -25,19 +25,19 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
     result = calculate(item_empty)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
     result = calculate(item_same_id)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "there are no values with check-specific properties"}
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
 
 item_test_passed = {

@@ -1,6 +1,6 @@
 import math
 
-from tools.checks import get_empty_result_resource
+from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import deep_get, get_values, parse_datetime
 
 version = 1.0
@@ -22,8 +22,8 @@ def calculate(item):
 
     periods = [period for path in period_paths for period in get_values(item, path)]
 
-    result["application_count"] = 0
-    result["pass_count"] = 0
+    application_count = 0
+    pass_count = 0
     result["meta"] = {"periods": []}
     for period in periods:
         start_date = None
@@ -59,16 +59,9 @@ def calculate(item):
 
         passed = math.floor(duration_in_days_computed) <= duration_in_days <= math.ceil(duration_in_days_computed)
 
-        result["application_count"] += 1
+        application_count += 1
         if passed:
-            result["pass_count"] += 1
+            pass_count += 1
         result["meta"]["periods"].append({"path": period["path"], "result": passed})
 
-    if result["application_count"] == 0:
-        result["application_count"] = None
-        result["pass_count"] = None
-        result["meta"] = {"reason": "there are no values with check-specific properties"}
-    else:
-        result["result"] = result["application_count"] == result["pass_count"]
-
-    return result
+    return complete_result_resource(result, application_count, pass_count, reason="insufficient data for check")

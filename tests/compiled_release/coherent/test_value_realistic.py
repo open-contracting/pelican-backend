@@ -14,33 +14,33 @@ item_no_rate = {"tender": {"value": {"amount": 100, "currency": "UYW"}}, "date":
 def test_undefined():
     empty_result = calculate(item_grandparent_unset)
     assert empty_result["result"] is None
-    assert empty_result["application_count"] == 0
-    assert empty_result["pass_count"] == 0
-    assert empty_result["meta"] == {"reason": "rule could not be applied for any value"}
+    assert empty_result["application_count"] is None
+    assert empty_result["pass_count"] is None
+    assert empty_result["meta"] == {"reason": "insufficient data for check"}
 
     result = calculate(item_parent_unset)
     assert result["result"] is None
-    assert result["application_count"] == 0
-    assert result["pass_count"] == 0
-    assert result["meta"] == {"reason": "rule could not be applied for any value"}
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
     result = calculate(item_unset)
     assert result["result"] is None
-    assert result["application_count"] == 0
-    assert result["pass_count"] == 0
-    assert result["meta"] == {"reason": "rule could not be applied for any value"}
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
     result = calculate(item_empty)
     assert result["result"] is None
-    assert result["application_count"] == 0
-    assert result["pass_count"] == 0
-    assert result["meta"] == {"reason": "rule could not be applied for any value"}
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
     result = calculate(item_no_rate)
     assert result["result"] is None
-    assert result["application_count"] == 0
-    assert result["pass_count"] == 0
-    assert result["meta"] == {"reason": "rule could not be applied for any value"}
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "insufficient data for check"}
 
 
 item_passed = {
