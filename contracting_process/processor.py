@@ -8,7 +8,7 @@ from contracting_process.field_level.definitions import definitions as field_lev
 from contracting_process.resource_level.definitions import definitions as resource_level_definitions
 from tools import settings
 from tools.getter import get_values
-from tools.services import get_cursor, set_items_state, state
+from tools.services import get_cursor, state, update_items_state
 from tools.workers import is_step_required
 
 logger = logging.getLogger("pelican.contracting_process.processor")
@@ -32,7 +32,7 @@ def do_work(dataset_id, items):
         if do_resource_level:
             resource_level_check_results.append(resource_level_checks(*item, dataset_id))
 
-    set_items_state(dataset_id, [item[1] for item in items], state.OK)
+    update_items_state(dataset_id, (item[1] for item in items), state.OK)
 
     if do_field_level:
         save_field_level_checks(field_level_check_results, items_count)

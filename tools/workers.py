@@ -5,7 +5,7 @@ from typing import Optional
 from yapw.methods.blocking import ack, publish
 
 from tools import settings
-from tools.services import commit, initialize_dataset_state, phase, set_items_state, state, update_dataset_state
+from tools.services import commit, initialize_dataset_state, initialize_items_state, phase, state, update_dataset_state
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ def process_items(client_state, channel, method, routing_key, cursors, dataset_i
             item_ids_batch = item_ids[j : j + settings.EXTRACTOR_MAX_BATCH_SIZE]
             items_inserted += len(item_ids_batch)
 
-            set_items_state(dataset_id, item_ids_batch, state.IN_PROGRESS)
+            initialize_items_state(dataset_id, item_ids_batch, state.IN_PROGRESS)
             dataset_state = state.OK if items_inserted >= len(ids) else state.IN_PROGRESS
             update_dataset_state(dataset_id, phase.CONTRACTING_PROCESS, dataset_state, size=items_inserted)
             commit()

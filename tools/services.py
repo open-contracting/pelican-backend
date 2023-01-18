@@ -136,19 +136,34 @@ def update_dataset_state(dataset_id: int, phase: str, state: str, size: Optional
         cursor.execute(sql, variables)
 
 
-def set_items_state(dataset_id: int, item_ids: List[int], state: str) -> None:
+def initialize_items_state(dataset_id: int, item_ids: List[int]) -> None:
     """
-    Upsert data items' progress to the given state.
+    Initialize data items' progress.
+
+    :param dataset_id: the dataset's ID
+    :param item_ids: the data items' IDs
+    """
+    sql = """\
+        INSERT INTO progress_monitor_item (dataset_id, item_id, state)
+        VALUES %s
+    """
+    with get_cursor() as cursor:
+        psycopg2.extras.execute_values(cursor, sql, [(dataset_id, item_id, state.IN_PROGRESS) for item_id in item_ids])
+
+
+def update_items_state(dataset_id: int, item_ids: List[int], state: str) -> None:
+    """
+    Update data items' progress to the given state.
 
     :param dataset_id: the dataset's ID
     :param item_ids: the data items' IDs
     :param state: the state to set
     """
     sql = """\
-        INSERT INTO progress_monitor_item (dataset_id, item_id, state)
-        VALUES %s
-        ON CONFLICT (dataset_id, item_id)
-        DO UPDATE SET state = excluded.state, modified = now()
+        UPDATE progress_monitor_item
+        SET state = data.state, modified = now()
+        FROM (VALUES %s) AS data (dataset_id, item_id, state)
+        WHERE progress_monitor_item.dataset_id = data.dataset_id AND progress_monitor_item.item_id = data.item_id
     """
     with get_cursor() as cursor:
         psycopg2.extras.execute_values(cursor, sql, [(dataset_id, item_id, state) for item_id in item_ids])
