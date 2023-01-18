@@ -40,6 +40,10 @@ You can now:
 
          env LOG_LEVEL=DEBUG python -m workers.extract.kingfisher_process
 
+   .. note::
+
+      Remember: `Consumers declare and bind queues, not publishers <https://ocp-software-handbook.readthedocs.io/en/latest/services/rabbitmq.html#bindings>`__. Start each worker before publishing messages.
+
 -  Run tests:
 
    .. code-block:: bash
