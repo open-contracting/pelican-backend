@@ -1,3 +1,9 @@
+"""
+.. seealso::
+
+   :func:`tools.checks.coherent_dates_check
+"""
+
 from tools.checks import coherent_dates_check
 from tools.getter import get_values
 

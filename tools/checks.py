@@ -176,6 +176,10 @@ def field_quality_check(
 
 def coherent_dates_check(version: float, pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]]) -> Dict[str, Any]:
     """
+    Return a compiled release-level check result for coherent date pairs.
+
+    A pair of dates is coherent if the first date is less than or equal to the second date.
+
     :param version: the check's version
     :param pairs: date value pairs
     """
