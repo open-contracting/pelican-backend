@@ -21,11 +21,11 @@ def calculate(item):
 
     for first_path, second_path, split in (
         ("tender.tenderPeriod.startDate", "tender.amendments.date", False),
+        ("awards.date", "awards.amendments.date", True),
+        ("contracts.dateSigned", "contracts.amendments.date", True),
         ("tender.amendments.date", "date", False),
         ("awards.amendments.date", "date", False),
         ("contracts.amendments.date", "date", False),
-        ("awards.date", "awards.amendments.date", True),
-        ("contracts.dateSigned", "contracts.amendments.date", True),
     ):
         first_dates = _get_values(first_path)
         second_dates = _get_values(second_path)

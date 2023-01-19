@@ -7,7 +7,7 @@
 from functools import lru_cache
 
 from tools.checks import coherent_dates_check
-from tools.getter import get_values
+from tools.getter import deep_has, get_values
 
 version = 1.0
 
@@ -45,10 +45,10 @@ def calculate(item):
             {"path": f"{contract['path']}.dateSigned", "value": contract["value"]["dateSigned"]},
         )
         for award in awards
-        if "date" in award["value"] and "id" in award["value"]
+        if deep_has(award["value"], "date") and deep_has(award["value"], "id")
         for contract in contracts
-        if "dateSigned" in contract["value"]
-        and "awardID" in contract["value"]
+        if deep_has(contract["value"], "dateSigned")
+        and deep_has(contract["value"], "awardID")
         and str(award["value"]["id"]) == str(contract["value"]["awardID"])
     )
 

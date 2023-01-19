@@ -74,6 +74,24 @@ def test_failed():
                 "value_2": "2015-12-31T00:00:00Z",
             },
             {
+                "path_1": "awards[1].date",
+                "path_2": "awards[1].amendments[0].date",
+                "value_1": "2020-12-31T00:00:00Z",
+                "value_2": "2015-12-31T00:00:00Z",
+            },
+            {
+                "path_1": "awards[1].date",
+                "path_2": "awards[1].amendments[1].date",
+                "value_1": "2020-12-31T00:00:00Z",
+                "value_2": "2015-12-31T00:00:00Z",
+            },
+            {
+                "path_1": "contracts[0].dateSigned",
+                "path_2": "contracts[0].amendments[0].date",
+                "value_1": "2020-12-31T00:00:00Z",
+                "value_2": "2015-12-31T00:00:00Z",
+            },
+            {
                 "path_1": "tender.amendments[0].date",
                 "path_2": "date",
                 "value_1": "2015-12-31T00:00:00Z",
@@ -102,24 +120,6 @@ def test_failed():
                 "path_2": "date",
                 "value_1": "2015-12-31T00:00:00Z",
                 "value_2": "2000-12-31T00:00:00Z",
-            },
-            {
-                "path_1": "awards[1].date",
-                "path_2": "awards[1].amendments[0].date",
-                "value_1": "2020-12-31T00:00:00Z",
-                "value_2": "2015-12-31T00:00:00Z",
-            },
-            {
-                "path_1": "awards[1].date",
-                "path_2": "awards[1].amendments[1].date",
-                "value_1": "2020-12-31T00:00:00Z",
-                "value_2": "2015-12-31T00:00:00Z",
-            },
-            {
-                "path_1": "contracts[0].dateSigned",
-                "path_2": "contracts[0].amendments[0].date",
-                "value_1": "2020-12-31T00:00:00Z",
-                "value_2": "2015-12-31T00:00:00Z",
             },
         ]
     }
