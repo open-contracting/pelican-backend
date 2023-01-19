@@ -16,6 +16,7 @@ This changelog only notes major changes, to notify other developers.
 -  fix: Use type casting for reference lookups in non-reference checks, to not shadow non-reference issues. :issue:`50`
 -  fix: Do not skip a check if a value is blank – only if it is not set.
 -  fix: ``application_count`` and ``pass_count`` are ``None`` if not positive.
+-  fix: :func:`~tools.getter.deep_get`: Return ``None`` if attempting to cast ``None``.
 -  fix: :func:`~tools.getter.get_values`: If ``item`` is ``None``, return ``[]``.
 -  refactor: Improve clarity of ``reason`` messages and ``meta`` keys. :issue:`76`
 

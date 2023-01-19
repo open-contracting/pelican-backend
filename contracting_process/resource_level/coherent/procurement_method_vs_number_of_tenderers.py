@@ -20,7 +20,7 @@ def calculate(item):
     number_of_tenderers = deep_get(item, "tender.numberOfTenderers", float)
 
     if number_of_tenderers is None:
-        result["meta"] = {"reason": "numberOfTenderers is not numeric"}
+        result["meta"] = {"reason": "numberOfTenderers is non-numeric"}
         return result
 
     return complete_result_resource_pass_fail(

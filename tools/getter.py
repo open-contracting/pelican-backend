@@ -90,7 +90,7 @@ def deep_get(value: Any, path: str, force: Type[Any] = None) -> Any:
         elif force in (float, int, str):
             try:
                 value = force(value)
-            except ValueError:
+            except (ValueError, TypeError):
                 return None
         else:
             raise NotImplementedError

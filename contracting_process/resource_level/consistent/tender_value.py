@@ -30,8 +30,8 @@ def calculate(item):
         result["meta"] = {"reason": "amount or currency is not set"}
         return result
 
-    tender_value_amount = deep_get(tender_value, "amount", force=float)
-    planning_budget_amount_amount = deep_get(planning_budget_amount, "amount", force=float)
+    tender_value_amount = deep_get(tender_value, "amount", float)
+    planning_budget_amount_amount = deep_get(planning_budget_amount, "amount", float)
 
     # None fields
     if (
@@ -41,7 +41,7 @@ def calculate(item):
         or planning_budget_amount["currency"] is None
     ):
 
-        result["meta"] = {"reason": "amount is not a number or currency is null"}
+        result["meta"] = {"reason": "amount is non-numeric or currency is null"}
         return result
 
     # currency conversion if necessary

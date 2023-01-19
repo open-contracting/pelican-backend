@@ -31,7 +31,7 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "amount is not a number or currency is null"}
+    assert result["meta"] == {"reason": "amount is non-numeric or currency is null"}
 
 
 item_no_rate = {

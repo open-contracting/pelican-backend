@@ -25,7 +25,7 @@ def test_undefined():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "numberOfTenderers is not numeric"}
+    assert empty_result["meta"] == {"reason": "numberOfTenderers is non-numeric"}
 
     empty_result = calculate(item_non_direct)
     assert type(empty_result) == dict
