@@ -83,7 +83,7 @@ item_test_failed4 = {
         },
     ],
 }
-item_party_int = {
+item_party_int__invalid_schema = {
     "parties": [
         {"id": 0},
     ],
@@ -128,7 +128,7 @@ def test_failed():
         "failed_paths": [{"path": "awards[1].suppliers[0]", "reason": "no party matches the referencing id"}]
     }
 
-    result = calculate_tender_tenderers(item_party_int)
+    result = calculate_tender_tenderers(item_party_int__invalid_schema)
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
