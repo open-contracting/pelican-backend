@@ -45,6 +45,8 @@ Each check is a function, named ``calculate`` by convention, that:
             "value_2": second_date["value"],
         }
 
+      If storing input data, store raw data, not processed data.
+
 #. Returns the ``result`` dict
 
 An empty ``result`` dict looks like:
