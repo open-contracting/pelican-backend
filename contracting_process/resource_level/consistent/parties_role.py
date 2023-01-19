@@ -3,11 +3,6 @@ from tools.getter import get_values
 
 version = 1.0
 
-"""
-author: Iaroslav Kolodka
-
-"""
-
 testing_roles = {
     "supplier": "awards.suppliers",
     "tenderer": "tender.tenderers",

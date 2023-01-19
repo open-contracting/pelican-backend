@@ -1,17 +1,6 @@
 from contracting_process.resource_level.consistent.parties_role import calculate
 from tools.checks import get_empty_result_resource
 
-"""
-author: Iaroslav Kolodka
-
-The file contain tests for a 'function contracting_process.resource_level.consistent.parties_role.calculate' .
-
-'test_on_inaction' - an input item has no valid parties -> "There are no parties with set role and id"
-'test_with_correct_input' - an input item has two valid parties with corresponding valid objects
-'test_with_incorrect_input' - an inputs has no corresponding valid objects
-
-"""
-
 version = 1.0
 
 item_with_no_correct_parties = {
