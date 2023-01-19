@@ -1,4 +1,9 @@
+"""
+The 3 most frequent ``amount`` and ``currency`` pairs appear in fewer than 10% of cases.
+"""
+
 import functools
+import heapq
 import random
 
 from tools.checks import get_empty_result_dataset
@@ -65,25 +70,28 @@ def get_result(scope):
         total_count = 0
         most_frequent = []
 
-        # determine three most frequent value.amount and value.currency combinations
-        for key in scope:
-            most_frequent.append(key)
-            most_frequent.sort(key=lambda k: scope[k]["count"], reverse=True)
-            most_frequent = most_frequent[:most_frequent_cap]
+        # Use `i` as tie-breaker.
+        for i, (key, value) in enumerate(scope.items()):
+            item = (value["count"], -i, key)
+            if len(most_frequent) < most_frequent_cap:
+                heapq.heappush(most_frequent, item)
+            else:
+                heapq.heappushpop(most_frequent, item)
+            total_count += value["count"]
 
-            total_count += scope[key]["count"]
+        most_frequent = [(key, count) for count, _, key in sorted(most_frequent, reverse=True)]
 
-        most_frequent_count = sum([scope[k]["count"] for k in most_frequent[:most_frequent_computation]])
+        most_frequent_count = sum(count for _, count in most_frequent[:most_frequent_computation])
 
         most_frequent_share = most_frequent_count / total_count
         passed = most_frequent_share < 0.1
 
-        for key in most_frequent:
-            scope[key]["share"] = scope[key]["count"] / total_count
+        for key, count in most_frequent:
+            scope[key]["share"] = count / total_count
 
         result["result"] = passed
         result["value"] = 100 * most_frequent_share
-        result["meta"] = {"most_frequent": [scope[key] for key in most_frequent], "total_processed": total_count}
+        result["meta"] = {"most_frequent": [scope[key] for key, _ in most_frequent], "total_processed": total_count}
     else:
         result["meta"] = {"reason": "there are is no suitable data item for this check"}
 
