@@ -49,7 +49,7 @@ def test_general():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "missing tender key"}
+    assert empty_result["meta"] == {"reason": "tender is not set"}
 
 
 def test_ok():
@@ -86,4 +86,4 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "incomplete data for comparison"}
+    assert result["meta"] == {"reason": "numberOfTenderers is not set or tenderers is not a list"}
