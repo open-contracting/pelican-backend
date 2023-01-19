@@ -4,55 +4,30 @@
    :func:`tools.checks.coherent_dates_check
 """
 
-from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import get_values, parse_datetime
+from tools.checks import coherent_dates_check
+from tools.getter import get_values
 
 version = 1.0
 
 
 def calculate(item):
-    result = get_empty_result_resource(version)
+    pairs = []
 
-    periods = []
-    for path in (
-        "tender.tenderPeriod",
-        "tender.enquiryPeriod",
-        "tender.awardPeriod",
-        "tender.contractPeriod",
-        "awards.contractPeriod",
-        "contracts.period",
+    for first_path, second_path, split in (
+        ("tender.tenderPeriod.startDate", "tender.tenderPeriod.endDate", False),
+        ("tender.enquiryPeriod.startDate", "tender.enquiryPeriod.endDate", False),
+        ("tender.awardPeriod.startDate", "tender.awardPeriod.endDate", False),
+        ("tender.contractPeriod.startDate", "tender.contractPeriod.endDate", False),
+        ("awards.contractPeriod.startDate", "awards.contractPeriod.endDate", True),
+        ("contracts.period.startDate", "contracts.period.endDate", True),
     ):
-        periods.extend(
-            period
-            for period in get_values(item, path)
-            if "startDate" in period["value"] and "endDate" in period["value"]
+        first_dates = get_values(item, first_path)
+        second_dates = get_values(item, second_path)
+        pairs.extend(
+            (first_date, second_date)
+            for first_date in first_dates
+            for second_date in second_dates
+            if not split or first_date["path"].split(".", 1)[0] == second_date["path"].split(".", 1)[0]
         )
 
-    if not periods:
-        result["meta"] = {"reason": "no pairs of dates in periods are set"}
-        return result
-
-    application_count = 0
-    pass_count = 0
-    failed_paths = []
-    for period in periods:
-        first_date_parsed = parse_datetime(period["value"]["startDate"])
-        second_date_parsed = parse_datetime(period["value"]["endDate"])
-
-        if first_date_parsed is None or second_date_parsed is None:
-            continue
-
-        application_count += 1
-
-        if first_date_parsed <= second_date_parsed:
-            pass_count += 1
-        else:
-            failed_paths.append(period["path"])
-
-    return complete_result_resource(
-        result,
-        application_count,
-        pass_count,
-        reason="insufficient data for check",
-        meta={"failed_paths": failed_paths},
-    )
+    return coherent_dates_check(version, pairs)
