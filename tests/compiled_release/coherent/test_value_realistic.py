@@ -16,31 +16,31 @@ def test_undefined():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "insufficient data for check"}
+    assert empty_result["meta"] == {"reason": "no numeric, convertable amounts"}
 
     result = calculate(item_parent_unset)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no numeric, convertable amounts"}
 
     result = calculate(item_unset)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no numeric, convertable amounts"}
 
     result = calculate(item_empty)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no numeric, convertable amounts"}
 
     result = calculate(item_no_rate)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no numeric, convertable amounts"}
 
 
 item_passed = {
@@ -64,13 +64,7 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 3
     assert result["pass_count"] == 3
-    assert result["meta"] == {
-        "references": [
-            {"result": True, "amount": -5.0e9, "currency": "USD", "path": "tender.value"},
-            {"result": True, "amount": 5.0e9, "currency": "USD", "path": "tender.minValue"},
-            {"result": True, "amount": 0, "currency": "USD", "path": "awards[0].value"},
-        ]
-    }
+    assert result["meta"] is None
 
 
 item_failed = {
@@ -85,9 +79,4 @@ def test_failed():
     assert result["result"] is False
     assert result["application_count"] == 2
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "references": [
-            {"result": True, "amount": 500, "currency": "CZK", "path": "contracts[0].value"},
-            {"result": False, "amount": 5.0e10, "currency": "USD", "path": "contracts[1].value"},
-        ]
-    }
+    assert result["meta"] == {"failed_paths": [{"amount": 5.0e10, "currency": "USD", "path": "contracts[1].value"}]}
