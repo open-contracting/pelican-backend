@@ -4,6 +4,8 @@
    :func:`tools.checks.coherent_dates_check
 """
 
+from functools import lru_cache
+
 from tools.checks import coherent_dates_check
 from tools.getter import get_values
 
@@ -11,6 +13,10 @@ version = 1.0
 
 
 def calculate(item):
+    @lru_cache
+    def _get_values(path):
+        return get_values(item, path)
+
     pairs = []
 
     for first_path, second_path in (
@@ -21,12 +27,12 @@ def calculate(item):
         ("contracts.dateSigned", "date"),
         ("contracts.implementation.transactions.date", "date"),
     ):
-        first_dates = get_values(item, first_path)
-        second_dates = get_values(item, second_path)
+        first_dates = _get_values(first_path)
+        second_dates = _get_values(second_path)
         pairs.extend((first_date, second_date) for first_date in first_dates for second_date in second_dates)
 
-    first_dates = get_values(item, "contracts.dateSigned")
-    second_dates = get_values(item, "contracts.implementation.transactions.date")
+    first_dates = _get_values("contracts.dateSigned")
+    second_dates = _get_values("contracts.implementation.transactions.date")
     pairs.extend(
         (first_date, second_date)
         for first_date in first_dates

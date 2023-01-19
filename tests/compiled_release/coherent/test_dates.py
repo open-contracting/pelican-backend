@@ -75,30 +75,6 @@ def test_failed():
             },
             {
                 "path_1": "tender.tenderPeriod.endDate",
-                "path_2": "contracts[0].dateSigned",
-                "value_1": "2021-12-31T00:00:00Z",
-                "value_2": "2015-12-30T00:00:00Z",
-            },
-            {
-                "path_1": "tender.tenderPeriod.endDate",
-                "path_2": "contracts[1].dateSigned",
-                "value_1": "2021-12-31T00:00:00Z",
-                "value_2": "2017-12-30T00:00:00Z",
-            },
-            {
-                "path_1": "contracts[0].dateSigned",
-                "path_2": "date",
-                "value_1": "2015-12-30T00:00:00Z",
-                "value_2": "2011-12-31T00:00:00Z",
-            },
-            {
-                "path_1": "contracts[1].dateSigned",
-                "path_2": "date",
-                "value_1": "2017-12-30T00:00:00Z",
-                "value_2": "2011-12-31T00:00:00Z",
-            },
-            {
-                "path_1": "tender.tenderPeriod.endDate",
                 "path_2": "awards[0].date",
                 "value_1": "2021-12-31T00:00:00Z",
                 "value_2": "2015-12-31T00:00:00Z",
@@ -110,6 +86,18 @@ def test_failed():
                 "value_2": "2017-12-31T00:00:00Z",
             },
             {
+                "path_1": "tender.tenderPeriod.endDate",
+                "path_2": "contracts[0].dateSigned",
+                "value_1": "2021-12-31T00:00:00Z",
+                "value_2": "2015-12-30T00:00:00Z",
+            },
+            {
+                "path_1": "tender.tenderPeriod.endDate",
+                "path_2": "contracts[1].dateSigned",
+                "value_1": "2021-12-31T00:00:00Z",
+                "value_2": "2017-12-30T00:00:00Z",
+            },
+            {
                 "path_1": "awards[0].date",
                 "path_2": "date",
                 "value_1": "2015-12-31T00:00:00Z",
@@ -119,6 +107,18 @@ def test_failed():
                 "path_1": "awards[1].date",
                 "path_2": "date",
                 "value_1": "2017-12-31T00:00:00Z",
+                "value_2": "2011-12-31T00:00:00Z",
+            },
+            {
+                "path_1": "contracts[0].dateSigned",
+                "path_2": "date",
+                "value_1": "2015-12-30T00:00:00Z",
+                "value_2": "2011-12-31T00:00:00Z",
+            },
+            {
+                "path_1": "contracts[1].dateSigned",
+                "path_2": "date",
+                "value_1": "2017-12-30T00:00:00Z",
                 "value_2": "2011-12-31T00:00:00Z",
             },
             {
