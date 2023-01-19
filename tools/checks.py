@@ -1,5 +1,5 @@
 import random
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 
 from tools.getter import parse_date
 
@@ -67,7 +67,7 @@ def complete_result_resource(
     application_count: int,
     pass_count: int,
     reason: Optional[str] = None,
-    meta: Optional[Dict[str, Any]] = None,
+    failed_paths: Optional[List[Union[str, Dict[str, Any]]]] = None,
 ) -> Dict[str, Any]:
     """
     Build a compiled release-level check result.
@@ -76,7 +76,7 @@ def complete_result_resource(
     :param application_count: the number of times the check was applied
     :param pass_count: the number of times the check passed
     :param reason: the reason to provide if the check was not applied
-    :param meta: the additional data to provide if the check failed
+    :param failed_paths: the failed paths if the check failed
     """
     if reason and application_count == 0:
         result["meta"] = {"reason": reason}
@@ -88,8 +88,8 @@ def complete_result_resource(
     result["application_count"] = application_count
     result["pass_count"] = pass_count
 
-    if meta and not passed:
-        result["meta"] = meta
+    if failed_paths and not passed:
+        result["meta"] = {"failed_paths": failed_paths}
 
     return result
 
@@ -218,7 +218,7 @@ def coherent_dates_check(version: float, pairs: List[Tuple[Dict[str, Any], Dict[
         application_count,
         pass_count,
         reason="no pairs of dates are parseable",
-        meta={"failed_paths": failed_paths},
+        failed_paths=failed_paths,
     )
 
 

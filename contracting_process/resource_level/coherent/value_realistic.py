@@ -63,5 +63,5 @@ def calculate(item):
         application_count,
         pass_count,
         reason="no numeric, convertable amounts",
-        meta={"failed_paths": failed_paths},
+        failed_paths=failed_paths,
     )

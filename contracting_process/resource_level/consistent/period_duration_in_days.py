@@ -55,5 +55,5 @@ def calculate(item):
         application_count,
         pass_count,
         reason="no period has a valid start date and valid end date",
-        meta={"failed_paths": failed_paths},
+        failed_paths=failed_paths,
     )

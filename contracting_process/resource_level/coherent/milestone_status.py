@@ -34,4 +34,4 @@ def calculate(item):
         else:
             failed_paths.append({"path": milestone["path"], "status": milestone["value"]["status"]})
 
-    return complete_result_resource(result, application_count, pass_count, meta={"failed_paths": failed_paths})
+    return complete_result_resource(result, application_count, pass_count, failed_paths=failed_paths)

@@ -38,4 +38,4 @@ def calculate_path(item, path):
         else:
             pass_count += 1
 
-    return complete_result_resource(result, application_count, pass_count, meta={"failed_paths": failed_paths})
+    return complete_result_resource(result, application_count, pass_count, failed_paths=failed_paths)

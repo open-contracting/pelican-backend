@@ -47,5 +47,5 @@ def calculate(item):
         application_count,
         pass_count,
         reason="insufficient data for check",
-        meta={"failed_paths": failed_paths},
+        failed_paths=failed_paths,
     )
