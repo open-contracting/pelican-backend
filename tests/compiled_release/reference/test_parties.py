@@ -12,7 +12,7 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no reference is set"}
 
 
 calculate_tender_tenderers = functools.partial(calculate_path, path="tender.tenderers")
@@ -83,6 +83,18 @@ item_test_failed4 = {
         },
     ],
 }
+item_party_int = {
+    "parties": [
+        {"id": 0},
+    ],
+    "tender": {"tenderers": [{"id": "0"}]},
+}
+item_reference_int = {
+    "parties": [
+        {"id": "0"},
+    ],
+    "tender": {"tenderers": [{"id": 0}]},
+}
 
 
 def test_failed():
@@ -90,14 +102,14 @@ def test_failed():
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
-    assert result["meta"] == {"failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "id missing"}]}
+    assert result["meta"] == {"failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "reference has no id"}]}
 
     result = calculate_awards_suppliers(item_test_failed2)
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "party with specified id is not present"}]
+        "failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "no party matches the referencing id"}]
     }
 
     result = calculate_awards_suppliers(item_same_id)
@@ -105,7 +117,7 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "there are multiple parties with specified id"}]
+        "failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "multiple parties match the referencing id"}]
     }
 
     result = calculate_awards_suppliers(item_test_failed4)
@@ -113,5 +125,21 @@ def test_failed():
     assert result["application_count"] == 2
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        "failed_paths": [{"path": "awards[1].suppliers[0]", "reason": "party with specified id is not present"}]
+        "failed_paths": [{"path": "awards[1].suppliers[0]", "reason": "no party matches the referencing id"}]
+    }
+
+    result = calculate_tender_tenderers(item_party_int)
+    assert result["result"] is False
+    assert result["application_count"] == 1
+    assert result["pass_count"] == 0
+    assert result["meta"] == {
+        "failed_paths": [{"path": "tender.tenderers[0]", "reason": "id values are not the same type"}]
+    }
+
+    result = calculate_tender_tenderers(item_reference_int)
+    assert result["result"] is False
+    assert result["application_count"] == 1
+    assert result["pass_count"] == 0
+    assert result["meta"] == {
+        "failed_paths": [{"path": "tender.tenderers[0]", "reason": "id values are not the same type"}]
     }
