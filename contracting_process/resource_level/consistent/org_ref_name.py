@@ -1,3 +1,18 @@
+"""
+Each reference has the same value for its ``name`` field as the party it references.
+
+The test is skipped if every referencing ``id`` is missing or if none matches the ``id`` of exactly one party.
+
+.. admonition:: Methodology notes
+
+   -  A missing ``name`` is not an inconsistent value.
+   -  ``id`` values are cast as ``str`` for matching.
+
+.. seealso::
+
+   :mod:`contracting_process.resource_level.reference.parties`, which fails in the skipped cases.
+"""
+
 from collections import Counter
 
 from tools.checks import complete_result_resource, get_empty_result_resource
@@ -7,38 +22,34 @@ from tools.getter import get_values
 def calculate(item, path):
     result = get_empty_result_resource()
 
-    parties = [
-        party
-        for party in get_values(item, "parties")
-        if ("id" in party["value"] and party["value"]["id"] and "name" in party["value"] and party["value"]["name"])
-    ]
-    party_id_counts = Counter([party["value"]["id"] for party in parties])
+    party_values = [v for v in get_values(item, "parties") if "id" in v["value"] and "name" in v["value"]]
 
-    parties_mapping = {}
-    for party_id in party_id_counts:
-        if party_id_counts[party_id] != 1:
-            continue
-
-        parties_mapping[party_id] = next(party for party in parties if party["value"]["id"] == party_id)
-
-    if not parties_mapping:
-        result["meta"] = {"reason": "there are no parties with unique id and name set"}
+    # Guard against failure when accessing "id".
+    if not party_values:
+        result["meta"] = {"reason": "no party has an id and a name"}
         return result
 
+    party_id_counts = Counter(str(v["value"]["id"]) for v in party_values)
+
     test_values = [
-        value
-        for value in get_values(item, path)
-        if ("id" in value["value"] and value["value"]["id"] and "name" in value["value"] and value["value"]["name"])
+        v
+        for v in get_values(item, path)
+        if "id" in v["value"] and "name" in v["value"] and party_id_counts[str(v["value"]["id"])] == 1
     ]
+
+    if not test_values:
+        result["meta"] = {"reason": "no reference has an id and a name and matches exactly one party"}
+        return result
+
+    party_value_lookup = {
+        str(v["value"]["id"]): v for v in party_values if party_id_counts[str(v["value"]["id"])] == 1
+    }
 
     application_count = 0
     pass_count = 0
     result["meta"] = {"references": []}
     for value in test_values:
-        if value["value"]["id"] not in parties_mapping:
-            continue
-
-        party = parties_mapping[value["value"]["id"]]
+        party = party_value_lookup[str(value["value"]["id"])]
 
         passed = value["value"]["name"] == party["value"]["name"]
         application_count += 1
@@ -53,4 +64,4 @@ def calculate(item, path):
             }
         )
 
-    return complete_result_resource(result, application_count, pass_count, reason="insufficient data for check")
+    return complete_result_resource(result, application_count, pass_count)

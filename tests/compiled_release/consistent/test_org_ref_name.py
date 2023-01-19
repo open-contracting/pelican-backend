@@ -38,19 +38,19 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "there are no parties with unique id and name set"}
+    assert result["meta"] == {"reason": "no party has an id and a name"}
 
     result = calculate_buyer(item_test_undefined2)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no reference has an id and a name and matches exactly one party"}
 
     result = calculate_buyer(item_test_undefined3)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "there are no parties with unique id and name set"}
+    assert result["meta"] == {"reason": "no reference has an id and a name and matches exactly one party"}
 
 
 calculate_tender_tenderers = functools.partial(calculate, path="tender.tenderers")

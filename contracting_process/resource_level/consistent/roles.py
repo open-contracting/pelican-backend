@@ -1,5 +1,21 @@
+"""
+Each referenced party has a corresponding role in its ``roles`` array.
+
+The test is skipped if every referencing ``id`` is missing or if none matches the ``id`` of exactly one party.
+
+.. admonition:: Methodology notes
+
+   -  ``id`` values are cast as ``str`` for matching.
+
+.. seealso::
+
+   :mod:`contracting_process.resource_level.reference.parties`, which fails in the skipped cases.
+"""
+
+from collections import Counter
+
 from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import get_values
+from tools.getter import deep_get, get_values
 
 version = 1.0
 
@@ -7,37 +23,34 @@ version = 1.0
 def calculate_path_role(item, path, role):
     result = get_empty_result_resource(version)
 
-    values = get_values(item, "parties")
-    parties_values = [v for v in values if "id" in v["value"] and v["value"]["id"] is not None]
+    party_values = [v for v in get_values(item, "parties") if "id" in v["value"]]
 
-    if not parties_values:
-        result["meta"] = {"reason": "there are no parties with id set"}
+    # Guard against failure when accessing "id".
+    if not party_values:
+        result["meta"] = {"reason": "no party has an id"}
         return result
 
-    parties_id = [p["value"]["id"] for p in parties_values]
+    party_id_counts = Counter(str(v["value"]["id"]) for v in party_values)
 
-    values = get_values(item, path)
-    check_values = [
-        v
-        for v in values
-        if "id" in v["value"] and v["value"]["id"] is not None and parties_id.count(str(v["value"]["id"])) == 1
+    test_values = [
+        v for v in get_values(item, path) if "id" in v["value"] and party_id_counts[str(v["value"]["id"])] == 1
     ]
 
-    if not check_values:
-        result["meta"] = {"reason": "insufficient data for check"}
+    if not test_values:
+        result["meta"] = {"reason": "no reference has an id and matches exactly one party"}
         return result
 
-    result["meta"] = {"references": []}
+    party_value_lookup = {
+        str(v["value"]["id"]): v for v in party_values if party_id_counts[str(v["value"]["id"])] == 1
+    }
+
     application_count = 0
     pass_count = 0
-    for value in check_values:
-        referenced_party = [p for p in parties_values if p["value"]["id"] == str(value["value"]["id"])][0]
-        passed = (
-            "roles" in referenced_party["value"]
-            and referenced_party["value"]["roles"] is not None
-            and role in referenced_party["value"]["roles"]
-        )
+    result["meta"] = {"references": []}
+    for value in test_values:
+        party = party_value_lookup[str(value["value"]["id"])]
 
+        passed = role in deep_get(party["value"], "roles", list)
         application_count += 1
         if passed:
             pass_count += 1
@@ -46,8 +59,8 @@ def calculate_path_role(item, path, role):
             {
                 "organization.id": str(value["value"]["id"]),
                 "expected_role": role,
-                "referenced_party_path": referenced_party["path"],
-                "referenced_party": referenced_party["value"],
+                "referenced_party_path": party["path"],
+                "referenced_party": party["value"],
                 "resource_path": value["path"],
                 "resource": value["value"],
                 "result": passed,
