@@ -20,3 +20,10 @@ Services
 .. automodule:: tools.services
    :members:
    :undoc-members:
+
+Settings
+--------
+
+.. automodule:: tools.settings
+   :members:
+   :undoc-members:

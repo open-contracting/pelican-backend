@@ -3,6 +3,27 @@ Changelog
 
 This changelog only notes major changes, to notify other developers.
 
+2023-01-19
+----------
+
+-  feat: ``coherent.dates`` checks ``contracts.implementation.transactions.date <= date``.
+-  feat: Add ``EXTRACTOR_PAGE_SIZE`` setting.
+-  fix: ``consistent.tender_value`` now skips if the ``value`` is non-numeric. :issue:`62`
+-  fix: Use type casting for reference lookups in non-reference checks, to not shadow non-reference issues. :issue:`50`
+-  fix: Do not skip a check if a value is blank – only if it is not set.
+-  fix: ``application_count`` and ``pass_count`` are ``None`` if not positive.
+-  fix: :func:`~tools.getter.get_values`: If ``item`` is ``None``, return ``[]``.
+-  refactor: Improve clarity of ``reason`` messages and ``meta`` keys. :issue:`76`
+
+2021-12-02
+----------
+
+-  feat: Add ``PELICAN_BACKEND_STEPS`` :class:`setting<tools.settings.Steps`.
+-  feat: Add :doc:`restart-dataset-check<tasks/troubleshoot>` command.
+-  fix: ``consistent.period_duration_in_days`` now casts durations as numbers. :issue:`26`
+-  fix: :func:`~tools.getter.parse_date`, :func:`~tools.getter.parse_datetime`: Parse truncated date/time formats.
+-  fix: :func:`~tools.getter.get_values`: Return leaf nodes only.
+
 2021-11-19
 ----------
 
@@ -25,7 +46,7 @@ This changelog only notes major changes, to notify other developers.
 
 -  fix: Refresh and expire external codelists appropriately. :issue:`31` :issue:`33`
 -  fix: ``coherent.milestone_status`` now works (was always skipping).
--  fix: ``coherent/value_realistic`` now uses ``planning.budget.amount`` (was ``planning.budget.value``).
+-  fix: ``coherent.value_realistic`` now uses ``planning.budget.amount`` (was ``planning.budget.value``).
 -  fix: ``distribution.value_currency`` now uses ``planning.budget.amount.currency`` (was ``planning.budget.value.currency``).
 -  refactor: Re-do the CLI interface. :commit:`ef8a9bf` :commit:`75a3859` :commit:`160aaa8`
 
