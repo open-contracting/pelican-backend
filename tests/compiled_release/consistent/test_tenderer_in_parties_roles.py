@@ -43,19 +43,7 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "references": [
-            {
-                "organization.id": "0",
-                "expected_role": "tenderer",
-                "referenced_party_path": "parties[0]",
-                "referenced_party": item_test_passed["parties"][0],
-                "resource_path": "tender.tenderers[0]",
-                "resource": item_test_passed["tender"]["tenderers"][0],
-                "result": True,
-            }
-        ]
-    }
+    assert result["meta"] is None
 
 
 item_test_failed1 = {"parties": [{"id": "0", "roles": []}], "tender": {"tenderers": [{"id": "0"}]}}
@@ -72,17 +60,12 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "references": [
+        "failed_paths": [
             {
-                "organization.id": "0",
-                "expected_role": "tenderer",
-                "referenced_party_path": "parties[0]",
-                "referenced_party": item_test_failed1["parties"][0],
-                "resource_path": "tender.tenderers[0]",
-                "resource": item_test_failed1["tender"]["tenderers"][0],
-                "result": False,
+                "party": {"id": "0", "path": "parties[0]", "roles": []},
+                "reference": {"id": "0", "path": "tender.tenderers[0]", "role": "tenderer"},
             }
-        ]
+        ],
     }
 
     result = calculate(item_test_failed2)
@@ -90,33 +73,14 @@ def test_failed():
     assert result["application_count"] == 3
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        "references": [
+        "failed_paths": [
             {
-                "organization.id": "0",
-                "expected_role": "tenderer",
-                "referenced_party_path": "parties[0]",
-                "referenced_party": item_test_failed2["parties"][0],
-                "resource_path": "tender.tenderers[0]",
-                "resource": item_test_failed2["tender"]["tenderers"][0],
-                "result": True,
+                "party": {"id": "1", "path": "parties[1]", "roles": []},
+                "reference": {"id": "1", "path": "tender.tenderers[1]", "role": "tenderer"},
             },
             {
-                "organization.id": "1",
-                "expected_role": "tenderer",
-                "referenced_party_path": "parties[1]",
-                "referenced_party": item_test_failed2["parties"][1],
-                "resource_path": "tender.tenderers[1]",
-                "resource": item_test_failed2["tender"]["tenderers"][1],
-                "result": False,
+                "party": {"id": "2", "path": "parties[2]", "roles": ["unknown"]},
+                "reference": {"id": "2", "path": "tender.tenderers[2]", "role": "tenderer"},
             },
-            {
-                "organization.id": "2",
-                "expected_role": "tenderer",
-                "referenced_party_path": "parties[2]",
-                "referenced_party": item_test_failed2["parties"][2],
-                "resource_path": "tender.tenderers[2]",
-                "resource": item_test_failed2["tender"]["tenderers"][2],
-                "result": False,
-            },
-        ]
+        ],
     }

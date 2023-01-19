@@ -51,19 +51,7 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "references": [
-            {
-                "organization.id": "0",
-                "expected_role": "payee",
-                "referenced_party_path": "parties[0]",
-                "referenced_party": item_test_passed["parties"][0],
-                "resource_path": "contracts[0].implementation.transactions[0].payee",
-                "resource": item_test_passed["contracts"][0]["implementation"]["transactions"][0]["payee"],
-                "result": True,
-            }
-        ]
-    }
+    assert result["meta"] is None
 
 
 item_test_failed1 = {
@@ -86,17 +74,12 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "references": [
+        "failed_paths": [
             {
-                "organization.id": "0",
-                "expected_role": "payee",
-                "referenced_party_path": "parties[0]",
-                "referenced_party": item_test_failed1["parties"][0],
-                "resource_path": "contracts[0].implementation.transactions[0].payee",
-                "resource": item_test_failed1["contracts"][0]["implementation"]["transactions"][0]["payee"],
-                "result": False,
+                "party": {"id": "0", "path": "parties[0]", "roles": []},
+                "reference": {"id": "0", "path": "contracts[0].implementation.transactions[0].payee", "role": "payee"},
             }
-        ]
+        ],
     }
 
     result = calculate(item_test_failed2)
@@ -104,33 +87,14 @@ def test_failed():
     assert result["application_count"] == 3
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        "references": [
+        "failed_paths": [
             {
-                "organization.id": "0",
-                "expected_role": "payee",
-                "referenced_party_path": "parties[0]",
-                "referenced_party": item_test_failed2["parties"][0],
-                "resource_path": "contracts[0].implementation.transactions[0].payee",
-                "resource": item_test_failed2["contracts"][0]["implementation"]["transactions"][0]["payee"],
-                "result": True,
+                "party": {"id": "1", "path": "parties[1]", "roles": []},
+                "reference": {"id": "1", "path": "contracts[1].implementation.transactions[0].payee", "role": "payee"},
             },
             {
-                "organization.id": "1",
-                "expected_role": "payee",
-                "referenced_party_path": "parties[1]",
-                "referenced_party": item_test_failed2["parties"][1],
-                "resource_path": "contracts[1].implementation.transactions[0].payee",
-                "resource": item_test_failed2["contracts"][1]["implementation"]["transactions"][0]["payee"],
-                "result": False,
+                "party": {"id": "2", "path": "parties[2]", "roles": ["unknown"]},
+                "reference": {"id": "2", "path": "contracts[1].implementation.transactions[1].payee", "role": "payee"},
             },
-            {
-                "organization.id": "2",
-                "expected_role": "payee",
-                "referenced_party_path": "parties[2]",
-                "referenced_party": item_test_failed2["parties"][2],
-                "resource_path": "contracts[1].implementation.transactions[1].payee",
-                "resource": item_test_failed2["contracts"][1]["implementation"]["transactions"][1]["payee"],
-                "result": False,
-            },
-        ]
+        ],
     }

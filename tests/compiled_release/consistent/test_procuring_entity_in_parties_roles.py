@@ -43,19 +43,7 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "references": [
-            {
-                "organization.id": "0",
-                "expected_role": "procuringEntity",
-                "referenced_party_path": "parties[0]",
-                "referenced_party": item_test_passed["parties"][0],
-                "resource_path": "tender.procuringEntity",
-                "resource": item_test_passed["tender"]["procuringEntity"],
-                "result": True,
-            }
-        ]
-    }
+    assert result["meta"] is None
 
 
 item_test_failed1 = {"parties": [{"id": "0", "roles": []}], "tender": {"procuringEntity": {"id": "0"}}}
@@ -67,15 +55,10 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "references": [
+        "failed_paths": [
             {
-                "organization.id": "0",
-                "expected_role": "procuringEntity",
-                "referenced_party_path": "parties[0]",
-                "referenced_party": item_test_failed1["parties"][0],
-                "resource_path": "tender.procuringEntity",
-                "resource": item_test_failed1["tender"]["procuringEntity"],
-                "result": False,
+                "party": {"id": "0", "path": "parties[0]", "roles": []},
+                "reference": {"id": "0", "path": "tender.procuringEntity", "role": "procuringEntity"},
             }
-        ]
+        ],
     }
