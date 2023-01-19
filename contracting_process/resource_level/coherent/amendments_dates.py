@@ -19,19 +19,13 @@ def calculate(item):
 
     pairs = []
 
-    for first_path, second_path in (
-        ("tender.tenderPeriod.startDate", "tender.amendments.date"),
-        ("tender.amendments.date", "date"),
-        ("awards.amendments.date", "date"),
-        ("contracts.amendments.date", "date"),
-    ):
-        first_dates = _get_values(first_path)
-        second_dates = _get_values(second_path)
-        pairs.extend((first_date, second_date) for first_date in first_dates for second_date in second_dates)
-
-    for first_path, second_path in (
-        ("awards.date", "awards.amendments.date"),
-        ("contracts.dateSigned", "contracts.amendments.date"),
+    for first_path, second_path, split in (
+        ("tender.tenderPeriod.startDate", "tender.amendments.date", False),
+        ("tender.amendments.date", "date", False),
+        ("awards.amendments.date", "date", False),
+        ("contracts.amendments.date", "date", False),
+        ("awards.date", "awards.amendments.date", True),
+        ("contracts.dateSigned", "contracts.amendments.date", True),
     ):
         first_dates = _get_values(first_path)
         second_dates = _get_values(second_path)
@@ -39,7 +33,7 @@ def calculate(item):
             (first_date, second_date)
             for first_date in first_dates
             for second_date in second_dates
-            if first_date["path"].split(".", 1)[0] == second_date["path"].split(".", 1)[0]
+            if not split or first_date["path"].split(".", 1)[0] == second_date["path"].split(".", 1)[0]
         )
 
     return coherent_dates_check(version, pairs)

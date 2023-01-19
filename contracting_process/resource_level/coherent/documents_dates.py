@@ -1,99 +1,43 @@
-from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import get_values, parse_date
+"""
+.. seealso::
+
+   :func:`tools.checks.coherent_dates_check
+"""
+
+from functools import lru_cache
+
+from tools.checks import coherent_dates_check
+from tools.getter import get_values
 
 version = 1.0
 
 
 def calculate(item):
-    result = get_empty_result_resource(version)
+    @lru_cache
+    def _get_values(path):
+        return get_values(item, path)
 
-    documents = []
-    for path in (
-        "planning.documents",
-        "tender.documents",
-        "awards.documents",
-        "contracts.documents",
-        "contracts.implementation.documents",
+    pairs = []
+
+    for prefix in (
+        "planning",
+        "tender",
+        "awards",
+        "contracts",
+        "contracts.implementation",
     ):
-        documents.extend(get_values(item, path))
+        for first_path, second_path, split in (
+            (f"{prefix}.documents.datePublished", f"{prefix}.documents.dateModified", True),
+            (f"{prefix}.documents.datePublished", "date", False),
+            (f"{prefix}.documents.dateModified", "date", False),
+        ):
+            first_dates = _get_values(first_path)
+            second_dates = _get_values(second_path)
+            pairs.extend(
+                (first_date, second_date)
+                for first_date in first_dates
+                for second_date in second_dates
+                if not split or first_date["path"].rsplit(".", 1)[0] == second_date["path"].rsplit(".", 1)[0]
+            )
 
-    if not documents:
-        result["meta"] = {"reason": "no documents are set"}
-        return result
-
-    date = {"value": item["date"] if "date" in item else None, "path": "date"}
-
-    application_count = 0
-    pass_count = 0
-    failed_paths = []
-    for document in documents:
-        date_published = {
-            "value": document["value"]["datePublished"] if "datePublished" in document["value"] else None,
-            "path": document["path"] + ".datePublished",
-        }
-        date_modified = {
-            "value": document["value"]["dateModified"] if "dateModified" in document["value"] else None,
-            "path": document["path"] + ".dateModified",
-        }
-
-        # checking document.datePublished and document.dateModified
-        first_date = parse_date(date_published["value"])
-        second_date = parse_date(date_modified["value"])
-        if first_date and second_date:
-            application_count += 1
-
-            if first_date <= second_date:
-                pass_count += 1
-            else:
-                failed_paths.append(
-                    {
-                        "path_1": date_published["path"],
-                        "value_1": date_published["value"],
-                        "path_2": date_modified["path"],
-                        "value_2": date_modified["value"],
-                    }
-                )
-
-        # checking document.datePublished and date
-        first_date = parse_date(date_published["value"])
-        second_date = parse_date(date["value"])
-        if first_date and second_date:
-            application_count += 1
-
-            if first_date <= second_date:
-                pass_count += 1
-            else:
-                failed_paths.append(
-                    {
-                        "path_1": date_published["path"],
-                        "value_1": date_published["value"],
-                        "path_2": date["path"],
-                        "value_2": date["value"],
-                    }
-                )
-
-        # checking document.dateModified and date
-        first_date = parse_date(date_modified["value"])
-        second_date = parse_date(date["value"])
-        if first_date and second_date:
-            application_count += 1
-
-            if first_date <= second_date:
-                pass_count += 1
-            else:
-                failed_paths.append(
-                    {
-                        "path_1": date_modified["path"],
-                        "value_1": date_modified["value"],
-                        "path_2": date["path"],
-                        "value_2": date["value"],
-                    }
-                )
-
-    return complete_result_resource(
-        result,
-        application_count,
-        pass_count,
-        reason="no pairs of dates are parseable",
-        meta={"failed_paths": failed_paths},
-    )
+    return coherent_dates_check(version, pairs)

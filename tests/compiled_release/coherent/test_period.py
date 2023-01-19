@@ -7,7 +7,7 @@ def test_undefined():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "insufficient data for check"}
+    assert empty_result["meta"] == {"reason": "no pairs of dates in periods are set"}
 
 
 item_test_multiple_contracts = {
@@ -47,7 +47,7 @@ def test_missing_dates():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no pairs of dates in periods are set"}
 
 
 item_test_ill_formatted_dates1__invalid_schema = {

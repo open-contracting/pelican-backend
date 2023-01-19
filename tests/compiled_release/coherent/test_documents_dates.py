@@ -7,7 +7,7 @@ def test_undefined():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "no documents are set"}
+    assert empty_result["meta"] == {"reason": "no pairs of dates are set"}
 
 
 item_ok = {
@@ -144,7 +144,19 @@ def test_failed():
                 "value_2": "2020-12-31T00:00:00Z",
             },
             {
+                "path_1": "planning.documents[1].datePublished",
+                "path_2": "planning.documents[1].dateModified",
+                "value_1": "2030-12-31T00:00:00Z",
+                "value_2": "2020-12-31T00:00:00Z",
+            },
+            {
                 "path_1": "planning.documents[0].datePublished",
+                "path_2": "date",
+                "value_1": "2030-12-31T00:00:00Z",
+                "value_2": "2010-12-31T00:00:00Z",
+            },
+            {
+                "path_1": "planning.documents[1].datePublished",
                 "path_2": "date",
                 "value_1": "2030-12-31T00:00:00Z",
                 "value_2": "2010-12-31T00:00:00Z",
@@ -153,18 +165,6 @@ def test_failed():
                 "path_1": "planning.documents[0].dateModified",
                 "path_2": "date",
                 "value_1": "2020-12-31T00:00:00Z",
-                "value_2": "2010-12-31T00:00:00Z",
-            },
-            {
-                "path_1": "planning.documents[1].datePublished",
-                "path_2": "planning.documents[1].dateModified",
-                "value_1": "2030-12-31T00:00:00Z",
-                "value_2": "2020-12-31T00:00:00Z",
-            },
-            {
-                "path_1": "planning.documents[1].datePublished",
-                "path_2": "date",
-                "value_1": "2030-12-31T00:00:00Z",
                 "value_2": "2010-12-31T00:00:00Z",
             },
             {
