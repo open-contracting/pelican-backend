@@ -1,3 +1,9 @@
+"""
+.. seealso::
+
+   :func:`tools.checks.coherent_dates_check
+"""
+
 from tools.checks import coherent_dates_check
 from tools.getter import get_values
 
@@ -9,11 +15,11 @@ def calculate(item):
 
     for first_path, second_path in (
         ("tender.tenderPeriod.endDate", "tender.contractPeriod.startDate"),
-        # ("tender.tenderPeriod.endDate", "date"),
-        ("tender.tenderPeriod.endDate", "contracts.dateSigned"),
-        ("contracts.dateSigned", "date"),
         ("tender.tenderPeriod.endDate", "awards.date"),
+        ("tender.tenderPeriod.endDate", "contracts.dateSigned"),
         ("awards.date", "date"),
+        ("contracts.dateSigned", "date"),
+        ("contracts.implementation.transactions.date", "date"),
     ):
         first_dates = get_values(item, first_path)
         second_dates = get_values(item, second_path)
