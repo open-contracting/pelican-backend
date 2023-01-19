@@ -3,17 +3,18 @@ from tools.getter import get_values
 
 version = 1.0
 
-testing_roles = {
-    "supplier": "awards.suppliers",
-    "tenderer": "tender.tenderers",
-    "procuringEntity": "tender.procuringEntity",
-    "payer": "contracts.implementation.transactions.payer",
-    "payee": "contracts.implementation.transactions.payee",
-}
-
 
 def calculate(item) -> dict:
     result = get_empty_result_resource(version)
+
+    testing_roles = {
+        "supplier": "awards.suppliers",
+        "tenderer": "tender.tenderers",
+        "procuringEntity": "tender.procuringEntity",
+        "payer": "contracts.implementation.transactions.payer",
+        "payee": "contracts.implementation.transactions.payee",
+    }
+
     parties = get_values(item, "parties")
     parties_roles = []
     for party in parties:

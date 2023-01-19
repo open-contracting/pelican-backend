@@ -13,13 +13,13 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no period has a valid start date and valid end date"}
 
     result = calculate(item_test_undefined)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no period has a valid start date and valid end date"}
 
 
 item_test_passed1 = {
@@ -77,25 +77,19 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 3
     assert result["pass_count"] == 3
-    assert result["meta"] == {
-        "periods": [
-            {"path": "awards[0].contractPeriod", "result": True},
-            {"path": "contracts[0].period", "result": True},
-            {"path": "contracts[1].period", "result": True},
-        ]
-    }
+    assert result["meta"] is None
 
     result = calculate(item_test_passed2)
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {"periods": [{"path": "tender.enquiryPeriod", "result": True}]}
+    assert result["meta"] is None
 
     result = calculate(item_test_passed3)
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {"periods": [{"path": "tender.enquiryPeriod", "result": True}]}
+    assert result["meta"] is None
 
 
 item_test_failed = {
@@ -133,10 +127,4 @@ def test_failed():
     assert result["result"] is False
     assert result["application_count"] == 3
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "periods": [
-            {"path": "awards[0].contractPeriod", "result": False},
-            {"path": "contracts[0].period", "result": False},
-            {"path": "contracts[1].period", "result": True},
-        ]
-    }
+    assert result["meta"] == {"failed_paths": ["awards[0].contractPeriod", "contracts[0].period"]}
