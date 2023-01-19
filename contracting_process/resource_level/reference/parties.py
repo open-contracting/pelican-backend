@@ -5,7 +5,7 @@ Each referencing ``id`` is present and matches the ``id`` of exactly one party.
 from collections import Counter
 
 from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import get_values
+from tools.getter import deep_has, get_values
 
 
 def calculate_path(item, path):
@@ -16,9 +16,9 @@ def calculate_path(item, path):
         result["meta"] = {"reason": "no reference is set"}
         return result
 
-    values = get_values(item, "parties.id", value_only=True)
-    party_id_counts_orig = Counter(values)
-    party_id_counts_cast = Counter(map(str, values))
+    ids = get_values(item, "parties.id", value_only=True)
+    id_counts = Counter(ids)
+    id_counts_str = Counter(map(str, ids))
 
     application_count = 0
     pass_count = 0
@@ -26,14 +26,15 @@ def calculate_path(item, path):
     for value in test_values:
         application_count += 1
 
-        if "id" not in value["value"]:
+        if not deep_has(value["value"], "id"):
             failed_paths.append({"path": value["path"], "reason": "reference has no id"})
-        elif value["value"]["id"] not in party_id_counts_orig:
-            if str(value["value"]["id"]) in party_id_counts_cast:
+        elif value["value"]["id"] not in id_counts:
+            if str(value["value"]["id"]) in id_counts_str:
                 failed_paths.append({"path": value["path"], "reason": "id values are not the same type"})
             else:
                 failed_paths.append({"path": value["path"], "reason": "no party matches the referencing id"})
-        elif party_id_counts_orig[value["value"]["id"]] > 1:
+        elif id_counts[value["value"]["id"]] > 1:
+            # Note: Multiple matches across different types currently pass.
             failed_paths.append({"path": value["path"], "reason": "multiple parties match the referencing id"})
         else:
             pass_count += 1
