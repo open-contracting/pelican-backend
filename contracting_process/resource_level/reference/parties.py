@@ -11,14 +11,14 @@ from tools.getter import get_values
 def calculate_path(item, path):
     result = get_empty_result_resource()
 
-    values = get_values(item, "parties.id", value_only=True)
-    party_id_counts_orig = Counter(values)
-    party_id_counts_cast = Counter(map(str, values))
-
     test_values = get_values(item, path)
     if not test_values:
         result["meta"] = {"reason": "no reference is set"}
         return result
+
+    values = get_values(item, "parties.id", value_only=True)
+    party_id_counts_orig = Counter(values)
+    party_id_counts_cast = Counter(map(str, values))
 
     application_count = 0
     pass_count = 0

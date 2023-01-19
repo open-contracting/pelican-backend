@@ -7,18 +7,21 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    date = {"value": item["date"] if "date" in item else None, "path": "date"}
-    document_paths = [
+    documents = []
+    for path in (
         "planning.documents",
         "tender.documents",
         "awards.documents",
         "contracts.documents",
         "contracts.implementation.documents",
-    ]
-
-    documents = []
-    for path in document_paths:
+    ):
         documents.extend(get_values(item, path))
+
+    if not documents:
+        result["meta"] = {"reason": "no documents are set"}
+        return result
+
+    date = {"value": item["date"] if "date" in item else None, "path": "date"}
 
     application_count = 0
     pass_count = 0
@@ -91,6 +94,6 @@ def calculate(item):
         result,
         application_count,
         pass_count,
-        reason="insufficient data for check",
+        reason="no pairs of dates are parseable",
         meta={"failed_paths": failed_paths},
     )

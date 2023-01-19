@@ -7,7 +7,7 @@ def test_undefined():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "insufficient data for check"}
+    assert empty_result["meta"] == {"reason": "no pairs of dates are set"}
 
 
 item_ok = {

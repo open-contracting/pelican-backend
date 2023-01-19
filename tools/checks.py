@@ -1,6 +1,8 @@
 import random
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 
+from tools.getter import parse_date
+
 
 def get_empty_result_resource(version: float = 1.0) -> Dict[str, Any]:
     """
@@ -170,6 +172,50 @@ def field_quality_check(
         return _prepare_field_result(obj, passed, value, reason, return_value=return_value)
 
     return method
+
+
+def coherent_dates_check(version: float, pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]]) -> Dict[str, Any]:
+    """
+    :param version: the check's version
+    :param pairs: date value pairs
+    """
+    result = get_empty_result_resource(version)
+
+    if not pairs:
+        result["meta"] = {"reason": "no pairs of dates are set"}
+        return result
+
+    application_count = 0
+    pass_count = 0
+    failed_paths = []
+    for first_date, second_date in pairs:
+        first_date_parsed = parse_date(first_date["value"])
+        second_date_parsed = parse_date(second_date["value"])
+
+        if first_date_parsed is None or second_date_parsed is None:
+            continue
+
+        application_count += 1
+
+        if first_date_parsed <= second_date_parsed:
+            pass_count += 1
+        else:
+            failed_paths.append(
+                {
+                    "path_1": first_date["path"],
+                    "value_1": first_date["value"],
+                    "path_2": second_date["path"],
+                    "value_2": second_date["value"],
+                }
+            )
+
+    return complete_result_resource(
+        result,
+        application_count,
+        pass_count,
+        reason="no pairs of dates are parseable",
+        meta={"failed_paths": failed_paths},
+    )
 
 
 def _empty_field_result(name: str, version: float = 1.0) -> Dict[str, Any]:
