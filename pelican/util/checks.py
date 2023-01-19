@@ -1,7 +1,7 @@
 import random
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 
-from tools.getter import parse_date
+from pelican.util.getter import parse_date
 
 
 def get_empty_result_resource(version: float = 1.0) -> Dict[str, Any]:

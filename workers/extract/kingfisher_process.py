@@ -4,9 +4,9 @@ import psycopg2.extras
 import simplejson as json
 
 import dataset.meta_data_aggregator as meta_data_aggregator
-from tools import exchange_rates_db, settings
-from tools.services import commit, consume, get_cursor
-from tools.workers import process_items
+from pelican.util import exchange_rates_db, settings
+from pelican.util.services import commit, consume, get_cursor
+from pelican.util.workers import process_items
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
 routing_key = "extractor"

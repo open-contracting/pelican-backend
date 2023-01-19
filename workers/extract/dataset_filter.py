@@ -6,8 +6,8 @@ import simplejson as json
 from psycopg2 import sql
 from yapw.methods.blocking import nack
 
-from tools.services import commit, consume, get_cursor
-from tools.workers import process_items
+from pelican.util.services import commit, consume, get_cursor
+from pelican.util.workers import process_items
 
 consume_routing_key = "dataset_filter_extractor_init"
 routing_key = "extractor"

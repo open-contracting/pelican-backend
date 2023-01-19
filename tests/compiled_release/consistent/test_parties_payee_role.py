@@ -1,5 +1,5 @@
 from contracting_process.resource_level.consistent.parties_role import calculate
-from tools.checks import get_empty_result_resource
+from pelican.util.checks import get_empty_result_resource
 
 version = 1.0
 

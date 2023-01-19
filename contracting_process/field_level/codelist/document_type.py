@@ -1,5 +1,5 @@
-from tools.checks import field_quality_check
-from tools.codelists import get_document_type_section_mapping
+from pelican.util.checks import field_quality_check
+from pelican.util.codelists import get_document_type_section_mapping
 
 name = "document_type"
 

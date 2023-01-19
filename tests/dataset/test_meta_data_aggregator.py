@@ -1,5 +1,5 @@
 from dataset.meta_data_aggregator import add_item, get_result
-from tools.currency_converter import bootstrap
+from pelican.util.currency_converter import bootstrap
 
 bootstrap()
 

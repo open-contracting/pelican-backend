@@ -1,5 +1,5 @@
 from contracting_process.resource_level.consistent.tender_value import calculate
-from tools.currency_converter import bootstrap
+from pelican.util.currency_converter import bootstrap
 
 bootstrap()
 

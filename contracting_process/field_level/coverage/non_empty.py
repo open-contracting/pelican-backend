@@ -1,4 +1,4 @@
-from tools.checks import field_coverage_check
+from pelican.util.checks import field_coverage_check
 
 name = "non_empty"
 

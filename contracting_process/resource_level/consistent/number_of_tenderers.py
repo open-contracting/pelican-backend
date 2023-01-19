@@ -4,8 +4,8 @@ The value of the ``numberOfTenderers`` field is equal to the number of entries i
 The test is skipped if the ``tenderers`` field is not an array.
 """
 
-from tools.checks import complete_result_resource_pass_fail, get_empty_result_resource
-from tools.getter import deep_get
+from pelican.util.checks import complete_result_resource_pass_fail, get_empty_result_resource
+from pelican.util.getter import deep_get
 
 version = 1.0
 

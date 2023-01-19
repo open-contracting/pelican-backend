@@ -1,5 +1,5 @@
-from tools.checks import field_quality_check
-from tools.codelists import get_ocid_prefix_codelist
+from pelican.util.checks import field_quality_check
+from pelican.util.codelists import get_ocid_prefix_codelist
 
 name = "ocid_prefix_check"
 

@@ -1,5 +1,5 @@
-from tools.checks import get_empty_result_dataset
-from tools.getter import get_values
+from pelican.util.checks import get_empty_result_dataset
+from pelican.util.getter import get_values
 
 version = 1.0
 

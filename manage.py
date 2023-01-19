@@ -3,8 +3,8 @@ import logging
 
 import click
 
-from tools import exchange_rates_db, settings
-from tools.services import commit, get_cursor, phase, publish, state, update_dataset_state
+from pelican.util import exchange_rates_db, settings
+from pelican.util.services import commit, get_cursor, phase, publish, state, update_dataset_state
 
 
 @click.group()

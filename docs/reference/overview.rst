@@ -47,10 +47,10 @@ Repository structure
    │   └── unique                Uniqueness checks
    ├── pelican                The main project
    │   ├── migrations            Database migrations
-   │   └── static                Static files (SQL dumps, SQL snippets, etc.)
+   │   ├── static                Static files (SQL dumps, SQL snippets, etc.)
+   │   └── util                  Shared utilities
    ├── time_variance          Time-based checks
    │   └── checks                Individual checks
-   ├── tools                  Shared utilities
    └── workers                :doc:`All workers<reference/workers>`
        ├── extract               Extractor workers
        └── check                 Checker workers

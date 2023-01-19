@@ -8,9 +8,9 @@ the future, the test silently ignores the value.
 
 import datetime
 
-from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.currency_converter import convert
-from tools.getter import deep_get, get_values
+from pelican.util.checks import complete_result_resource, get_empty_result_resource
+from pelican.util.currency_converter import convert
+from pelican.util.getter import deep_get, get_values
 
 version = 1.0
 

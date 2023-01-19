@@ -1,11 +1,11 @@
 """
 .. seealso::
 
-   :func:`tools.checks.coherent_dates_check
+   :func:`pelican.util.checks.coherent_dates_check
 """
 
-from tools.checks import coherent_dates_check
-from tools.getter import get_values
+from pelican.util.checks import coherent_dates_check
+from pelican.util.getter import get_values
 
 version = 1.0
 

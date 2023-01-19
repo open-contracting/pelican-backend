@@ -1,8 +1,8 @@
 import pytest
 
+from pelican.util import settings
+from pelican.util.workers import is_step_required
 from tests import override_settings
-from tools import settings
-from tools.workers import is_step_required
 
 
 @pytest.mark.parametrize(

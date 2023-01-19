@@ -48,7 +48,7 @@ Once all items are read, the ``get_result`` function:
 
 An empty ``result`` dict looks like:
 
-.. literalinclude:: ../../../tools/checks.py
+.. literalinclude:: ../../../pelican/util/checks.py
    :language: python
    :start-after: get_empty_result_dataset
    :end-at: }

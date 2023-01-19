@@ -14,8 +14,8 @@ The test is skipped if every referencing ``id`` is missing or if none matches th
 
 from collections import Counter
 
-from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import deep_get, deep_has, get_values
+from pelican.util.checks import complete_result_resource, get_empty_result_resource
+from pelican.util.getter import deep_get, deep_has, get_values
 
 version = 1.0
 

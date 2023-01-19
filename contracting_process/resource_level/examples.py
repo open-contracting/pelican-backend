@@ -1,8 +1,8 @@
 import simplejson as json
 
 from contracting_process.resource_level.definitions import definitions
-from tools.checks import ReservoirSampler
-from tools.services import commit, get_cursor
+from pelican.util.checks import ReservoirSampler
+from pelican.util.services import commit, get_cursor
 
 examples_cap = 20
 

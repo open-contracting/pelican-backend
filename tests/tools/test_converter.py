@@ -1,7 +1,7 @@
 from datetime import date
 from unittest.mock import patch
 
-import tools.currency_converter as cc
+import pelican.util.currency_converter as cc
 
 #################
 # INTERPOLATION #

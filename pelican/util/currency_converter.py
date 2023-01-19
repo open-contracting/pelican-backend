@@ -2,13 +2,13 @@ import datetime
 import os
 from typing import Dict, List, Set, Tuple
 
-from tools import settings
+from pelican.util import settings
 
 # https://docs.pytest.org/en/latest/example/simple.html#pytest-current-test-environment-variable
 if "PYTEST_CURRENT_TEST" in os.environ:
-    import tools.exchange_rates_db as exchange_rates
+    import pelican.util.exchange_rates_db as exchange_rates
 else:
-    import tools.exchange_rates_file as exchange_rates
+    import pelican.util.exchange_rates_file as exchange_rates
 
 rates: Dict[datetime.date, Dict[str, float]] = {}
 bounds: Dict[str, Tuple[datetime.date, datetime.date]] = {}

@@ -27,14 +27,14 @@ If ``filter`` returns ``True``, and if the new item is present, then the ``evalu
 
 The accumulator is initialized as:
 
-.. literalinclude:: ../../../tools/checks.py
+.. literalinclude:: ../../../pelican/util/checks.py
    :language: python
    :start-after: get_empty_result_time_variance_scope
    :end-at: }
 
 ``time_variance/processor.py`` then prepares the ``result`` dict. An empty ``result`` dict looks like:
 
-.. literalinclude:: ../../../tools/checks.py
+.. literalinclude:: ../../../pelican/util/checks.py
    :language: python
    :start-after: get_empty_result_time_variance
    :end-at: }

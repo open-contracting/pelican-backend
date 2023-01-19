@@ -1,5 +1,5 @@
 from dataset.distribution import value
-from tools.currency_converter import bootstrap
+from pelican.util.currency_converter import bootstrap
 
 bootstrap()
 contracts_value = value.ModuleType("contracts.value")

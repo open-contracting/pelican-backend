@@ -1,4 +1,4 @@
-from tools.getter import get_values
+from pelican.util.getter import get_values
 
 version = 1.0
 

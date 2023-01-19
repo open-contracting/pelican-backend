@@ -3,8 +3,8 @@ If an award's ``status`` is inactive ('pending', 'cancelled', 'unsuccessful'), t
 the award's ``id``.
 """
 
-from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import deep_get, deep_has, get_values
+from pelican.util.checks import complete_result_resource, get_empty_result_resource
+from pelican.util.getter import deep_get, deep_has, get_values
 
 version = 1.0
 applicable_statuses = {"pending", "cancelled", "unsuccessful"}

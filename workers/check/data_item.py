@@ -2,9 +2,9 @@
 import click
 
 from contracting_process import processor
-from tools.currency_converter import bootstrap
-from tools.services import consume, get_cursor
-from tools.workers import finish_callback
+from pelican.util.currency_converter import bootstrap
+from pelican.util.services import consume, get_cursor
+from pelican.util.workers import finish_callback
 
 consume_routing_key = "extractor"
 routing_key = "contracting_process_checker"

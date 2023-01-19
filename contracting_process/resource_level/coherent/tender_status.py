@@ -3,8 +3,8 @@ If ``tender.status`` is incomplete ('planning', 'planned', 'active', 'cancelled'
 ``awards`` and ``contracts`` are blank.
 """
 
-from tools.checks import complete_result_resource_pass_fail, get_empty_result_resource
-from tools.getter import deep_get
+from pelican.util.checks import complete_result_resource_pass_fail, get_empty_result_resource
+from pelican.util.getter import deep_get
 
 version = 1.0
 applicable_statuses = {"planning", "planned", "active", "cancelled", "unsuccessful", "withdrawn"}

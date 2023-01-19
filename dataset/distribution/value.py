@@ -1,8 +1,8 @@
 import functools
 
-from tools.checks import get_empty_result_dataset
-from tools.currency_converter import convert, currency_available
-from tools.getter import get_values, parse_date
+from pelican.util.checks import get_empty_result_dataset
+from pelican.util.currency_converter import convert, currency_available
+from pelican.util.getter import get_values, parse_date
 
 version = 1.0
 

@@ -1,13 +1,13 @@
 """
 .. seealso::
 
-   :func:`tools.checks.coherent_dates_check
+   :func:`pelican.util.checks.coherent_dates_check
 """
 
 from functools import lru_cache
 
-from tools.checks import coherent_dates_check
-from tools.getter import deep_has, get_values
+from pelican.util.checks import coherent_dates_check
+from pelican.util.getter import deep_has, get_values
 
 version = 1.0
 

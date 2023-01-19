@@ -1,5 +1,5 @@
+from pelican.util.checks import get_empty_result_time_variance_scope
 from time_variance.checks import ocid
-from tools.checks import get_empty_result_time_variance_scope
 
 ancestor = {
     "ocid": "2",

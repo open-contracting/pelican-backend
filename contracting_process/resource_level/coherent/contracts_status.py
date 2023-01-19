@@ -2,8 +2,8 @@
 If a contract's ``status`` is unsigned ('pending' or 'cancelled'), then its ``implementation.transactions`` is blank.
 """
 
-from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import deep_get, get_values
+from pelican.util.checks import complete_result_resource, get_empty_result_resource
+from pelican.util.getter import deep_get, get_values
 
 version = 1.0
 applicable_statuses = {"pending", "cancelled"}

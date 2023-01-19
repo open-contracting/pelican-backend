@@ -3,10 +3,10 @@ import random
 
 import simplejson as json
 
+from pelican.util import settings
+from pelican.util.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
+from pelican.util.services import get_cursor
 from time_variance.definitions import definitions
-from tools import settings
-from tools.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
-from tools.services import get_cursor
 
 logger = logging.getLogger("pelican.time_variance.processor")
 

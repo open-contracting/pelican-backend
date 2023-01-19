@@ -1,8 +1,8 @@
 import random
 from collections import defaultdict
 
-from tools.checks import ReservoirSampler, get_empty_result_dataset
-from tools.getter import get_values
+from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
+from pelican.util.getter import get_values
 
 version = 2.0
 

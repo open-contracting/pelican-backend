@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from tools.codelists import (
+from pelican.util.codelists import (
     get_document_type_section_mapping,
     get_identifier_scheme_codelist,
     get_language_codelist,

@@ -14,18 +14,18 @@ This changelog only notes major changes, to notify other developers.
 -  fix: Use type casting for reference lookups in non-reference checks, to not shadow non-reference issues. :issue:`50`
 -  fix: Do not skip a check if a value is blank – only if it is not set.
 -  fix: ``application_count`` and ``pass_count`` are ``None`` if not positive.
--  fix: :func:`~tools.getter.deep_get`: Return ``None`` if attempting to cast ``None``.
--  fix: :func:`~tools.getter.get_values`: If ``item`` is ``None``, return ``[]``.
+-  fix: :func:`~pelican.util.getter.deep_get`: Return ``None`` if attempting to cast ``None``.
+-  fix: :func:`~pelican.util.getter.get_values`: If ``item`` is ``None``, return ``[]``.
 -  refactor: Improve clarity of ``reason`` messages and ``meta`` keys. :issue:`76`
 
 2021-12-02
 ----------
 
--  feat: Add ``PELICAN_BACKEND_STEPS`` :class:`setting<tools.settings.Steps`.
+-  feat: Add ``PELICAN_BACKEND_STEPS`` :class:`setting<pelican.util.settings.Steps`.
 -  feat: Add :doc:`restart-dataset-check<tasks/troubleshoot>` command.
 -  fix: ``consistent.period_duration_in_days`` now casts durations as numbers. :issue:`26`
--  fix: :func:`~tools.getter.parse_date`, :func:`~tools.getter.parse_datetime`: Parse truncated date/time formats.
--  fix: :func:`~tools.getter.get_values`: Return leaf nodes only.
+-  fix: :func:`~pelican.util.getter.parse_date`, :func:`~pelican.util.getter.parse_datetime`: Parse truncated date/time formats.
+-  fix: :func:`~pelican.util.getter.get_values`: Return leaf nodes only.
 
 2021-11-19
 ----------

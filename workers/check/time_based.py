@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import click
 
+from pelican.util import settings
+from pelican.util.services import commit, consume, phase, state, update_dataset_state
+from pelican.util.workers import finish_callback, is_step_required
 from time_variance import processor
-from tools import settings
-from tools.services import commit, consume, phase, state, update_dataset_state
-from tools.workers import finish_callback, is_step_required
 
 consume_routing_key = "dataset_checker"
 routing_key = "time_variance_checker"

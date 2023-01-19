@@ -8,8 +8,8 @@ Since the test operates on all period objects, the test silently ignores any dat
 import datetime
 import math
 
-from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import deep_get, get_values
+from pelican.util.checks import complete_result_resource, get_empty_result_resource
+from pelican.util.getter import deep_get, get_values
 
 version = 1.0
 

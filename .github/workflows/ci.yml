@@ -22,8 +22,8 @@ jobs:
             --cov contracting_process \
             --cov dataset \
             --cov manage \
+            --cov pelican \
             --cov time_variance \
-            --cov tools \
             --cov workers
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

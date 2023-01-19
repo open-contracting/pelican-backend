@@ -1,6 +1,6 @@
 import math
 
-from tools.checks import field_quality_check
+from pelican.util.checks import field_quality_check
 
 name = "number_checks"
 

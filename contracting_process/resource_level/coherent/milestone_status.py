@@ -2,8 +2,8 @@
 If a milestone's ``status`` is unmet ('scheduled' or 'notMet'), then its ``dateMet`` is blank.
 """
 
-from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import deep_get, get_values
+from pelican.util.checks import complete_result_resource, get_empty_result_resource
+from pelican.util.getter import deep_get, get_values
 
 version = 1.0
 applicable_statuses = {"scheduled", "notMet"}

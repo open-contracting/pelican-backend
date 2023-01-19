@@ -1,5 +1,5 @@
+from pelican.util.checks import get_empty_result_time_variance_scope
 from time_variance.checks import tender_title
-from tools.checks import get_empty_result_time_variance_scope
 
 ancestor = {"ocid": "2", "tender": {"title": "Title 1"}}
 

@@ -5,9 +5,9 @@ import click
 from yapw.methods.blocking import ack, nack
 
 from dataset import processor
-from tools import settings
-from tools.currency_converter import bootstrap
-from tools.services import (
+from pelican.util import settings
+from pelican.util.currency_converter import bootstrap
+from pelican.util.services import (
     commit,
     consume,
     get_dataset_progress,
@@ -17,7 +17,7 @@ from tools.services import (
     state,
     update_dataset_state,
 )
-from tools.workers import finish_callback, is_step_required
+from pelican.util.workers import finish_callback, is_step_required
 
 consume_routing_key = "contracting_process_checker"
 routing_key = "dataset_checker"

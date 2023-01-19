@@ -51,7 +51,7 @@ Each check is a function, named ``calculate`` by convention, that:
 
 An empty ``result`` dict looks like:
 
-.. literalinclude:: ../../../tools/checks.py
+.. literalinclude:: ../../../pelican/util/checks.py
    :language: python
    :start-after: get_empty_result_resource
    :end-at: }

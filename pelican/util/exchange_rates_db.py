@@ -6,8 +6,8 @@ from typing import Dict, List, Tuple
 import psycopg2
 import requests
 
-from tools import settings
-from tools.services import commit, get_cursor, rollback
+from pelican.util import settings
+from pelican.util.services import commit, get_cursor, rollback
 
 logger = logging.getLogger("pelican.tools.exchange_rates_db")
 

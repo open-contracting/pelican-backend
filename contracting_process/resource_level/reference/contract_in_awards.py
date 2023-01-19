@@ -4,8 +4,8 @@ Each contract's ``awardID`` is present and matches the ``id`` of exactly one awa
 
 from collections import Counter
 
-from tools.checks import complete_result_resource, get_empty_result_resource
-from tools.getter import deep_has, get_values
+from pelican.util.checks import complete_result_resource, get_empty_result_resource
+from pelican.util.getter import deep_has, get_values
 
 version = 1.0
 

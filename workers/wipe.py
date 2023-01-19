@@ -2,7 +2,7 @@
 import click
 from yapw.methods.blocking import ack
 
-from tools.services import commit, consume, get_cursor
+from pelican.util.services import commit, consume, get_cursor
 
 consume_routing_key = "wiper_init"
 

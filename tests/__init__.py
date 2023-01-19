@@ -2,7 +2,7 @@ import json
 import os
 from contextlib import AbstractContextManager
 
-from tools import settings
+from pelican.util import settings
 
 
 def is_subset_dict(subset, superset):

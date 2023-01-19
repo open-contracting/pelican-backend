@@ -7,7 +7,7 @@ import psycopg2.extras
 import simplejson as json
 from yapw import clients
 
-from tools import settings
+from pelican.util import settings
 
 global db_connected
 db_connected = False

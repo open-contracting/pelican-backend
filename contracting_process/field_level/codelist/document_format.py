@@ -1,5 +1,5 @@
-from tools.checks import field_quality_check
-from tools.codelists import get_media_type_codelist
+from pelican.util.checks import field_quality_check
+from pelican.util.codelists import get_media_type_codelist
 
 name = "document_format_codelist"
 

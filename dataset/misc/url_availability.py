@@ -2,9 +2,9 @@ import random
 
 import requests
 
-from tools import settings
-from tools.checks import get_empty_result_dataset
-from tools.getter import get_values
+from pelican.util import settings
+from pelican.util.checks import get_empty_result_dataset
+from pelican.util.getter import get_values
 
 version = 1.0
 samples_num = 100

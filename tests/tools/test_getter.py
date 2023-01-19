@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from tools.getter import get_values, parse_date, parse_datetime
+from pelican.util.getter import get_values, parse_date, parse_datetime
 
 EMPTY = [None, "", 0, 0.0, False, set(), (), [], {}]
 NON_STR = [None, 1, 1.0, True, {1}, (1,), [1], {1}]

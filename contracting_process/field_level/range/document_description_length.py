@@ -1,4 +1,4 @@
-from tools.checks import field_quality_check
+from pelican.util.checks import field_quality_check
 
 name = "document_description_length"
 max_length = 250

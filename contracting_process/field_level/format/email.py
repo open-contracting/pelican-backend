@@ -1,6 +1,6 @@
 from validate_email import validate_email
 
-from tools.checks import field_quality_check
+from pelican.util.checks import field_quality_check
 
 name = "email"
 

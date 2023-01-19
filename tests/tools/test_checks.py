@@ -1,6 +1,6 @@
 import pytest
 
-from tools.checks import ReservoirSampler
+from pelican.util.checks import ReservoirSampler
 
 
 def test_reservoir_sampler():
