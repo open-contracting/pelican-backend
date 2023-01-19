@@ -1,5 +1,5 @@
 import logging
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Type, Union
 
 import pika.exceptions
 import psycopg2.extensions
@@ -9,8 +9,9 @@ from yapw import clients
 
 from pelican.util import settings
 
-global db_connected
+global db_connected, db_connection
 db_connected = False
+db_connection = None
 
 logger = logging.getLogger(__name__)
 
@@ -19,27 +20,52 @@ logger = logging.getLogger(__name__)
 
 
 class Consumer(clients.Threaded, clients.Durable, clients.Blocking, clients.Base):
-    pass
+    """
+    A RabbitMQ client for consuming messages.
+    """
 
 
 class Publisher(clients.Durable, clients.Blocking, clients.Base):
-    pass
+    """
+    A RabbitMQ client for publishing messages.
+    """
 
 
 def encode(message: Any, content_type: Optional[str]) -> bytes:
+    """
+    Encode the body of a message for RabbitMQ.
+
+    :param message: a decoded message
+    :param content_type: the message's content type
+    """
     return json.dumps(message).encode()
 
 
 def decode(body: bytes, content_type: Optional[str]) -> Any:
+    """
+    Decode the body of a message from RabbitMQ.
+
+    :param message: an encoded message
+    :param content_type: the message's content type
+    """
     return json.loads(body.decode("utf-8"))
 
 
-def get_client(klass, **kwargs):
+def get_client(klass: Union[Type[Consumer], Type[Publisher]], **kwargs: Any) -> Union[Consumer, Publisher]:
+    """
+    Return a RabbitMQ client.
+
+    :param klass: the class of the client to initialize
+    :param kwargs: the keyword arguments to initialize the client with
+    """
     return klass(url=settings.RABBIT_URL, exchange=settings.RABBIT_EXCHANGE_NAME, encode=encode, **kwargs)
 
 
 # https://github.com/pika/pika/blob/master/examples/blocking_consume_recover_multiple_hosts.py
-def consume(*args, **kwargs):
+def consume(*args: Any, **kwargs: Any) -> None:
+    """
+    Consume messages from RabbitMQ.
+    """
     while True:
         try:
             client = get_client(Consumer, prefetch_count=20, decode=decode)
@@ -55,7 +81,10 @@ def consume(*args, **kwargs):
             continue
 
 
-def publish(*args, **kwargs):
+def publish(*args: Any, **kwargs: Any) -> None:
+    """
+    Publish a message to RabbitMQ.
+    """
     client = get_client(Publisher)
     try:
         client.publish(*args, **kwargs)
@@ -67,6 +96,9 @@ def publish(*args, **kwargs):
 
 
 def get_cursor() -> psycopg2.extensions.cursor:
+    """
+    Connect to the database, if needed, and return a database cursor.
+    """
     global db_connected, db_connection
     if not db_connected:
         db_connection = psycopg2.connect(settings.DATABASE_URL)
@@ -76,10 +108,16 @@ def get_cursor() -> psycopg2.extensions.cursor:
 
 
 def commit() -> None:
+    """
+    Commit the transaction.
+    """
     db_connection.commit()
 
 
 def rollback() -> None:
+    """
+    Rollback the transaction.
+    """
     db_connection.rollback()
 
 
@@ -196,7 +234,7 @@ def get_total_items_count(dataset_id: int) -> int:
         return cursor.fetchone()["size"]
 
 
-def get_dataset_progress(dataset_id: int) -> Tuple[Any, ...]:
+def get_dataset_progress(dataset_id: int) -> Optional[Tuple[Any, ...]]:
     """
     Return the dataset's progress.
 

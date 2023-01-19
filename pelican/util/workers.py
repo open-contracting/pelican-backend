@@ -1,8 +1,10 @@
 import logging
 from math import ceil
-from typing import Optional
+from typing import Any, Callable, Dict, List, Optional
 
+import pika
 from yapw.methods.blocking import ack, publish
+from yapw.types import State
 
 from pelican.util import settings
 from pelican.util.services import (
@@ -18,10 +20,38 @@ logger = logging.getLogger(__name__)
 
 
 def is_step_required(*steps: str) -> bool:
+    """
+    Return whether to run the step(s).
+
+    :param: one or more steps
+
+    .. seealso::
+
+       :class:`pelican.util.settings.Steps`
+    """
     return any(step in settings.STEPS for step in steps)
 
 
-def process_items(client_state, channel, method, routing_key, cursors, dataset_id, ids, insert_items):
+def process_items(
+    client_state: State,
+    channel: pika.channel.Channel,
+    method: pika.spec.Basic.Deliver,
+    routing_key: str,
+    cursors: Dict[str, Any],
+    dataset_id: int,
+    ids: List[int],
+    insert_items: Callable[[Dict[str, Any], int, List[int]], None],
+) -> None:
+    """
+    Ack the message, initialize the dataset's and items' progress, insert items into the database in batches, and
+    publish messages to process the items in batches.
+
+    :param routing_key: the routing key for the outgoing message
+    :param cursors: the database cursors ("default" is required)
+    :param dataset_id: the dataset's ID
+    :param ids: the ID's of rows to import
+    :param insert_items: a function to insert the items, taking ``cursors``, ``dataset_id``, ``ids``
+    """
     ack(client_state, channel, method.delivery_tag)
 
     initialize_dataset_state(dataset_id)
@@ -56,10 +86,19 @@ def process_items(client_state, channel, method, routing_key, cursors, dataset_i
 
 
 def finish_callback(
-    client_state, channel, method, dataset_id: int, phase: Optional[str] = None, routing_key: Optional[str] = None
+    client_state: State,
+    channel: pika.channel.Channel,
+    method: pika.spec.Basic.Deliver,
+    dataset_id: int,
+    phase: Optional[str] = None,
+    routing_key: Optional[str] = None,
 ) -> None:
     """
     Update the dataset's state, publish a message if a routing key is provided, and ack the message.
+
+    :param dataset_id: the dataset's ID
+    :param phase: the dataset's phase
+    :param routing_key: the routing key for the outgoing message
     """
     if phase:
         update_dataset_state(dataset_id, phase, state.OK)

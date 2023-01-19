@@ -1,5 +1,5 @@
 import random
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Type, Union
 
 from pelican.util.getter import parse_date
 
@@ -67,7 +67,7 @@ def complete_result_resource(
     application_count: int,
     pass_count: int,
     reason: Optional[str] = None,
-    failed_paths: Optional[List[Union[str, Dict[str, Any]]]] = None,
+    failed_paths: Optional[Sequence[Union[str, Dict[str, Any]]]] = None,
 ) -> Dict[str, Any]:
     """
     Build a compiled release-level check result.

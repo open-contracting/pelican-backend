@@ -11,6 +11,8 @@ regex = re.compile(r"^([^[]*)\[([\d]*)\]$")
 def parse_datetime(string: Optional[str]) -> Optional[datetime]:
     """
     Parse a string to a datetime.
+
+    :param string: the value to parse
     """
     if string is None or not isinstance(string, str):
         return None
@@ -21,12 +23,14 @@ def parse_datetime(string: Optional[str]) -> Optional[datetime]:
     try:
         return datetime.strptime(string, "%Y-%m-%dT%H:%M:%S%z")
     except ValueError:
-        pass
+        return None
 
 
 def parse_date(string: Optional[str]) -> Optional[date]:
     """
     Parse a string to a date.
+
+    :param string: the value to parse
     """
     if not string or not isinstance(string, str):
         return None
@@ -37,7 +41,7 @@ def parse_date(string: Optional[str]) -> Optional[date]:
     try:
         return datetime.strptime(string[:10], "%Y-%m-%d").date()
     except ValueError:
-        pass
+        return None
 
 
 def deep_has(value: Any, path: str) -> bool:
@@ -46,6 +50,9 @@ def deep_has(value: Any, path: str) -> bool:
 
     Use this instead of :func:`deep_get` to check for the presence of a key. For example,
     ``deep_get({"id": 0}, "id")`` is falsy.
+
+    :param value: the value to index into
+    :param path: a period-separated list of keys
     """
     for part in path.split("."):
         if type(value) is dict and part in value:
@@ -56,7 +63,7 @@ def deep_has(value: Any, path: str) -> bool:
     return True
 
 
-def deep_get(value: Any, path: str, force: Type[Any] = None) -> Any:
+def deep_get(value: Any, path: str, force: Optional[Type[Any]] = None) -> Any:
     """
     Gets a nested value from nested dicts, safely. If ``force`` is provided and the nested value is not of that type,
     then if ``force`` is ...
@@ -68,7 +75,7 @@ def deep_get(value: Any, path: str, force: Type[Any] = None) -> Any:
     If the nested value is not set, if ``force`` is provided, and ``force`` is ``dict``, ``list`` or ``str``, return an
     empty ``dict``, ``list`` or ``str``, respectively. Otherwise, if the nested value is not set, return ``None``.
 
-    :param value: the value
+    :param value: the value to index into
     :param path: a period-separated list of keys
     :param force: the type to which to coerce the nested value, if possible
     """
