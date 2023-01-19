@@ -22,20 +22,14 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
                     {"status": "pending", "implementation": {"transactions": []}},
                 ]
             },
-            {
-                "processed_contracts": [
-                    {"path": "contracts[1]", "transactions_count": 0, "result": True},
-                    {"path": "contracts[2]", "transactions_count": 0, "result": True},
-                    {"path": "contracts[3]", "transactions_count": 0, "result": True},
-                ]
-            },
+            None,
             3,
         ),
     ]
     failing = [
         (
             {"contracts": [{"status": "pending", "implementation": {"transactions": [{"id": 0}]}}]},
-            {"processed_contracts": [{"path": "contracts[0]", "transactions_count": 1, "result": False}]},
+            {"failed_paths": [{"path": "contracts[0]", "transactions_count": 1}]},
             1,
             0,
         ),
@@ -47,12 +41,7 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
                     {"status": "cancelled", "implementation": {"transactions": [{"id": 0}, {"id": 1}]}},
                 ]
             },
-            {
-                "processed_contracts": [
-                    {"path": "contracts[1]", "transactions_count": 0, "result": True},
-                    {"path": "contracts[2]", "transactions_count": 2, "result": False},
-                ]
-            },
+            {"failed_paths": [{"path": "contracts[2]", "transactions_count": 2}]},
             2,
             1,
         ),

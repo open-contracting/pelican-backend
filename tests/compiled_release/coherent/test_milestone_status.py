@@ -28,14 +28,7 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
                     }
                 ],
             },
-            {
-                "references": [
-                    {"result": True, "status": "notMet", "path": "planning.milestones[0]"},
-                    {"result": True, "status": "notMet", "path": "tender.milestones[0]"},
-                    {"result": True, "status": "notMet", "path": "contracts[0].milestones[0]"},
-                    {"result": True, "status": "notMet", "path": "contracts[0].implementation.milestones[0]"},
-                ]
-            },
+            None,
             4,
         ),
         (
@@ -55,14 +48,7 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
                     },
                 ],
             },
-            {
-                "references": [
-                    {"result": True, "status": "notMet", "path": "contracts[0].milestones[0]"},
-                    {"result": True, "status": "notMet", "path": "contracts[0].milestones[1]"},
-                    {"result": True, "status": "notMet", "path": "contracts[1].milestones[0]"},
-                    {"result": True, "status": "notMet", "path": "contracts[1].milestones[1]"},
-                ]
-            },
+            None,
             4,
         ),
     ]
@@ -88,14 +74,7 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
                     }
                 ],
             },
-            {
-                "references": [
-                    {"result": False, "status": "scheduled", "path": "tender.milestones[0]"},
-                    {"result": True, "status": "scheduled", "path": "tender.milestones[1]"},
-                    {"result": True, "status": "notMet", "path": "contracts[0].milestones[0]"},
-                    {"result": True, "status": "notMet", "path": "contracts[0].implementation.milestones[0]"},
-                ]
-            },
+            {"failed_paths": [{"path": "tender.milestones[0]", "status": "scheduled"}]},
             4,
             3,
         ),

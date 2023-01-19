@@ -1,12 +1,13 @@
 """
-If an award's status is inactive ('pending', 'cancelled', 'unsuccessful'), then no contract's awardID matches the
-award's id.
+If an award's ``status`` is inactive ('pending', 'cancelled', 'unsuccessful'), then no contract's ``awardID`` matches
+the award's ``id``.
 """
 
 from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import deep_get, deep_has, get_values
 
 version = 1.0
+applicable_statuses = {"pending", "cancelled", "unsuccessful"}
 
 
 def calculate(item):
@@ -15,28 +16,25 @@ def calculate(item):
     awards = [
         v
         for v in get_values(item, "awards")
-        if deep_has(v["value"], "id") and deep_get(v["value"], "status") in ("pending", "cancelled", "unsuccessful")
+        if deep_get(v["value"], "status") in applicable_statuses and deep_has(v["value"], "id")
     ]
 
     if not awards:
         result["meta"] = {"reason": "no award with an id is inactive"}
         return result
 
-    contracts_award_ids = get_values(item, "contracts.awardID", value_only=True)
+    contracts_award_ids = {str(v) for v in get_values(item, "contracts.awardID", value_only=True)}
 
     application_count = 0
     pass_count = 0
-    result["meta"] = {"processed_awards": []}
+    failed_paths = []
     for award in awards:
-        # Note: Don't cast IDs to string for comparison. Users should be able to match IDs without doing so.
-        passed = award["value"]["id"] not in contracts_award_ids
-
-        result["meta"]["processed_awards"].append(
-            {"path": award["path"], "id": award["value"]["id"], "result": passed}
-        )
+        passed = str(award["value"]["id"]) not in contracts_award_ids
 
         application_count += 1
         if passed:
             pass_count += 1
+        else:
+            failed_paths.append({"path": award["path"], "id": award["value"]["id"]})
 
-    return complete_result_resource(result, application_count, pass_count)
+    return complete_result_resource(result, application_count, pass_count, meta={"failed_paths": failed_paths})

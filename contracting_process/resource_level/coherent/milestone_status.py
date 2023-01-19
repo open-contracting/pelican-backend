@@ -1,11 +1,12 @@
 """
-If a milestone's status is unmet ('scheduled' or 'notMet'), then its dateMet is blank.
+If a milestone's ``status`` is unmet ('scheduled' or 'notMet'), then its ``dateMet`` is blank.
 """
 
 from tools.checks import complete_result_resource, get_empty_result_resource
 from tools.getter import deep_get, get_values
 
 version = 1.0
+applicable_statuses = {"scheduled", "notMet"}
 
 
 def calculate(item):
@@ -14,9 +15,7 @@ def calculate(item):
     milestones = []
     for path in ("planning", "tender", "contracts", "contracts.implementation"):
         milestones.extend(
-            v
-            for v in get_values(item, f"{path}.milestones")
-            if deep_get(v["value"], "status") in ("scheduled", "notMet")
+            v for v in get_values(item, f"{path}.milestones") if deep_get(v["value"], "status") in applicable_statuses
         )
 
     if not milestones:
@@ -25,16 +24,14 @@ def calculate(item):
 
     application_count = 0
     pass_count = 0
-    result["meta"] = {"references": []}
+    failed_paths = []
     for milestone in milestones:
         passed = not deep_get(milestone["value"], "dateMet")
-
-        result["meta"]["references"].append(
-            {"result": passed, "status": milestone["value"]["status"], "path": milestone["path"]}
-        )
 
         application_count += 1
         if passed:
             pass_count += 1
+        else:
+            failed_paths.append({"path": milestone["path"], "status": milestone["value"]["status"]})
 
-    return complete_result_resource(result, application_count, pass_count)
+    return complete_result_resource(result, application_count, pass_count, meta={"failed_paths": failed_paths})

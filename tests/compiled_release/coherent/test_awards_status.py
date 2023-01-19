@@ -15,12 +15,12 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
     passing = [
         (
             {"awards": [{"status": "pending", "id": 0}]},
-            {"processed_awards": [{"path": "awards[0]", "id": 0, "result": True}]},
+            None,
             1,
         ),
         (
             {"awards": [{"status": "pending", "id": 0}], "contracts": [{"awardID": 1}]},
-            {"processed_awards": [{"path": "awards[0]", "id": 0, "result": True}]},
+            None,
             1,
         ),
         (
@@ -28,25 +28,20 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
                 "awards": [{"status": "pending", "id": 0}, {"status": "pending", "id": 1}],
                 "contracts": [{"awardID": 2}, {"awardID": 3}],
             },
-            {
-                "processed_awards": [
-                    {"path": "awards[0]", "id": 0, "result": True},
-                    {"path": "awards[1]", "id": 1, "result": True},
-                ]
-            },
+            None,
             2,
         ),
     ]
     failing = [
         (
             {"awards": [{"status": "pending", "id": 0}], "contracts": [{"awardID": 0}]},
-            {"processed_awards": [{"path": "awards[0]", "id": 0, "result": False}]},
+            {"failed_paths": [{"path": "awards[0]", "id": 0}]},
             1,
             0,
         ),
         (
             {"awards": [{"status": "pending", "id": None}], "contracts": [{"awardID": None}]},
-            {"processed_awards": [{"path": "awards[0]", "id": None, "result": False}]},
+            {"failed_paths": [{"path": "awards[0]", "id": None}]},
             1,
             0,
         ),
@@ -55,12 +50,7 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
                 "awards": [{"status": "pending", "id": 0}, {"status": "pending", "id": 1}],
                 "contracts": [{"awardID": 1}, {"awardID": 2}],
             },
-            {
-                "processed_awards": [
-                    {"path": "awards[0]", "id": 0, "result": True},
-                    {"path": "awards[1]", "id": 1, "result": False},
-                ]
-            },
+            {"failed_paths": [{"path": "awards[1]", "id": 1}]},
             2,
             1,
         ),
