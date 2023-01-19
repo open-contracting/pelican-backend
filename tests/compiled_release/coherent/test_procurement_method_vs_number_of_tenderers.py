@@ -11,21 +11,21 @@ def test_undefined():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "procurementMethod or numberOfTenderers is not set"}
+    assert empty_result["meta"] == {"reason": "procurementMethod is not direct"}
 
     empty_result = calculate(item_unset_procurement_method)
     assert type(empty_result) == dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "procurementMethod or numberOfTenderers is not set"}
+    assert empty_result["meta"] == {"reason": "procurementMethod is not direct"}
 
     empty_result = calculate(item_unset_number_of_tenderers)
     assert type(empty_result) == dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "procurementMethod or numberOfTenderers is not set"}
+    assert empty_result["meta"] == {"reason": "numberOfTenderers is not numeric"}
 
     empty_result = calculate(item_non_direct)
     assert type(empty_result) == dict

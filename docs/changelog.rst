@@ -9,6 +9,10 @@ This changelog only notes major changes, to notify other developers.
 -  feat: ``coherent.dates`` checks ``contracts.implementation.transactions.date <= date``.
 -  feat: Add ``EXTRACTOR_PAGE_SIZE`` setting.
 -  fix: ``consistent.tender_value`` now skips if the ``value`` is non-numeric. :issue:`62`
+-  fix: Cast values as numbers where appropriate. :issue:`75`
+
+   -  ``coherent.procurement_method_vs_number_of_tenderers``: ``tender.numberOfTenderers``
+
 -  fix: Use type casting for reference lookups in non-reference checks, to not shadow non-reference issues. :issue:`50`
 -  fix: Do not skip a check if a value is blank – only if it is not set.
 -  fix: ``application_count`` and ``pass_count`` are ``None`` if not positive.

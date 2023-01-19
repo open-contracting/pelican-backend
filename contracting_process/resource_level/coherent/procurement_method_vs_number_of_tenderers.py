@@ -3,7 +3,7 @@ If the ``tender.procurementMethod`` is 'direct', then the ``tender.numberOfTende
 """
 
 from tools.checks import complete_result_resource_pass_fail, get_empty_result_resource
-from tools.getter import get_values
+from tools.getter import deep_get
 
 version = 1.0
 
@@ -11,18 +11,16 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    procurement_method_values = get_values(item, "tender.procurementMethod", value_only=True)
-    number_of_tenderers_values = get_values(item, "tender.numberOfTenderers", value_only=True)
-
-    if not procurement_method_values or not number_of_tenderers_values:
-        result["meta"] = {"reason": "procurementMethod or numberOfTenderers is not set"}
-        return result
-
-    procurement_method = procurement_method_values[0]
-    number_of_tenderers = number_of_tenderers_values[0]
+    procurement_method = deep_get(item, "tender.procurementMethod")
 
     if procurement_method != "direct":
         result["meta"] = {"reason": "procurementMethod is not direct"}
+        return result
+
+    number_of_tenderers = deep_get(item, "tender.numberOfTenderers", float)
+
+    if number_of_tenderers is None:
+        result["meta"] = {"reason": "numberOfTenderers is not numeric"}
         return result
 
     return complete_result_resource_pass_fail(
