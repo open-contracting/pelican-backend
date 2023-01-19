@@ -4,7 +4,7 @@ from typing import Any, List, Optional, Type
 
 from dateutil.parser import isoparse
 
-regex = r"^([^[]*)\[([\d]*)\]$"
+regex = re.compile(r"^([^[]*)\[([\d]*)\]$")
 
 
 # https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
@@ -131,7 +131,7 @@ def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> 
     # indexing used
     field = None
     index = None
-    groups = re.findall(regex, str_path)
+    groups = regex.findall(str_path)
     if len(groups) == 1:
         try:
             field = groups[0][0]
@@ -205,7 +205,7 @@ def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> 
     # indexing used
     field = None
     index = None
-    groups = re.findall(regex, key)
+    groups = regex.findall(key)
     if len(groups) == 1:
         try:
             field = groups[0][0]
