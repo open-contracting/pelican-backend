@@ -80,10 +80,10 @@ def callback(client_state, channel, method, properties, input_message):
         cursor.execute(
             """\
             INSERT INTO dataset (name, meta, ancestor_id)
-            SELECT name, meta, NULL FROM dataset WHERE id = %(ancestor_id)s
+            SELECT name, meta, NULL FROM dataset WHERE id = %(dataset_id)s
             RETURNING id
             """,
-            {"ancestor_id": dataset_id_original},
+            {"dataset_id": dataset_id_original},
         )
         dataset_id_filtered = cursor.fetchone()[0]
         commit()
