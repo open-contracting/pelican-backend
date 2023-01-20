@@ -3,11 +3,12 @@ Changelog
 
 This changelog only notes major changes, to notify other developers.
 
-2023-01-19
+2023-01-20
 ----------
 
 -  feat: ``coherent.dates`` checks ``contracts.implementation.transactions.date <= date``.
 -  feat: Add ``EXTRACTOR_PAGE_SIZE`` setting.
+-  feat: Remove contract value histogram and release date timeline from dataset-level reporting.
 -  fix: ``consistent.tender_value`` now skips if the ``value`` is non-numeric. :issue:`62`
 -  fix: ``reference.contract_in_awards`` now fails if ``awards`` is not set (was skipping). :issue:`9`
 -  fix: Cast values as numbers where appropriate. :issue:`75`
