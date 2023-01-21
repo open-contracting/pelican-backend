@@ -33,43 +33,12 @@ def create(dataset_id):
         report[path] = {
             "examples_filled": False,
             "processing_order": order,
-            "coverage": {
-                "checks": {},
-                "passed_count": 0,
-                "failed_count": 0,
-                "total_count": 0,
-                "passed_examples": None,
-                "failed_examples": None,
-            },
-            "quality": {
-                "checks": {},
-                "passed_count": 0,
-                "failed_count": 0,
-                "total_count": 0,
-                "passed_examples": None,
-                "failed_examples": None,
-            },
         }
+        examples[path] = {}
 
-        examples[path] = {
-            "coverage": {
+        for key, checks in (("coverage", coverage_checks), ("quality", quality_checks)):
+            report[path][key] = {
                 "checks": {},
-                "passed_examples": [],
-                "failed_examples": [],
-                "passed_sampler": ReservoirSampler(examples_cap),
-                "failed_sampler": ReservoirSampler(examples_cap),
-            },
-            "quality": {
-                "checks": {},
-                "passed_examples": [],
-                "failed_examples": [],
-                "passed_sampler": ReservoirSampler(examples_cap),
-                "failed_sampler": ReservoirSampler(examples_cap),
-            },
-        }
-
-        for _, check_name in coverage_checks:
-            report[path]["coverage"]["checks"][check_name] = {
                 "passed_count": 0,
                 "failed_count": 0,
                 "total_count": 0,
@@ -77,30 +46,30 @@ def create(dataset_id):
                 "failed_examples": None,
             }
 
-            examples[path]["coverage"]["checks"][check_name] = {
+            examples[path][key] = {
+                "checks": {},
                 "passed_examples": [],
                 "failed_examples": [],
                 "passed_sampler": ReservoirSampler(examples_cap),
                 "failed_sampler": ReservoirSampler(examples_cap),
             }
 
-        for _, check_name in quality_checks:
-            report[path]["quality"]["checks"][check_name] = {
-                "passed_count": 0,
-                "failed_count": 0,
-                "total_count": 0,
-                "passed_examples": None,
-                "failed_examples": None,
-            }
+            for _, check_name in checks:
+                report[path][key]["checks"][check_name] = {
+                    "passed_count": 0,
+                    "failed_count": 0,
+                    "total_count": 0,
+                    "passed_examples": None,
+                    "failed_examples": None,
+                }
 
-            examples[path]["quality"]["checks"][check_name] = {
-                "passed_examples": [],
-                "failed_examples": [],
-                "passed_sampler": ReservoirSampler(examples_cap),
-                "failed_sampler": ReservoirSampler(examples_cap),
-            }
+                examples[path][key]["checks"][check_name] = {
+                    "passed_examples": [],
+                    "failed_examples": [],
+                    "passed_sampler": ReservoirSampler(examples_cap),
+                    "failed_sampler": ReservoirSampler(examples_cap),
+                }
 
-    # processing field level checks
     logger.info("Starting processing pages.")
 
     processed_count = page_size
@@ -134,54 +103,26 @@ def create(dataset_id):
                 for path_check in path_checks:
                     exact_path = path_check["path"]
 
-                    # coverage
-                    if path_check["coverage"]["overall_result"]:
-                        report[path]["coverage"]["passed_count"] += 1
-                    else:
-                        report[path]["coverage"]["failed_count"] += 1
-
-                    report[path]["coverage"]["total_count"] += 1
-
-                    for check in path_check["coverage"]["check_results"]:
-                        example = {"meta": meta, "path": exact_path, "result": check}
-
-                        if check["result"]:
-                            report[path]["coverage"]["checks"][check["name"]]["passed_count"] += 1
-                            examples[path]["coverage"]["checks"][check["name"]]["passed_sampler"].process(example)
-                            examples[path]["coverage"]["passed_sampler"].process(example)
-
+                    for key in ("coverage", "quality"):
+                        if path_check[key]["overall_result"]:
+                            report[path][key]["passed_count"] += 1
                         else:
-                            report[path]["coverage"]["checks"][check["name"]]["failed_count"] += 1
-                            examples[path]["coverage"]["checks"][check["name"]]["failed_sampler"].process(example)
-                            examples[path]["coverage"]["failed_sampler"].process(example)
+                            report[path][key]["failed_count"] += 1
 
-                        report[path]["coverage"]["checks"][check["name"]]["total_count"] += 1
+                        report[path][key]["total_count"] += 1
 
-                    if not path_check["coverage"]["overall_result"] or not path_check["quality"]["check_results"]:
-                        continue
+                        for check in path_check[key]["check_results"]:
+                            example = {"meta": meta, "path": exact_path, "result": check}
 
-                    # quality
-                    if path_check["quality"]["overall_result"]:
-                        report[path]["quality"]["passed_count"] += 1
-                    else:
-                        report[path]["quality"]["failed_count"] += 1
+                            prefix = "passed" if check["result"] else "failed"
+                            report[path][key]["checks"][check["name"]][f"{prefix}_count"] += 1
+                            examples[path][key]["checks"][check["name"]][f"{prefix}_sampler"].process(example)
+                            examples[path][key][f"{prefix}_sampler"].process(example)
 
-                    report[path]["quality"]["total_count"] += 1
+                            report[path][key]["checks"][check["name"]]["total_count"] += 1
 
-                    for check in path_check["quality"]["check_results"]:
-                        example = {"meta": meta, "path": exact_path, "result": check}
-
-                        if check["result"]:
-                            report[path]["quality"]["checks"][check["name"]]["passed_count"] += 1
-                            examples[path]["quality"]["checks"][check["name"]]["passed_sampler"].process(example)
-                            examples[path]["quality"]["passed_sampler"].process(example)
-
-                        else:
-                            report[path]["quality"]["checks"][check["name"]]["failed_count"] += 1
-                            examples[path]["quality"]["checks"][check["name"]]["failed_sampler"].process(example)
-                            examples[path]["quality"]["failed_sampler"].process(example)
-
-                        report[path]["quality"]["checks"][check["name"]]["total_count"] += 1
+                        if not path_check["coverage"]["overall_result"] or not path_check["quality"]["check_results"]:
+                            break
 
             processed_count += 1
             id = row["id"]
@@ -199,29 +140,19 @@ def create(dataset_id):
 
     logger.info("Storing examples for field level checks for dataset_id %s", dataset_id)
     for path, path_checks in examples.items():
-        path_checks["coverage"]["passed_examples"] = path_checks["coverage"]["passed_sampler"].retrieve_samples()
-        path_checks["coverage"]["failed_examples"] = path_checks["coverage"]["failed_sampler"].retrieve_samples()
-        path_checks["quality"]["passed_examples"] = path_checks["quality"]["passed_sampler"].retrieve_samples()
-        path_checks["quality"]["failed_examples"] = path_checks["quality"]["failed_sampler"].retrieve_samples()
+        for key in ("coverage", "quality"):
+            path_checks[key]["passed_examples"] = path_checks[key]["passed_sampler"].retrieve_samples()
+            path_checks[key]["failed_examples"] = path_checks[key]["failed_sampler"].retrieve_samples()
 
-        del path_checks["coverage"]["passed_sampler"]
-        del path_checks["coverage"]["failed_sampler"]
-        del path_checks["quality"]["passed_sampler"]
-        del path_checks["quality"]["failed_sampler"]
+            del path_checks[key]["passed_sampler"]
+            del path_checks[key]["failed_sampler"]
 
-        for check_name, check in path_checks["coverage"]["checks"].items():
-            check["passed_examples"] = check["passed_sampler"].retrieve_samples()
-            check["failed_examples"] = check["failed_sampler"].retrieve_samples()
+            for check_name, check in path_checks[key]["checks"].items():
+                check["passed_examples"] = check["passed_sampler"].retrieve_samples()
+                check["failed_examples"] = check["failed_sampler"].retrieve_samples()
 
-            del check["passed_sampler"]
-            del check["failed_sampler"]
-
-        for check_name, check in path_checks["quality"]["checks"].items():
-            check["passed_examples"] = check["passed_sampler"].retrieve_samples()
-            check["failed_examples"] = check["failed_sampler"].retrieve_samples()
-
-            del check["passed_sampler"]
-            del check["failed_sampler"]
+                del check["passed_sampler"]
+                del check["failed_sampler"]
 
         cursor.execute(
             """\
