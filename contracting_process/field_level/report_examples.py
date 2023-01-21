@@ -42,8 +42,6 @@ def create(dataset_id):
                 "passed_count": 0,
                 "failed_count": 0,
                 "total_count": 0,
-                "passed_examples": None,
-                "failed_examples": None,
             }
 
             examples[path][key] = {
@@ -59,8 +57,6 @@ def create(dataset_id):
                     "passed_count": 0,
                     "failed_count": 0,
                     "total_count": 0,
-                    "passed_examples": None,
-                    "failed_examples": None,
                 }
 
                 examples[path][key]["checks"][check_name] = {
