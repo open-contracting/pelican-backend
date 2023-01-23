@@ -48,7 +48,6 @@ def get_kingfisher_meta_data(collection_id):
         "kingfisher_metadata": {"collection_id": None, "processing_start": None, "processing_end": None},
         "collection_metadata": {
             "publisher": None,
-            "url": None,
             "ocid_prefix": None,
             "data_license": None,
             "publication_policy": None,
@@ -125,30 +124,22 @@ def get_kingfisher_meta_data(collection_id):
     # collection metadata #
     #######################
 
-    # publisher
     values = get_values(package_data, "data.publisher.name", value_only=True)
     if values:
         meta_data["collection_metadata"]["publisher"] = values[0]
 
-    # url
-    meta_data["collection_metadata"]["url"] = "The URL where the data can be downloaded isn't presently available."
-
-    # ocid prefix
     values = get_values(result, "ocid", value_only=True)
     if values and type(values[0]) == str:
         meta_data["collection_metadata"]["ocid_prefix"] = values[0][:11]
 
-    # data license
     values = get_values(package_data, "data.license", value_only=True)
     if values:
         meta_data["collection_metadata"]["data_license"] = values[0]
 
-    # publication policy
     values = get_values(package_data, "data.publicationPolicy", value_only=True)
     if values:
         meta_data["collection_metadata"]["publication_policy"] = values[0]
 
-    # extensions
     repository_urls = get_values(package_data, "data.extensions", value_only=True)
     for repository_url in repository_urls:
         try:
@@ -159,11 +150,9 @@ def get_kingfisher_meta_data(collection_id):
             extension = response.json()
             extension["repositoryUrl"] = repository_url
             meta_data["collection_metadata"]["extensions"].append(extension)
-
         except requests.RequestException:
             pass
 
-    # published from, published to
     kf_cursor.execute(
         """\
         SELECT MIN(data.data->>'date'), MAX(data.data->>'date')
