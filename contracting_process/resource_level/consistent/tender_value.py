@@ -1,6 +1,17 @@
+"""
+``planning.budget.amount`` isn't less than 50%, or more than 150%, of ``tender.value``, after conversion to USD if
+necessary.
+
+The test is skipped if an amount is missing, zero or non-numeric, if a currency is missing or unknown, if the two
+amounts aren't both positive or both negative, or if currency conversion is necessary and the release date is invalid,
+before 1999, or in the future.
+"""
+
+import datetime
+
 from pelican.util.checks import complete_result_resource_pass_fail, get_empty_result_resource
 from pelican.util.currency_converter import convert
-from pelican.util.getter import deep_get, get_values, parse_date
+from pelican.util.getter import deep_get
 
 version = 1.0
 
@@ -8,82 +19,37 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    tender_value = get_values(item, "tender.value", value_only=True)
-    planning_budget_amount = get_values(item, "planning.budget.amount", value_only=True)
-
-    # path not found
-    if not tender_value or not planning_budget_amount:
-        result["meta"] = {"reason": "values are not set"}
+    planning_currency = deep_get(item, "planning.budget.amount.currency")
+    tender_currency = deep_get(item, "tender.value.currency")
+    if planning_currency is None or tender_currency is None:
+        result["meta"] = {"reason": "a currency is missing"}
         return result
 
-    tender_value = tender_value[0]
-    planning_budget_amount = planning_budget_amount[0]
-
-    # missing amount or currency fields
-    if (
-        "amount" not in tender_value
-        or "currency" not in tender_value
-        or "amount" not in planning_budget_amount
-        or "currency" not in planning_budget_amount
-    ):
-
-        result["meta"] = {"reason": "amount or currency is not set"}
+    planning_amount = deep_get(item, "planning.budget.amount.amount", float)
+    tender_amount = deep_get(item, "tender.value.amount", float)
+    if planning_amount is None or tender_amount is None:
+        result["meta"] = {"reason": "an amount is missing or non-numeric"}
         return result
 
-    tender_value_amount = deep_get(tender_value, "amount", float)
-    planning_budget_amount_amount = deep_get(planning_budget_amount, "amount", float)
+    date = deep_get(item, "date", datetime.date)
 
-    # None fields
-    if (
-        tender_value_amount is None
-        or tender_value["currency"] is None
-        or planning_budget_amount_amount is None
-        or planning_budget_amount["currency"] is None
-    ):
+    if planning_currency != tender_currency:
+        planning_amount = convert(planning_amount, planning_currency, "USD", date)
+        tender_amount = convert(tender_amount, tender_currency, "USD", date)
 
-        result["meta"] = {"reason": "amount is non-numeric or currency is null"}
+    if planning_amount in (0, None) or tender_amount in (0, None):
+        result["meta"] = {"reason": "an amount is zero or unconvertable"}
         return result
 
-    # currency conversion if necessary
-    if tender_value["currency"] != planning_budget_amount["currency"]:
-        ref_date = parse_date(get_values(item, "date", value_only=True)[0])
-        tender_value_amount = convert(tender_value_amount, tender_value["currency"], "USD", ref_date)
-        planning_budget_amount_amount = convert(
-            planning_budget_amount_amount, planning_budget_amount["currency"], "USD", ref_date
-        )
-
-    # non-convertible values
-    if tender_value_amount is None or planning_budget_amount_amount is None:
-        result["meta"] = {
-            "reason": "values are not convertible",
-            "tender.value": tender_value,
-            "planning.budget.amount": planning_budget_amount,
-        }
+    if (tender_amount > 0 and planning_amount < 0) or (tender_amount < 0 and planning_amount > 0):
+        result["meta"] = {"reason": "the amounts have different signs"}
         return result
 
-    # amount is equal to zero
-    if tender_value_amount == 0 or planning_budget_amount_amount == 0:
-        result["meta"] = {
-            "reason": "amount is equal to zero",
-            "tender.value": tender_value,
-            "planning.budget.amount": planning_budget_amount,
-        }
-        return result
-
-    # different signs
-    if (tender_value_amount > 0 and planning_budget_amount_amount < 0) or (
-        tender_value_amount < 0 and planning_budget_amount_amount > 0
-    ):
-
-        result["meta"] = {
-            "reason": "amounts have different signs",
-            "tender.value": tender_value,
-            "planning.budget.amount": planning_budget_amount,
-        }
-        return result
-
-    ratio = abs(tender_value_amount - planning_budget_amount_amount) / abs(tender_value_amount)
-
-    result["meta"] = {"tender.value": tender_value, "planning.budget.amount": planning_budget_amount}
-
-    return complete_result_resource_pass_fail(result, ratio <= 0.5)
+    return complete_result_resource_pass_fail(
+        result,
+        abs(tender_amount - planning_amount) / abs(tender_amount) <= 0.5,
+        {
+            "tender.value": item["tender"]["value"],
+            "planning.budget.amount": item["planning"]["budget"]["amount"],
+        },
+    )

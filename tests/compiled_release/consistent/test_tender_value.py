@@ -19,19 +19,19 @@ def test_undefined():
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
-    assert empty_result["meta"] == {"reason": "values are not set"}
+    assert empty_result["meta"] == {"reason": "a currency is missing"}
 
     result = calculate(item_test_undefined2)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "amount or currency is not set"}
+    assert result["meta"] == {"reason": "a currency is missing"}
 
     result = calculate(item_test_undefined3)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "amount is non-numeric or currency is null"}
+    assert result["meta"] == {"reason": "a currency is missing"}
 
 
 item_no_rate = {
@@ -46,11 +46,7 @@ def test_no_rate():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {
-        "reason": "values are not convertible",
-        "tender.value": item_no_rate["tender"]["value"],
-        "planning.budget.amount": item_no_rate["planning"]["budget"]["amount"],
-    }
+    assert result["meta"] == {"reason": "an amount is zero or unconvertable"}
 
 
 item_test_currency_conversion = {
@@ -80,11 +76,7 @@ def test_zero_amount():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {
-        "reason": "amount is equal to zero",
-        "tender.value": item_test_zero_amount["tender"]["value"],
-        "planning.budget.amount": item_test_zero_amount["planning"]["budget"]["amount"],
-    }
+    assert result["meta"] == {"reason": "an amount is zero or unconvertable"}
 
 
 item_test_different_signs = {
@@ -98,11 +90,7 @@ def test_different_signs():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {
-        "reason": "amounts have different signs",
-        "tender.value": item_test_different_signs["tender"]["value"],
-        "planning.budget.amount": item_test_different_signs["planning"]["budget"]["amount"],
-    }
+    assert result["meta"] == {"reason": "the amounts have different signs"}
 
 
 item_test_passed1 = {
@@ -121,19 +109,13 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "tender.value": item_test_passed1["tender"]["value"],
-        "planning.budget.amount": item_test_passed1["planning"]["budget"]["amount"],
-    }
+    assert result["meta"] is None
 
     result = calculate(item_test_passed2)
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "tender.value": item_test_passed2["tender"]["value"],
-        "planning.budget.amount": item_test_passed2["planning"]["budget"]["amount"],
-    }
+    assert result["meta"] is None
 
 
 item_test_failed1 = {
