@@ -4,7 +4,7 @@ from pelican.util.currency_converter import bootstrap
 bootstrap()
 
 
-item_no_contracts = {"date": "2019-01-10T22:00:00+01:00", "contracts": []}
+item_no_contracts = {"date": "2019-01-10T22:00:00+01:00", "contracts": [], "awards": [{"id": 0}]}
 item_no_awards = {"date": "2019-01-10T22:00:00+01:00", "contracts": [{"awardID": 0}], "awards": []}
 item_same_id = {
     "date": "2019-01-10T22:00:00+01:00",
@@ -28,13 +28,13 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "there are no contracts"}
+    assert result["meta"] == {"reason": "no contract is set"}
 
     result = calculate(item_no_awards)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "there are no awards"}
+    assert result["meta"] == {"reason": "no award is set"}
 
     result = calculate(item_no_rate)
     assert result["result"] is None

@@ -1,128 +1,121 @@
+"""
+For each award, the sum of its contracts' values isn't less than 50%, or more than 150%, of the award's value, after
+conversion to USD if necessary.
+
+Since the test operates on all award and contract values, the test silently ignores:
+
+1. any contract whose ``awardID`` doesn't match the ``id`` of exactly one award
+2. if an amount is missing, zero or non-numeric
+3. if a currency is missing or unknown
+4. if the two amounts aren't both positive or both negative
+5. if currency conversion is necessary and the release date is invalid, before 1999, or in the future
+"""
+
+import datetime
+from collections import Counter, defaultdict
+
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
 from pelican.util.currency_converter import convert
-from pelican.util.getter import parse_datetime
+from pelican.util.getter import deep_get, deep_has
 
 version = 1.0
+
+
+def _get_amount(item, no_conversion, amount, currency, date):
+    if no_conversion:
+        return amount
+    elif date is not None:
+        return convert(amount, currency, "USD", date)
 
 
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    contracts = item["contracts"] if "contracts" in item else None
-    if not contracts:
-        result["meta"] = {"reason": "there are no contracts"}
+    date = deep_get(item, "date", datetime.datetime)
+
+    awards = deep_get(item, "awards")
+    if not awards:
+        result["meta"] = {"reason": "no award is set"}
         return result
 
-    awards = item["awards"] if "awards" in item else None
-    if not awards:
-        result["meta"] = {"reason": "there are no awards"}
+    contracts = deep_get(item, "contracts")
+    if not contracts:
+        result["meta"] = {"reason": "no contract is set"}
         return result
+
+    # (1) No matching possible.
+    awards = [award for award in awards if deep_has(award, "id")]
+    contracts = [contract for contract in contracts if deep_has(contract, "awardID")]
+
+    award_id_counts = Counter(str(award["id"]) for award in awards)
+
+    contracts_lookup = defaultdict(list)
+    for contract in contracts:
+        contracts_lookup[str(contract["awardID"])].append(contract)
 
     application_count = 0
     pass_count = 0
-    non_applicable_award_ids = set()
-    for contract in contracts:
-        matching_awards = [
-            a for a in awards if "awardID" in contract and "id" in a and str(contract["awardID"]) == str(a["id"])
-        ]
-
-        # matching award can be only one
-        if len(matching_awards) != 1:
-            non_applicable_award_ids.update([str(a["id"]) for a in matching_awards])
-            continue
-
-        matching_award = matching_awards[0]
-
-        # checking whether amount or currency fields are set
-        if (
-            "value" not in contract
-            or "value" not in matching_award
-            or "currency" not in contract["value"]
-            or "amount" not in contract["value"]
-            or "currency" not in matching_award["value"]
-            or "amount" not in matching_award["value"]
-            or contract["value"]["currency"] is None
-            or contract["value"]["amount"] is None
-            or matching_award["value"]["currency"] is None
-            or matching_award["value"]["amount"] is None
-        ):
-            non_applicable_award_ids.add(str(matching_award["id"]))
-            continue
-
-        # converting values if necessary
-        contract_value_amount = None
-        award_value_amount = None
-        if contract["value"]["currency"] == matching_award["value"]["currency"]:
-            contract_value_amount = contract["value"]["amount"]
-            award_value_amount = matching_award["value"]["amount"]
-        else:
-            contract_value_amount = convert(
-                contract["value"]["amount"], contract["value"]["currency"], "USD", parse_datetime(item["date"])
-            )
-            award_value_amount = convert(
-                matching_award["value"]["amount"],
-                matching_award["value"]["currency"],
-                "USD",
-                parse_datetime(item["date"]),
-            )
-
-        # checking for non-convertible values
-        if contract_value_amount is None or award_value_amount is None:
-            non_applicable_award_ids.add(str(matching_award["id"]))
-            continue
-
-        # amount is equal to zero
-        if contract_value_amount == 0 or award_value_amount == 0:
-            non_applicable_award_ids.add(str(matching_award["id"]))
-            continue
-
-        # different signs
-        if (contract_value_amount > 0 and award_value_amount < 0) or (
-            contract_value_amount < 0 and award_value_amount > 0
-        ):
-            non_applicable_award_ids.add(str(matching_award["id"]))
-            continue
-
     for award in awards:
-        if "id" not in award or str(award["id"]) in non_applicable_award_ids:
+        award_id = str(award["id"])
+        # (1) No matching award (singular).
+        if award_id_counts[award_id] != 1:
             continue
 
-        matching_contracts = [
-            c for c in contracts if "awardID" in c and "id" in award and str(c["awardID"]) == str(award["id"])
-        ]
-
-        # no matching contracts
-        if not matching_contracts:
+        matches = contracts_lookup[award_id]
+        # (1) No matching contracts.
+        if not matches:
             continue
 
-        award_value_amount = None
-        contracts_value_amount_sum = None
-        if all([award["value"]["currency"] == c["value"]["currency"] for c in matching_contracts]):
-            award_value_amount = award["value"]["amount"]
-            contracts_value_amount_sum = sum([c["value"]["amount"] for c in matching_contracts])
+        currency = deep_get(award, "value.currency")
+
+        currencies = {currency} | {deep_get(contract, "value.currency") for contract in matches}
+        no_conversion = len(currencies) == 1
+        # (3) Currency is missing.
+        if None in currencies:
+            continue
+
+        unconverted_amount = deep_get(award, "value.amount", float)
+        # (2) Amount is missing or non-numeric.
+        if unconverted_amount is None:
+            continue
+
+        award_amount = _get_amount(award, no_conversion, unconverted_amount, currency, date)
+        # (2,5) Amount is zero or unconvertable.
+        if award_amount is None or award_amount == 0:
+            continue
+
+        contracts_amount_sum = 0
+        for contract in matches:
+            currency = deep_get(contract, "value.currency")
+
+            unconverted_amount = deep_get(contract, "value.amount", float)
+            # (2) Amount is missing or non-numeric.
+            if unconverted_amount is None:
+                break
+
+            contract_amount = _get_amount(contract, no_conversion, unconverted_amount, currency, date)
+            # (2,5) Amount is zero or unconvertable.
+            if contract_amount is None or contract_amount == 0:
+                break
+
+            # (4) Different signs.
+            if (contract_amount > 0 and award_amount < 0) or (contract_amount < 0 and award_amount > 0):
+                break
+
+            contracts_amount_sum += contract_amount
         else:
-            award_value_amount = convert(
-                award["value"]["amount"], award["value"]["currency"], "USD", parse_datetime(item["date"])
+            ratio = abs(award_amount - contracts_amount_sum) / abs(award_amount)
+            passed = ratio <= 0.5
+
+            application_count += 1
+            if passed:
+                pass_count += 1
+
+            if result["meta"] is None:
+                result["meta"] = {"awards": []}
+
+            result["meta"]["awards"].append(
+                {"awardID": award["id"], "awards.value": award["value"], "contracts.value_sum": contracts_amount_sum}
             )
-            contracts_value_amount_sum = sum(
-                [
-                    convert(c["value"]["amount"], c["value"]["currency"], "USD", parse_datetime(item["date"]))
-                    for c in matching_contracts
-                ]
-            )
-
-        ratio = abs(award_value_amount - contracts_value_amount_sum) / abs(award_value_amount)
-        passed = ratio <= 0.5
-
-        application_count += 1
-        if passed:
-            pass_count += 1
-
-        if result["meta"] is None:
-            result["meta"] = {"awards": []}
-
-        result["meta"]["awards"].append(
-            {"awardID": award["id"], "awards.value": award["value"], "contracts.value_sum": contracts_value_amount_sum}
-        )
 
     return complete_result_resource(result, application_count, pass_count, reason="insufficient data for check")
