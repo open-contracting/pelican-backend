@@ -4,7 +4,16 @@ from typing import Any, List, Optional, Type
 
 from dateutil.parser import isoparse
 
+from pelican.util.currency_converter import convert
+
 regex = re.compile(r"^([^[]*)\[([\d]*)\]$")
+
+
+def get_amount(no_conversion, amount, currency, date):
+    if no_conversion:
+        return amount
+    elif date is not None:
+        return convert(amount, currency, "USD", date)
 
 
 # https://datatracker.ietf.org/doc/html/rfc3339#section-5.6

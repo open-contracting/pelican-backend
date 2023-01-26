@@ -28,31 +28,37 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "no contract is set"}
+    assert result["meta"] == {"reason": "no contract has an awardID"}
 
     result = calculate(item_no_awards)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "no award is set"}
+    assert result["meta"] == {"reason": "no award has an id"}
 
     result = calculate(item_no_rate)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {
+        "reason": "no award-contracts pairs have numeric, non-zero, same-sign, convertable amounts"
+    }
 
     result = calculate(item_same_id)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {
+        "reason": "no award-contracts pairs have numeric, non-zero, same-sign, convertable amounts"
+    }
 
     result = calculate(item_missing_fields)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {
+        "reason": "no award-contracts pairs have numeric, non-zero, same-sign, convertable amounts"
+    }
 
 
 item_test_passed1 = {
@@ -88,17 +94,13 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "awards": [{"awardID": "str", "awards.value": {"amount": 100, "currency": "USD"}, "contracts.value_sum": 125}]
-    }
+    assert result["meta"] is None
 
     result = calculate(item_test_passed2)
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "awards": [{"awardID": "str1", "awards.value": {"amount": 100, "currency": "USD"}, "contracts.value_sum": 125}]
-    }
+    assert result["meta"] is None
 
 
 item_test_failed = {
@@ -116,8 +118,13 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "awards": [
-            {"awardID": "str", "awards.value": {"amount": -100, "currency": "USD"}, "contracts.value_sum": -151}
+        "failed_paths": [
+            {
+                "awardID": "str",
+                "award_amount": {"amount": -100, "currency": "USD"},
+                "contracts_amount_sum": -151,
+                "currency": "USD",
+            }
         ]
     }
 
@@ -140,12 +147,7 @@ def test_passed_multiple_awards():
     assert result["result"] is True
     assert result["application_count"] == 2
     assert result["pass_count"] == 2
-    assert result["meta"] == {
-        "awards": [
-            {"awardID": 0, "awards.value": {"amount": 100, "currency": "USD"}, "contracts.value_sum": 125},
-            {"awardID": 1, "awards.value": {"amount": 10, "currency": "USD"}, "contracts.value_sum": 10},
-        ]
-    }
+    assert result["meta"] is None
 
 
 item_test_failed_multiple_awards = {
@@ -167,8 +169,12 @@ def test_failed_multiple_awards():
     assert result["application_count"] == 2
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        "awards": [
-            {"awardID": 0, "awards.value": {"amount": 100, "currency": "USD"}, "contracts.value_sum": 125},
-            {"awardID": 1, "awards.value": {"amount": 20, "currency": "USD"}, "contracts.value_sum": 1},
+        "failed_paths": [
+            {
+                "awardID": 1,
+                "award_amount": {"amount": 20, "currency": "USD"},
+                "contracts_amount_sum": 1,
+                "currency": "USD",
+            }
         ]
     }

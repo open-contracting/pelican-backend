@@ -18,19 +18,19 @@ def test_undefined():
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no contract is set"}
 
     result = calculate(item_empty)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no numeric, convertable amounts"}
 
     result = calculate(item_same_id)
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
-    assert result["meta"] == {"reason": "insufficient data for check"}
+    assert result["meta"] == {"reason": "no numeric, convertable amounts"}
 
 
 item_test_passed1 = {
@@ -75,20 +75,13 @@ def test_passed():
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"] == {
-        "contracts": [
-            {"path": "contracts[0]", "contract_amount": 300, "transactions_amount_sum": 300, "currency": "CZK"}
-        ]
-    }
+    assert result["meta"] is None
 
     result = calculate(item_test_passed2)
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
-    assert result["meta"]["contracts"][0]["path"] == "contracts[0]"
-    assert result["meta"]["contracts"][0]["contract_amount"] > 0
-    assert result["meta"]["contracts"][0]["transactions_amount_sum"] > 0
-    assert result["meta"]["contracts"][0]["currency"] == "USD"
+    assert result["meta"] is None
 
 
 item_test_failed = {
@@ -121,8 +114,7 @@ def test_failed():
     assert result["application_count"] == 2
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        "contracts": [
-            {"path": "contracts[0]", "contract_amount": 300, "transactions_amount_sum": 300, "currency": "CZK"},
+        "failed_paths": [
             {"path": "contracts[1]", "contract_amount": 300, "transactions_amount_sum": 301, "currency": "CZK"},
         ]
     }

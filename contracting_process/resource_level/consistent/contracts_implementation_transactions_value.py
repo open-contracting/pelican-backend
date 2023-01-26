@@ -1,6 +1,16 @@
+"""
+For each contract, the sum of its transaction's values is less than or equal to the contract's value, after conversion
+to USD if necessary.
+
+Since the test operates on all contract and transaction objects, the test silently ignores any missing or non-numeric
+amounts and any missing or unknown currencies. If currency conversion is necessary, but the release date is invalid,
+before 1999, or in the future, the test silently ignores the contract and its transactions.
+"""
+
+import datetime
+
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
-from pelican.util.currency_converter import convert
-from pelican.util.getter import get_values, parse_datetime
+from pelican.util.getter import deep_get, get_amount, get_values
 
 version = 1.0
 
@@ -9,88 +19,69 @@ def calculate(item):
     result = get_empty_result_resource(version)
 
     contracts = get_values(item, "contracts")
+    if not contracts:
+        result["meta"] = {"reason": "no contract is set"}
+        return result
+
+    date = deep_get(item, "date", datetime.datetime)
 
     application_count = 0
     pass_count = 0
-    result["meta"] = {"contracts": []}
+    failed_paths = []
     for contract in contracts:
         transactions = get_values(contract["value"], "implementation.transactions", value_only=True)
         if not transactions:
             continue
 
-        # checking whether all check-specific fields are set
-        if (
-            "value" not in contract["value"]
-            or "currency" not in contract["value"]["value"]
-            or "amount" not in contract["value"]["value"]
-            or contract["value"]["value"]["amount"] is None
-            or contract["value"]["value"]["currency"] is None
-            or any(
-                [
-                    "value" not in transaction
-                    or "currency" not in transaction["value"]
-                    or "amount" not in transaction["value"]
-                    or transaction["value"]["amount"] is None
-                    or transaction["value"]["currency"] is None
-                    for transaction in transactions
-                ]
-            )
-        ):
+        currency = deep_get(contract["value"], "value.currency")
+
+        currencies = {currency} | {deep_get(transaction, "value.currency") for transaction in transactions}
+        no_conversion = len(currencies) == 1
+        # Currency is missing.
+        if None in currencies:
             continue
 
-        # checking whether all values have the same currency set, otherwise going for conversion
-        conversion_failed = False
-        currency_used = None
-        contract_amount = 0
+        unconverted_amount = deep_get(contract["value"], "value.amount", float)
+        # Amount is missing or non-numeric.
+        if unconverted_amount is None:
+            continue
+
+        contract_amount = get_amount(no_conversion, unconverted_amount, currency, date)
+        # Amount is unconvertable.
+        if contract_amount is None:
+            continue
+
         transactions_amount_sum = 0
-        currencies = [contract["value"]["value"]["currency"]]
-        currencies.extend([transaction["value"]["currency"] for transaction in transactions])
-        if len(set(currencies)) == 1:
-            currency_used = currencies[0]
-            contract_amount = contract["value"]["value"]["amount"]
-            transactions_amount_sum = sum([transaction["value"]["amount"] for transaction in transactions])
+        for transaction in transactions:
+            currency = deep_get(transaction, "value.currency")
+
+            unconverted_amount = deep_get(transaction, "value.amount", float)
+            # Amount is missing or non-numeric.
+            if unconverted_amount is None:
+                break
+
+            transaction_amount = get_amount(no_conversion, unconverted_amount, currency, date)
+            # Amount is unconvertable.
+            if transaction_amount is None:
+                break
+
+            transactions_amount_sum += transaction_amount
         else:
-            currency_used = "USD"
-            contract_amount = convert(
-                contract["value"]["value"]["amount"],
-                contract["value"]["value"]["currency"],
-                currency_used,
-                parse_datetime(item["date"]),
-            )
+            passed = transactions_amount_sum <= contract_amount
 
-            if contract_amount is None:
-                conversion_failed = True
-
-            for transaction in transactions:
-                amount = convert(
-                    transaction["value"]["amount"],
-                    transaction["value"]["currency"],
-                    currency_used,
-                    parse_datetime(item["date"]),
+            application_count += 1
+            if passed:
+                pass_count += 1
+            else:
+                failed_paths.append(
+                    {
+                        "path": contract["path"],
+                        "contract_amount": contract_amount,
+                        "transactions_amount_sum": transactions_amount_sum,
+                        "currency": currencies.pop() if no_conversion else "USD",
+                    }
                 )
 
-                if amount is None:
-                    conversion_failed = True
-                    break
-
-                transactions_amount_sum += amount
-
-        if conversion_failed:
-            continue
-
-        # contract is applicable for this check
-        passed = transactions_amount_sum <= contract_amount
-
-        application_count += 1
-        if passed:
-            pass_count += 1
-        result["meta"]["contracts"].append(
-            {
-                "path": contract["path"],
-                "contract_amount": contract_amount,
-                "transactions_amount_sum": transactions_amount_sum,
-                "currency": currency_used,
-            }
-        )
-
-    return complete_result_resource(result, application_count, pass_count, reason="insufficient data for check")
+    return complete_result_resource(
+        result, application_count, pass_count, reason="no numeric, convertable amounts", failed_paths=failed_paths
+    )

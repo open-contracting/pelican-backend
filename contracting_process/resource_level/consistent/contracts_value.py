@@ -15,37 +15,25 @@ import datetime
 from collections import Counter, defaultdict
 
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
-from pelican.util.currency_converter import convert
-from pelican.util.getter import deep_get, deep_has
+from pelican.util.getter import deep_get, deep_has, get_amount
 
 version = 1.0
-
-
-def _get_amount(item, no_conversion, amount, currency, date):
-    if no_conversion:
-        return amount
-    elif date is not None:
-        return convert(amount, currency, "USD", date)
 
 
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    date = deep_get(item, "date", datetime.datetime)
-
-    awards = deep_get(item, "awards")
+    awards = [award for award in deep_get(item, "awards") if deep_has(award, "id")]
     if not awards:
-        result["meta"] = {"reason": "no award is set"}
+        result["meta"] = {"reason": "no award has an id"}
         return result
 
-    contracts = deep_get(item, "contracts")
+    contracts = [contract for contract in deep_get(item, "contracts") if deep_has(contract, "awardID")]
     if not contracts:
-        result["meta"] = {"reason": "no contract is set"}
+        result["meta"] = {"reason": "no contract has an awardID"}
         return result
 
-    # (1) No matching possible.
-    awards = [award for award in awards if deep_has(award, "id")]
-    contracts = [contract for contract in contracts if deep_has(contract, "awardID")]
+    date = deep_get(item, "date", datetime.datetime)
 
     award_id_counts = Counter(str(award["id"]) for award in awards)
 
@@ -55,6 +43,7 @@ def calculate(item):
 
     application_count = 0
     pass_count = 0
+    failed_paths = []
     for award in awards:
         award_id = str(award["id"])
         # (1) No matching award (singular).
@@ -79,7 +68,7 @@ def calculate(item):
         if unconverted_amount is None:
             continue
 
-        award_amount = _get_amount(award, no_conversion, unconverted_amount, currency, date)
+        award_amount = get_amount(no_conversion, unconverted_amount, currency, date)
         # (2,5) Amount is zero or unconvertable.
         if award_amount is None or award_amount == 0:
             continue
@@ -93,7 +82,7 @@ def calculate(item):
             if unconverted_amount is None:
                 break
 
-            contract_amount = _get_amount(contract, no_conversion, unconverted_amount, currency, date)
+            contract_amount = get_amount(no_conversion, unconverted_amount, currency, date)
             # (2,5) Amount is zero or unconvertable.
             if contract_amount is None or contract_amount == 0:
                 break
@@ -104,18 +93,25 @@ def calculate(item):
 
             contracts_amount_sum += contract_amount
         else:
-            ratio = abs(award_amount - contracts_amount_sum) / abs(award_amount)
-            passed = ratio <= 0.5
+            passed = abs(award_amount - contracts_amount_sum) / abs(award_amount) <= 0.5
 
             application_count += 1
             if passed:
                 pass_count += 1
+            else:
+                failed_paths.append(
+                    {
+                        "awardID": award["id"],
+                        "award_amount": award["value"],
+                        "contracts_amount_sum": contracts_amount_sum,
+                        "currency": currencies.pop() if no_conversion else "USD",
+                    }
+                )
 
-            if result["meta"] is None:
-                result["meta"] = {"awards": []}
-
-            result["meta"]["awards"].append(
-                {"awardID": award["id"], "awards.value": award["value"], "contracts.value_sum": contracts_amount_sum}
-            )
-
-    return complete_result_resource(result, application_count, pass_count, reason="insufficient data for check")
+    return complete_result_resource(
+        result,
+        application_count,
+        pass_count,
+        reason="no award-contracts pairs have numeric, non-zero, same-sign, convertable amounts",
+        failed_paths=failed_paths,
+    )
