@@ -1,9 +1,6 @@
 Time-based
 ==========
 
-Backend
--------
-
 #. Find a check under the ``time_variance`` directory to copy as a starting point.
 #. Add the check to the ``time_variance/definitions.py`` file. For example:
 
@@ -40,11 +37,6 @@ The accumulator is initialized as:
    :end-at: }
 
 Storage
-~~~~~~~
+-------
 
 The result of each check for a given dataset is stored in a single row in the ``time_variance_level_check`` table.
-
-Frontend
---------
-
-Pelican frontend automatically supports new time-based checks.

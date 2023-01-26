@@ -1,9 +1,6 @@
 Field-level
 ===========
 
-Backend
--------
-
 #. Determine the type of check (see :ref:`repository-structure`).
 #. Find a check under the corresponding ``contracting_process/field_level`` sub-directory to copy as a starting point.
 #. Update the ``_definitions()`` function to assign the check to fields in the ``contracting_process/field_level/definitions.py`` file.
@@ -33,13 +30,13 @@ An empty ``result`` dict looks like:
    :end-at: }
 
 Example
-~~~~~~~
+-------
 
 .. literalinclude:: ../../../contracting_process/field_level/coverage/exists.py
    :language: python
 
 Storage
-~~~~~~~
+-------
 
 The results for each item are stored in a single row in the ``field_level_check`` table. A stored ``result`` value looks like (only one entry in the ``checks`` array is shown):
 
@@ -81,8 +78,3 @@ The results for each item are stored in a single row in the ``field_level_check`
            ]
        }
    }
-
-Frontend
---------
-
-Pelican frontend automatically supports new field-level checks.

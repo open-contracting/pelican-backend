@@ -1,9 +1,6 @@
 Compiled release-level
 ======================
 
-Backend
--------
-
 #. Determine the type of check (see :ref:`repository-structure`).
 #. Find a check under the corresponding ``contracting_process/resource_level`` sub-directory to copy as a starting point.
 #. Add the check to the ``contracting_process/resource_level/definitions.py`` file. For example:
@@ -57,13 +54,13 @@ An empty ``result`` dict looks like:
    :end-at: }
 
 Example
-~~~~~~~
+-------
 
 .. literalinclude:: ../../../contracting_process/resource_level/coherent/milestone_status.py
    :language: python
 
 Storage
-~~~~~~~
+-------
 
 The results for each item are stored in a single row in the ``resource_level_check`` table. A stored ``result`` value looks like (only two entries in the ``checks`` array are shown):
 
@@ -106,9 +103,3 @@ The results for each item are stored in a single row in the ``resource_level_che
            }
        }
    }
-
-Frontend
---------
-
-Pelican frontend automatically supports new compiled release-level checks with known check types.
-

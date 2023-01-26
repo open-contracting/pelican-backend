@@ -1,9 +1,6 @@
 Dataset-level
 =============
 
-Backend
--------
-
 #. Determine the type of check (see :ref:`repository-structure`).
 #. Find a check under the corresponding ``dataset`` sub-directory to copy as a starting point.
 #. Add the check to the ``dataset/definitions.py`` file. For example:
@@ -54,13 +51,6 @@ An empty ``result`` dict looks like:
    :end-at: }
 
 Storage
-~~~~~~~
+-------
 
 The result of each check for a given dataset is stored in a single row in the ``dataset_level_check`` table.
-
-Frontend
---------
-
-#. Update ``frontend/src/components/DatasetLevelSection.vue`` and register the check.
-#. Register the check in ``frontend/src/plugins/datasetMixins.js``.
-
