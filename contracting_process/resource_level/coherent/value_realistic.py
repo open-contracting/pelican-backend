@@ -18,6 +18,8 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
+    date = deep_get(item, "date", datetime.date)
+
     values = []
     for path in (
         "tender.value",
@@ -43,7 +45,6 @@ def calculate(item):
         if currency == "USD":
             usd_amount = amount
         else:
-            date = deep_get(item, "date", datetime.date)
             if date is None:
                 continue
             usd_amount = convert(amount, currency, "USD", date)

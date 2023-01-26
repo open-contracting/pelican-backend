@@ -1,8 +1,8 @@
+import datetime
 import functools
 
 from pelican.util.checks import get_empty_result_dataset
-from pelican.util.currency_converter import convert, currency_available
-from pelican.util.getter import get_values, parse_date
+from pelican.util.getter import deep_get, get_amount, get_values
 
 version = 1.0
 
@@ -17,35 +17,25 @@ def add_item(scope, item, item_id, path):
     if "values" not in scope:
         scope["values"] = []
 
-    if type(item) == dict:
-        ocid = get_values(item, "ocid", value_only=True)[0]
-        values = get_values(item, path)
-        if values:
-            for value in values:
+    ocid = get_values(item, "ocid", value_only=True)[0]
+    date = deep_get(item, "date", datetime.date)
+    values = get_values(item, path)
+    if values:
+        for value in values:
+            currency = deep_get(value["value"], "currency")
+            if currency is None:
+                continue
+
+            amount = deep_get(value["value"], "amount", float)
+            if amount is None or amount < 0:
+                continue
+
+            usd_amount = get_amount(currency == "USD", amount, currency, date)
+            if usd_amount is not None:
                 value["item_id"] = item_id
                 value["ocid"] = ocid
-
-                if (
-                    "currency" not in value["value"]
-                    or value["value"]["currency"] is None
-                    or "amount" not in value["value"]
-                    or value["value"]["amount"] is None
-                    or float(value["value"]["amount"]) < 0
-                ):
-                    continue
-
-                if currency_available(value["value"]["currency"]):
-                    if value["value"]["currency"] != "USD":
-                        if "date" in item and item["date"]:
-                            rel_date = parse_date(item["date"])
-                            value["abs_amount"] = convert(
-                                value["value"]["amount"], value["value"]["currency"], "USD", rel_date
-                            )
-                        if "abs_amount" in value and value["abs_amount"] is not None:
-                            scope["values"].append(value)
-                    else:
-                        value["abs_amount"] = value["value"]["amount"]
-                        scope["values"].append(value)
+                value["abs_amount"] = usd_amount
+                scope["values"].append(value)
 
     return scope
 

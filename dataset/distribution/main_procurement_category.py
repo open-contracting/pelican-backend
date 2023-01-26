@@ -7,18 +7,17 @@ version = 1.0
 def add_item(scope, item, item_id):
     ocid = get_values(item, "ocid", value_only=True)[0]
 
-    if type(item) == dict:
-        categories = get_values(item, "tender.mainProcurementCategory", value_only=True)
-        if categories:
-            for category in categories:
-                if category not in scope:
-                    scope[category] = {}
-                    scope[category]["count"] = 0
-                    scope[category]["examples"] = []
+    categories = get_values(item, "tender.mainProcurementCategory", value_only=True)
+    if categories:
+        for category in categories:
+            if category not in scope:
+                scope[category] = {}
+                scope[category]["count"] = 0
+                scope[category]["examples"] = []
 
-                scope[category]["count"] += 1
-                if len(scope[category]["examples"]) < 100:
-                    scope[category]["examples"].append({"item_id": item_id, "ocid": ocid})
+            scope[category]["count"] += 1
+            if len(scope[category]["examples"]) < 100:
+                scope[category]["examples"].append({"item_id": item_id, "ocid": ocid})
 
     return scope
 

@@ -200,7 +200,3 @@ def convert(amount, original_currency, target_currency, rel_date):
         return None
 
     return round(amount * (target_currency_rate / original_currency_rate), 6)
-
-
-def currency_available(currency):
-    return currency in currencies

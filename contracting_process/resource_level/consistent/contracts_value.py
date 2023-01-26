@@ -70,7 +70,7 @@ def calculate(item):
 
         award_amount = get_amount(no_conversion, unconverted_amount, currency, date)
         # (2,5) Amount is zero or unconvertable.
-        if award_amount is None or award_amount == 0:
+        if award_amount in (0, None):
             continue
 
         contracts_amount_sum = 0
@@ -84,7 +84,7 @@ def calculate(item):
 
             contract_amount = get_amount(no_conversion, unconverted_amount, currency, date)
             # (2,5) Amount is zero or unconvertable.
-            if contract_amount is None or contract_amount == 0:
+            if contract_amount in (0, None):
                 break
 
             # (4) Different signs.
