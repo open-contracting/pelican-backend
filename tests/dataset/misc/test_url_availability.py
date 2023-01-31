@@ -68,8 +68,9 @@ def test_failed_multiple():
 
         result = url_availability.get_result(scope)
         assert result["result"] is False
-        assert result["value"] >= 98
-        assert len(result["meta"]["passed_examples"]) >= 98
-        assert len(result["meta"]["failed_examples"]) <= 2
-        assert len([s for s in result["meta"]["passed_examples"] if s["status"] == "OK"]) >= 98
-        assert len([s for s in result["meta"]["failed_examples"] if s["status"] == "ERROR"]) <= 2
+        # httpbin.org might return errors due to request volume.
+        assert result["value"] >= 96
+        assert len(result["meta"]["passed_examples"]) >= 96
+        assert len(result["meta"]["failed_examples"]) <= 4
+        assert len([s for s in result["meta"]["passed_examples"] if s["status"] == "OK"]) >= 96
+        assert len([s for s in result["meta"]["failed_examples"] if s["status"] == "ERROR"]) <= 4
