@@ -54,7 +54,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         dataset_id_original = input_message["dataset_id_original"]
         filter_message = input_message["filter_message"]
-        max_items = int(input_message["max_items"]) if "max_items" in input_message else None
+        max_items = input_message.get("max_items")
 
         cursor.execute(
             """\

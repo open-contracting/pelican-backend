@@ -31,8 +31,8 @@ def callback(client_state, channel, method, properties, input_message):
     try:
         name = input_message["name"]
         collection_id = input_message["collection_id"]
-        max_items = input_message["max_items"]
-        ancestor_id = input_message["ancestor_id"]
+        max_items = input_message.get("max_items")
+        ancestor_id = input_message.get("ancestor_id")
 
         if max_items is None:
             kf_cursor.execute(
