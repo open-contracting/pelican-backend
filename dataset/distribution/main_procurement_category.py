@@ -10,11 +10,13 @@ def add_item(scope, item, item_id):
     categories = get_values(item, "tender.mainProcurementCategory", value_only=True)
     if categories:
         for category in categories:
-            if category not in scope:
-                scope[category] = {}
-                scope[category]["count"] = 0
-                scope[category]["examples"] = []
-
+            scope.setdefault(
+                category,
+                {
+                    "count": 0,
+                    "examples": [],
+                },
+            )
             scope[category]["count"] += 1
             if len(scope[category]["examples"]) < 100:
                 scope[category]["examples"].append({"item_id": item_id, "ocid": ocid})
@@ -26,22 +28,21 @@ def get_result(scope):
     result = get_empty_result_dataset(version)
 
     if scope:
-        max_item = max(scope.items(), key=lambda s: s[1]["count"])
-        sum_value = sum(int(value["count"]) for name, value in scope.items())
+        sorted_scope = sorted(scope.items(), key=lambda item: item[1]["count"])
+        total_count = sum(value["count"] for _, value in sorted_scope)
 
-        share = max_item[1]["count"] / sum_value
+        result["meta"] = {
+            "shares": {
+                category: {
+                    "share": value["count"] / total_count,
+                    "count": value["count"],
+                    "examples": value["examples"],
+                }
+                for category, value in sorted_scope
+            }
+        }
 
-        data = {}
-
-        for item in sorted(scope.items(), key=lambda s: s[1]["count"]):
-            data[item[0]] = {}
-            data[item[0]]["share"] = item[1]["count"] / sum_value
-            data[item[0]]["count"] = int(item[1]["count"])
-            data[item[0]]["examples"] = item[1]["examples"]
-
-        result["meta"] = {"shares": data}
-
-        passed = share <= 0.95
+        passed = sorted_scope[-1][1]["count"] / total_count <= 0.95
 
         result["result"] = passed
         result["value"] = 100 if passed else 0

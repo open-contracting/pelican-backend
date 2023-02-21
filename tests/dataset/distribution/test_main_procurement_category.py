@@ -43,6 +43,7 @@ def test_ok():
             "goods": {"share": 1 / 3, "count": 1, "examples": [{"item_id": 1, "ocid": "1"}]},
         }
     }
+    assert list(result["meta"]["shares"]) == ["goods", "works"]
 
 
 def test_failed():
