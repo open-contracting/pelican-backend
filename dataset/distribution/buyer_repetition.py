@@ -28,9 +28,14 @@ def add_item(scope, item, item_id):
     ocid = get_values(item, "ocid", value_only=True)[0]
     scope["total_ocid_count"] += 1
     key = (buyer_identifier["scheme"], buyer_identifier["id"])
-    if key not in scope["buyers"]:
-        scope["buyers"][key] = {"total_ocid_count": 0, "sampler": ReservoirSampler(examples_cap)}
 
+    scope["buyers"].setdefault(
+        key,
+        {
+            "total_ocid_count": 0,
+            "sampler": ReservoirSampler(examples_cap),
+        },
+    )
     scope["buyers"][key]["total_ocid_count"] += 1
     scope["buyers"][key]["sampler"].process({"item_id": item_id, "ocid": ocid})
 

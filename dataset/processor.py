@@ -36,9 +36,7 @@ def do_work(dataset_id, logger):
                     item["id"],
                 )
 
-                if plugin_name not in scope:
-                    scope[plugin_name] = {}
-
+                scope.setdefault(plugin_name, {})
                 scope[plugin_name] = plugin.add_item(scope[plugin_name], item["data"], item["id"])
 
             processed_count += 1

@@ -96,14 +96,10 @@ def interpolation_closest(currency, start_date, end_date):
             )
             continue
         elif distance_to_start < distance_to_end:
-            if current_date not in rates:
-                rates[current_date] = {}
-
+            rates.setdefault(current_date, {})
             rates[current_date][currency] = start_date_rate
         else:
-            if current_date not in rates:
-                rates[current_date] = {}
-
+            rates.setdefault(current_date, {})
             rates[current_date][currency] = end_date_rate
 
         current_date += datetime.timedelta(days=1)
@@ -133,9 +129,7 @@ def interpolation_linear(currency, start_date, end_date):
             )
             continue
         else:
-            if current_date not in rates:
-                rates[current_date] = {}
-
+            rates.setdefault(current_date, {})
             rates[current_date][currency] = round(
                 start_date_rate
                 + (current_date - start_date).days

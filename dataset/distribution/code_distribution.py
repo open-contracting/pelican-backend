@@ -22,9 +22,13 @@ class CodeDistribution:
             if value is None or not isinstance(value, str):
                 continue
 
-            if value not in scope:
-                scope[value] = {"count": 0, "sampler": ReservoirSampler(self.samples_cap)}
-
+            scope.setdefault(
+                value,
+                {
+                    "count": 0,
+                    "sampler": ReservoirSampler(self.samples_cap),
+                },
+            )
             scope[value]["count"] += 1
             scope[value]["sampler"].process({"item_id": item_id, "ocid": ocid})
 
@@ -34,7 +38,7 @@ class CodeDistribution:
         result = get_empty_result_dataset()
 
         if scope:
-            total_count = sum([value["count"] for value in scope.values()])
+            total_count = sum(value["count"] for value in scope.values())
 
             passed = True
             for key, value in scope.items():

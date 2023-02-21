@@ -65,8 +65,7 @@ def do_work(dataset_id):
                     item[0],
                 )
 
-                if plugin_name not in scope:
-                    scope[plugin_name] = get_empty_result_time_variance_scope()
+                scope.setdefault(plugin_name, get_empty_result_time_variance_scope())
 
                 filtering_result = plugin.filter(
                     scope[plugin_name], ancestor_item, ancestor_item_id, new_item, new_item_id

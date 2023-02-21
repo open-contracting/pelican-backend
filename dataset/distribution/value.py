@@ -14,8 +14,7 @@ class ModuleType:
 
 
 def add_item(scope, item, item_id, path):
-    if "values" not in scope:
-        scope["values"] = []
+    scope.setdefault("values", [])
 
     ocid = get_values(item, "ocid", value_only=True)[0]
     date = deep_get(item, "date", datetime.date)
