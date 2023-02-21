@@ -57,7 +57,7 @@ def get_result(scope):
             percent_index_20 = 20 * percent_size
             percent_index_50 = 50 * percent_size
 
-            sorted_values = sorted(values, key=lambda s: int(s["abs_amount"]), reverse=True)
+            sorted_values = sorted(values, key=lambda item: int(item["abs_amount"]), reverse=True)
 
             count_0_1_percent = len(sorted_values[:percent_index_1])
             count_1_5_percent = len(sorted_values[percent_index_1:percent_index_5])

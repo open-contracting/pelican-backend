@@ -29,4 +29,4 @@ def test_reservoir_sampler():
         sampler.process(i)
     samples = sampler.retrieve_samples()
     assert len(samples) == 5
-    assert all([s in range(10) for s in samples])
+    assert all(example in range(10) for example in samples)

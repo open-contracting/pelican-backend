@@ -47,7 +47,7 @@ def test_passed():
     assert result["value"] == 100
     assert len(result["meta"]["passed_examples"]) == 100
     assert len(result["meta"]["failed_examples"]) == 0
-    assert all([s["status"] == "OK" for s in result["meta"]["passed_examples"]])
+    assert all([example["status"] == "OK" for example in result["meta"]["passed_examples"]])
 
 
 items_test_failed_multiple = [
@@ -72,5 +72,5 @@ def test_failed_multiple():
         assert result["value"] >= 96
         assert len(result["meta"]["passed_examples"]) >= 96
         assert len(result["meta"]["failed_examples"]) <= 4
-        assert len([s for s in result["meta"]["passed_examples"] if s["status"] == "OK"]) >= 96
-        assert len([s for s in result["meta"]["failed_examples"] if s["status"] == "ERROR"]) <= 4
+        assert len(example for example in result["meta"]["passed_examples"] if example["status"] == "OK") >= 96
+        assert len(example for example in result["meta"]["failed_examples"] if example["status"] == "ERROR") <= 4
