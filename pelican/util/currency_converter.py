@@ -153,7 +153,6 @@ def extrapolation_closest_rate(currency, rel_date):
         (rel_date - bound[1]).days <= settings.CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK
         or settings.CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK == -1
     ):
-
         return rates[bound[1]][currency]
 
 
