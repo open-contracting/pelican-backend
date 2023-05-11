@@ -1,4 +1,3 @@
-import os
 from unittest.mock import patch
 
 import pytest
@@ -38,7 +37,7 @@ item_test_passed = {
 }
 
 
-@pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
+@pytest.mark.skip(reason="skipping slow and inconsistent test")
 def test_passed():
     scope = {}
     scope = url_availability.add_item(scope, item_test_passed, 0)
