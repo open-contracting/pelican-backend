@@ -96,7 +96,7 @@ def update_from_fixer_io() -> None:
                     """\
                     UPDATE exchange_rates
                     SET rates = %(rates)s, modified = current_timestamp
-                    WHERE valid_on = %(valid_on)s;
+                    WHERE valid_on = %(valid_on)s AND rates <> %(rates)s;
 
                     INSERT INTO exchange_rates (valid_on, rates)
                     VALUES (%(valid_on)s, %(rates)s)
