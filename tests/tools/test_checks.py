@@ -15,14 +15,14 @@ def test_reservoir_sampler():
         sampler.process(i)
     samples = sampler.retrieve_samples()
     assert len(samples) == 3
-    assert all([i in samples for i in range(3)])
+    assert all(i in samples for i in range(3))
 
     sampler = ReservoirSampler(5)
     for i in range(5):
         sampler.process(i)
     samples = sampler.retrieve_samples()
     assert len(samples) == 5
-    assert all([i in samples for i in range(5)])
+    assert all(i in samples for i in range(5))
 
     sampler = ReservoirSampler(5)
     for i in range(10):
