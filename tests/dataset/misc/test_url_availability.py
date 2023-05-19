@@ -1,3 +1,4 @@
+import os
 from unittest.mock import patch
 
 import pytest
@@ -5,7 +6,7 @@ import pytest
 from dataset.misc import url_availability
 
 item_unset = {"ocid": "0"}
-item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": "https://httpbin.org/status/200"}]}}
+item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": "https://postman-echo.com/status/200"}]}}
 
 
 class mock_settings:
@@ -30,14 +31,14 @@ def test_undefined():
 
 item_test_passed = {
     "ocid": "0",
-    "planning": {"documents": [{"url": "https://httpbin.org/status/200"} for _ in range(25)]},
-    "tender": {"documents": [{"url": "https://httpbin.org/status/200"} for _ in range(25)]},
-    "awards": [{"documents": [{"url": "https://httpbin.org/status/200"}]} for _ in range(25)],
-    "contracts": [{"documents": [{"url": "https://httpbin.org/status/200"}]} for _ in range(25)],
+    "planning": {"documents": [{"url": "https://postman-echo.com/status/200"} for _ in range(25)]},
+    "tender": {"documents": [{"url": "https://postman-echo.com/status/200"} for _ in range(25)]},
+    "awards": [{"documents": [{"url": "https://postman-echo.com/status/200"}]} for _ in range(25)],
+    "contracts": [{"documents": [{"url": "https://postman-echo.com/status/200"}]} for _ in range(25)],
 }
 
 
-@pytest.mark.skip(reason="skipping slow and inconsistent test")
+@pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
 def test_passed():
     scope = {}
     scope = url_availability.add_item(scope, item_test_passed, 0)
@@ -50,12 +51,15 @@ def test_passed():
 
 
 items_test_failed_multiple = [
-    {"ocid": str(num), "planning": {"documents": [{"url": "https://httpbin.org/status/200"}]}} for num in range(99)
+    {"ocid": str(num), "planning": {"documents": [{"url": "https://postman-echo.com/status/200"}]}}
+    for num in range(99)
 ]
-items_test_failed_multiple.append({"ocid": "99", "planning": {"documents": [{"url": "https://httpbin.org/delay/10"}]}})
+items_test_failed_multiple.append(
+    {"ocid": "99", "planning": {"documents": [{"url": "https://postman-echo.com/delay/10"}]}}
+)
 
 
-@pytest.mark.skip(reason="skipping slow and inconsistent test")
+@pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
 def test_failed_multiple():
     with patch.object(url_availability, "settings", new=mock_settings):
         scope = {}
@@ -67,9 +71,8 @@ def test_failed_multiple():
 
         result = url_availability.get_result(scope)
         assert result["result"] is False
-        # httpbin.org might return errors due to request volume.
-        assert result["value"] >= 90
-        assert len(result["meta"]["passed_examples"]) >= 90
-        assert len(result["meta"]["failed_examples"]) <= 10
-        assert len([example for example in result["meta"]["passed_examples"] if example["status"] == "OK"]) >= 90
-        assert len([example for example in result["meta"]["failed_examples"] if example["status"] == "ERROR"]) <= 10
+        assert result["value"] >= 99
+        assert len(result["meta"]["passed_examples"]) == 99
+        assert len(result["meta"]["failed_examples"]) == 1
+        assert len([example for example in result["meta"]["passed_examples"] if example["status"] == "OK"]) == 99
+        assert len([example for example in result["meta"]["failed_examples"] if example["status"] == "ERROR"]) == 1
