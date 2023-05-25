@@ -17,7 +17,7 @@ logger = logging.getLogger("pelican.workers.extract.dataset_filter")
 @click.command()
 def start():
     """
-    Add filtered datasets.
+    Create filtered datasets.
     """
     consume(callback, consume_routing_key)
 

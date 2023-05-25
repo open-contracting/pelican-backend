@@ -15,7 +15,7 @@ routing_key = "extractor"
 @click.command()
 def start():
     """
-    Import collections from Kingfisher Process.
+    Extract collections from Kingfisher Process.
     """
     consume(callback, consume_routing_key)
 
