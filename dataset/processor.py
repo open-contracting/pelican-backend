@@ -1,3 +1,5 @@
+import logging
+
 import simplejson as json
 
 from dataset import meta_data_aggregator
@@ -5,10 +7,12 @@ from dataset.definitions import definitions
 from pelican.util import settings
 from pelican.util.services import get_cursor
 
+logger = logging.getLogger("pelican.dataset.processor")
+
 page_size = 1000
 
 
-def do_work(dataset_id, logger):
+def do_work(dataset_id):
     processed_count = 1000
     id = -1
     no_item_processed = True
