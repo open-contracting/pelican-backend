@@ -86,7 +86,7 @@ def get_kingfisher_meta_data(collection_id):
     result = kf_cursor.fetchall()
 
     if not result:
-        logger.warning("No rows found in `collection` where id = %s", settings.KINGFISHER_PROCESS_DATABASE_URL)
+        logger.warning("No rows found in `collection` where id = %s", collection_id)
         return meta_data
 
     meta_data["kingfisher_metadata"]["collection_id"] = collection_id
