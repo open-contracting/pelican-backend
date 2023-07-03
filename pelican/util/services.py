@@ -47,7 +47,6 @@ YAPW_KWARGS = {
 }
 
 
-# https://github.com/pika/pika/blob/master/examples/blocking_consume_recover_multiple_hosts.py
 def consume(*args: Any, **kwargs: Any) -> None:
     """
     Consume messages from RabbitMQ.
