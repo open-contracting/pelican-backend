@@ -1,6 +1,5 @@
 import datetime
 import os
-from typing import Dict, List, Set, Tuple
 
 from pelican.util import settings
 
@@ -10,16 +9,16 @@ if "PYTEST_CURRENT_TEST" in os.environ:
 else:
     import pelican.util.exchange_rates_file as exchange_rates
 
-rates: Dict[datetime.date, Dict[str, float]] = {}
-bounds: Dict[str, Tuple[datetime.date, datetime.date]] = {}
-currencies: Set[str] = set()
+rates: dict[datetime.date, dict[str, float]] = {}
+bounds: dict[str, tuple[datetime.date, datetime.date]] = {}
+currencies: set[str] = set()
 
 
 def bootstrap() -> None:
     import_data(exchange_rates.load())
 
 
-def import_data(data: List[Tuple[datetime.date, Dict[str, float]]]) -> None:
+def import_data(data: list[tuple[datetime.date, dict[str, float]]]) -> None:
     global rates
     global bounds
     global currencies
@@ -33,7 +32,7 @@ def import_data(data: List[Tuple[datetime.date, Dict[str, float]]]) -> None:
     data.sort(key=lambda k: k[0])
 
     if settings.CURRENCY_CONVERTER_INTERPOLATION:
-        real_data_dates: Dict[str, List[datetime.date]] = {currency: [] for currency in currencies}
+        real_data_dates: dict[str, list[datetime.date]] = {currency: [] for currency in currencies}
 
         for item in data:
             rates[item[0]] = item[1]

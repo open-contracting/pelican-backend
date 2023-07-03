@@ -1,5 +1,5 @@
 import logging
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 import psycopg2.extensions
 import psycopg2.extras
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 # RabbitMQ
 
 
-def encode(message: Any, content_type: Optional[str]) -> bytes:
+def encode(message: Any, content_type: str | None) -> bytes:
     """
     Encode the body of a message for RabbitMQ.
 
@@ -28,7 +28,7 @@ def encode(message: Any, content_type: Optional[str]) -> bytes:
     return json.dumps(message).encode()
 
 
-def decode(body: bytes, content_type: Optional[str]) -> Any:
+def decode(body: bytes, content_type: str | None) -> Any:
     """
     Decode the body of a message from RabbitMQ.
 
@@ -123,7 +123,7 @@ def initialize_dataset_state(dataset_id: int) -> None:
         cursor.execute(sql, {"dataset_id": dataset_id, "phase": phase.CONTRACTING_PROCESS, "state": state.IN_PROGRESS})
 
 
-def update_dataset_state(dataset_id: int, phase: str, state: str, size: Optional[int] = None) -> None:
+def update_dataset_state(dataset_id: int, phase: str, state: str, size: int | None = None) -> None:
     """
     Update a dataset's progress to the given phase and state.
 
@@ -149,7 +149,7 @@ def update_dataset_state(dataset_id: int, phase: str, state: str, size: Optional
         cursor.execute(sql, variables)
 
 
-def initialize_items_state(dataset_id: int, item_ids: List[int]) -> None:
+def initialize_items_state(dataset_id: int, item_ids: list[int]) -> None:
     """
     Initialize data items' progress.
 
@@ -164,7 +164,7 @@ def initialize_items_state(dataset_id: int, item_ids: List[int]) -> None:
         psycopg2.extras.execute_values(cursor, sql, [(dataset_id, item_id, state.IN_PROGRESS) for item_id in item_ids])
 
 
-def update_items_state(dataset_id: int, item_ids: List[int], state: str) -> None:
+def update_items_state(dataset_id: int, item_ids: list[int], state: str) -> None:
     """
     Update data items' progress to the given state.
 
@@ -209,7 +209,7 @@ def get_total_items_count(dataset_id: int) -> int:
         return cursor.fetchone()["size"]
 
 
-def get_dataset_progress(dataset_id: int) -> Optional[Tuple[Any, ...]]:
+def get_dataset_progress(dataset_id: int) -> tuple[Any, ...] | None:
     """
     Return the dataset's progress.
 

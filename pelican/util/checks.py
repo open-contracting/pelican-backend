@@ -1,10 +1,11 @@
 import random
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Type, Union
+from collections.abc import Callable, Sequence
+from typing import Any
 
 from pelican.util.getter import parse_date
 
 
-def get_empty_result_resource(version: float = 1.0) -> Dict[str, Any]:
+def get_empty_result_resource(version: float = 1.0) -> dict[str, Any]:
     """
     Initialize a compiled release-level check result.
 
@@ -19,7 +20,7 @@ def get_empty_result_resource(version: float = 1.0) -> Dict[str, Any]:
     }
 
 
-def get_empty_result_dataset(version: float = 1.0) -> Dict[str, Any]:
+def get_empty_result_dataset(version: float = 1.0) -> dict[str, Any]:
     """
     Initialize a dataset-level check result.
 
@@ -33,7 +34,7 @@ def get_empty_result_dataset(version: float = 1.0) -> Dict[str, Any]:
     }
 
 
-def get_empty_result_time_variance(version: float = 1.0) -> Dict[str, Any]:
+def get_empty_result_time_variance(version: float = 1.0) -> dict[str, Any]:
     """
     Initialize a time-based check result.
 
@@ -49,7 +50,7 @@ def get_empty_result_time_variance(version: float = 1.0) -> Dict[str, Any]:
     }
 
 
-def get_empty_result_time_variance_scope() -> Dict[str, Any]:
+def get_empty_result_time_variance_scope() -> dict[str, Any]:
     """
     Initialize a time-based check result accumulator.
     """
@@ -63,12 +64,12 @@ def get_empty_result_time_variance_scope() -> Dict[str, Any]:
 
 
 def complete_result_resource(
-    result: Dict[str, Any],
+    result: dict[str, Any],
     application_count: int,
     pass_count: int,
-    reason: Optional[str] = None,
-    failed_paths: Optional[Sequence[Union[str, Dict[str, Any]]]] = None,
-) -> Dict[str, Any]:
+    reason: str | None = None,
+    failed_paths: Sequence[str | dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """
     Build a compiled release-level check result.
 
@@ -95,8 +96,8 @@ def complete_result_resource(
 
 
 def complete_result_resource_pass_fail(
-    result: Dict[str, Any], passed: bool, meta: Optional[Dict[str, Any]] = None
-) -> Dict[str, Any]:
+    result: dict[str, Any], passed: bool, meta: dict[str, Any] | None = None
+) -> dict[str, Any]:
     """
     Build a compiled release-level check result, for a pass-fail check.
 
@@ -115,8 +116,8 @@ def complete_result_resource_pass_fail(
 
 
 def field_coverage_check(
-    name: str, test: Callable[[Dict[str, Any], str], Tuple[bool, str]], version: float = 1.0
-) -> Callable[[Dict[str, Any], str], Dict[str, Any]]:
+    name: str, test: Callable[[dict[str, Any], str], tuple[bool, str]], version: float = 1.0
+) -> Callable[[dict[str, Any], str], dict[str, Any]]:
     """
     :param name: the machine name of the check
     :param test: a function that accepts a dict and a key and returns a tuple of a boolean (whether the test passed)
@@ -124,7 +125,7 @@ def field_coverage_check(
     :param version: the version number of the check
     """
 
-    def method(item: Dict[str, Any], key: str) -> Dict[str, Any]:
+    def method(item: dict[str, Any], key: str) -> dict[str, Any]:
         obj = _empty_field_result(name, version=version)
 
         # This is not a separate check, as checks ought to be able to assume the basic structure.
@@ -142,11 +143,11 @@ def field_coverage_check(
 
 def field_quality_check(
     name: str,
-    test: Callable[[Any], Tuple[bool, str]],
+    test: Callable[[Any], tuple[bool, str]],
     version: float = 1.0,
-    require_type: Optional[Type[Any]] = None,
-    return_value: Optional[Callable[[Any], Any]] = None,
-) -> Callable[[Dict[str, Any], str], Dict[str, Any]]:
+    require_type: type[Any] | None = None,
+    return_value: Callable[[Any], Any] | None = None,
+) -> Callable[[dict[str, Any], str], dict[str, Any]]:
     """
     :param name: the machine name of the check
     :param test: a function that accepts a value and returns a tuple of a boolean (whether the test passed) and a
@@ -156,7 +157,7 @@ def field_quality_check(
     :param return_value: a function that accepts a value and returns the value to set in the returned object
     """
 
-    def method(item: Dict[str, Any], key: str, **kwargs: Any) -> Dict[str, Any]:
+    def method(item: dict[str, Any], key: str, **kwargs: Any) -> dict[str, Any]:
         obj = _empty_field_result(name, version=version)
 
         value = item[key]
@@ -174,7 +175,7 @@ def field_quality_check(
     return method
 
 
-def coherent_dates_check(version: float, pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]]) -> Dict[str, Any]:
+def coherent_dates_check(version: float, pairs: list[tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any]:
     """
     Return a compiled release-level check result for coherent date pairs.
 
@@ -222,7 +223,7 @@ def coherent_dates_check(version: float, pairs: List[Tuple[Dict[str, Any], Dict[
     )
 
 
-def _empty_field_result(name: str, version: float = 1.0) -> Dict[str, Any]:
+def _empty_field_result(name: str, version: float = 1.0) -> dict[str, Any]:
     return {
         "name": name,
         "result": None,
@@ -233,8 +234,8 @@ def _empty_field_result(name: str, version: float = 1.0) -> Dict[str, Any]:
 
 
 def _prepare_field_result(
-    obj: Dict[str, Any], passed: bool, value: Any, reason: str, return_value: Optional[Callable[[Any], Any]] = None
-) -> Dict[str, Any]:
+    obj: dict[str, Any], passed: bool, value: Any, reason: str, return_value: Callable[[Any], Any] | None = None
+) -> dict[str, Any]:
     obj["result"] = passed
     if not passed:
         if return_value:
@@ -251,7 +252,7 @@ class ReservoirSampler:
             raise ValueError("samples_cap must be a positive integer")
 
         self._samples_cap = samples_cap
-        self._samples: List[Any] = []
+        self._samples: list[Any] = []
         self._index = 0
 
     def process(self, value: Any) -> None:
@@ -264,5 +265,5 @@ class ReservoirSampler:
 
         self._index += 1
 
-    def retrieve_samples(self) -> List[Any]:
+    def retrieve_samples(self) -> list[Any]:
         return self._samples

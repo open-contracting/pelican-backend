@@ -1,6 +1,7 @@
 import logging
+from collections.abc import Callable
 from math import ceil
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 import pika
 from yapw.methods import ack, publish
@@ -37,10 +38,10 @@ def process_items(
     channel: pika.channel.Channel,
     method: pika.spec.Basic.Deliver,
     routing_key: str,
-    cursors: Dict[str, Any],
+    cursors: dict[str, Any],
     dataset_id: int,
-    ids: List[int],
-    insert_items: Callable[[Dict[str, Any], int, List[int]], None],
+    ids: list[int],
+    insert_items: Callable[[dict[str, Any], int, list[int]], None],
 ) -> None:
     """
     Ack the message, initialize the dataset's and items' progress, insert items into the database in batches, and
@@ -90,8 +91,8 @@ def finish_callback(
     channel: pika.channel.Channel,
     method: pika.spec.Basic.Deliver,
     dataset_id: int,
-    phase: Optional[str] = None,
-    routing_key: Optional[str] = None,
+    phase: str | None = None,
+    routing_key: str | None = None,
 ) -> None:
     """
     Update the dataset's state, publish a message if a routing key is provided, and ack the message.

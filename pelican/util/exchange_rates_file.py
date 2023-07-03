@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Dict, List, Tuple
 
 # Exchange rates for 2019.
 DATA = [
@@ -4504,5 +4503,5 @@ DATA = [
 ]
 
 
-def load() -> List[Tuple[date, Dict[str, float]]]:
+def load() -> list[tuple[date, dict[str, float]]]:
     return DATA

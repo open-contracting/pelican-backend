@@ -1,6 +1,6 @@
 import re
 from datetime import date, datetime
-from typing import Any, List, Optional, Type
+from typing import Any
 
 from dateutil.parser import isoparse
 
@@ -17,7 +17,7 @@ def get_amount(no_conversion, amount, currency, date):
 
 
 # https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
-def parse_datetime(string: Optional[str]) -> Optional[datetime]:
+def parse_datetime(string: str | None) -> datetime | None:
     """
     Parse a string to a datetime.
 
@@ -35,7 +35,7 @@ def parse_datetime(string: Optional[str]) -> Optional[datetime]:
         return None
 
 
-def parse_date(string: Optional[str]) -> Optional[date]:
+def parse_date(string: str | None) -> date | None:
     """
     Parse a string to a date.
 
@@ -72,7 +72,7 @@ def deep_has(value: Any, path: str) -> bool:
     return True
 
 
-def deep_get(value: Any, path: str, force: Optional[Type[Any]] = None) -> Any:
+def deep_get(value: Any, path: str, force: type[Any] | None = None) -> Any:
     """
     Gets a nested value from nested dicts, safely. If ``force`` is provided and the nested value is not of that type,
     then if ``force`` is ...
@@ -114,8 +114,8 @@ def deep_get(value: Any, path: str, force: Optional[Type[Any]] = None) -> Any:
     return value
 
 
-def get_values(item: Any, str_path: str, value_only: Optional[bool] = False) -> List[Any]:
-    index: Optional[int]
+def get_values(item: Any, str_path: str, value_only: bool | None = False) -> list[Any]:
+    index: int | None
 
     if item is None:
         return []

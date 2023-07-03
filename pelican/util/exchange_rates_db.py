@@ -1,7 +1,6 @@
 import json
 import logging
 from datetime import date, timedelta
-from typing import Dict, List, Tuple
 
 import psycopg2
 import requests
@@ -27,7 +26,7 @@ class EmptyExchangeRatesTable(Exception):
     pass
 
 
-def load() -> List[Tuple[date, Dict[str, float]]]:
+def load() -> list[tuple[date, dict[str, float]]]:
     with get_cursor() as cursor:
         cursor.execute("SELECT valid_on, rates FROM exchange_rates")
         return cursor.fetchall()
