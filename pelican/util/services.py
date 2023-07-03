@@ -1,11 +1,10 @@
 import logging
-from typing import Any, List, Optional, Tuple, Type, Union
+from typing import Any, List, Optional, Tuple
 
-import pika.exceptions
 import psycopg2.extensions
 import psycopg2.extras
 import simplejson as json
-from yapw import clients
+from yapw.clients import AsyncConsumer, Blocking
 
 from pelican.util import settings
 
@@ -17,18 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 # RabbitMQ
-
-
-class Consumer(clients.Threaded, clients.Durable, clients.Blocking, clients.Base):
-    """
-    A RabbitMQ client for consuming messages.
-    """
-
-
-class Publisher(clients.Durable, clients.Blocking, clients.Base):
-    """
-    A RabbitMQ client for publishing messages.
-    """
 
 
 def encode(message: Any, content_type: Optional[str]) -> bytes:
@@ -51,14 +38,13 @@ def decode(body: bytes, content_type: Optional[str]) -> Any:
     return json.loads(body.decode("utf-8"))
 
 
-def get_client(klass: Union[Type[Consumer], Type[Publisher]], **kwargs: Any) -> Union[Consumer, Publisher]:
-    """
-    Return a RabbitMQ client.
-
-    :param klass: the class of the client to initialize
-    :param kwargs: the keyword arguments to initialize the client with
-    """
-    return klass(url=settings.RABBIT_URL, exchange=settings.RABBIT_EXCHANGE_NAME, encode=encode, **kwargs)
+YAPW_KWARGS = {
+    "url": settings.RABBIT_URL,
+    "exchange": settings.RABBIT_EXCHANGE_NAME,
+    "prefetch_count": 20,
+    "encode": encode,
+    "decode": decode,
+}
 
 
 # https://github.com/pika/pika/blob/master/examples/blocking_consume_recover_multiple_hosts.py
@@ -66,26 +52,15 @@ def consume(*args: Any, **kwargs: Any) -> None:
     """
     Consume messages from RabbitMQ.
     """
-    while True:
-        try:
-            client = get_client(Consumer, prefetch_count=20, decode=decode)
-            client.consume(*args, **kwargs)
-            break
-        # Do not recover if the connection was closed by the broker.
-        except pika.exceptions.ConnectionClosedByBroker as e:  # subclass of AMQPConnectionError
-            logger.warning(e)
-            break
-        # Recover from "Connection reset by peer".
-        except pika.exceptions.StreamLostError as e:  # subclass of AMQPConnectionError
-            logger.warning(e)
-            continue
+    client = AsyncConsumer(*args, **kwargs, **YAPW_KWARGS)
+    client.start()
 
 
 def publish(*args: Any, **kwargs: Any) -> None:
     """
     Publish a message to RabbitMQ.
     """
-    client = get_client(Publisher)
+    client = Blocking(**YAPW_KWARGS)
     try:
         client.publish(*args, **kwargs)
     finally:

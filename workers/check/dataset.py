@@ -2,7 +2,7 @@
 import logging
 
 import click
-from yapw.methods.blocking import ack, nack
+from yapw.methods import ack, nack
 
 from dataset import processor
 from pelican.util import settings
@@ -30,7 +30,7 @@ def start():
     Perform the dataset-level checks.
     """
     bootstrap()
-    consume(callback, consume_routing_key)
+    consume(on_message_callback=callback, queue=consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):

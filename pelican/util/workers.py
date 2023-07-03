@@ -3,7 +3,7 @@ from math import ceil
 from typing import Any, Callable, Dict, List, Optional
 
 import pika
-from yapw.methods.blocking import ack, publish
+from yapw.methods import ack, publish
 from yapw.types import State
 
 from pelican.util import settings

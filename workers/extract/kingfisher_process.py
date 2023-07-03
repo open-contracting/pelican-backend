@@ -17,7 +17,7 @@ def start():
     """
     Extract collections from Kingfisher Process.
     """
-    consume(callback, consume_routing_key)
+    consume(on_message_callback=callback, queue=consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):

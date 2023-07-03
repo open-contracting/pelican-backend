@@ -4,7 +4,7 @@ import logging
 import click
 import simplejson as json
 from psycopg2 import sql
-from yapw.methods.blocking import nack
+from yapw.methods import nack
 
 from pelican.util.services import commit, consume, get_cursor
 from pelican.util.workers import process_items
@@ -19,7 +19,7 @@ def start():
     """
     Create filtered datasets.
     """
-    consume(callback, consume_routing_key)
+    consume(on_message_callback=callback, queue=consume_routing_key)
 
 
 # input message example
