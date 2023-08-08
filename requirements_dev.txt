@@ -9,9 +9,8 @@ appdirs==1.4.4
 attrs==21.2.0
     # via
     #   jsonschema
-    #   packaging
     #   pytest
-black==21.12b0
+black==23.7.0
     # via -r requirements_dev.in
 build==0.10.0
     # via pip-tools
@@ -28,7 +27,7 @@ charset-normalizer==3.1.0
     # via
     #   -r requirements.txt
     #   requests
-click==8.1.3
+click==8.1.6
     # via
     #   -r requirements.txt
     #   black
@@ -73,8 +72,9 @@ orjson==3.9.1
     # via
     #   -r requirements.txt
     #   yapw
-packaging==19.1
+packaging==23.1
     # via
+    #   black
     #   build
     #   pytest
 pathspec==0.9.0
@@ -101,8 +101,6 @@ pycodestyle==2.7.0
     # via flake8
 pyflakes==2.3.1
     # via flake8
-pyparsing==2.4.2
-    # via packaging
 pyproject-hooks==1.0.0
     # via build
 pyrsistent==0.18.0
@@ -135,16 +133,11 @@ simplejson==3.16.0
 six==1.16.0
     # via
     #   -r requirements.txt
-    #   packaging
     #   python-dateutil
     #   rfc3339-validator
     #   virtualenv
 toml==0.10.2
     # via pre-commit
-tomli==1.2.2
-    # via black
-typing-extensions==4.0.1
-    # via black
 urllib3==1.26.15
     # via
     #   -r requirements.txt

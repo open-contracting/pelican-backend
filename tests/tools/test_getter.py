@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import pytest
 
@@ -163,11 +163,89 @@ def test_parse_date(value, components):
 @pytest.mark.parametrize(
     "data,expected,actual",
     [
-        ({}, "contracts", []),
+        ({}, "tender.buyer.id", None),
+        ({"tender": {"buyer": {"id": "1"}}}, "tender.buyer.id", "1"),
     ],
 )
 def test_deep_get(data, expected, actual):
-    assert deep_get(data, expected, actual)
+    assert deep_get(data, expected) == actual
+
+
+@pytest.mark.parametrize(
+    "data,expected,force,actual",
+    [
+        ({}, "unset", dict, {}),
+        ({}, "unset", list, []),
+        ({}, "unset", str, ""),
+        ({}, "unset", date, None),
+        ({}, "unset", datetime, None),
+        ({}, "unset", float, None),
+        ({}, "unset", int, None),
+        # `for part in path.split(".")`
+        ({"null": None}, "null.unset", dict, {}),
+        ({"null": None}, "null.unset", list, []),
+        ({"null": None}, "null.unset", str, ""),
+        ({"null": None}, "null.unset", date, None),
+        ({"null": None}, "null.unset", datetime, None),
+        ({"null": None}, "null.unset", float, None),
+        ({"null": None}, "null.unset", int, None),
+        # `type(value) is dict`
+        ({"emptylist": []}, "emptylist.unset", dict, {}),
+        ({"emptylist": []}, "emptylist.unset", list, []),
+        ({"emptylist": []}, "emptylist.unset", str, ""),
+        ({"emptylist": []}, "emptylist.unset", date, None),
+        ({"emptylist": []}, "emptylist.unset", datetime, None),
+        ({"emptylist": []}, "emptylist.unset", float, None),
+        ({"emptylist": []}, "emptylist.unset", int, None),
+        # `part in value`
+        ({"emptydict": {}}, "emptydict.unset", dict, {}),
+        ({"emptydict": {}}, "emptydict.unset", list, []),
+        ({"emptydict": {}}, "emptydict.unset", str, ""),
+        ({"emptydict": {}}, "emptydict.unset", date, None),
+        ({"emptydict": {}}, "emptydict.unset", datetime, None),
+        ({"emptydict": {}}, "emptydict.unset", float, None),
+        ({"emptydict": {}}, "emptydict.unset", int, None),
+        # date and datetime
+        ({"todate": "2001-02-03"}, "todate", date, date(2001, 2, 3)),
+        ({"todatetime": "2001-02-03T04:05:06"}, "todatetime", datetime, datetime(2001, 2, 3, 4, 5, 6)),
+        # dict
+        ({"todict": None}, "todict", dict, {}),
+        ({"todict": ["list"]}, "todict", dict, {}),
+        ({"todict": 1}, "todict", dict, {}),
+        ({"todict": 1.0}, "todict", dict, {}),
+        ({"todict": "string"}, "todict", dict, {}),
+        # list
+        ({"tolist": None}, "todict", dict, {}),
+        ({"tolist": {"key": "value"}}, "tolist", list, []),
+        ({"tolist": 1}, "tolist", list, []),
+        ({"tolist": 1.0}, "tolist", list, []),
+        ({"tolist": "string"}, "tolist", list, []),
+        # float
+        ({"tofloat": "1"}, "tofloat", float, 1.0),
+        ({"tofloat": "1.0"}, "tofloat", float, 1.0),
+        ({"tofloat": None}, "tofloat", float, None),
+        ({"tofloat": {"key": "value"}}, "tofloat", float, None),
+        ({"tofloat": ["list"]}, "tofloat", float, None),
+        ({"tofloat": 1}, "tofloat", float, 1.0),
+        ({"tofloat": "string"}, "tofloat", float, None),
+        # int
+        ({"toint": "1"}, "toint", int, 1),
+        ({"toint": "1.0"}, "toint", int, None),
+        ({"toint": None}, "toint", int, None),
+        ({"toint": {"key": "value"}}, "toint", int, None),
+        ({"toint": ["list"]}, "toint", int, None),
+        ({"toint": 1.0}, "toint", int, 1),
+        ({"toint": "string"}, "toint", int, None),
+        # str
+        ({"tostring": None}, "tostring", str, "None"),
+        ({"tostring": 1}, "tostring", str, "1"),
+        ({"tostring": 1.0}, "tostring", str, "1.0"),
+        ({"tostring": [1]}, "tostring", str, "[1]"),
+        ({"tostring": {"key": "value"}}, "tostring", str, "{'key': 'value'}"),
+    ],
+)
+def test_deep_get_force(data, expected, force, actual):
+    assert deep_get(data, expected, force) == actual
 
 
 def test_get_values_invalid():
