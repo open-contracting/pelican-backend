@@ -129,7 +129,7 @@ def get_kingfisher_meta_data(collection_id):
         meta_data["collection_metadata"]["publisher"] = values[0]
 
     values = get_values(result, "ocid", value_only=True)
-    if values and type(values[0]) == str:
+    if values and type(values[0]) is str:
         meta_data["collection_metadata"]["ocid_prefix"] = values[0][:11]
 
     values = get_values(package_data, "data.license", value_only=True)

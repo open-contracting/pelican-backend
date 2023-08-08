@@ -8,13 +8,13 @@ item_special_case = {  # tender.tenderPeriod.endDate > date
 
 def test_undefined():
     empty_result = calculate({})
-    assert type(empty_result) == dict
+    assert type(empty_result) is dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
     assert empty_result["meta"] == {"reason": "no pairs of dates are set"}
     empty_result2 = calculate(item_special_case)
-    assert type(empty_result2) == dict
+    assert type(empty_result2) is dict
     assert empty_result2["result"] is None
     assert empty_result2["application_count"] is None
     assert empty_result2["pass_count"] is None
@@ -37,7 +37,7 @@ item_ok = {
 
 def test_ok():
     result = calculate(item_ok)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is True
     assert result["application_count"] == 11
     assert result["pass_count"] == 11
@@ -60,7 +60,7 @@ item_failed = {
 
 def test_failed():
     result = calculate(item_failed)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is False
     # assert result["application_count"] == 11
     assert result["application_count"] == 10
@@ -144,7 +144,7 @@ item_failed_in_contracts = {
 
 def test_failed_in_contracts():
     result = calculate(item_failed_in_contracts)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is False
     assert result["application_count"] == 3
     assert result["pass_count"] == 0

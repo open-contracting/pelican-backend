@@ -3,7 +3,7 @@ from contracting_process.resource_level.reference.contract_in_awards import calc
 
 def test_undefined():
     empty_result = calculate({})
-    assert type(empty_result) == dict
+    assert type(empty_result) is dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
@@ -21,7 +21,7 @@ item_ok = {
 
 def test_ok():
     result = calculate(item_ok)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is True
     assert result["application_count"] == 2
     assert result["pass_count"] == 2
@@ -51,7 +51,7 @@ item_failed2 = {
 
 def test_failed():
     result = calculate(item_failed1)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is False
     assert result["application_count"] == 4
     assert result["pass_count"] == 1
@@ -64,7 +64,7 @@ def test_failed():
     }
 
     result = calculate(item_failed2)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0

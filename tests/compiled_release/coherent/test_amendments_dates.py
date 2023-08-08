@@ -3,7 +3,7 @@ from contracting_process.resource_level.coherent.amendments_dates import calcula
 
 def test_undefined():
     empty_result = calculate({})
-    assert type(empty_result) == dict
+    assert type(empty_result) is dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
@@ -29,7 +29,7 @@ item_ok = {
 
 def test_ok():
     result = calculate(item_ok)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is True
     assert result["application_count"] == 10
     assert result["pass_count"] == 10
@@ -55,7 +55,7 @@ item_failed = {
 
 def test_failed():
     result = calculate(item_failed)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is False
     assert result["application_count"] == 10
     assert result["pass_count"] == 0

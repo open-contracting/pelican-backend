@@ -6,7 +6,7 @@ name = "number_checks"
 
 
 def test(value):
-    if type(value) == complex:
+    if type(value) is complex:
         return False, "not a real number"
     try:
         number = float(value)

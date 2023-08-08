@@ -162,7 +162,7 @@ def field_quality_check(
 
         value = item[key]
 
-        if require_type and type(value) != require_type:
+        if require_type and type(value) is not require_type:
             obj["result"] = False
             obj["value"] = value
             obj["reason"] = f"not a {require_type.__name__}"

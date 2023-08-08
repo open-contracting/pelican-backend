@@ -13,7 +13,7 @@ def test_empty():
     scope = awards_value.add_item(scope, item_unset1, 1)
     scope = awards_value.add_item(scope, item_unset2, 2)
     result = awards_value.get_result(scope)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {"reason": "insufficient amount of values (at least 100 required)"}
@@ -51,7 +51,7 @@ def test_undefined():
     scope = {}
     scope = awards_value.add_item(scope, first, 1)
     result = awards_value.get_result(scope)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] == {"reason": "insufficient amount of values (at least 100 required)"}
@@ -64,7 +64,7 @@ def test_failed():
         scope = awards_value.add_item(scope, second, i)
 
     result = awards_value.get_result(scope)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is False
     assert result["value"] == 0
     assert result["meta"] == {
@@ -350,7 +350,7 @@ def test_ok():
         scope = awards_value.add_item(scope, second, i + 1)
 
     result = awards_value.get_result(scope)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is True
     assert result["value"] == 100
     assert result["meta"] == {

@@ -159,13 +159,13 @@ def convert(amount, original_currency, target_currency, rel_date):
     if original_currency not in currencies or target_currency not in currencies:
         return None
 
-    if type(rel_date) != datetime.date:
+    if type(rel_date) is not datetime.date:
         try:
             rel_date = rel_date.date()
         except AttributeError:
             return None
 
-    if type(amount) != float:
+    if type(amount) is not float:
         try:
             amount = float(amount)
         except (TypeError, ValueError):

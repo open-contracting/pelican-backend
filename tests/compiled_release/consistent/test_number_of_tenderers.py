@@ -51,7 +51,7 @@ item_undefined_tenderers = {
 
 def test_general():
     empty_result = calculate({})
-    assert type(empty_result) == dict
+    assert type(empty_result) is dict
     assert empty_result["result"] is None
     assert empty_result["application_count"] is None
     assert empty_result["pass_count"] is None
@@ -60,7 +60,7 @@ def test_general():
 
 def test_ok():
     result = calculate(item_ok)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is True
     assert result["application_count"] == 1
     assert result["pass_count"] == 1
@@ -69,7 +69,7 @@ def test_ok():
 
 def test_failed():
     result = calculate(item_failed)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
@@ -88,7 +88,7 @@ def test_failed():
 
 def test_undefined_number_of_tenderers():
     result = calculate(item_undefined_number_of_tenderers)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
@@ -97,7 +97,7 @@ def test_undefined_number_of_tenderers():
 
 def test_undefined_tenderers():
     result = calculate(item_undefined_tenderers)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None

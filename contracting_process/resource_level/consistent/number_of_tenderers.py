@@ -20,7 +20,7 @@ def calculate(item):
 
     tenderers = deep_get(item, "tender.tenderers")
 
-    if type(tenderers) != list:
+    if type(tenderers) is not list:
         result["meta"] = {"reason": "tenderers is not an array"}
         return result
 

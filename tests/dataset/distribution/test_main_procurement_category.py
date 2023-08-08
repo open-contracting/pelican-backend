@@ -9,7 +9,7 @@ def test_empty():
     scope = main_procurement_category.add_item(scope, item_unset1, 1)
     scope = main_procurement_category.add_item(scope, item_unset2, 2)
     result = main_procurement_category.get_result(scope)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is None
     assert result["value"] is None
     assert result["meta"] is None
@@ -30,7 +30,7 @@ def test_ok():
     scope = main_procurement_category.add_item(scope, second, 2)
     scope = main_procurement_category.add_item(scope, third, 3)
     result = main_procurement_category.get_result(scope)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is True
     assert result["value"] == 100
     assert result["meta"] == {
@@ -51,7 +51,7 @@ def test_failed():
     scope = main_procurement_category.add_item(scope, second, 2)
     scope = main_procurement_category.add_item(scope, third, 3)
     result = main_procurement_category.get_result(scope)
-    assert type(result) == dict
+    assert type(result) is dict
     assert result["result"] is False
     assert result["value"] == 0
     assert result["meta"] == {
