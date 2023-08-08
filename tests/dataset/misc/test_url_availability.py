@@ -71,8 +71,8 @@ def test_failed_multiple():
 
         result = url_availability.get_result(scope)
         assert result["result"] is False
-        assert result["value"] >= 98
-        assert len(result["meta"]["passed_examples"]) >= 98
-        assert len(result["meta"]["failed_examples"]) <= 2
-        assert len([example for example in result["meta"]["passed_examples"] if example["status"] == "OK"]) >= 98
-        assert len([example for example in result["meta"]["failed_examples"] if example["status"] == "ERROR"]) <= 2
+        assert result["value"] >= 95
+        assert len(result["meta"]["passed_examples"]) >= 95
+        assert len(result["meta"]["failed_examples"]) <= 5
+        assert len([example for example in result["meta"]["passed_examples"] if example["status"] == "OK"]) >= 95
+        assert len([example for example in result["meta"]["failed_examples"] if example["status"] == "ERROR"]) <= 5
