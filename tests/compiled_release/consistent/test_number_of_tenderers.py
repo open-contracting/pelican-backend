@@ -29,7 +29,7 @@ item_failed = {
     }
 }
 
-item_undefined = {
+item_undefined_number_of_tenderers = {
     "tender": {
         "tenderers": [
             {
@@ -39,6 +39,12 @@ item_undefined = {
                 "name": "Mom and Pop",
             },
         ],
+    }
+}
+
+item_undefined_tenderers = {
+    "tender": {
+        "numberOfTenderers": 1,
     }
 }
 
@@ -80,10 +86,19 @@ def test_failed():
     }
 
 
-def test_undefined():
-    result = calculate(item_undefined)
+def test_undefined_number_of_tenderers():
+    result = calculate(item_undefined_number_of_tenderers)
     assert type(result) == dict
     assert result["result"] is None
     assert result["application_count"] is None
     assert result["pass_count"] is None
     assert result["meta"] == {"reason": "numberOfTenderers is non-numeric"}
+
+
+def test_undefined_tenderers():
+    result = calculate(item_undefined_tenderers)
+    assert type(result) == dict
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "tenderers is not an array"}

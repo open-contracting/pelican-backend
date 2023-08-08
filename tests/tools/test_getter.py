@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from pelican.util.getter import get_values, parse_date, parse_datetime
+from pelican.util.getter import deep_get, get_values, parse_date, parse_datetime
 
 EMPTY = [None, "", 0, 0.0, False, set(), (), [], {}]
 NON_STR = [None, 1, 1.0, True, {1}, (1,), [1], {1}]
@@ -160,11 +160,21 @@ def test_parse_date(value, components):
     assert parse_date(value) == datetime(*components).date()
 
 
+@pytest.mark.parametrize(
+    "data,expected,actual",
+    [
+        ({}, "contracts", []),
+    ],
+)
+def test_deep_get(data, expected, actual):
+    assert deep_get(data, expected, actual)
+
+
 def test_get_values_invalid():
     assert get_values({"tender": {"tenderers": "string"}}, "tender.tenderers.contactPoint.name") == []
 
 
-def test_get_value_simple():
+def test_get_values_simple():
     assert get_values(item, "id") == [{"path": "id", "value": item["id"]}]
     assert get_values(item, "") == [{"path": "", "value": item}]
     assert get_values(item, "tender") == [{"path": "tender", "value": item["tender"]}]
@@ -184,7 +194,7 @@ def test_get_value_simple():
     assert (len(result)) == 0
 
 
-def test_get_value_lists():
+def test_get_values_lists():
     result = get_values(item, "tender.items.quantity")
     assert result == [
         {"path": "tender.items[0].quantity", "value": 4.0},
@@ -213,7 +223,7 @@ def test_get_value_lists():
     assert len(result) == 0
 
 
-def test_join():
+def test_get_values_join():
     assert get_values(item, "tender.items.additionalClassifications.id") == [
         {"path": "tender.items[0].additionalClassifications[0].id", "value": "bbb"},
         {"path": "tender.items[0].additionalClassifications[1].id", "value": "ccc"},
@@ -251,7 +261,7 @@ def test_join():
     ]
 
 
-def test_end_of_path():
+def test_get_values_end_of_path():
     result = get_values(item, "tender")
     assert type(result) is list
     assert result == [{"path": "tender", "value": item["tender"]}]
@@ -275,7 +285,7 @@ def test_end_of_path():
     assert result == [item["tender"]["items"][0], item["tender"]["items"][1], item["tender"]["items"][2]]
 
 
-def test_indexing():
+def test_get_values_indexing():
     result = get_values(item, "tender.items[0]")
     assert type(result) is list
     assert len(result) == 1
@@ -323,7 +333,7 @@ def test_indexing():
     assert result == [item["contracts"][0]["documents"][0], item["contracts"][0]["documents"][1]]
 
 
-def test_none_value():
+def test_get_values_none_value():
     result = get_values(item, "tender.milestones.status")
     assert type(result) is list
     assert len(result) == 1

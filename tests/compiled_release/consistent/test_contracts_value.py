@@ -4,6 +4,8 @@ from pelican.util.currency_converter import bootstrap
 bootstrap()
 
 
+item_undefined_contracts = {"date": "2019-01-10T22:00:00+01:00", "awards": [{"id": 0}]}
+item_undefined_awards = {"date": "2019-01-10T22:00:00+01:00", "contracts": [{"awardID": 0}]}
 item_no_contracts = {"date": "2019-01-10T22:00:00+01:00", "contracts": [], "awards": [{"id": 0}]}
 item_no_awards = {"date": "2019-01-10T22:00:00+01:00", "contracts": [{"awardID": 0}], "awards": []}
 item_same_id = {
@@ -24,6 +26,18 @@ item_no_rate = {
 
 
 def test_undefined():
+    result = calculate(item_undefined_contracts)
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "no contract has an awardID"}
+
+    result = calculate(item_undefined_awards)
+    assert result["result"] is None
+    assert result["application_count"] is None
+    assert result["pass_count"] is None
+    assert result["meta"] == {"reason": "no award has an id"}
+
     result = calculate(item_no_contracts)
     assert result["result"] is None
     assert result["application_count"] is None

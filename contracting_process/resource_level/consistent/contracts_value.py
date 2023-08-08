@@ -23,12 +23,12 @@ version = 1.0
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    awards = [award for award in deep_get(item, "awards") if deep_has(award, "id")]
+    awards = [award for award in deep_get(item, "awards", list) if deep_has(award, "id")]
     if not awards:
         result["meta"] = {"reason": "no award has an id"}
         return result
 
-    contracts = [contract for contract in deep_get(item, "contracts") if deep_has(contract, "awardID")]
+    contracts = [contract for contract in deep_get(item, "contracts", list) if deep_has(contract, "awardID")]
     if not contracts:
         result["meta"] = {"reason": "no contract has an awardID"}
         return result
