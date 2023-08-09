@@ -92,7 +92,7 @@ def remove(dataset_id, filtered):
                     "dataset_ids": tuple(delete_dataset_ids),
                 },
             )
-            new_delete_dataset_ids = [row[0] for row in cursor.fetchall()] + [dataset_id]
+            new_delete_dataset_ids = [row[0] for row in cursor] + [dataset_id]
             if sorted(delete_dataset_ids) == sorted(new_delete_dataset_ids):
                 break
 
@@ -155,7 +155,7 @@ def remove(dataset_id, filtered):
                 "dataset_ids": tuple(drop_dataset_ids + [-1]),
             },
         )
-        new_drop_dataset_ids = [row[0] for row in cursor.fetchall()]
+        new_drop_dataset_ids = [row[0] for row in cursor]
         if sorted(drop_dataset_ids) == sorted(new_drop_dataset_ids):
             break
 

@@ -33,11 +33,7 @@ def create(dataset_id):
         {"dataset_id": dataset_id},
     )
 
-    while True:
-        row = cursor.fetchone()
-        if row is None:
-            break
-
+    for row in cursor:
         example = {"meta": row[0], "result": row[1]}
 
         if example["result"]["result"] is True:

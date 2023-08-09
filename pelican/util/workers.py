@@ -64,7 +64,7 @@ def process_items(
         commit()
 
         # insert_items() returns the id's of the rows inserted into the data_item table.
-        item_ids = [row[0] for row in cursors["default"].fetchall()]
+        item_ids = [row[0] for row in cursors["default"]]
         for j in range(0, len(item_ids), settings.EXTRACTOR_MAX_BATCH_SIZE):
             item_ids_batch = item_ids[j : j + settings.EXTRACTOR_MAX_BATCH_SIZE]
             items_inserted += len(item_ids_batch)

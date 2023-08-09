@@ -52,7 +52,7 @@ def create(dataset_id):
         {"dataset_id": dataset_id},
     )
 
-    for row in cursor.fetchall():
+    for row in cursor:
         if row["result"] is True:
             report[row["check_name"]]["passed_count"] = row["count"]
         elif row["result"] is False:
@@ -91,7 +91,7 @@ def create(dataset_id):
         {"dataset_id": dataset_id},
     )
 
-    for row in cursor.fetchall():
+    for row in cursor:
         report[row["check_name"]]["individual_passed_count"] = row["pass_count"]
         report[row["check_name"]]["individual_failed_count"] = row["application_count"] - row["pass_count"]
         report[row["check_name"]]["individual_application_count"] = row["application_count"]

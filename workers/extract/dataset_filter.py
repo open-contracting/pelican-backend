@@ -134,7 +134,7 @@ def callback(client_state, channel, method, properties, input_message):
         logger.info(query.as_string(cursor))
 
         cursor.execute(query)
-        ids = [row[0] for row in cursor.fetchall()]
+        ids = [row[0] for row in cursor]
 
         process_items(
             client_state=client_state,
