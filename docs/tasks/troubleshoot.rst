@@ -15,7 +15,7 @@ There are exceptions:
 
    .. code-block:: bash
 
-      ./manage.py restart-dataset-check 123
+      ./manage.py dev restart-dataset-check 123
 
 -  The :ref:`workers-extract` workers publish a message for each batch of extracted data. The received message is acknowledged before publishing messages; this avoids a loop of re-publishing messages in case of a recurring error. However, this means that, if the worker fails, then the missing batches are never extracted. It isn't possible to recover from a partial extraction. After fixing the issue, :ref:`manage-add` a new dataset and :ref:`manage-remove` the old dataset.
 
