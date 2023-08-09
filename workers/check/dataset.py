@@ -73,7 +73,6 @@ def callback(client_state, channel, method, properties, input_message):
             processed_count,
         )
         update_dataset_state(dataset_id, phase.DATASET, state.IN_PROGRESS)
-
         commit()
 
         processor.do_work(dataset_id)
