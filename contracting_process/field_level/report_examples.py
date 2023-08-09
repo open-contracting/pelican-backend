@@ -9,7 +9,6 @@ from pelican.util.services import commit, get_cursor
 logger = logging.getLogger("pelican.contracting_process.field_level.report_examples")
 
 examples_cap = 20
-page_size = 2000
 
 
 def create(dataset_id):
@@ -68,30 +67,13 @@ def create(dataset_id):
 
     logger.info("Starting processing pages.")
 
-    processed_count = page_size
-    id = -1
-    pager = 0
-
-    while processed_count == page_size:
-        processed_count = 0
-        cursor = get_cursor()
-
-        cursor.execute(
-            """\
-            SELECT id, result
-            FROM field_level_check
-            WHERE
-                id > %(id)s
-                AND dataset_id = %(dataset_id)s
-            ORDER BY id
-            LIMIT %(limit)s
-            """,
-            {"id": id, "dataset_id": dataset_id, "limit": page_size},
+    with get_cursor(name="field_level_report_examples") as named_cursor:
+        named_cursor.execute(
+            "SELECT result FROM field_level_check WHERE dataset_id = %(dataset_id)s",
+            {"dataset_id": dataset_id},
         )
 
-        rows = cursor.fetchall()
-
-        for row in rows:
+        for i, row in enumerate(named_cursor, 1):
             result = row["result"]
             meta = result["meta"]
 
@@ -120,11 +102,8 @@ def create(dataset_id):
                         if not path_check["coverage"]["overall_result"] or not path_check["quality"]["check_results"]:
                             break
 
-            processed_count += 1
-            id = row["id"]
-
-        pager += 1
-        logger.info("Processed page %s", pager)
+            if i % 1000:
+                logger.info("Processed %s field-level check results", i)
 
     logger.info("Storing field level check report for dataset_id %s", dataset_id)
     cursor.execute(

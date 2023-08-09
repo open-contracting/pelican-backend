@@ -1,4 +1,5 @@
 import logging
+import threading
 from typing import Any
 
 import psycopg2.extensions
@@ -11,6 +12,7 @@ from pelican.util import settings
 global db_connected, db_connection
 db_connected = False
 db_connection = None
+db_cursor_idx = 0
 
 logger = logging.getLogger(__name__)
 
@@ -69,16 +71,22 @@ def publish(*args: Any, **kwargs: Any) -> None:
 # PostgreSQL
 
 
-def get_cursor() -> psycopg2.extensions.cursor:
+def get_cursor(name="") -> psycopg2.extensions.cursor:
     """
     Connect to the database, if needed, and return a database cursor.
     """
-    global db_connected, db_connection
+    global db_connected, db_connection, db_cursor_idx
     if not db_connected:
         db_connection = psycopg2.connect(settings.DATABASE_URL)
         db_connected = True
 
-    return db_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    kwargs = {}
+    if name:
+        db_cursor_idx += 1
+        # https://github.com/django/django/blob/4.2.x/django/db/backends/postgresql/base.py#L469
+        kwargs["name"] = f"{name}-{threading.current_thread().ident}-{db_cursor_idx}"
+
+    return db_connection.cursor(cursor_factory=psycopg2.extras.DictCursor, **kwargs)
 
 
 def commit() -> None:
