@@ -76,7 +76,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         commit()
 
-        processor.do_work(dataset_id, logger)
+        processor.do_work(dataset_id)
 
         finish_callback(client_state, channel, method, dataset_id, phase=phase.DATASET, routing_key=routing_key)
     else:
