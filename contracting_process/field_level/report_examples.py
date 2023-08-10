@@ -39,10 +39,8 @@ def create(dataset_id):
 
             examples[path][key] = {
                 "checks": {},
-                "passed_examples": [],
-                "failed_examples": [],
-                "passed_sampler": ReservoirSampler(sample_size),
-                "failed_sampler": ReservoirSampler(sample_size),
+                "passed_examples": ReservoirSampler(sample_size),
+                "failed_examples": ReservoirSampler(sample_size),
             }
 
             for _, check_name in checks:
@@ -53,10 +51,8 @@ def create(dataset_id):
                 }
 
                 examples[path][key]["checks"][check_name] = {
-                    "passed_examples": [],
-                    "failed_examples": [],
-                    "passed_sampler": ReservoirSampler(sample_size),
-                    "failed_sampler": ReservoirSampler(sample_size),
+                    "passed_examples": ReservoirSampler(sample_size),
+                    "failed_examples": ReservoirSampler(sample_size),
                 }
 
     logger.info("Starting processing pages.")
@@ -68,32 +64,40 @@ def create(dataset_id):
         )
 
         for i, row in enumerate(named_cursor, 1):
-            result = row["result"]
-            meta = result["meta"]
-
-            for path, path_checks in result["checks"].items():
-                for path_check in path_checks:
-                    exact_path = path_check["path"]
+            value = row["result"]
+            meta = value["meta"]
+            for path, entries in value["checks"].items():
+                # If the path is to an array, the value corresponds to its entries.
+                for entry in entries:
+                    path_with_indexes = entry["path"]
 
                     for key in ("coverage", "quality"):
-                        if path_check[key]["overall_result"]:
-                            report[path][key]["passed_count"] += 1
+                        check_group = entry[key]
+                        report_item = report[path][key]
+                        examples_item = examples[path][key]
+
+                        if check_group["overall_result"]:
+                            report_item["passed_count"] += 1
                         else:
-                            report[path][key]["failed_count"] += 1
+                            report_item["failed_count"] += 1
+                        report_item["total_count"] += 1
 
-                        report[path][key]["total_count"] += 1
+                        for result in check_group["check_results"]:
+                            example = {"meta": meta, "path": path_with_indexes, "result": result}
+                            check_name = result["name"]
 
-                        for check in path_check[key]["check_results"]:
-                            example = {"meta": meta, "path": exact_path, "result": check}
+                            if result["result"]:
+                                report_item["checks"][check_name]["passed_count"] += 1
+                                examples_item["checks"][check_name]["passed_examples"].process(example)
+                                examples_item["passed_examples"].process(example)
+                            else:
+                                report_item["checks"][check_name]["failed_count"] += 1
+                                examples_item["checks"][check_name]["failed_examples"].process(example)
+                                examples_item["failed_examples"].process(example)
+                            report_item["checks"][check_name]["total_count"] += 1
 
-                            prefix = "passed" if check["result"] else "failed"
-                            report[path][key]["checks"][check["name"]][f"{prefix}_count"] += 1
-                            examples[path][key]["checks"][check["name"]][f"{prefix}_sampler"].process(example)
-                            examples[path][key][f"{prefix}_sampler"].process(example)
-
-                            report[path][key]["checks"][check["name"]]["total_count"] += 1
-
-                        if not path_check["coverage"]["overall_result"] or not path_check["quality"]["check_results"]:
+                        # Skip the "quality" iteration if not covered or if no quality results.
+                        if not entry["coverage"]["overall_result"] or not entry["quality"]["check_results"]:
                             break
 
             if not i % 1000:
@@ -108,27 +112,22 @@ def create(dataset_id):
     commit()
 
     logger.info("Storing examples for field level checks for dataset_id %s", dataset_id)
-    for path, path_checks in examples.items():
+    for path, check_groups in examples.items():
         for key in ("coverage", "quality"):
-            path_checks[key]["passed_examples"] = path_checks[key]["passed_sampler"].sample
-            path_checks[key]["failed_examples"] = path_checks[key]["failed_sampler"].sample
+            check_group = check_groups[key]
+            check_group["passed_examples"] = check_group["passed_examples"].sample
+            check_group["failed_examples"] = check_group["failed_examples"].sample
 
-            del path_checks[key]["passed_sampler"]
-            del path_checks[key]["failed_sampler"]
-
-            for check_name, check in path_checks[key]["checks"].items():
-                check["passed_examples"] = check["passed_sampler"].sample
-                check["failed_examples"] = check["failed_sampler"].sample
-
-                del check["passed_sampler"]
-                del check["failed_sampler"]
+            for check_name, check in check_group["checks"].items():
+                check["passed_examples"] = check["passed_examples"].sample
+                check["failed_examples"] = check["failed_examples"].sample
 
         cursor.execute(
             """\
             INSERT INTO field_level_check_examples (dataset_id, path, data)
             VALUES (%(dataset_id)s, %(path)s, %(data)s)
             """,
-            {"dataset_id": dataset_id, "path": path, "data": json.dumps(path_checks)},
+            {"dataset_id": dataset_id, "path": path, "data": json.dumps(checks)},
         )
 
     commit()

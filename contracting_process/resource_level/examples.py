@@ -38,8 +38,9 @@ def create(dataset_id):
         )
 
         for i, row in enumerate(named_cursor, 1):
-            meta = row["result"]["meta"]
-            for check_name, result in row["result"]["checks"].items():
+            value = row["result"]
+            meta = value["meta"]
+            for check_name, result in value["checks"].items():
                 example = {"meta": meta, "result": result}
                 passed = result["result"]
 
