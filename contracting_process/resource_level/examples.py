@@ -8,12 +8,11 @@ sample_size = 20
 
 
 def create(dataset_id):
-    cursor = get_cursor()
-
-    # Delete existing data in case of duplicate messages.
-    cursor.execute(
-        "DELETE FROM resource_level_check_examples WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
-    )
+    with get_cursor() as cursor:
+        # Delete existing data in case of duplicate messages.
+        cursor.execute(
+            "DELETE FROM resource_level_check_examples WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
+        )
 
     check_samplers = {
         check_name: {
@@ -24,42 +23,42 @@ def create(dataset_id):
         for check_name in definitions
     }
 
-    cursor.execute(
-        """\
-        SELECT result->'meta' AS meta, d.value AS result, d.key AS check_name
-        FROM resource_level_check, jsonb_each(result->'checks') d
-        WHERE dataset_id = %(dataset_id)s
-        """,
-        {"dataset_id": dataset_id},
-    )
-
-    for row in cursor:
-        example = {"meta": row[0], "result": row[1]}
-
-        if example["result"]["result"] is True:
-            check_samplers[row[2]]["passed"].process(example)
-        elif example["result"]["result"] is False:
-            check_samplers[row[2]]["failed"].process(example)
-        elif example["result"]["result"] is None:
-            check_samplers[row[2]]["undefined"].process(example)
-        else:
-            raise ValueError
-
-    for check_name, samplers in check_samplers.items():
-        data = {
-            "passed_examples": samplers["passed"].retrieve_samples(),
-            "failed_examples": samplers["failed"].retrieve_samples(),
-            "undefined_examples": samplers["undefined"].retrieve_samples(),
-        }
-
-        cursor.execute(
+    with get_cursor(name="resource_level_examples") as named_cursor:
+        named_cursor.execute(
             """\
-            INSERT INTO resource_level_check_examples (dataset_id, check_name, data)
-            VALUES (%(dataset_id)s, %(check_name)s, %(data)s)
+            SELECT result->'meta' AS meta, d.value AS result, d.key AS check_name
+            FROM resource_level_check, jsonb_each(result->'checks') d
+            WHERE dataset_id = %(dataset_id)s
             """,
-            {"dataset_id": dataset_id, "check_name": check_name, "data": json.dumps(data)},
+            {"dataset_id": dataset_id},
         )
 
-    commit()
+        for row in named_cursor:
+            example = {"meta": row[0], "result": row[1]}
 
-    cursor.close()
+            if example["result"]["result"] is True:
+                check_samplers[row[2]]["passed"].process(example)
+            elif example["result"]["result"] is False:
+                check_samplers[row[2]]["failed"].process(example)
+            elif example["result"]["result"] is None:
+                check_samplers[row[2]]["undefined"].process(example)
+            else:
+                raise ValueError
+
+    with get_cursor() as cursor:
+        for check_name, samplers in check_samplers.items():
+            data = {
+                "passed_examples": samplers["passed"].sample,
+                "failed_examples": samplers["failed"].sample,
+                "undefined_examples": samplers["undefined"].sample,
+            }
+
+            cursor.execute(
+                """\
+                INSERT INTO resource_level_check_examples (dataset_id, check_name, data)
+                VALUES (%(dataset_id)s, %(check_name)s, %(data)s)
+                """,
+                {"dataset_id": dataset_id, "check_name": check_name, "data": json.dumps(data)},
+            )
+
+    commit()
