@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import logging
-
 import click
 
 from pelican.util import exchange_rates_db, settings
@@ -41,14 +39,12 @@ def remove(dataset_id, include_filtered):
     """
     Delete a dataset.
     """
-    logger = logging.getLogger("pelican.remove")
-
     cursor = get_cursor()
 
     # checking if dataset exists
     cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s)", {"id": dataset_id})
     if not cursor.fetchone()[0]:
-        logger.error("Dataset with dataset_id %s does not exist.", dataset_id)
+        click.echo(f"Dataset with dataset_id {dataset_id} does not exist.", err=True)
         return
 
     cursor.execute(
@@ -57,13 +53,10 @@ def remove(dataset_id, include_filtered):
     )
     row = cursor.fetchone()
     if not row or row[0] not in (phase.CHECKED, phase.DELETED) or row[1] != state.OK:
-        logger.error(
-            "Dataset with dataset_id %s cannot be deleted. "
-            "For a successful deletion the dataset should be in '%s' or '%s' phase and '%s' state.",
-            dataset_id,
-            phase.CHECKED,
-            phase.DELETED,
-            state.OK,
+        click.echo(
+            f"Dataset with dataset_id {dataset_id} cannot be deleted. For a successful deletion, "
+            f"the dataset should be in '{phase.CHECKED}' or '{phase.DELETED}' phase and '{state.OK}' state.",
+            err=True,
         )
         return
 
@@ -99,10 +92,9 @@ def remove(dataset_id, include_filtered):
             delete_dataset_ids = new_delete_dataset_ids.copy()
 
     # safely deleting dataset
-    logger.info(
-        "Deleting datasets with the following dataset_ids: %s. "
-        "Only rows in the following tables will remain: dataset, dataset_filter, progress_monitor_dataset.",
-        delete_dataset_ids,
+    click.echo(
+        f"Deleting datasets with the following dataset_ids: {delete_dataset_ids}. "
+        "Only rows in the following tables will remain: dataset, dataset_filter, progress_monitor_dataset."
     )
     parameters = {"dataset_ids": delete_dataset_ids}
     cursor.execute("DELETE FROM field_level_check             WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
@@ -128,10 +120,10 @@ def remove(dataset_id, include_filtered):
     )
     commit()
 
-    logger.info("Datasets with dataset_ids %s have been deleted.", delete_dataset_ids)
+    click.echo(f"Datasets with dataset_ids {delete_dataset_ids} have been deleted.")
 
     # dropping datasets if no dependencies exist
-    logger.info("Checking if some deleted datasets can be dropped entirely.")
+    click.echo("Checking if some deleted datasets can be dropped entirely.")
     drop_dataset_ids = []
     while True:
         cursor.execute(
@@ -162,9 +154,9 @@ def remove(dataset_id, include_filtered):
         drop_dataset_ids = new_drop_dataset_ids.copy()
 
     if drop_dataset_ids:
-        logger.info("The following datasets will be dropped entirely: %s", drop_dataset_ids)
+        click.echo(f"The following datasets will be dropped entirely: {drop_dataset_ids}")
         parameters = {"dataset_ids": drop_dataset_ids}
-        cursor.execute("DELETE FROM dataset WHERE id = ANY(%(dataset_ids)s)", parameters)
+        cursor.execute("DELETE FROM progress_monitor_dataset WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
         cursor.execute(
             """\
             DELETE FROM dataset_filter
@@ -172,11 +164,11 @@ def remove(dataset_id, include_filtered):
             """,
             parameters,
         )
-        cursor.execute("DELETE FROM progress_monitor_dataset WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+        cursor.execute("DELETE FROM dataset WHERE id = ANY(%(dataset_ids)s)", parameters)
         commit()
 
     cursor.close()
-    logger.info("Successful deletion executed.")
+    click.echo("Successful deletion executed.")
 
 
 @cli.group()

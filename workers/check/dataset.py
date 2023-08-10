@@ -68,7 +68,7 @@ def callback(client_state, channel, method, properties, input_message):
 
     if dataset["phase"] == phase.CONTRACTING_PROCESS and dataset["state"] == state.OK and not difference:
         logger.info(
-            "All messages for dataset_id %s with %s items processed, starting to calculate dataset level checks",
+            "All messages processed for dataset_id %s with %s items, starting to calculate dataset level checks",
             dataset_id,
             processed_count,
         )
