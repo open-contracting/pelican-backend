@@ -24,7 +24,7 @@ def callback(client_state, channel, method, properties, input_message):
     item_ids = input_message["item_ids"]
 
     with get_cursor() as cursor:
-        cursor.execute("SELECT data, id FROM data_item WHERE id IN %(ids)s", {"ids": tuple(item_ids)})
+        cursor.execute("SELECT data, id FROM data_item WHERE id = ANY(%(ids)s)", {"ids": item_ids})
         processor.do_work(dataset_id, cursor.fetchall())
 
     finish_callback(client_state, channel, method, dataset_id, routing_key=routing_key)

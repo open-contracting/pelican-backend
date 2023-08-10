@@ -153,10 +153,10 @@ def insert_items(cursors, dataset_id, ids):
     cursors["default"].execute(
         """\
         INSERT INTO data_item (data, dataset_id)
-        SELECT data, %(dataset_id)s FROM data_item WHERE id IN %(ids)s
+        SELECT data, %(dataset_id)s FROM data_item WHERE id = ANY(%(ids)s)
         RETURNING id
         """,
-        {"dataset_id": dataset_id, "ids": tuple(ids)},
+        {"dataset_id": dataset_id, "ids": ids},
     )
 
 

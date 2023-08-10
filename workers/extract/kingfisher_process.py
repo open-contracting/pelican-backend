@@ -94,7 +94,7 @@ def callback(client_state, channel, method, properties, input_message):
 
 
 def insert_items(cursors, dataset_id, ids):
-    cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id IN %(ids)s", {"ids": tuple(ids)})
+    cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id = ANY(%(ids)s)", {"ids": ids})
     argslist = [(json.dumps(row[0]), dataset_id) for row in cursors["kingfisher_process"]]
     sql = "INSERT INTO data_item (data, dataset_id) VALUES %s RETURNING id"
     psycopg2.extras.execute_values(cursors["default"], sql, argslist, page_size=settings.EXTRACTOR_PAGE_SIZE)
