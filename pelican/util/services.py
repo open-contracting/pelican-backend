@@ -81,9 +81,12 @@ def get_cursor(name="") -> psycopg2.extensions.cursor:
 
     kwargs = {}
     if name:
+        # https://github.com/django/django/blob/stable/4.2.x/django/db/backends/postgresql/base.py#L469
         db_cursor_idx += 1
-        # https://github.com/django/django/blob/4.2.x/django/db/backends/postgresql/base.py#L469
         kwargs["name"] = f"{name}-{threading.current_thread().ident}-{db_cursor_idx}"
+        # Avoid "named cursor isn't valid anymore". Another option is to use a separate connection.
+        # https://www.psycopg.org/docs/usage.html#server-side-cursors
+        kwargs["withhold"] = True
 
     return db_connection.cursor(cursor_factory=psycopg2.extras.DictCursor, **kwargs)
 

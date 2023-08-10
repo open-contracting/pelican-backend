@@ -41,7 +41,6 @@ def get_result(scope):
 
 def get_kingfisher_meta_data(collection_id):
     kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
-
     kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     meta_data = {
