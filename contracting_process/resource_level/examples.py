@@ -1,8 +1,12 @@
+import logging
+
 import simplejson as json
 
 from contracting_process.resource_level.definitions import definitions
 from pelican.util.checks import ReservoirSampler
 from pelican.util.services import commit, get_cursor
+
+logger = logging.getLogger("pelican.contracting_process.resource_level.examples")
 
 sample_size = 20
 
@@ -33,7 +37,7 @@ def create(dataset_id):
             {"dataset_id": dataset_id},
         )
 
-        for row in named_cursor:
+        for i, row in enumerate(named_cursor, 1):
             meta = row["result"]["meta"]
             for check_name, result in row["result"]["checks"].items():
                 example = {"meta": meta, "result": result}
@@ -47,6 +51,9 @@ def create(dataset_id):
                     check_samplers[check_name]["undefined"].process(example)
                 else:
                     raise NotImplementedError("result is not a boolean or null")
+
+            if not i % 1000:
+                logger.info("Processed %s resource-level check results", i)
 
     with get_cursor() as cursor:
         for check_name, samplers in check_samplers.items():
