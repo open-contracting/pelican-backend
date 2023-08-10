@@ -34,11 +34,16 @@ item_failed1 = {
         {"dateSigned": "2017-12-31T00:00:00Z", "awardID": "2"},
         {"dateSigned": "2017-12-31T00:00:00Z", "awardID": "3"},
         {"dateSigned": "2017-12-31T00:00:00Z"},
+        {"dateSigned": "2015-12-31T00:00:00Z", "awardID": "4"},
+        {"dateSigned": "2015-12-31T00:00:00Z", "awardID": 5},
     ],
     "awards": [
+        {"date": "2015-12-30T00:00:00Z", "id": 1},
         {"date": "2015-12-30T00:00:00Z", "id": "1"},
         {"date": "2017-12-30T00:00:00Z", "id": "2"},
         {"date": "2017-12-30T00:00:00Z", "id": "2", "title": ""},
+        {"date": "2017-12-30T00:00:00Z", "id": 4},
+        {"date": "2017-12-30T00:00:00Z", "id": "5"},
     ],
 }
 
@@ -53,13 +58,15 @@ def test_failed():
     result = calculate(item_failed1)
     assert type(result) is dict
     assert result["result"] is False
-    assert result["application_count"] == 4
+    assert result["application_count"] == 6
     assert result["pass_count"] == 1
     assert result["meta"] == {
         "failed_paths": [
-            {"path": "contracts[1]", "reason": "multiple awards match the awardID"},
-            {"path": "contracts[2]", "reason": "no award matches the awardID"},
-            {"path": "contracts[3]", "reason": "contract has no awardID"},
+            {"path": "contracts[1]", "awardID": "2", "reason": "multiple awards match the awardID"},
+            {"path": "contracts[2]", "awardID": "3", "reason": "no award matches the awardID"},
+            {"path": "contracts[3]", "awardID": None, "reason": "contract has no awardID"},
+            {"path": "contracts[4]", "awardID": "4", "reason": "id is not the same type as awardID"},
+            {"path": "contracts[5]", "awardID": 5, "reason": "id is not the same type as awardID"},
         ]
     }
 
@@ -70,6 +77,6 @@ def test_failed():
     assert result["pass_count"] == 0
     assert result["meta"] == {
         "failed_paths": [
-            {"path": "contracts[0]", "reason": "no award matches the awardID"},
+            {"path": "contracts[0]", "awardID": "1", "reason": "no award matches the awardID"},
         ]
     }

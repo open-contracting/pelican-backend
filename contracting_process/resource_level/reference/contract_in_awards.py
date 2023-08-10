@@ -28,17 +28,30 @@ def calculate(item):
     for value in test_values:
         application_count += 1
 
+        path = value["path"]
         if not deep_has(value["value"], "awardID"):
-            failed_paths.append({"path": value["path"], "reason": "contract has no awardID"})
-        elif value["value"]["awardID"] not in id_counts:
-            if str(value["value"]["awardID"]) in id_counts_str:
-                failed_paths.append({"path": value["path"], "reason": "id is not the same type as awardID"})
-            else:
-                failed_paths.append({"path": value["path"], "reason": "no award matches the awardID"})
-        elif id_counts[value["value"]["awardID"]] > 1:
-            # Note: Multiple matches across different types currently pass.
-            failed_paths.append({"path": value["path"], "reason": "multiple awards match the awardID"})
+            failed_paths.append({"path": path, "awardID": None, "reason": "contract has no awardID"})
         else:
-            pass_count += 1
+            awardID = value["value"]["awardID"]
+            if awardID not in id_counts:
+                if str(awardID) in id_counts_str:
+                    failed_paths.append(
+                        {"path": path, "awardID": awardID, "reason": "id is not the same type as awardID"}
+                    )
+                else:
+                    failed_paths.append({"path": path, "awardID": awardID, "reason": "no award matches the awardID"})
+            elif id_counts[awardID] > 1:
+                failed_paths.append(
+                    {"path": path, "awardID": awardID, "reason": "multiple awards match the awardID"}  # (same type)
+                )
+            # Multiple matches across different types are currently designed to pass. (This assumes users do not coerce
+            # IDs to strings.) If we change this to a failure, uncomment the following lines.
+            #
+            # elif id_counts_str[str(awardID)] > 1:
+            #     failed_paths.append(
+            #       {"path": path, "awardID": awardID, "reason": "multiple awards match the awardID (different types)"}
+            #     )
+            else:
+                pass_count += 1
 
     return complete_result_resource(result, application_count, pass_count, failed_paths=failed_paths)
