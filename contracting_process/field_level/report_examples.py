@@ -128,7 +128,7 @@ def create(dataset_id):
             INSERT INTO field_level_check_examples (dataset_id, path, data)
             VALUES (%(dataset_id)s, %(path)s, %(data)s)
             """,
-            {"dataset_id": dataset_id, "path": path, "data": json.dumps(checks)},
+            {"dataset_id": dataset_id, "path": path, "data": json.dumps(check_groups)},
         )
 
     commit()
