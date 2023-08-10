@@ -100,7 +100,7 @@ def create(dataset_id):
                         if not entry["coverage"]["overall_result"] or not entry["quality"]["check_results"]:
                             break
 
-            if not i % 1000:
+            if not i % 5000:  # about once per 15s
                 logger.info("Processed %s field-level check results", i)
 
     logger.info("Storing field level check report for dataset_id %s", dataset_id)

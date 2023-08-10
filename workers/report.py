@@ -20,7 +20,13 @@ def start():
     """
     Create reports, pick examples, and update dataset metadata.
     """
-    consume(on_message_callback=callback, queue=consume_routing_key)
+    consume(
+        on_message_callback=callback,
+        queue=consume_routing_key,
+        # 3 hours in milliseconds.
+        # https://www.rabbitmq.com/consumers.html
+        arguments={"x-consumer-timeout": 3 * 60 * 60 * 1000},
+    )
 
 
 def callback(client_state, channel, method, properties, input_message):
