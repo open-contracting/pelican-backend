@@ -1,70 +1,65 @@
+"""
+For each role of each party, there is an organization reference. The roles to test are:
+
+-  procuringEntity
+-  tenderer
+-  supplier
+-  payer
+-  payee
+
+The 'buyer' role is not tested, because there can be multiple buyers in the ``parties`` array, but there is only one
+``buyer`` field for the primary buyer.
+
+Since the test operates on all organization objects, the test silently ignores any party whose ``id`` field is missing,
+as it cannot be referenced.
+
+.. admonition:: Methodology notes
+
+   -  ``id`` values are cast as ``str`` for matching.
+"""
+
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
-from pelican.util.getter import get_values
+from pelican.util.getter import deep_get, deep_has, get_values
 
 version = 1.0
+applicable_roles = {
+    "supplier": "awards.suppliers.id",
+    "tenderer": "tender.tenderers.id",
+    "procuringEntity": "tender.procuringEntity.id",
+    "payer": "contracts.implementation.transactions.payer.id",
+    "payee": "contracts.implementation.transactions.payee.id",
+}
 
 
-def calculate(item) -> dict:
+def calculate(item):
     result = get_empty_result_resource(version)
 
-    testing_roles = {
-        "supplier": "awards.suppliers",
-        "tenderer": "tender.tenderers",
-        "procuringEntity": "tender.procuringEntity",
-        "payer": "contracts.implementation.transactions.payer",
-        "payee": "contracts.implementation.transactions.payee",
-    }
+    parties = [
+        {"path": v["path"], "id": str(v["value"]["id"]), "role": role}
+        for v in get_values(item, "parties")
+        if deep_has(v["value"], "id")
+        for role in deep_get(v["value"], "roles", list)
+        if role in applicable_roles
+    ]
 
-    parties = get_values(item, "parties")
-    parties_roles = []
-    for party in parties:
-        if "value" in party and party["value"]:
-            party_value = party["value"]
-            if "roles" in party_value and party_value["roles"] and "id" in party_value and party_value["id"]:
-                for role in party_value["roles"]:
-                    if role in testing_roles.keys():
-                        party_item = {"role": role, "id": party_value["id"], "path": party["path"]}
-                        parties_roles.append(party_item)
-
-    if not parties_roles:
-        result["meta"] = {"reason": "There are no parties with set role and id"}
+    if not parties:
+        result["meta"] = {"reason": "no party has an id and an applicable role"}
         return result
 
-    items_from_paths = []
-    for role_name, role_path in testing_roles.items():
-        found_items = []
-        found_items += get_values(item, role_path)
-        for elem in found_items:
-            if "value" in elem and "id" in elem["value"]:
-                elem_box = {"id": elem["value"]["id"], "role": role_name}
-                items_from_paths.append(elem_box)
+    roles = {party["role"] for party in parties}
 
-    passed = None
-    pass_count = 0
+    references = {role: set(map(str, get_values(item, applicable_roles[role], value_only=True))) for role in roles}
+
     application_count = 0
+    pass_count = 0
+    failed_paths = []
+    for party in parties:
+        passed = party["id"] in references[party["role"]]
 
-    for party in parties_roles:
-        if not result["meta"] or "references" not in result["meta"]:
-            result["meta"] = {"references": []}
-        passed = False
-        role = None
-        for referenced_item in items_from_paths:
-            if str(referenced_item["id"]) == str(party["id"]) and referenced_item["role"] == party["role"]:
-                passed = True
-                break
         application_count += 1
         if passed:
             pass_count += 1
+        else:
+            failed_paths.append({"path": party["path"], "role": party["role"], "id": party["id"]})
 
-        result["meta"]["references"].append(
-            {
-                # identification of a resource
-                "party_path": party["path"],
-                # role that was examined
-                "examined_role": party["role"],
-                # identification of a resource
-                "resource_identification": party["id"],
-            }
-        )
-
-    return complete_result_resource(result, application_count, pass_count)
+    return complete_result_resource(result, application_count, pass_count, failed_paths=failed_paths)
