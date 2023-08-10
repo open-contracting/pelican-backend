@@ -99,7 +99,7 @@ def remove(dataset_id, include_filtered, force):
 
             delete_dataset_ids = new_delete_dataset_ids.copy()
 
-    click.echo(f"Removing datasets {', '.join(map(str, delete_dataset_ids))}... ", nl=False)
+    click.echo(f"Removing dataset(s) {', '.join(map(str, delete_dataset_ids))}... ", nl=False)
 
     parameters = {"dataset_ids": delete_dataset_ids}
     cursor.execute("DELETE FROM field_level_check             WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
@@ -158,7 +158,7 @@ def remove(dataset_id, include_filtered, force):
         drop_dataset_ids = new_drop_dataset_ids.copy()
 
     if drop_dataset_ids:
-        click.echo(f"Purging datasets {', '.join(map(str, drop_dataset_ids))}... ", nl=False)
+        click.echo(f"Purging dataset(s) {', '.join(map(str, drop_dataset_ids))}... ", nl=False)
 
         parameters = {"dataset_ids": drop_dataset_ids}
         cursor.execute("DELETE FROM progress_monitor_dataset WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
