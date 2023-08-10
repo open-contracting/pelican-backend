@@ -37,7 +37,7 @@ def add(name, collection_id, previous_dataset, sample):
 @cli.command()
 @click.argument("dataset_id", type=int)
 @click.option("--include-filtered", is_flag=True, help="Delete its filtered datasets.")
-def remove(dataset_id, filtered):
+def remove(dataset_id, include_filtered):
     """
     Delete a dataset.
     """
@@ -69,7 +69,7 @@ def remove(dataset_id, filtered):
 
     # searching for descendant filtered datasets
     delete_dataset_ids = [dataset_id]
-    if filtered:
+    if include_filtered:
         while True:
             cursor.execute(
                 """\
