@@ -43,17 +43,16 @@ def decode(body: bytes, content_type: str | None) -> Any:
 YAPW_KWARGS = {
     "url": settings.RABBIT_URL,
     "exchange": settings.RABBIT_EXCHANGE_NAME,
-    "prefetch_count": 20,
     "encode": encode,
     "decode": decode,
 }
 
 
-def consume(*args: Any, **kwargs: Any) -> None:
+def consume(*args: Any, prefetch_count=1, **kwargs: Any) -> None:
     """
     Consume messages from RabbitMQ.
     """
-    client = AsyncConsumer(*args, **kwargs, **YAPW_KWARGS)
+    client = AsyncConsumer(*args, prefetch_count=prefetch_count, **kwargs, **YAPW_KWARGS)
     client.start()
 
 

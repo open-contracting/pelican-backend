@@ -26,9 +26,7 @@ def create(dataset_id):
     report = {}
     examples = {}
 
-    for order, definition in enumerate(definitions.items()):
-        path, quality_checks = definition
-
+    for order, (path, quality_checks) in enumerate(definitions.items()):
         report[path] = {
             "examples_filled": False,
             "processing_order": order,

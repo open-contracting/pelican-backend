@@ -16,7 +16,7 @@ def start():
     Perform the field-level and compiled release-level checks.
     """
     bootstrap()
-    consume(on_message_callback=callback, queue=consume_routing_key)
+    consume(on_message_callback=callback, queue=consume_routing_key, prefetch_count=20)
 
 
 def callback(client_state, channel, method, properties, input_message):
