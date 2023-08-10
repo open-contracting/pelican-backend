@@ -64,7 +64,7 @@ def remove(dataset_id, include_filtered, force):
             click.secho(
                 f"Dataset {dataset_id} (phase={row[0]}, state={row[1]}) can't be removed. Its phase must be "
                 f"{phase.CHECKED} or {phase.DELETED}, and its state must be {state.OK}.",
-                fg="err",
+                fg="red",
                 err=True,
             )
             return
