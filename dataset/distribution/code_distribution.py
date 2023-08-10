@@ -3,10 +3,10 @@ from pelican.util.getter import get_values
 
 
 class CodeDistribution:
-    def __init__(self, paths, test_values=[], samples_cap=20):
+    def __init__(self, paths, test_values=[], limit=20):
         self.paths = paths
         self.test_values = set(test_values)
-        self.samples_cap = samples_cap
+        self.limit = limit
 
     def add_item(self, scope, item, item_id):
         if not scope:
@@ -26,7 +26,7 @@ class CodeDistribution:
                 value,
                 {
                     "count": 0,
-                    "sampler": ReservoirSampler(self.samples_cap),
+                    "sampler": ReservoirSampler(self.limit),
                 },
             )
             scope[value]["count"] += 1

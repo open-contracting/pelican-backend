@@ -247,20 +247,21 @@ def _prepare_field_result(
 
 
 class ReservoirSampler:
-    def __init__(self, samples_cap: int):
-        if samples_cap < 1:
-            raise ValueError("samples_cap must be a positive integer")
+    def __init__(self, limit: int):
+        if limit < 1:
+            raise ValueError("limit must be a positive integer")
 
-        self._samples_cap = samples_cap
+        self._limit = limit
         self._samples: list[Any] = []
         self._index = 0
 
+    # https://en.wikipedia.org/wiki/Reservoir_sampling
     def process(self, value: Any) -> None:
-        if self._index < self._samples_cap:
+        if self._index < self._limit:
             self._samples.append(value)
         else:
             r = random.randint(0, self._index)
-            if r < self._samples_cap:
+            if r < self._limit:
                 self._samples[r] = value
 
         self._index += 1

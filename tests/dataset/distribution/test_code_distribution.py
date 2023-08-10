@@ -27,7 +27,7 @@ items_multiple_paths = [
 
 def test_no_test_values():
     # items_multiple_items
-    distribution = CodeDistribution(["awards.status"], samples_cap=20)
+    distribution = CodeDistribution(["awards.status"], limit=20)
     scope = {}
     id = 0
     for item in items_multiple_items:
@@ -43,7 +43,7 @@ def test_no_test_values():
     assert len(result["meta"]["shares"]["active"]["examples"]) == 2
 
     # items_complex_structure
-    distribution = CodeDistribution(["contracts.implementation.milestones.status"], samples_cap=20)
+    distribution = CodeDistribution(["contracts.implementation.milestones.status"], limit=20)
     scope = {}
     id = 0
     for item in items_complex_structure:
@@ -59,9 +59,7 @@ def test_no_test_values():
     assert len(result["meta"]["shares"]["notMet"]["examples"]) == 2
 
     # items_multiple_paths
-    distribution = CodeDistribution(
-        ["planning.documents.documentType", "tender.documents.documentType"], samples_cap=20
-    )
+    distribution = CodeDistribution(["planning.documents.documentType", "tender.documents.documentType"], limit=20)
     scope = {}
     id = 0
     for item in items_multiple_paths:
@@ -95,9 +93,7 @@ items_passed3.extend([{"ocid": "0", "awards": [{"status": "active"}]} for i in r
 
 def test_passed():
     # test_passed1
-    distribution = CodeDistribution(
-        ["awards.status"], ["pending", "active", "cancelled", "unsuccessful"], samples_cap=20
-    )
+    distribution = CodeDistribution(["awards.status"], ["pending", "active", "cancelled", "unsuccessful"], limit=20)
     scope = {}
     id = 0
     for item in items_passed1:
@@ -117,7 +113,7 @@ def test_passed():
     }
 
     # test_passed2
-    distribution = CodeDistribution(["awards.status"], ["pending"], samples_cap=20)
+    distribution = CodeDistribution(["awards.status"], ["pending"], limit=20)
     scope = {}
     id = 0
     for item in items_passed2:
@@ -133,7 +129,7 @@ def test_passed():
     assert len(result["meta"]["shares"]["active"]["examples"]) == 20
 
     # test_passed3
-    distribution = CodeDistribution(["awards.status"], ["pending", "active"], samples_cap=20)
+    distribution = CodeDistribution(["awards.status"], ["pending", "active"], limit=20)
     scope = {}
     id = 0
     for item in items_passed3:
@@ -159,7 +155,7 @@ items_failed3 = [{"ocid": "0", "awards": [{"status": "active"}]}]
 
 def test_failed():
     # test_failed1
-    distribution = CodeDistribution(["awards.status"], ["pending"], samples_cap=20)
+    distribution = CodeDistribution(["awards.status"], ["pending"], limit=20)
     scope = {}
     id = 0
     for item in items_failed1:
@@ -174,7 +170,7 @@ def test_failed():
     }
 
     # test_failed2
-    distribution = CodeDistribution(["awards.status"], ["pending"], samples_cap=20)
+    distribution = CodeDistribution(["awards.status"], ["pending"], limit=20)
     scope = {}
     id = 0
     for item in items_failed2:
@@ -190,7 +186,7 @@ def test_failed():
     assert len(result["meta"]["shares"]["active"]["examples"]) == 20
 
     # test_failed2
-    distribution = CodeDistribution(["awards.status"], ["pending"], samples_cap=20)
+    distribution = CodeDistribution(["awards.status"], ["pending"], limit=20)
     scope = {}
     id = 0
     for item in items_failed3:
