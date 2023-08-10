@@ -27,5 +27,5 @@ def calculate(item):
     return complete_result_resource_pass_fail(
         result,
         number_of_tenderers == len(tenderers),
-        {"numberOfTenderers": item["tender"]["numberOfTenderers"], "tenderers": item["tender"]["tenderers"]},
+        {"numberOfTenderers": item["tender"]["numberOfTenderers"], "len(tenderers)": len(tenderers)},
     )

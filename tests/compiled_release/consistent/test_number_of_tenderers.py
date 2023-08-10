@@ -75,14 +75,7 @@ def test_failed():
     assert result["pass_count"] == 0
     assert result["meta"] == {
         "numberOfTenderers": 1,
-        "tenderers": [
-            {
-                "name": "Acme Inc.",
-            },
-            {
-                "name": "Mom and Pop",
-            },
-        ],
+        "len(tenderers)": 2,
     }
 
 
