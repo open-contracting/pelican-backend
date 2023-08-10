@@ -58,7 +58,7 @@ def test_passed():
     assert result["meta"] is None
 
 
-item_test_failed1 = {
+item_test_failed1__invalid_schema = {
     "parties": [
         {"id": "1", "roles": ["procuringEntity"]},
         {"id": "2", "roles": ["tenderer"]},
@@ -89,7 +89,7 @@ item_test_failed1 = {
     ],
 }
 
-item_test_failed2 = {
+item_test_failed2__invalid_schema = {
     "parties": [
         {"id": "1", "roles": ["procuringEntity"]},
         {"id": "2", "roles": ["tenderer"]},
@@ -101,7 +101,7 @@ item_test_failed2 = {
 
 
 def test_failed():
-    result = calculate(item_test_failed1)
+    result = calculate(item_test_failed1__invalid_schema)
     assert result["result"] is False
     assert result["application_count"] == 5
     assert result["pass_count"] == 0
@@ -115,7 +115,7 @@ def test_failed():
         ]
     }
 
-    result = calculate(item_test_failed2)
+    result = calculate(item_test_failed2__invalid_schema)
     assert result["result"] is False
     assert result["application_count"] == 5
     assert result["pass_count"] == 0
