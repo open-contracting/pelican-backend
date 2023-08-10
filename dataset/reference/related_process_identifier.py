@@ -4,7 +4,7 @@ from pelican.util.checks import get_empty_result_dataset
 from pelican.util.getter import get_values
 
 version = 2.0
-examples_cap = 100
+sample_size = 100
 
 
 def add_item(scope, item, item_id):
@@ -95,20 +95,20 @@ def pick_examples(scope, related_process_key, result):
     }
 
     if result:
-        if scope["meta"]["total_passed"] < examples_cap:
+        if scope["meta"]["total_passed"] < sample_size:
             scope["meta"]["passed_examples"].append(example)
         else:
             r = random.randint(0, scope["meta"]["total_passed"])
-            if r < examples_cap:
+            if r < sample_size:
                 scope["meta"]["passed_examples"][r] = example
 
         scope["meta"]["total_passed"] += 1
     else:
-        if scope["meta"]["total_failed"] < examples_cap:
+        if scope["meta"]["total_failed"] < sample_size:
             scope["meta"]["failed_examples"].append(example)
         else:
             r = random.randint(0, scope["meta"]["total_failed"])
-            if r < examples_cap:
+            if r < sample_size:
                 scope["meta"]["failed_examples"][r] = example
 
         scope["meta"]["total_failed"] += 1

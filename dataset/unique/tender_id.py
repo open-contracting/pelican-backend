@@ -5,6 +5,7 @@ from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
 from pelican.util.getter import get_values
 
 version = 2.0
+sample_size = 100
 
 
 def add_item(scope, item, item_id):
@@ -45,8 +46,8 @@ def get_result(scope):
     passed_releases_count = sum(len(v) for v in scope["tender_id_mapping"].values() if len(v) == 1)
     result["result"] = relevant_releases_count == passed_releases_count
 
-    passed_examples_sampler = ReservoirSampler(100)
-    failed_examples_sampler = ReservoirSampler(100)
+    passed_examples_sampler = ReservoirSampler(sample_size)
+    failed_examples_sampler = ReservoirSampler(sample_size)
     for tender_id, items in scope["tender_id_mapping"].items():
         main_item = random.choice(items)
         sample = {
@@ -60,8 +61,8 @@ def get_result(scope):
         else:
             failed_examples_sampler.process(sample)
 
-    result["meta"]["passed_examples"] = passed_examples_sampler.retrieve_samples()
-    result["meta"]["failed_examples"] = failed_examples_sampler.retrieve_samples()
+    result["meta"]["passed_examples"] = passed_examples_sampler.sample
+    result["meta"]["failed_examples"] = failed_examples_sampler.sample
 
     result["value"] = 100 * passed_releases_count / relevant_releases_count
     result["meta"]["total_processed"] = relevant_releases_count

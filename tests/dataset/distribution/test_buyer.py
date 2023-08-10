@@ -87,7 +87,7 @@ def test_failed():
     assert result["meta"]["total_buyer_count"] == buyer.min_resources_num
     assert result["meta"]["counts"]["1"]["total_ocid_count"] == buyer.min_resources_num
     assert result["meta"]["counts"]["1"]["total_buyer_count"] == buyer.min_resources_num
-    assert len(result["meta"]["examples"]) == buyer.examples_cap
+    assert len(result["meta"]["examples"]) == buyer.sample_size
 
     scope = {}
 
@@ -105,7 +105,7 @@ def test_failed():
     assert result["meta"]["counts"]["1"]["total_buyer_count"] == buyer.min_resources_num
     assert result["meta"]["counts"]["100+"]["total_ocid_count"] == buyer.min_resources_num
     assert result["meta"]["counts"]["100+"]["total_buyer_count"] == 1
-    assert len(result["meta"]["examples"]) == buyer.examples_cap
+    assert len(result["meta"]["examples"]) == buyer.sample_size
 
 
 items_test_passed_multiple = []
@@ -159,4 +159,4 @@ def test_passed_multiple():
     assert result["meta"]["counts"]["21_50"]["total_ocid_count"] == 100 * 21
     assert result["meta"]["counts"]["51_100"]["total_ocid_count"] == 100 * 51
     assert result["meta"]["counts"]["100+"]["total_ocid_count"] == 100 * 101
-    assert len(result["meta"]["examples"]) == buyer.examples_cap
+    assert len(result["meta"]["examples"]) == buyer.sample_size

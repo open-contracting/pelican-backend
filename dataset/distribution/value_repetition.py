@@ -10,7 +10,7 @@ from pelican.util.checks import get_empty_result_dataset
 from pelican.util.getter import get_values
 
 version = 1.0
-examples_cap = 10
+sample_size = 10
 most_frequent_cap = 5
 most_frequent_computation = 3
 
@@ -51,11 +51,11 @@ def add_item(scope, item, item_id, path):
             }
 
         # reservoir sampling
-        if scope[key]["count"] < examples_cap:
+        if scope[key]["count"] < sample_size:
             scope[key]["examples"].append({"item_id": item_id, "ocid": ocid})
         else:
             r = random.randint(0, scope[key]["count"])
-            if r < examples_cap:
+            if r < sample_size:
                 scope[key]["examples"][r] = {"item_id": item_id, "ocid": ocid}
 
         scope[key]["count"] += 1

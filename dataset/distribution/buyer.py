@@ -3,7 +3,7 @@ from pelican.util.getter import get_values
 
 version = 1.0
 min_resources_num = 1000
-examples_cap = 20
+sample_size = 20
 
 
 def add_item(scope, item, item_id):
@@ -54,7 +54,7 @@ def get_result(scope):
             "100+": {"total_ocid_count": 0, "total_buyer_count": 0},
         }
 
-        buyer_with_one_ocid_sampler = ReservoirSampler(examples_cap)
+        buyer_with_one_ocid_sampler = ReservoirSampler(sample_size)
 
         # filling in the histogram
         for value in scope["buyers"].values():
@@ -87,7 +87,7 @@ def get_result(scope):
             "counts": ocid_histogram,
             "total_ocid_count": scope["total_ocid_count"],
             "total_buyer_count": len(scope["buyers"]),
-            "examples": buyer_with_one_ocid_sampler.retrieve_samples(),
+            "examples": buyer_with_one_ocid_sampler.sample,
         }
     else:
         result["meta"] = {"reason": "no data items were processed"}

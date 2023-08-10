@@ -3,7 +3,7 @@ from pelican.util.getter import get_values
 
 version = 1.0
 min_resources_num = 1000
-examples_cap = 20
+sample_size = 20
 
 
 def add_item(scope, item, item_id):
@@ -33,7 +33,7 @@ def add_item(scope, item, item_id):
         key,
         {
             "total_ocid_count": 0,
-            "sampler": ReservoirSampler(examples_cap),
+            "sampler": ReservoirSampler(sample_size),
         },
     )
     scope["buyers"][key]["total_ocid_count"] += 1
@@ -65,7 +65,7 @@ def get_result(scope):
             "total_ocid_count": scope["total_ocid_count"],
             "ocid_count": biggest_buyer["total_ocid_count"],
             "ocid_share": biggest_buyer["total_ocid_count"] / scope["total_ocid_count"],
-            "examples": biggest_buyer["sampler"].retrieve_samples(),
+            "examples": biggest_buyer["sampler"].sample,
             "specifics": {"buyer.identifier.id": biggest_buyer_id, "buyer.identifier.scheme": biggest_buyer_scheme},
         }
 

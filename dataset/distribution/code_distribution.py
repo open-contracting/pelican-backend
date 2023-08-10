@@ -43,7 +43,7 @@ class CodeDistribution:
             passed = True
             for key, value in scope.items():
                 value["share"] = value["count"] / total_count
-                value["examples"] = value["sampler"].retrieve_samples()
+                value["examples"] = value["sampler"].sample
                 del value["sampler"]
 
                 if key in self.test_values:

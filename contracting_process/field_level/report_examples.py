@@ -8,7 +8,7 @@ from pelican.util.services import commit, get_cursor
 
 logger = logging.getLogger("pelican.contracting_process.field_level.report_examples")
 
-examples_cap = 20
+sample_size = 20
 
 
 def create(dataset_id):
@@ -45,8 +45,8 @@ def create(dataset_id):
                 "checks": {},
                 "passed_examples": [],
                 "failed_examples": [],
-                "passed_sampler": ReservoirSampler(examples_cap),
-                "failed_sampler": ReservoirSampler(examples_cap),
+                "passed_sampler": ReservoirSampler(sample_size),
+                "failed_sampler": ReservoirSampler(sample_size),
             }
 
             for _, check_name in checks:
@@ -59,8 +59,8 @@ def create(dataset_id):
                 examples[path][key]["checks"][check_name] = {
                     "passed_examples": [],
                     "failed_examples": [],
-                    "passed_sampler": ReservoirSampler(examples_cap),
-                    "failed_sampler": ReservoirSampler(examples_cap),
+                    "passed_sampler": ReservoirSampler(sample_size),
+                    "failed_sampler": ReservoirSampler(sample_size),
                 }
 
     logger.info("Starting processing pages.")
@@ -114,15 +114,15 @@ def create(dataset_id):
     logger.info("Storing examples for field level checks for dataset_id %s", dataset_id)
     for path, path_checks in examples.items():
         for key in ("coverage", "quality"):
-            path_checks[key]["passed_examples"] = path_checks[key]["passed_sampler"].retrieve_samples()
-            path_checks[key]["failed_examples"] = path_checks[key]["failed_sampler"].retrieve_samples()
+            path_checks[key]["passed_examples"] = path_checks[key]["passed_sampler"].sample
+            path_checks[key]["failed_examples"] = path_checks[key]["failed_sampler"].sample
 
             del path_checks[key]["passed_sampler"]
             del path_checks[key]["failed_sampler"]
 
             for check_name, check in path_checks[key]["checks"].items():
-                check["passed_examples"] = check["passed_sampler"].retrieve_samples()
-                check["failed_examples"] = check["failed_sampler"].retrieve_samples()
+                check["passed_examples"] = check["passed_sampler"].sample
+                check["failed_examples"] = check["failed_sampler"].sample
 
                 del check["passed_sampler"]
                 del check["failed_sampler"]

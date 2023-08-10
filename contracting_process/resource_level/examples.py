@@ -4,7 +4,7 @@ from contracting_process.resource_level.definitions import definitions
 from pelican.util.checks import ReservoirSampler
 from pelican.util.services import commit, get_cursor
 
-examples_cap = 20
+sample_size = 20
 
 
 def create(dataset_id):
@@ -17,9 +17,9 @@ def create(dataset_id):
 
     check_samplers = {
         check_name: {
-            "passed": ReservoirSampler(examples_cap),
-            "failed": ReservoirSampler(examples_cap),
-            "undefined": ReservoirSampler(examples_cap),
+            "passed": ReservoirSampler(sample_size),
+            "failed": ReservoirSampler(sample_size),
+            "undefined": ReservoirSampler(sample_size),
         }
         for check_name in definitions
     }
