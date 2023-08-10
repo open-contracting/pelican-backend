@@ -26,17 +26,26 @@ def calculate_path(item, path):
     for value in test_values:
         application_count += 1
 
+        path = value["path"]
         if not deep_has(value["value"], "id"):
-            failed_paths.append({"path": value["path"], "reason": "reference has no id"})
-        elif value["value"]["id"] not in id_counts:
-            if str(value["value"]["id"]) in id_counts_str:
-                failed_paths.append({"path": value["path"], "reason": "id values are not the same type"})
-            else:
-                failed_paths.append({"path": value["path"], "reason": "no party matches the referencing id"})
-        elif id_counts[value["value"]["id"]] > 1:
-            # Note: Multiple matches across different types currently pass.
-            failed_paths.append({"path": value["path"], "reason": "multiple parties match the referencing id"})
+            failed_paths.append({"path": path, "id": None, "reason": "reference has no id"})
         else:
-            pass_count += 1
+            ident = value["value"]["id"]
+            if ident not in id_counts:
+                if str(ident) in id_counts_str:
+                    failed_paths.append({"path": path, "id": ident, "reason": "id values are not the same type"})
+                else:
+                    failed_paths.append({"path": path, "id": ident, "reason": "no party matches the referencing id"})
+            elif id_counts[ident] > 1:
+                failed_paths.append({"path": path, "id": ident, "reason": "multiple parties match the referencing id"})
+            # Multiple matches across different types are currently designed to pass. (This assumes users do not coerce
+            # IDs to strings.) If we change this to a failure, uncomment the following lines.
+            #
+            # elif id_counts_str[str(ident)] > 1:
+            #     failed_paths.append(
+            #       {"path": path, "id": ident, "reason": "multiple parties match the referencing id (types differ)"}
+            #     )
+            else:
+                pass_count += 1
 
     return complete_result_resource(result, application_count, pass_count, failed_paths=failed_paths)

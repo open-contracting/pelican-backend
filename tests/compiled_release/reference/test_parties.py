@@ -102,14 +102,18 @@ def test_failed():
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
-    assert result["meta"] == {"failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "reference has no id"}]}
+    assert result["meta"] == {
+        "failed_paths": [{"path": "awards[0].suppliers[0]", "id": None, "reason": "reference has no id"}]
+    }
 
     result = calculate_awards_suppliers(item_test_failed2)
     assert result["result"] is False
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "no party matches the referencing id"}]
+        "failed_paths": [
+            {"path": "awards[0].suppliers[0]", "id": "0", "reason": "no party matches the referencing id"}
+        ]
     }
 
     result = calculate_awards_suppliers(item_same_id)
@@ -117,7 +121,9 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "failed_paths": [{"path": "awards[0].suppliers[0]", "reason": "multiple parties match the referencing id"}]
+        "failed_paths": [
+            {"path": "awards[0].suppliers[0]", "id": "0", "reason": "multiple parties match the referencing id"}
+        ]
     }
 
     result = calculate_awards_suppliers(item_test_failed4)
@@ -125,7 +131,9 @@ def test_failed():
     assert result["application_count"] == 2
     assert result["pass_count"] == 1
     assert result["meta"] == {
-        "failed_paths": [{"path": "awards[1].suppliers[0]", "reason": "no party matches the referencing id"}]
+        "failed_paths": [
+            {"path": "awards[1].suppliers[0]", "id": "1", "reason": "no party matches the referencing id"}
+        ]
     }
 
     result = calculate_tender_tenderers(item_party_int__invalid_schema)
@@ -133,7 +141,7 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "failed_paths": [{"path": "tender.tenderers[0]", "reason": "id values are not the same type"}]
+        "failed_paths": [{"path": "tender.tenderers[0]", "id": "0", "reason": "id values are not the same type"}]
     }
 
     result = calculate_tender_tenderers(item_reference_int)
@@ -141,5 +149,5 @@ def test_failed():
     assert result["application_count"] == 1
     assert result["pass_count"] == 0
     assert result["meta"] == {
-        "failed_paths": [{"path": "tender.tenderers[0]", "reason": "id values are not the same type"}]
+        "failed_paths": [{"path": "tender.tenderers[0]", "id": 0, "reason": "id values are not the same type"}]
     }

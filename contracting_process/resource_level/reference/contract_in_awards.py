@@ -49,7 +49,7 @@ def calculate(item):
             #
             # elif id_counts_str[str(awardID)] > 1:
             #     failed_paths.append(
-            #       {"path": path, "awardID": awardID, "reason": "multiple awards match the awardID (different types)"}
+            #       {"path": path, "awardID": awardID, "reason": "multiple awards match the awardID (types differ)"}
             #     )
             else:
                 pass_count += 1
