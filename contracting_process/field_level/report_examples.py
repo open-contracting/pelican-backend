@@ -57,6 +57,7 @@ def create(dataset_id):
 
     logger.info("Starting processing pages.")
 
+    # To improve performance, would need to split work across threads, then merge deeply nested dicts.
     with get_cursor(name="field_level_report_examples") as named_cursor:
         named_cursor.execute(
             "SELECT result FROM field_level_check WHERE dataset_id = %(dataset_id)s",
