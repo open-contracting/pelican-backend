@@ -34,17 +34,17 @@ def add(name, collection_id, previous_dataset, sample):
 
 @cli.command()
 @click.argument("dataset_id", type=int)
-@click.option("--include-filtered", is_flag=True, help="Delete its filtered datasets.")
-def remove(dataset_id, include_filtered):
+@click.option("--include-filtered", is_flag=True, help="Remove its filtered datasets.")
+@click.option("--force", is_flag=True, help="Forcefully remove the dataset.")
+def remove(dataset_id, include_filtered, force):
     """
     Delete a dataset.
     """
     cursor = get_cursor()
 
-    # checking if dataset exists
     cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s)", {"id": dataset_id})
     if not cursor.fetchone()[0]:
-        click.echo(f"Dataset with dataset_id {dataset_id} does not exist.", err=True)
+        click.secho(f"Dataset {dataset_id} doesn't exist.", err=True, fg="red")
         return
 
     cursor.execute(
@@ -53,14 +53,22 @@ def remove(dataset_id, include_filtered):
     )
     row = cursor.fetchone()
     if not row or row[0] not in (phase.CHECKED, phase.DELETED) or row[1] != state.OK:
-        click.echo(
-            f"Dataset with dataset_id {dataset_id} cannot be deleted. For a successful deletion, "
-            f"the dataset should be in '{phase.CHECKED}' or '{phase.DELETED}' phase and '{state.OK}' state.",
-            err=True,
-        )
-        return
+        if force:
+            click.secho(
+                f"Forcefully removing dataset {dataset_id} (phase={row[0]}, state={row[1]}). (Its phase should be "
+                f"{phase.CHECKED} or {phase.DELETED}, and its state should be {state.OK}.)",
+                fg="yellow",
+                err=True,
+            )
+        else:
+            click.secho(
+                f"Dataset {dataset_id} (phase={row[0]}, state={row[1]}) can't be removed. Its phase must be "
+                f"{phase.CHECKED} or {phase.DELETED}, and its state must be {state.OK}.",
+                fg="err",
+                err=True,
+            )
+            return
 
-    # searching for descendant filtered datasets
     delete_dataset_ids = [dataset_id]
     if include_filtered:
         while True:
@@ -91,11 +99,8 @@ def remove(dataset_id, include_filtered):
 
             delete_dataset_ids = new_delete_dataset_ids.copy()
 
-    # safely deleting dataset
-    click.echo(
-        f"Deleting datasets with the following dataset_ids: {delete_dataset_ids}. "
-        "Only rows in the following tables will remain: dataset, dataset_filter, progress_monitor_dataset."
-    )
+    click.echo(f"Removing datasets {', '.join(delete_dataset_ids)}... ", nl=False)
+
     parameters = {"dataset_ids": delete_dataset_ids}
     cursor.execute("DELETE FROM field_level_check             WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
     cursor.execute("DELETE FROM field_level_check_examples    WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
@@ -118,12 +123,11 @@ def remove(dataset_id, include_filtered):
             "state": state.OK,
         },
     )
+
     commit()
+    click.echo("done")
 
-    click.echo(f"Datasets with dataset_ids {delete_dataset_ids} have been deleted.")
-
-    # dropping datasets if no dependencies exist
-    click.echo("Checking if some deleted datasets can be dropped entirely.")
+    click.echo("Checking if rows can be deleted in dataset, dataset_filter, progress_monitor_dataset...")
     drop_dataset_ids = []
     while True:
         cursor.execute(
@@ -154,7 +158,8 @@ def remove(dataset_id, include_filtered):
         drop_dataset_ids = new_drop_dataset_ids.copy()
 
     if drop_dataset_ids:
-        click.echo(f"The following datasets will be dropped entirely: {drop_dataset_ids}")
+        click.echo(f"Purging datasets {', '.join(drop_dataset_ids)}... ", nl=False)
+
         parameters = {"dataset_ids": drop_dataset_ids}
         cursor.execute("DELETE FROM progress_monitor_dataset WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
         cursor.execute(
@@ -165,10 +170,11 @@ def remove(dataset_id, include_filtered):
             parameters,
         )
         cursor.execute("DELETE FROM dataset WHERE id = ANY(%(dataset_ids)s)", parameters)
+
         commit()
+        click.echo("done")
 
     cursor.close()
-    click.echo("Successful deletion executed.")
 
 
 @cli.group()
