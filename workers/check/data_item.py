@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import multiprocessing
+
 import click
 
 from contracting_process import processor
@@ -16,7 +18,7 @@ def start():
     Perform the field-level and compiled release-level checks.
     """
     bootstrap()
-    consume(on_message_callback=callback, queue=consume_routing_key, prefetch_count=20)
+    consume(on_message_callback=callback, queue=consume_routing_key, prefetch_count=multiprocessing.cpu_count())
 
 
 def callback(client_state, channel, method, properties, input_message):
