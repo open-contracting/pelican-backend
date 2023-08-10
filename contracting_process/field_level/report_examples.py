@@ -102,7 +102,7 @@ def create(dataset_id):
                             break
 
             if not i % 5000:  # about once per 15s
-                logger.debug("Processed %s field-level check results", i)
+                logger.info("Processed %s field-level check results", i)
 
     logger.info("Storing field level check report for dataset_id %s", dataset_id)
     cursor.execute(
