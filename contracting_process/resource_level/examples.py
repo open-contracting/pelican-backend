@@ -26,24 +26,27 @@ def create(dataset_id):
     with get_cursor(name="resource_level_examples") as named_cursor:
         named_cursor.execute(
             """\
-            SELECT result->'meta' AS meta, d.value AS result, d.key AS check_name
-            FROM resource_level_check, jsonb_each(result->'checks') d
+            SELECT result
+            FROM resource_level_check
             WHERE dataset_id = %(dataset_id)s
             """,
             {"dataset_id": dataset_id},
         )
 
         for row in named_cursor:
-            example = {"meta": row[0], "result": row[1]}
+            meta = row["result"]["meta"]
+            for check_name, result in row["result"]["checks"].items():
+                example = {"meta": meta, "result": result}
+                passed = result["result"]
 
-            if example["result"]["result"] is True:
-                check_samplers[row[2]]["passed"].process(example)
-            elif example["result"]["result"] is False:
-                check_samplers[row[2]]["failed"].process(example)
-            elif example["result"]["result"] is None:
-                check_samplers[row[2]]["undefined"].process(example)
-            else:
-                raise ValueError
+                if passed is True:
+                    check_samplers[check_name]["passed"].process(example)
+                elif passed is False:
+                    check_samplers[check_name]["failed"].process(example)
+                elif passed is None:
+                    check_samplers[check_name]["undefined"].process(example)
+                else:
+                    raise NotImplementedError("result is not a boolean or null")
 
     with get_cursor() as cursor:
         for check_name, samplers in check_samplers.items():
