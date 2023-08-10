@@ -101,8 +101,8 @@ def calculate(item):
             else:
                 failed_paths.append(
                     {
-                        "awardID": award["id"],
-                        "award_amount": award["value"],
+                        "award_id": award["id"],
+                        "award_amount": award_amount,
                         "contracts_amount_sum": contracts_amount_sum,
                         "currency": currencies.pop() if no_conversion else "USD",
                     }

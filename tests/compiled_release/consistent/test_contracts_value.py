@@ -134,8 +134,8 @@ def test_failed():
     assert result["meta"] == {
         "failed_paths": [
             {
-                "awardID": "str",
-                "award_amount": {"amount": -100, "currency": "USD"},
+                "award_id": "str",
+                "award_amount": -100,
                 "contracts_amount_sum": -151,
                 "currency": "USD",
             }
@@ -185,8 +185,8 @@ def test_failed_multiple_awards():
     assert result["meta"] == {
         "failed_paths": [
             {
-                "awardID": 1,
-                "award_amount": {"amount": 20, "currency": "USD"},
+                "award_id": 1,
+                "award_amount": 20,
                 "contracts_amount_sum": 1,
                 "currency": "USD",
             }
