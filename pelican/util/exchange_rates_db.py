@@ -91,17 +91,22 @@ def update_from_fixer_io() -> None:
                     logger.error("API request for currency rates on %s did not succeed.", date_str)
                     break
 
+                parameters = {"valid_on": date_str, "rates": json.dumps(data["rates"])}
                 cursor.execute(
                     """\
                     UPDATE exchange_rates
                     SET rates = %(rates)s, modified = current_timestamp
-                    WHERE valid_on = %(valid_on)s AND rates <> %(rates)s;
-
+                    WHERE valid_on = %(valid_on)s AND rates <> %(rates)s
+                    """,
+                    parameters,
+                )
+                cursor.execute(
+                    """\
                     INSERT INTO exchange_rates (valid_on, rates)
                     VALUES (%(valid_on)s, %(rates)s)
-                    ON CONFLICT DO NOTHING;
+                    ON CONFLICT DO NOTHING
                     """,
-                    {"valid_on": date_str, "rates": json.dumps(data["rates"])},
+                    parameters,
                 )
             except psycopg2.Error as e:
                 logger.error("Couldn't insert exchange rate: %s", e)

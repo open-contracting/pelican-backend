@@ -104,21 +104,21 @@ def remove(dataset_id, filtered):
         "Only rows in the following tables will remain: dataset, dataset_filter, progress_monitor_dataset.",
         delete_dataset_ids,
     )
+    parameters = {"dataset_ids": tuple(delete_dataset_ids)}
+    cursor.execute("DELETE FROM field_level_check             WHERE dataset_id IN %(dataset_ids)s", parameters)
+    cursor.execute("DELETE FROM field_level_check_examples    WHERE dataset_id IN %(dataset_ids)s", parameters)
+    cursor.execute("DELETE FROM resource_level_check          WHERE dataset_id IN %(dataset_ids)s", parameters)
+    cursor.execute("DELETE FROM resource_level_check_examples WHERE dataset_id IN %(dataset_ids)s", parameters)
+    cursor.execute("DELETE FROM report                        WHERE dataset_id IN %(dataset_ids)s", parameters)
+    cursor.execute("DELETE FROM dataset_level_check           WHERE dataset_id IN %(dataset_ids)s", parameters)
+    cursor.execute("DELETE FROM time_variance_level_check     WHERE dataset_id IN %(dataset_ids)s", parameters)
+    cursor.execute("DELETE FROM progress_monitor_item         WHERE dataset_id IN %(dataset_ids)s", parameters)
+    cursor.execute("DELETE FROM data_item                     WHERE dataset_id IN %(dataset_ids)s", parameters)
     cursor.execute(
         """\
-        DELETE FROM field_level_check WHERE dataset_id IN %(dataset_ids)s;
-        DELETE FROM field_level_check_examples WHERE dataset_id IN %(dataset_ids)s;
-        DELETE FROM resource_level_check WHERE dataset_id IN %(dataset_ids)s;
-        DELETE FROM resource_level_check_examples WHERE dataset_id IN %(dataset_ids)s;
-        DELETE FROM report WHERE dataset_id IN %(dataset_ids)s;
-        DELETE FROM dataset_level_check WHERE dataset_id IN %(dataset_ids)s;
-        DELETE FROM time_variance_level_check WHERE dataset_id IN %(dataset_ids)s;
-        DELETE FROM progress_monitor_item WHERE dataset_id IN %(dataset_ids)s;
-        DELETE FROM data_item WHERE dataset_id IN %(dataset_ids)s;
-
         UPDATE progress_monitor_dataset
         SET phase = %(phase)s, state = %(state)s, modified = now()
-        WHERE dataset_id IN %(dataset_ids)s;
+        WHERE dataset_id IN %(dataset_ids)s
         """,
         {
             "dataset_ids": tuple(delete_dataset_ids),
@@ -163,17 +163,16 @@ def remove(dataset_id, filtered):
 
     if drop_dataset_ids:
         logger.info("The following datasets will be dropped entirely: %s", drop_dataset_ids)
+        parameters = {"dataset_ids": tuple(drop_dataset_ids)}
+        cursor.execute("DELETE FROM dataset WHERE id IN %(dataset_ids)s", parameters)
         cursor.execute(
             """\
-            DELETE FROM dataset WHERE id IN %(dataset_ids)s;
-
             DELETE FROM dataset_filter
-            WHERE dataset_id_original IN %(dataset_ids)s OR dataset_id_filtered IN %(dataset_ids)s;
-
-            DELETE FROM progress_monitor_dataset WHERE dataset_id IN %(dataset_ids)s;
+            WHERE dataset_id_original IN %(dataset_ids)s OR dataset_id_filtered IN %(dataset_ids)s
             """,
-            {"dataset_ids": tuple(drop_dataset_ids)},
+            parameters,
         )
+        cursor.execute("DELETE FROM progress_monitor_dataset WHERE dataset_id IN %(dataset_ids)s", parameters)
         commit()
 
     cursor.close()

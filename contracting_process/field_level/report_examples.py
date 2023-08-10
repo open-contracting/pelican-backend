@@ -15,13 +15,9 @@ def create(dataset_id):
     cursor = get_cursor()
 
     # Delete existing data in case of duplicate messages.
-    cursor.execute(
-        """\
-        DELETE FROM report WHERE dataset_id = %(dataset_id)s AND type = 'field_level_check';
-        DELETE FROM field_level_check_examples WHERE dataset_id = %(dataset_id)s;
-        """,
-        {"dataset_id": dataset_id},
-    )
+    parameters = {"dataset_id": dataset_id}
+    cursor.execute("DELETE FROM report WHERE dataset_id = %(dataset_id)s AND type = 'field_level_check'", parameters)
+    cursor.execute("DELETE FROM field_level_check_examples WHERE dataset_id = %(dataset_id)s", parameters)
 
     report = {}
     examples = {}

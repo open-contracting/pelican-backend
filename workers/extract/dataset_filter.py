@@ -129,7 +129,6 @@ def callback(client_state, channel, method, properties, input_message):
             query += sql.SQL(" and ") + expr
         if max_items is not None:
             query += sql.SQL(" LIMIT ") + sql.Literal(max_items)
-        query += sql.SQL(";")
 
         logger.info(query.as_string(cursor))
 
