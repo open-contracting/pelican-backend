@@ -46,7 +46,7 @@ def remove(dataset_id, include_filtered):
     cursor = get_cursor()
 
     # checking if dataset exists
-    cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s)", {"id", dataset_id})
+    cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s)", {"id": dataset_id})
     if not cursor.fetchone()[0]:
         logger.error("Dataset with dataset_id %s does not exist.", dataset_id)
         return
