@@ -11,10 +11,6 @@ CREATE INDEX dataset_name_idx ON dataset (name);
 
 CREATE INDEX dataset_meta_idx ON dataset USING gin (meta jsonb_path_ops);
 
-CREATE INDEX dataset_created_idx ON dataset (created);
-
-CREATE INDEX dataset_modified_idx ON dataset (modified);
-
 CREATE TABLE dataset_filter (
     id bigserial PRIMARY KEY,
     dataset_id_original bigint,
@@ -29,10 +25,6 @@ CREATE INDEX dataset_filter_filter_message_idx ON dataset_filter USING gin (filt
 CREATE INDEX dataset_filter_dataset_id_original_idx ON dataset_filter (dataset_id_original);
 
 CREATE INDEX dataset_filter_dataset_id_filtered_idx ON dataset_filter (dataset_id_filtered);
-
-CREATE INDEX dataset_filter_created_idx ON dataset_filter (created);
-
-CREATE INDEX dataset_filter_modified_idx ON dataset_filter (modified);
 
 CREATE TYPE report_type AS ENUM (
     'field_level_check',
@@ -55,8 +47,6 @@ CREATE INDEX type_report_idx ON report (type);
 
 CREATE INDEX report_data_idx ON report USING gin (data jsonb_path_ops);
 
-CREATE INDEX report_modified_idx ON report (modified);
-
 CREATE TABLE progress_monitor_dataset (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
@@ -66,8 +56,6 @@ CREATE TABLE progress_monitor_dataset (
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE INDEX progress_monitor_dataset_modified_idx ON progress_monitor_dataset (modified);
 
 CREATE INDEX progress_monitor_dataset_state_idx ON progress_monitor_dataset (state);
 
@@ -84,8 +72,6 @@ CREATE TABLE progress_monitor_item (
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE INDEX progress_monitor_item_modified_idx ON progress_monitor_item (modified);
 
 CREATE INDEX progress_monitor_item_dataset_id_idx ON progress_monitor_item (dataset_id);
 
@@ -107,8 +93,6 @@ CREATE TABLE data_item (
 );
 
 CREATE INDEX data_item_data_idx ON data_item USING gin (data jsonb_path_ops);
-
-CREATE INDEX data_item_modified_idx ON data_item (modified);
 
 CREATE INDEX data_item_dataset_id_idx ON data_item (dataset_id);
 
@@ -135,8 +119,6 @@ CREATE INDEX field_level_check_data_item_id_idx ON field_level_check (data_item_
 
 CREATE INDEX field_level_check_dataset_id_idx ON field_level_check (dataset_id);
 
-CREATE INDEX field_level_check_modified_idx ON field_level_check (modified);
-
 CREATE TABLE field_level_check_examples (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
@@ -151,8 +133,6 @@ CREATE INDEX field_level_check_examples_data_idx ON field_level_check_examples U
 CREATE INDEX field_level_check_examples_dataset_id_idx ON field_level_check_examples (dataset_id);
 
 CREATE INDEX field_level_check_examples_path_idx ON field_level_check_examples (path);
-
-CREATE INDEX field_level_check_examples_modified_idx ON field_level_check_examples (modified);
 
 CREATE TABLE resource_level_check (
     id bigserial PRIMARY KEY,
@@ -169,8 +149,6 @@ CREATE INDEX resource_level_check_data_item_id_idx ON resource_level_check (data
 
 CREATE INDEX resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
 
-CREATE INDEX resource_level_check_modified_idx ON resource_level_check (modified);
-
 CREATE TABLE resource_level_check_examples (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
@@ -186,8 +164,6 @@ CREATE INDEX resource_level_check_examples_dataset_id_idx ON resource_level_chec
 
 CREATE INDEX resource_level_check_examples_check_name_idx ON resource_level_check_examples (check_name);
 
-CREATE INDEX resource_level_check_examples_modified_idx ON resource_level_check_examples (modified);
-
 CREATE TABLE dataset_level_check (
     id bigserial PRIMARY KEY,
     check_name character varying,
@@ -200,8 +176,6 @@ CREATE TABLE dataset_level_check (
 );
 
 CREATE INDEX dataset_level_check_dataset_id_idx ON dataset_level_check (dataset_id);
-
-CREATE INDEX dataset_level_check_modified_idx ON dataset_level_check (modified);
 
 CREATE TABLE time_variance_level_check (
     id bigserial PRIMARY KEY,
@@ -217,8 +191,6 @@ CREATE TABLE time_variance_level_check (
 );
 
 CREATE INDEX time_variance_level_check_dataset_id_idx ON time_variance_level_check (dataset_id);
-
-CREATE INDEX time_variance_level_check_modified_idx ON time_variance_level_check (modified);
 
 CREATE TABLE exchange_rates (
     id bigserial PRIMARY KEY,
