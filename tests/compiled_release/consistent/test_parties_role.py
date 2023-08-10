@@ -18,7 +18,7 @@ def test_undefined():
     assert result["meta"] == {"reason": "no party has an id and an applicable role"}
 
 
-item_test_passed = {
+item_test_passed__invalid_schema = {
     "parties": [
         {"id": "1", "roles": ["procuringEntity"]},
         {"id": "2", "roles": ["tenderer"]},
@@ -51,7 +51,7 @@ item_test_passed = {
 
 
 def test_passed():
-    result = calculate(item_test_passed)
+    result = calculate(item_test_passed__invalid_schema)
     assert result["result"] is True
     assert result["application_count"] == 5
     assert result["pass_count"] == 5
