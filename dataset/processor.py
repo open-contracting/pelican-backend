@@ -36,7 +36,7 @@ def do_work(dataset_id):
                 meta_data_aggregator_scope, item["data"], item["id"]
             )
 
-            if i % 1000:
+            if not i % 1000:
                 logger.info("Processed %s data items", i)
 
     if "i" not in locals():

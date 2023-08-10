@@ -100,7 +100,7 @@ def do_work(dataset_id):
                                         "new_item_ocid": new_item["ocid"],
                                     }
 
-            if i % 1000:
+            if not i % 1000:
                 logger.info("Processed %s data items", i)
 
     if "i" not in locals():

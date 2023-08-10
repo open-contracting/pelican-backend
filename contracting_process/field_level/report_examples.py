@@ -100,7 +100,7 @@ def create(dataset_id):
                         if not path_check["coverage"]["overall_result"] or not path_check["quality"]["check_results"]:
                             break
 
-            if i % 1000:
+            if not i % 1000:
                 logger.info("Processed %s field-level check results", i)
 
     logger.info("Storing field level check report for dataset_id %s", dataset_id)
