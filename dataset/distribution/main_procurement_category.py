@@ -12,12 +12,10 @@ sample_size = 100
 
 
 def add_item(scope, item, item_id):
-    ocid = item["ocid"]
-
     category = deep_get(item, "tender.mainProcurementCategory", str)
     if category:
         scope.setdefault(category, ReservoirSampler(sample_size))
-        scope[category].process({"item_id": item_id, "ocid": ocid})
+        scope[category].process({"item_id": item_id, "ocid": item["ocid"]})
 
     return scope
 

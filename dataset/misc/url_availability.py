@@ -27,14 +27,14 @@ paths = [
 
 
 def add_item(scope, item, item_id):
-    scope.setdefault("samples", ReservoirSampler(min_items))
+    scope.setdefault("sampler", ReservoirSampler(min_items))
 
     ocid = item["ocid"]
 
     for path in paths:
         for value in deep_get(item, path, list):
             if type(value) is str:
-                scope["samples"].process({"value": value, "item_id": item_id, "ocid": ocid})
+                scope["sampler"].process({"value": value, "item_id": item_id, "ocid": ocid})
 
     return scope
 
@@ -42,7 +42,7 @@ def add_item(scope, item, item_id):
 def get_result(scope):
     result = get_empty_result_dataset(version)
 
-    sampler = scope["samples"]
+    sampler = scope["sampler"]
     if not scope or not sampler:
         result["meta"] = {"reason": "no compiled releases set necessary fields"}
         return result

@@ -237,6 +237,9 @@ def test_deep_get(data, expected, actual):
         ({"toint": 1.0}, "toint", int, 1),
         ({"toint": "string"}, "toint", int, None),
         # str
+        # Note: Although returning "None" is surprising, in practice, this should rarely occur. A null value survives
+        # Kingfisher Process only if: OCDS Merge was skipped, or the wholeListMerge strategy was used. That said, this
+        # behavior can be changed if it causes issues.
         ({"tostring": None}, "tostring", str, "None"),
         ({"tostring": 1}, "tostring", str, "1"),
         ({"tostring": 1.0}, "tostring", str, "1.0"),
