@@ -70,6 +70,8 @@ def publish(*args: Any, **kwargs: Any) -> None:
 
 # PostgreSQL
 
+psycopg2.extras.register_default_jsonb(loads=orjson.loads, globally=True)
+
 
 def get_cursor(name="") -> psycopg2.extensions.cursor:
     """
