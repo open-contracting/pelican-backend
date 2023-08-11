@@ -1,7 +1,6 @@
 """
-If ``test_values`` is set, then each test value occurs in between 0.1% and 99% of cases.
-
-Otherwise, no test is performed.
+If ``test_values`` is set, then each test value occurs in between 0.1% and 99% of cases. Otherwise, no test is
+performed. The test is skipped if the ``paths`` are never present.
 """
 
 from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
@@ -41,7 +40,7 @@ class CodeDistribution:
             share = sampler.index / total_count
             if code in self.test_values:
                 passed = passed and (0.001 <= share <= 0.99)
-            shares[code] = {"count": sampler.index, "share": share, "examples": sampler.sample}
+            shares[code] = {"share": share, "count": sampler.index, "examples": sampler.sample}
 
         # In other words, its share is 0%.
         if any(code not in scope for code in self.test_values):

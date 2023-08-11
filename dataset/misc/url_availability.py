@@ -6,6 +6,8 @@ A random sample of 100 URL values return responses without HTTP error codes. The
 -  ``awards.documents.url``
 -  ``contracts.documents.url``
 -  ``contracts.implementation.documents.url``
+
+The test is skipped if fewer than 100 URL values are present.
 """
 
 import requests
