@@ -74,11 +74,10 @@ The results for each item are stored in a single row in the ``resource_level_che
        "checks": {
            "coherent.dates": {
                "meta": {
-                   "reason": "insufficient data for check"
+                   "reason": "no pairs of dates are set"
                },
-               "value": null,
                "result": null,
-               "version": 1.0,
+               "version": 1,
                "pass_count": null,
                "application_count": null
            },
@@ -86,19 +85,16 @@ The results for each item are stored in a single row in the ``resource_level_che
                "meta": {
                    "failed_paths": [
                        {
-                           "path": "tender.tenderPeriod",
-                           "result": true
-                       },
-                       {
-                           "path": "tender.enquiryPeriod",
-                           "result": true
+                           "path_1": "contracts[0].period.startDate",
+                           "path_2": "contracts[0].period.endDate",
+                           "value_1": "2007-12-05T00:00:00-05:00",
+                           "value_2": "2007-06-05T00:00:00-05:00"
                        }
                    ]
                },
-               "value": null,
-               "result": true,
-               "version": 1.0,
-               "pass_count": 2,
+               "result": false,
+               "version": 1,
+               "pass_count": 1,
                "application_count": 2
            }
        }
