@@ -34,7 +34,9 @@ def calculate(item):
         else:
             awardID = value["value"]["awardID"]
             if awardID not in id_counts:
-                if str(awardID) in id_counts_str:
+                if not ids:
+                    failed_paths.append({"path": path, "awardID": awardID, "reason": "no award has an id"})
+                elif str(awardID) in id_counts_str:
                     failed_paths.append(
                         {"path": path, "awardID": awardID, "reason": "id is not the same type as awardID"}
                     )

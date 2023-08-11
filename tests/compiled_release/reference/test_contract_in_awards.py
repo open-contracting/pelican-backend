@@ -77,6 +77,6 @@ def test_failed():
     assert result["pass_count"] == 0
     assert result["meta"] == {
         "failed_paths": [
-            {"path": "contracts[0]", "awardID": "1", "reason": "no award matches the awardID"},
+            {"path": "contracts[0]", "awardID": "1", "reason": "no award has an id"},
         ]
     }

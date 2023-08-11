@@ -95,6 +95,7 @@ item_reference_int = {
     ],
     "tender": {"tenderers": [{"id": 0}]},
 }
+item_no_parties = {"awards": [{"suppliers": [{"id": "0"}]}]}
 
 
 def test_failed():
@@ -150,4 +151,12 @@ def test_failed():
     assert result["pass_count"] == 0
     assert result["meta"] == {
         "failed_paths": [{"path": "tender.tenderers[0]", "id": 0, "reason": "id values are not the same type"}]
+    }
+
+    result = calculate_awards_suppliers(item_no_parties)
+    assert result["result"] is False
+    assert result["application_count"] == 1
+    assert result["pass_count"] == 0
+    assert result["meta"] == {
+        "failed_paths": [{"path": "awards[0].suppliers[0]", "id": "0", "reason": "no party has an id"}]
     }

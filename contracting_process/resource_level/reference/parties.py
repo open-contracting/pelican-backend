@@ -32,7 +32,9 @@ def calculate_path(item, path):
         else:
             ident = value["value"]["id"]
             if ident not in id_counts:
-                if str(ident) in id_counts_str:
+                if not ids:
+                    failed_paths.append({"path": path, "id": ident, "reason": "no party has an id"})
+                elif str(ident) in id_counts_str:
                     failed_paths.append({"path": path, "id": ident, "reason": "id values are not the same type"})
                 else:
                     failed_paths.append({"path": path, "id": ident, "reason": "no party matches the referencing id"})
