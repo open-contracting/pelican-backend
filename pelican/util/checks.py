@@ -252,16 +252,25 @@ class ReservoirSampler:
             raise ValueError("limit must be a positive integer")
 
         self._limit = limit
-        self._index = 0
+        self.index = 0
         self.sample = []
 
     # https://en.wikipedia.org/wiki/Reservoir_sampling
     def process(self, value: Any) -> None:
-        if self._index < self._limit:
+        if self.index < self._limit:
             self.sample.append(value)
         else:
-            r = random.randint(0, self._index)
+            r = random.randint(0, self.index)
             if r < self._limit:
                 self.sample[r] = value
 
-        self._index += 1
+        self.index += 1
+
+    def __len__(self):
+        return len(self.sample)
+
+    def __iter__(self):
+        return iter(self.sample)
+
+    def __bool__(self):
+        return bool(self.sample)
