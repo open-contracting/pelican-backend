@@ -18,7 +18,7 @@ def test_undefined():
     result = tender_value_repetition.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "there are is no suitable data item for this check"}
+    assert result["meta"] == {"reason": "no compiled releases set necessary fields"}
 
 
 def get_currencies():

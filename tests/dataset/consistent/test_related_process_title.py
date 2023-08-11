@@ -21,7 +21,7 @@ def test_undefined():
     result = related_process_title.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "there are no pairs of related processes with check-specific properties"}
+    assert result["meta"] == {"reason": "no pair of related processes sets necessary fields"}
 
     scope = {}
     scope = related_process_title.add_item(scope, items_test_undefined2[0], 0)
@@ -29,7 +29,7 @@ def test_undefined():
     result = related_process_title.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "there are no pairs of related processes with check-specific properties"}
+    assert result["meta"] == {"reason": "no pair of related processes sets necessary fields"}
 
 
 items_test_passed = [

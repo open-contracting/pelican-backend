@@ -12,7 +12,7 @@ def test_empty():
     assert type(result) is dict
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] is None
+    assert result["meta"] == {"reason": "no compiled releases set necessary fields"}
 
 
 first = {"ocid": "1", "tender": {"mainProcurementCategory": "goods"}}

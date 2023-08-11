@@ -16,7 +16,7 @@ def test_empty():
     assert type(result) is dict
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "insufficient amount of values (at least 100 required)"}
+    assert result["meta"] == {"reason": "no compiled releases set necessary fields"}
 
 
 first = {
@@ -54,7 +54,7 @@ def test_undefined():
     assert type(result) is dict
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "insufficient amount of values (at least 100 required)"}
+    assert result["meta"] == {"reason": "fewer than 100 occurrences of necessary fields"}
 
 
 def test_failed():

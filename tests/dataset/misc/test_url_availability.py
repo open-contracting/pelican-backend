@@ -19,14 +19,14 @@ def test_undefined():
     result = url_availability.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": f"there is less than {url_availability.samples_num} URLs in the dataset"}
+    assert result["meta"] == {"reason": "no compiled releases set necessary fields"}
 
     scope = {}
     scope = url_availability.add_item(scope, item_test_undefined, 0)
     result = url_availability.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": f"there is less than {url_availability.samples_num} URLs in the dataset"}
+    assert result["meta"] == {"reason": "no compiled releases set necessary fields"}
 
 
 item_test_passed = {
@@ -74,5 +74,5 @@ def test_failed_multiple():
         assert result["value"] >= 95
         assert len(result["meta"]["passed_examples"]) >= 95
         assert len(result["meta"]["failed_examples"]) <= 5
-        assert len([example for example in result["meta"]["passed_examples"] if example["status"] == "OK"]) >= 95
-        assert len([example for example in result["meta"]["failed_examples"] if example["status"] != "OK"]) <= 5
+        assert sum(1 for example in result["meta"]["passed_examples"] if example["status"] == "OK") >= 95
+        assert sum(1 for example in result["meta"]["failed_examples"] if example["status"] != "OK") <= 5

@@ -9,14 +9,14 @@ def test_undefined():
     result = buyer_repetition.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "no data items were processed"}
+    assert result["meta"] == {"reason": "no compiled releases set necessary fields"}
 
     scope = {}
     scope = buyer_repetition.add_item(scope, item_unset, 0)
     result = buyer_repetition.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "there are not enough resources with check-specific properties"}
+    assert result["meta"] == {"reason": "no compiled releases set necessary fields"}
 
 
 items_test_passed1 = []

@@ -19,7 +19,7 @@ def test_undefined():
 
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "there are no tenders with check-specific properties"}
+    assert result["meta"] == {"reason": "no compiled releases set necessary fields"}
 
 
 def test_passed():
