@@ -9,6 +9,12 @@ To use another schema, you can set the ``PGOPTIONS`` environment variable when r
 
    env PGOPTIONS=--search_path=development psql DATABASE -f FILE
 
+Create the btree_gin extension:
+
+.. code-block:: bash
+
+   psql pelican_backend -c "CREATE EXTENSION btree_gin";
+
 Run migrations
 --------------
 
