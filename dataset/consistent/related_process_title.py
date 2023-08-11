@@ -103,7 +103,7 @@ def get_result(scope):
         )
 
     if scope["meta"]["total_processed"] == 0:
-        result["meta"] = {"reason": "there are no pairs of related processes with check-specific properties"}
+        result["meta"] = {"reason": "no pair of related processes sets necessary fields"}
     else:
         result["result"] = scope["meta"]["total_passed"] == scope["meta"]["total_processed"]
         result["value"] = 100 * (scope["meta"]["total_passed"] / scope["meta"]["total_processed"])

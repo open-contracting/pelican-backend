@@ -9,8 +9,7 @@ sample_size = 100
 
 
 def add_item(scope, item, item_id):
-    if not scope:
-        scope = {"tender_id_mapping": defaultdict(list)}
+    scope.setdefault("tender_id_mapping", defaultdict(list))
 
     values = get_values(item, "tender.id", value_only=True)
     if not values:
@@ -31,7 +30,7 @@ def get_result(scope):
     result = get_empty_result_dataset(version=version)
 
     if not scope or not scope["tender_id_mapping"]:
-        result["meta"] = {"reason": "there are no tenders with check-specific properties"}
+        result["meta"] = {"reason": "no compiled releases set necessary fields"}
         return result
 
     result["meta"] = {

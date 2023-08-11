@@ -9,9 +9,6 @@ class CodeDistribution:
         self.limit = limit
 
     def add_item(self, scope, item, item_id):
-        if not scope:
-            scope = {}
-
         ocid = get_values(item, "ocid", value_only=True)[0]
 
         values = []
@@ -37,26 +34,26 @@ class CodeDistribution:
     def get_result(self, scope):
         result = get_empty_result_dataset()
 
-        if scope:
-            total_count = sum(value["count"] for value in scope.values())
+        if not scope:
+            result["meta"] = {"reason": "no compiled releases set necessary fields"}
+            return result
 
-            passed = True
-            for key, value in scope.items():
-                value["share"] = value["count"] / total_count
-                value["examples"] = value["sampler"].sample
-                del value["sampler"]
+        total_count = sum(value["count"] for value in scope.values())
 
-                if key in self.test_values:
-                    passed = passed and (0.001 <= value["share"] <= 0.99)
+        passed = True
+        for key, value in scope.items():
+            value["share"] = value["count"] / total_count
+            value["examples"] = value["sampler"].sample
+            del value["sampler"]
 
-            if any(key not in scope for key in self.test_values):
-                passed = False
+            if key in self.test_values:
+                passed = passed and (0.001 <= value["share"] <= 0.99)
 
-            result["result"] = passed
-            result["value"] = 100 if passed else 0
-            result["meta"] = {"shares": scope}
+        if any(key not in scope for key in self.test_values):
+            passed = False
 
-        else:
-            result["meta"] = {"reason": "no values in specified paths found"}
+        result["result"] = passed
+        result["value"] = 100 if passed else 0
+        result["meta"] = {"shares": scope}
 
         return result

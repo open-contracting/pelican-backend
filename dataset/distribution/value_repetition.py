@@ -22,9 +22,6 @@ class ModuleType:
 
 
 def add_item(scope, item, item_id, path):
-    if scope is None:
-        scope = {}
-
     ocid = get_values(item, "ocid", value_only=True)[0]
 
     values = get_values(item, f"{path}.value", value_only=True)
@@ -66,33 +63,34 @@ def add_item(scope, item, item_id, path):
 def get_result(scope):
     result = get_empty_result_dataset(version)
 
-    if scope:
-        total_count = 0
-        most_frequent = []
+    if not scope:
+        result["meta"] = {"reason": "no compiled releases set necessary fields"}
+        return result
 
-        # Use `i` as tie-breaker.
-        for i, (key, value) in enumerate(scope.items()):
-            item = (value["count"], -i, key)
-            if len(most_frequent) < most_frequent_cap:
-                heapq.heappush(most_frequent, item)
-            else:
-                heapq.heappushpop(most_frequent, item)
-            total_count += value["count"]
+    total_count = 0
+    most_frequent = []
 
-        most_frequent = [(key, count) for count, _, key in sorted(most_frequent, reverse=True)]
+    # Use `i` as tie-breaker.
+    for i, (key, value) in enumerate(scope.items()):
+        item = (value["count"], -i, key)
+        if len(most_frequent) < most_frequent_cap:
+            heapq.heappush(most_frequent, item)
+        else:
+            heapq.heappushpop(most_frequent, item)
+        total_count += value["count"]
 
-        most_frequent_count = sum(count for _, count in most_frequent[:most_frequent_computation])
+    most_frequent = [(key, count) for count, _, key in sorted(most_frequent, reverse=True)]
 
-        most_frequent_share = most_frequent_count / total_count
-        passed = most_frequent_share < 0.1
+    most_frequent_count = sum(count for _, count in most_frequent[:most_frequent_computation])
 
-        for key, count in most_frequent:
-            scope[key]["share"] = count / total_count
+    most_frequent_share = most_frequent_count / total_count
+    passed = most_frequent_share < 0.1
 
-        result["result"] = passed
-        result["value"] = 100 * most_frequent_share
-        result["meta"] = {"most_frequent": [scope[key] for key, _ in most_frequent], "total_processed": total_count}
-    else:
-        result["meta"] = {"reason": "there are is no suitable data item for this check"}
+    for key, count in most_frequent:
+        scope[key]["share"] = count / total_count
+
+    result["result"] = passed
+    result["value"] = 100 * most_frequent_share
+    result["meta"] = {"most_frequent": [scope[key] for key, _ in most_frequent], "total_processed": total_count}
 
     return result

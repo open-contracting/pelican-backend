@@ -7,7 +7,7 @@ from pelican.util.checks import get_empty_result_dataset
 from pelican.util.getter import get_values
 
 version = 1.0
-samples_num = 100
+sample_size = 100
 
 paths = [
     "planning.documents.url",
@@ -19,9 +19,8 @@ paths = [
 
 
 def add_item(scope, item, item_id):
-    if "index" not in scope or "samples" not in scope:
-        scope["index"] = 0
-        scope["samples"] = []
+    if not scope:
+        scope = {"samples": [], "index": 0}  # index is only used within this function
 
     ocid = get_values(item, "ocid", value_only=True)[0]
 
@@ -39,11 +38,11 @@ def add_item(scope, item, item_id):
 
     # reservoir sampling
     for value in values:
-        if scope["index"] < samples_num:
+        if scope["index"] < sample_size:
             scope["samples"].append(value)
         else:
             r = random.randint(0, scope["index"])
-            if r < samples_num:
+            if r < sample_size:
                 scope["samples"][r] = value
 
         scope["index"] += 1
@@ -54,9 +53,12 @@ def add_item(scope, item, item_id):
 def get_result(scope):
     result = get_empty_result_dataset(version)
 
-    # not enough urls
-    if len(scope["samples"]) < samples_num:
-        result["meta"] = {"reason": f"there is less than {samples_num} URLs in the dataset"}
+    if not scope or not scope["samples"]:
+        result["meta"] = {"reason": "no compiled releases set necessary fields"}
+        return result
+
+    if len(scope["samples"]) < sample_size:
+        result["meta"] = {"reason": f"fewer than {sample_size} occurrences of necessary fields"}
         return result
 
     # checking url status
@@ -72,12 +74,12 @@ def get_result(scope):
         except requests.RequestException:
             sample["status"] = "ERROR"
 
-    result["result"] = ok_status_num == samples_num
-    result["value"] = 100 * (ok_status_num / samples_num)
+    result["result"] = ok_status_num == sample_size
+    result["value"] = 100 * (ok_status_num / sample_size)
     result["meta"] = {
-        "total_processed": samples_num,
+        "total_processed": sample_size,
         "total_passed": ok_status_num,
-        "total_failed": samples_num - ok_status_num,
+        "total_failed": sample_size - ok_status_num,
         "passed_examples": [sample for sample in scope["samples"] if sample["status"] == "OK"],
         "failed_examples": [sample for sample in scope["samples"] if sample["status"] != "OK"],
     }
