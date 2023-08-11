@@ -77,12 +77,12 @@ def process_items(
             publish(client_state, channel, {"item_ids": item_ids_batch, "dataset_id": dataset_id}, routing_key)
 
         logger.info(
-            "Inserted %s/%s pages (%s/%s items) for dataset %s",
+            "Dataset %s: Inserted %s/%s pages (%s/%s items)",
+            dataset_id,
             page_number + 1,
             ceil(len(ids) / settings.EXTRACTOR_PAGE_SIZE),
             items_inserted,
             len(ids),
-            dataset_id,
         )
 
 

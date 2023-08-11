@@ -29,15 +29,15 @@ def do_work(dataset_id):
             )
 
             if not i % 50000:  # about once per 15s
-                logger.info("Processed %s data items", i)
+                logger.info("Dataset %s: Processed %s data items", dataset_id, i)
 
     if "i" not in locals():
-        logger.info("No item with dataset_id %s found. Skipping dataset checks computation.", dataset_id)
+        logger.info("Dataset %s: No items found, skipping dataset-level checks", dataset_id)
         return
 
     with get_cursor() as cursor:
         for check_name, check in definitions.items():
-            logger.info("Getting result for %s dataset check.", check_name)
+            logger.info("Dataset %s: Inserting %s dataset-level check result", dataset_id, check_name)
             result = check.get_result(check_scope[check_name])
 
             if "meta" not in result or result["meta"] is None:
@@ -60,6 +60,6 @@ def do_work(dataset_id):
                 },
             )
 
-    logger.info("Saving meta data for dataset_id %s", dataset_id)
+    logger.info("Dataset %s: Updating with dataset metadata", dataset_id)
     meta_data = meta_data_aggregator.get_result(meta_data_aggregator_scope)
     meta_data_aggregator.update_meta_data(meta_data, dataset_id)

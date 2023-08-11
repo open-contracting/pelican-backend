@@ -33,16 +33,16 @@ def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
     if is_step_required(settings.Steps.REPORT):
-        logger.info("Calculating report for compiled release-level checks of dataset_id %s", dataset_id)
+        logger.info("Dataset %s: Calculating compiled release-level check report", dataset_id)
         resource_level_report.create(dataset_id)
 
-        logger.info("Picking examples for compiled release-level checks of dataset_id %s", dataset_id)
+        logger.info("Dataset %s: Calculating compiled release-level check examples", dataset_id)
         resource_level_examples.create(dataset_id)
 
-        logger.info("Calculating report and picking examples for field-level checks of dataset_id %s", dataset_id)
+        logger.info("Dataset %s: Calculating field-level check report and examples", dataset_id)
         field_level_report_examples.create(dataset_id)
 
-        logger.info("Saving Pelican metadata")
+        logger.info("Dataset %s: Updating with Pelican metadata", dataset_id)
         meta_data = meta_data_aggregator.get_dqt_meta_data(dataset_id)
         meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 

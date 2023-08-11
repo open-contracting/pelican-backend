@@ -40,15 +40,15 @@ def callback(client_state, channel, method, properties, input_message):
     dataset = get_dataset_progress(dataset_id)
 
     if dataset["phase"] == phase.CONTRACTING_PROCESS and dataset["state"] == state.IN_PROGRESS:
-        logger.info("CONTRACTING_PROCESS phase still in-progress for dataset_id %s", dataset_id)
+        logger.info("Dataset %s: CONTRACTING_PROCESS phase still in-progress", dataset_id)
         ack(client_state, channel, delivery_tag)
         return
     if dataset["phase"] == phase.DATASET and dataset["state"] == state.IN_PROGRESS:
-        logger.info("DATASET phase already in-progress for dataset_id %s", dataset_id)
+        logger.info("Dataset %s: DATASET phase already in-progress", dataset_id)
         ack(client_state, channel, delivery_tag)
         return
     if dataset["phase"] in (phase.DATASET, phase.TIME_VARIANCE, phase.CHECKED, phase.DELETED):
-        logger.info("DATASET phase already complete for dataset_id %s", dataset_id)
+        logger.info("Dataset %s: DATASET phase already complete", dataset_id)
         ack(client_state, channel, delivery_tag)
         return
 
@@ -58,7 +58,7 @@ def callback(client_state, channel, method, properties, input_message):
     difference = total_count - processed_count
 
     if difference:
-        logger.info("CONTRACTING_PROCESS phase has %s messages left for dataset_id %s", difference, dataset_id)
+        logger.info("Dataset %s: CONTRACTING_PROCESS phase has %s items left", dataset_id, difference)
         ack(client_state, channel, delivery_tag)
         return
 
@@ -68,9 +68,7 @@ def callback(client_state, channel, method, properties, input_message):
 
     if dataset["phase"] == phase.CONTRACTING_PROCESS and dataset["state"] == state.OK and not difference:
         logger.info(
-            "All messages processed for dataset_id %s with %s items, starting to calculate dataset level checks",
-            dataset_id,
-            processed_count,
+            "Dataset %s: Processed all %s items, starting dataset-level checks...", dataset_id, processed_count
         )
         update_dataset_state(dataset_id, phase.DATASET, state.IN_PROGRESS)
         commit()
@@ -80,7 +78,7 @@ def callback(client_state, channel, method, properties, input_message):
         finish_callback(client_state, channel, method, dataset_id, phase=phase.DATASET, routing_key=routing_key)
     else:
         logger.error(
-            "Dataset processing for dataset_id %s is in unexpected state (phase=%s, state=%s).",
+            "Dataset %s is in an unexpected state (phase=%s, state=%s).",
             dataset_id,
             dataset["phase"],
             dataset["state"],

@@ -18,7 +18,7 @@ def do_work(dataset_id):
         ancestor_id = cursor.fetchone()["ancestor_id"]
 
     if not ancestor_id:
-        logger.info("No ancestor dataset available. Skipping time variance checks.")
+        logger.info("Dataset %s: No ancestor available, skipping time-based checks", dataset_id)
         return
 
     with get_cursor() as cursor:
@@ -93,15 +93,15 @@ def do_work(dataset_id):
                                     }
 
             if not i % 1000:
-                logger.info("Processed %s data items", i)
+                logger.info("Dataset %s: Processed %s data items", dataset_id, i)
 
     if "i" not in locals():
-        logger.info("No item with dataset_id %s found. Skipping time variance checks computation.", dataset_id)
+        logger.info("Dataset %s: No items found, skipping time-based checks", dataset_id)
         return
 
     with get_cursor() as cursor:
         for check_name, check in definitions.items():
-            logger.info("Getting result for %s time variance check.", check_name)
+            logger.info("Dataset %s: Inserting %s time-based check result", dataset_id, check_name)
             result = get_result(scope[check_name], check.version)
 
             if "meta" not in result or result["meta"] is None:

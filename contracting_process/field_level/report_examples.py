@@ -55,7 +55,7 @@ def create(dataset_id):
                     "failed_examples": ReservoirSampler(sample_size),
                 }
 
-    logger.info("Starting processing pages.")
+    logger.info("Dataset %s: Calculating field-level report and examples...", dataset_id)
 
     # To improve performance, would need to split work across threads, then merge deeply nested dicts.
     with get_cursor(name="field_level_report_examples") as named_cursor:
@@ -102,9 +102,9 @@ def create(dataset_id):
                             break
 
             if not i % 5000:  # about once per 15s
-                logger.info("Processed %s field-level check results", i)
+                logger.info("Dataset %s: Processed %s field-level check results", dataset_id, i)
 
-    logger.info("Storing field level check report for dataset_id %s", dataset_id)
+    logger.info("Dataset %s: Inserting field-level check report", dataset_id)
     cursor.execute(
         "INSERT INTO report (dataset_id, type, data) VALUES (%(dataset_id)s, 'field_level_check', %(data)s)",
         {"dataset_id": dataset_id, "data": json.dumps(report)},
@@ -112,7 +112,7 @@ def create(dataset_id):
 
     commit()
 
-    logger.info("Storing examples for field level checks for dataset_id %s", dataset_id)
+    logger.info("Dataset %s: Inserting field-level check examples", dataset_id)
     for path, check_groups in examples.items():
         for key in ("coverage", "quality"):
             check_group = check_groups[key]

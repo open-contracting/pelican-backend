@@ -54,7 +54,7 @@ def create(dataset_id):
                     raise NotImplementedError("result is not a boolean or null")
 
             if not i % 100000:  # about once per 10s
-                logger.info("Processed %s resource-level check results", i)
+                logger.info("Dataset %s: Processed %s compiled release-level check results", dataset_id, i)
 
     with get_cursor() as cursor:
         for check_name, samplers in check_samplers.items():
