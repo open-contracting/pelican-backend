@@ -4,7 +4,7 @@ import psycopg2.extras
 import requests
 
 from pelican.util import settings
-from pelican.util.getter import get_values, parse_datetime
+from pelican.util.getter import deep_get, deep_has, get_values, parse_datetime
 from pelican.util.services import Json, get_cursor
 
 DATE_STR_FORMAT = "%b-%-y"
@@ -22,10 +22,10 @@ def add_item(scope, item, item_id):
 
     scope["compiled_releases"]["_ocid_set"].add(item["ocid"])
 
-    scope["tender_lifecycle"]["planning"] += len(get_values(item, "planning"))
-    scope["tender_lifecycle"]["tender"] += len(get_values(item, "tender"))
-    scope["tender_lifecycle"]["award"] += len(get_values(item, "awards"))
-    scope["tender_lifecycle"]["contract"] += len(get_values(item, "contracts"))
+    scope["tender_lifecycle"]["planning"] += deep_has(item, "planning")
+    scope["tender_lifecycle"]["tender"] += deep_has(item, "tender")
+    scope["tender_lifecycle"]["award"] += len(deep_get(item, "awards", list))
+    scope["tender_lifecycle"]["contract"] += len(deep_get(item, "contracts", list))
     scope["tender_lifecycle"]["implementation"] += len(get_values(item, "contracts.implementation"))
 
     return scope
@@ -113,43 +113,42 @@ def get_kingfisher_meta_data(collection_id):
         return meta_data
 
     kf_cursor.execute(
-        "SELECT * FROM package_data WHERE id = %(id)s LIMIT 1",
+        "SELECT data FROM package_data WHERE id = %(id)s LIMIT 1",
         {"id": result["package_data_id"]},
     )
-    package_data = kf_cursor.fetchone() or {}
+    package_data_row = kf_cursor.fetchone()
 
     #######################
     # collection metadata #
     #######################
 
-    values = get_values(package_data, "data.publisher.name", value_only=True)
-    if values:
-        meta_data["collection_metadata"]["publisher"] = values[0]
+    if package_data_row:
+        package_data = package_data_row["data"]
 
-    values = get_values(result, "ocid", value_only=True)
-    if values and type(values[0]) is str:
-        meta_data["collection_metadata"]["ocid_prefix"] = values[0][:11]
+        value = deep_get(result, "ocid")
+        if value and type(value) is str:
+            meta_data["collection_metadata"]["ocid_prefix"] = value[:11]
 
-    values = get_values(package_data, "data.license", value_only=True)
-    if values:
-        meta_data["collection_metadata"]["data_license"] = values[0]
+        if value := deep_get(package_data, "publisher.name"):
+            meta_data["collection_metadata"]["publisher"] = value
 
-    values = get_values(package_data, "data.publicationPolicy", value_only=True)
-    if values:
-        meta_data["collection_metadata"]["publication_policy"] = values[0]
+        if value := deep_get(package_data, "license"):
+            meta_data["collection_metadata"]["data_license"] = value
 
-    repository_urls = get_values(package_data, "data.extensions", value_only=True)
-    for repository_url in repository_urls:
-        try:
-            response = requests.get(repository_url, timeout=30)
-            if response.status_code != 200:
-                continue
+        if value := deep_get(package_data, "publicationPolicy"):
+            meta_data["collection_metadata"]["publication_policy"] = value
 
-            extension = response.json()
-            extension["repositoryUrl"] = repository_url
-            meta_data["collection_metadata"]["extensions"].append(extension)
-        except requests.RequestException:
-            pass
+        for repository_url in deep_get(package_data, "extensions", list):
+            try:
+                response = requests.get(repository_url, timeout=30)
+                if response.status_code != 200:
+                    continue
+
+                extension = response.json()
+                extension["repositoryUrl"] = repository_url
+                meta_data["collection_metadata"]["extensions"].append(extension)
+            except requests.RequestException:
+                pass
 
     kf_cursor.execute(
         """\
