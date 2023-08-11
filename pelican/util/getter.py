@@ -196,15 +196,14 @@ def get_values(item: Any, str_path: str, value_only: bool | None = False) -> lis
             for list_item in item[key]:
                 values = get_values(list_item, ".".join(path[1:]), value_only=value_only)
 
-                if values:
-                    for list_item in values:
-                        if value_only:
-                            result.append(list_item)
-                        else:
-                            if list_item and "path" in list_item:
-                                list_item["path"] = f"{key}[{index_counter}].{list_item['path']}"
+                for list_item in values:
+                    if value_only:
+                        result.append(list_item)
+                    else:
+                        if list_item and "path" in list_item:
+                            list_item["path"] = f"{key}[{index_counter}].{list_item['path']}"
 
-                                result.append(list_item)
+                            result.append(list_item)
 
                 index_counter += 1
 
@@ -235,15 +234,14 @@ def get_values(item: Any, str_path: str, value_only: bool | None = False) -> lis
 
             values = get_values(item[field][index], ".".join(path[1:]), value_only=value_only)
 
-            if values:
-                for list_item in values:
-                    if value_only:
-                        result.append(list_item)
-                    else:
-                        if list_item and "path" in list_item:
-                            list_item["path"] = f"{field}[{index}].{list_item['path']}"
+            for list_item in values:
+                if value_only:
+                    result.append(list_item)
+                else:
+                    if list_item and "path" in list_item:
+                        list_item["path"] = f"{field}[{index}].{list_item['path']}"
 
-                            result.append(list_item)
+                        result.append(list_item)
 
             return result
 
