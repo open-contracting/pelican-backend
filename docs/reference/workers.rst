@@ -70,7 +70,7 @@ Perform the field-level and compiled release-level checks.
 #. Store all results
 #. Publish a message
 
-There can be many workers processing the same dataset at the same time. 
+There can be many workers processing the same dataset at the same time.
 
 .. _check-dataset:
 
@@ -131,7 +131,7 @@ Create reports, pick examples, and update dataset metadata.
 #. Calculate compiled release-level report
 #. Prepare (random) examples from compiled release-level checks
 #. Calculate field-level report
-#. Prepare (random) examples from field-level checks 
+#. Prepare (random) examples from field-level checks
 #. Update the dataset's metadata
 
 wipe

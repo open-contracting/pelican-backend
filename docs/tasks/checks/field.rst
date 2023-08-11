@@ -42,39 +42,39 @@ The results for each item are stored in a single row in the ``field_level_check`
 
 .. code-block:: json
 
-   {                                                                                               
-       "meta": {                                                                                   
-           "ocid": "ocds-lcuori-0rw29R-003-2011-1",                                                
-           "item_id": 8477481                                                                      
-       },                                                                                          
-       "checks": {                                                                                 
-           "id": [                                                                                 
-               {                                                                                   
-                   "path": "id",                                                                   
-                   "quality": {                                                                    
-                       "check_results": null,                                                      
-                       "overall_result": null                                                      
-                   },                                                                              
-                   "coverage": {                                                                   
-                       "check_results": [                                                          
-                           {                                                                       
-                               "name": "exists",                                                   
-                               "result": true,                                                     
-                               "value": null,                                                      
-                               "reason": null,                                                     
-                               "version": 1.0                                                      
-                           },                                                                      
-                           {                                                                       
-                               "name": "non_empty",                                                
-                               "result": true,                                                     
-                               "value": null,                                                      
-                               "reason": null,                                                     
-                               "version": 1.0                                                      
-                           }                                                                       
-                       ],                                                                          
-                       "overall_result": true                                                      
-                   }                                                                               
-               }                                                                                   
+   {
+       "meta": {
+           "ocid": "ocds-lcuori-0rw29R-003-2011-1",
+           "item_id": 8477481
+       },
+       "checks": {
+           "id": [
+               {
+                   "path": "id",
+                   "quality": {
+                       "check_results": null,
+                       "overall_result": null
+                   },
+                   "coverage": {
+                       "check_results": [
+                           {
+                               "name": "exists",
+                               "result": true,
+                               "value": null,
+                               "reason": null,
+                               "version": 1.0
+                           },
+                           {
+                               "name": "non_empty",
+                               "result": true,
+                               "value": null,
+                               "reason": null,
+                               "version": 1.0
+                           }
+                       ],
+                       "overall_result": true
+                   }
+               }
            ]
        }
    }

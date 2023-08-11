@@ -31,5 +31,5 @@ coherent/value_realistic
   Each monetary value is between -5 billion USD and +5 billion USD.
 distribution/value
   The sum of the top 1% of tender/award/contract values doesn't exceed 50% of the sum of all such values.
-  
+
 Compiled release-level consistency checks compare tender, award, contract and transaction amounts. These amounts are expected to cover a short period, such that incorrect results are unlikely, especially given the generous margins.

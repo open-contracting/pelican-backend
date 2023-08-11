@@ -66,40 +66,40 @@ The results for each item are stored in a single row in the ``resource_level_che
 
 .. code-block:: json
 
-   {                                                                                                      
-       "meta": {                                                                                          
-           "ocid": "ocds-lcuori-0rw29R-003-2011-1",                                                       
-           "item_id": 8477481                                                                             
-       },                                                                                                 
-       "checks": {                                                                                        
-           "coherent.dates": {                                                                            
-               "meta": {                                                                                  
-                   "reason": "insufficient data for check"                                                
-               },                                                                                         
-               "value": null,                                                                             
-               "result": null,                                                                            
-               "version": 1.0,                                                                            
-               "pass_count": null,                                                                        
-               "application_count": null                                                                  
-           },                                                                                             
-           "coherent.period": {                                                                           
-               "meta": {                                                                                  
-                   "failed_paths": [                                                                      
-                       {                                                                                  
-                           "path": "tender.tenderPeriod",                                                 
-                           "result": true                                                                 
-                       },                                                                                 
-                       {                                                                                  
-                           "path": "tender.enquiryPeriod",                                                
-                           "result": true                                                                 
-                       }                                                                                  
-                   ]                                                                                      
-               },                                                                                         
-               "value": null,                                                                             
-               "result": true,                                                                            
-               "version": 1.0,                                                                            
-               "pass_count": 2,                                                                           
-               "application_count": 2                                                                     
+   {
+       "meta": {
+           "ocid": "ocds-lcuori-0rw29R-003-2011-1",
+           "item_id": 8477481
+       },
+       "checks": {
+           "coherent.dates": {
+               "meta": {
+                   "reason": "insufficient data for check"
+               },
+               "value": null,
+               "result": null,
+               "version": 1.0,
+               "pass_count": null,
+               "application_count": null
+           },
+           "coherent.period": {
+               "meta": {
+                   "failed_paths": [
+                       {
+                           "path": "tender.tenderPeriod",
+                           "result": true
+                       },
+                       {
+                           "path": "tender.enquiryPeriod",
+                           "result": true
+                       }
+                   ]
+               },
+               "value": null,
+               "result": true,
+               "version": 1.0,
+               "pass_count": 2,
+               "application_count": 2
            }
        }
    }
