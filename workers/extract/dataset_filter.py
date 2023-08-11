@@ -67,8 +67,7 @@ def callback(client_state, channel, method, properties, input_message):
             AND EXISTS (
                 SELECT 1
                 FROM progress_monitor_dataset
-                WHERE dataset_id = %(dataset_id)s
-                AND phase = 'CHECKED'
+                WHERE dataset_id = %(dataset_id)s AND phase = 'CHECKED'
             )
             """,
             {"dataset_id": dataset_id_original},
@@ -105,28 +104,28 @@ def callback(client_state, channel, method, properties, input_message):
         query = sql.SQL("SELECT id FROM data_item WHERE dataset_id = ") + sql.Literal(dataset_id_original)
         if "release_date_from" in filter_message:
             expr = sql.SQL("data->>'date' >= ") + sql.Literal(filter_message["release_date_from"])
-            query += sql.SQL(" and ") + expr
+            query += sql.SQL(" AND ") + expr
         if "release_date_to" in filter_message:
             expr = sql.SQL("data->>'date' <= ") + sql.Literal(filter_message["release_date_to"])
-            query += sql.SQL(" and ") + expr
+            query += sql.SQL(" AND ") + expr
         if "buyer" in filter_message:
             expr = sql.SQL(", ").join([sql.Literal(buyer) for buyer in filter_message["buyer"]])
-            expr = sql.SQL("data->'buyer'->>'name' in ") + sql.SQL("(") + expr + sql.SQL(")")
-            query += sql.SQL(" and ") + expr
+            expr = sql.SQL("data->'buyer'->>'name' IN ") + sql.SQL("(") + expr + sql.SQL(")")
+            query += sql.SQL(" AND ") + expr
         if "buyer_regex" in filter_message:
-            expr = sql.SQL("data->'buyer'->>'name' ilike ") + sql.Literal(filter_message["buyer_regex"])
-            query += sql.SQL(" and ") + expr
+            expr = sql.SQL("data->'buyer'->>'name' ILIKE ") + sql.Literal(filter_message["buyer_regex"])
+            query += sql.SQL(" AND ") + expr
         if "procuring_entity" in filter_message:
             expr = sql.SQL(", ").join(
                 [sql.Literal(procuring_entity) for procuring_entity in filter_message["procuring_entity"]]
             )
-            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' in ") + sql.SQL("(") + expr + sql.SQL(")")
-            query += sql.SQL(" and ") + expr
+            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' IN ") + sql.SQL("(") + expr + sql.SQL(")")
+            query += sql.SQL(" AND ") + expr
         if "procuring_entity_regex" in filter_message:
-            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' ilike ") + sql.Literal(
+            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' ILIKE ") + sql.Literal(
                 filter_message["procuring_entity_regex"]
             )
-            query += sql.SQL(" and ") + expr
+            query += sql.SQL(" AND ") + expr
         if max_items is not None:
             query += sql.SQL(" LIMIT ") + sql.Literal(max_items)
 
