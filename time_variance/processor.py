@@ -1,13 +1,10 @@
 import logging
-import random
 
 from pelican.util.checks import get_empty_result_time_based, get_empty_result_time_based_scope
 from pelican.util.services import Json, get_cursor
 from time_variance.definitions import definitions
 
 logger = logging.getLogger("pelican.time_variance.processor")
-
-examples_count = 50
 
 
 def do_work(dataset_id):
@@ -70,25 +67,14 @@ def do_work(dataset_id):
                             scope[check_name]["ok_count"] += 1
                         else:
                             scope[check_name]["failed_count"] += 1
-
-                            if len(scope[check_name]["examples"]) < examples_count:
-                                scope[check_name]["examples"].append(
-                                    {
-                                        "item_id": ancestor_item_id,
-                                        "new_item_id": new_item_id,
-                                        "ocid": ancestor_item["ocid"],
-                                        "new_item_ocid": new_item["ocid"],
-                                    }
-                                )
-                            else:
-                                rand_int = random.randint(0, scope[check_name]["failed_count"])
-                                if rand_int < examples_count:
-                                    scope[check_name]["examples"][rand_int] = {
-                                        "item_id": ancestor_item_id,
-                                        "new_item_id": new_item_id,
-                                        "ocid": ancestor_item["ocid"],
-                                        "new_item_ocid": new_item["ocid"],
-                                    }
+                            scope[check_name]["examples"].process(
+                                {
+                                    "item_id": ancestor_item_id,
+                                    "new_item_id": new_item_id,
+                                    "ocid": ancestor_item["ocid"],
+                                    "new_item_ocid": new_item["ocid"],
+                                }
+                            )
 
             if not i % 1000:
                 logger.info("Dataset %s: Processed %s data items", dataset_id, i)
@@ -145,7 +131,7 @@ def get_result(scope, version):
         result["coverage_value"] = round(scope["coverage_count"] / (scope["total_count"] / 100))
         result["coverage_result"] = result["coverage_value"] > 95
 
-    result["examples"] = scope["examples"]
+    result["examples"] = scope["examples"].sample
 
     result["meta"] = {
         "total_count": scope["total_count"],

@@ -59,7 +59,7 @@ def get_empty_result_time_based_scope() -> dict[str, Any]:
         "coverage_count": 0,
         "failed_count": 0,
         "ok_count": 0,
-        "examples": [],
+        "examples": ReservoirSampler(50),
     }
 
 
