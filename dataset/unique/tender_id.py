@@ -1,27 +1,23 @@
+"""
+Each ``tender.id`` is unique across the collection.
+
+The test is skipped if the field is never present.
+"""
+
 import random
-from collections import defaultdict
 
 from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
-from pelican.util.getter import get_values
+from pelican.util.getter import deep_get
 
 version = 2.0
 sample_size = 100
 
 
 def add_item(scope, item, item_id):
-    scope.setdefault("tender_id_mapping", defaultdict(list))
-
-    values = get_values(item, "tender.id", value_only=True)
-    if not values:
-        return scope
-
-    tender_id = str(values[0])
-    scope["tender_id_mapping"][tender_id].append(
-        {
-            "ocid": item["ocid"],
-            "item_id": item_id,
-        }
-    )
+    tender_id = deep_get(item, "tender.id", str)
+    if tender_id:
+        scope.setdefault(tender_id, [])
+        scope[tender_id].append({"item_id": item_id, "ocid": item["ocid"]})
 
     return scope
 
@@ -29,43 +25,35 @@ def add_item(scope, item, item_id):
 def get_result(scope):
     result = get_empty_result_dataset(version=version)
 
-    if not scope or not scope["tender_id_mapping"]:
+    if not scope:
         result["meta"] = {"reason": "no compiled releases set necessary fields"}
         return result
 
-    result["meta"] = {
-        "passed_examples": [],
-        "failed_examples": [],
-        "total_processed": None,
-        "total_passed": None,
-        "total_failed": None,
-    }
-
-    relevant_releases_count = sum(len(v) for v in scope["tender_id_mapping"].values())
-    passed_releases_count = sum(len(v) for v in scope["tender_id_mapping"].values() if len(v) == 1)
-    result["result"] = relevant_releases_count == passed_releases_count
-
+    total_count = 0
+    passed_count = 0
     passed_examples_sampler = ReservoirSampler(sample_size)
     failed_examples_sampler = ReservoirSampler(sample_size)
-    for tender_id, items in scope["tender_id_mapping"].items():
-        main_item = random.choice(items)
-        sample = {
-            "tender_id": tender_id,
-            "ocid": main_item["ocid"],
-            "item_id": main_item["item_id"],
-            "all_items": items,
-        }
-        if len(items) == 1:
+
+    for tender_id, items in scope.items():
+        # Pick the "main" item that others repeat, at random.
+        item = random.choice(items)
+        sample = {"tender_id": tender_id, "ocid": item["ocid"], "item_id": item["item_id"], "all_items": items}
+        repetitions = len(items)
+        if repetitions == 1:
             passed_examples_sampler.process(sample)
+            passed_count += 1
         else:
             failed_examples_sampler.process(sample)
+        total_count += repetitions
 
-    result["meta"]["passed_examples"] = passed_examples_sampler.sample
-    result["meta"]["failed_examples"] = failed_examples_sampler.sample
-
-    result["value"] = 100 * passed_releases_count / relevant_releases_count
-    result["meta"]["total_processed"] = relevant_releases_count
-    result["meta"]["total_passed"] = passed_releases_count
-    result["meta"]["total_failed"] = relevant_releases_count - passed_releases_count
+    result["result"] = passed_count == total_count
+    result["value"] = 100 * passed_count / total_count
+    result["meta"] = {
+        "total_processed": total_count,
+        "total_passed": passed_count,
+        "total_failed": total_count - passed_count,
+        "passed_examples": passed_examples_sampler.sample,
+        "failed_examples": failed_examples_sampler.sample,
+    }
 
     return result

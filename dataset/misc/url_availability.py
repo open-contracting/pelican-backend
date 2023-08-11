@@ -1,13 +1,21 @@
-import random
+"""
+A random sample of 100 URL values return responses without HTTP error codes. The URL fields are:
+
+-  ``planning.documents.url``
+-  ``tender.documents.url``
+-  ``awards.documents.url``
+-  ``contracts.documents.url``
+-  ``contracts.implementation.documents.url``
+"""
 
 import requests
 
 from pelican.util import settings
-from pelican.util.checks import get_empty_result_dataset
-from pelican.util.getter import get_values
+from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
+from pelican.util.getter import deep_get
 
 version = 1.0
-sample_size = 100
+min_items = 100
 
 paths = [
     "planning.documents.url",
@@ -19,33 +27,14 @@ paths = [
 
 
 def add_item(scope, item, item_id):
-    if not scope:
-        scope = {"samples": [], "index": 0}  # index is only used within this function
+    scope.setdefault("samples", ReservoirSampler(min_items))
 
-    ocid = get_values(item, "ocid", value_only=True)[0]
+    ocid = item["ocid"]
 
-    values = []
     for path in paths:
-        pos_values = get_values(item, path)
-        if not pos_values:
-            continue
-
-        for value in pos_values:
-            value["item_id"] = item_id
-            value["ocid"] = ocid
-            if value["value"] is not None:
-                values.append(value)
-
-    # reservoir sampling
-    for value in values:
-        if scope["index"] < sample_size:
-            scope["samples"].append(value)
-        else:
-            r = random.randint(0, scope["index"])
-            if r < sample_size:
-                scope["samples"][r] = value
-
-        scope["index"] += 1
+        for value in deep_get(item, path, list):
+            if type(value) is str:
+                scope["samples"].process({"value": value, "item_id": item_id, "ocid": ocid})
 
     return scope
 
@@ -53,35 +42,41 @@ def add_item(scope, item, item_id):
 def get_result(scope):
     result = get_empty_result_dataset(version)
 
-    if not scope or not scope["samples"]:
+    sampler = scope["samples"]
+    if not scope or not sampler:
         result["meta"] = {"reason": "no compiled releases set necessary fields"}
         return result
 
-    if len(scope["samples"]) < sample_size:
-        result["meta"] = {"reason": f"fewer than {sample_size} occurrences of necessary fields"}
+    total_count = len(sampler)
+    if total_count < min_items:
+        result["meta"] = {"reason": f"fewer than {min_items} occurrences of necessary fields"}
         return result
 
-    # checking url status
-    ok_status_num = 0
-    for sample in scope["samples"]:
+    passed_count = 0
+    passed_examples = []
+    failed_examples = []
+    for sample in sampler:
         try:
             response = requests.get(sample["value"], timeout=settings.REQUESTS_TIMEOUT, stream=True)
             if 200 <= response.status_code < 400:
                 sample["status"] = "OK"
-                ok_status_num += 1
+                passed_examples.append(sample)
+                passed_count += 1
             else:
                 sample["status"] = response.status_code
+                failed_examples.append(sample)
         except requests.RequestException:
             sample["status"] = "ERROR"
+            failed_examples.append(sample)
 
-    result["result"] = ok_status_num == sample_size
-    result["value"] = 100 * (ok_status_num / sample_size)
+    result["result"] = passed_count == total_count
+    result["value"] = 100 * passed_count / total_count
     result["meta"] = {
-        "total_processed": sample_size,
-        "total_passed": ok_status_num,
-        "total_failed": sample_size - ok_status_num,
-        "passed_examples": [sample for sample in scope["samples"] if sample["status"] == "OK"],
-        "failed_examples": [sample for sample in scope["samples"] if sample["status"] != "OK"],
+        "total_processed": total_count,
+        "total_passed": passed_count,
+        "total_failed": total_count - passed_count,
+        "passed_examples": passed_examples,
+        "failed_examples": failed_examples,
     }
 
     return result
