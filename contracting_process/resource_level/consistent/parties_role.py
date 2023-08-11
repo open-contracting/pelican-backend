@@ -23,9 +23,9 @@ from pelican.util.getter import deep_get, deep_has, get_values
 
 version = 1.0
 applicable_roles = {
-    "supplier": "awards.suppliers.id",
-    "tenderer": "tender.tenderers.id",
     "procuringEntity": "tender.procuringEntity.id",
+    "tenderer": "tender.tenderers.id",
+    "supplier": "awards.suppliers.id",
     "payer": "contracts.implementation.transactions.payer.id",
     "payee": "contracts.implementation.transactions.payee.id",
 }

@@ -82,6 +82,7 @@ def create(dataset_id):
                         report_item["total_count"] += 1
 
                         for result in check_group["check_results"]:
+                            # The meta (ocid, item_id) is repeated, since examples are picked at random.
                             example = {"meta": meta, "path": path_with_indexes, "result": result}
                             check_name = result["name"]
 

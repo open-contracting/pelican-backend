@@ -39,6 +39,7 @@ def create(dataset_id):
             value = row["result"]
             meta = value["meta"]
             for check_name, result in value["checks"].items():
+                # The meta (ocid, item_id) is repeated, since examples are picked at random.
                 example = {"meta": meta, "result": result}
                 passed = result["result"]
 
