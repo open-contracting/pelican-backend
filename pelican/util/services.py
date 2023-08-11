@@ -3,9 +3,9 @@ import threading
 from functools import cache
 from typing import Any
 
+import orjson
 import psycopg2.extensions
 import psycopg2.extras
-import simplejson as json
 from yapw.clients import AsyncConsumer, Blocking
 
 from pelican.util import settings
@@ -28,7 +28,7 @@ def encode(message: Any, content_type: str | None) -> bytes:
     :param message: a decoded message
     :param content_type: the message's content type
     """
-    return json.dumps(message).encode()
+    return orjson.dumps(message)
 
 
 def decode(body: bytes, content_type: str | None) -> Any:
@@ -38,7 +38,7 @@ def decode(body: bytes, content_type: str | None) -> Any:
     :param message: an encoded message
     :param content_type: the message's content type
     """
-    return json.loads(body.decode("utf-8"))
+    return orjson.loads(body)
 
 
 YAPW_KWARGS = {
