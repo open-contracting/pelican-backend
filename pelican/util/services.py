@@ -1,5 +1,6 @@
 import logging
 import threading
+from functools import cache
 from typing import Any
 
 import psycopg2.extensions
@@ -205,6 +206,8 @@ def get_processed_items_count(dataset_id: int) -> int:
         return cursor.fetchone()["cnt"]
 
 
+# The check.dataset worker calls this function when phase=CONTRACTING_PROCESS and state=OK, at which point size is set.
+@cache
 def get_total_items_count(dataset_id: int) -> int:
     """
     Return the number of items to process.
