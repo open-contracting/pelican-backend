@@ -2,11 +2,10 @@
 import logging
 
 import click
-import simplejson as json
 from psycopg2 import sql
 from yapw.methods import nack
 
-from pelican.util.services import commit, consume, get_cursor
+from pelican.util.services import Json, commit, consume, get_cursor
 from pelican.util.workers import process_items
 
 consume_routing_key = "dataset_filter_extractor_init"
@@ -96,7 +95,7 @@ def callback(client_state, channel, method, properties, input_message):
             {
                 "dataset_id_original": dataset_id_original,
                 "dataset_id_filtered": dataset_id_filtered,
-                "filter_message": json.dumps(filter_message),
+                "filter_message": Json(filter_message),
             },
         )
         commit()

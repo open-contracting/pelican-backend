@@ -1,10 +1,8 @@
 import logging
 import random
 
-import simplejson as json
-
 from pelican.util.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
-from pelican.util.services import get_cursor
+from pelican.util.services import Json, get_cursor
 from time_variance.definitions import definitions
 
 logger = logging.getLogger("pelican.time_variance.processor")
@@ -109,7 +107,6 @@ def do_work(dataset_id):
 
             result["meta"]["version"] = result["version"]
             result["meta"]["examples"] = result["examples"]
-            meta = json.dumps(result["meta"])
 
             cursor.execute(
                 """\
@@ -132,7 +129,7 @@ def do_work(dataset_id):
                     "check_result": result["check_result"],
                     "check_value": result["check_value"],
                     "dataset_id": dataset_id,
-                    "meta": meta,
+                    "meta": Json(result["meta"]),
                 },
             )
 

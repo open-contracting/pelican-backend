@@ -73,6 +73,11 @@ def publish(*args: Any, **kwargs: Any) -> None:
 psycopg2.extras.register_default_jsonb(loads=orjson.loads, globally=True)
 
 
+class Json(psycopg2.extras.Json):
+    def dumps(self, obj):
+        return orjson.dumps(obj)
+
+
 def get_cursor(name="") -> psycopg2.extensions.cursor:
     """
     Connect to the database, if needed, and return a database cursor.

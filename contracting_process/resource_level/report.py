@@ -1,7 +1,5 @@
-import simplejson as json
-
 from contracting_process.resource_level.definitions import definitions
-from pelican.util.services import commit, get_cursor
+from pelican.util.services import Json, commit, get_cursor
 
 
 def create(dataset_id):
@@ -98,7 +96,7 @@ def create(dataset_id):
 
     cursor.execute(
         "INSERT INTO report (dataset_id, type, data) VALUES (%(dataset_id)s, 'resource_level_check', %(data)s)",
-        {"dataset_id": dataset_id, "data": json.dumps(report)},
+        {"dataset_id": dataset_id, "data": Json(report)},
     )
 
     commit()

@@ -1,10 +1,8 @@
 import logging
 
-import simplejson as json
-
 from dataset import meta_data_aggregator
 from dataset.definitions import definitions
-from pelican.util.services import get_cursor
+from pelican.util.services import Json, get_cursor
 
 logger = logging.getLogger("pelican.dataset.processor")
 
@@ -44,7 +42,6 @@ def do_work(dataset_id):
                 result["meta"] = {}
 
             result["meta"]["version"] = result["version"]
-            meta = json.dumps(result["meta"])
 
             cursor.execute(
                 """\
@@ -55,7 +52,7 @@ def do_work(dataset_id):
                     "check_name": check_name,
                     "result": result["result"],
                     "value": result["value"],
-                    "meta": meta,
+                    "meta": Json(result["meta"]),
                     "dataset_id": dataset_id,
                 },
             )

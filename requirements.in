@@ -7,7 +7,6 @@ pika
 psycopg2
 python-dateutil
 requests
-simplejson
 validate_email
 sentry-sdk
 yapw[perf]

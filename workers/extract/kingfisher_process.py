@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 import click
 import psycopg2.extras
-import simplejson as json
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from pelican.util import exchange_rates_db, settings
-from pelican.util.services import commit, consume, get_cursor
+from pelican.util.services import Json, commit, consume, get_cursor
 from pelican.util.workers import process_items
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
@@ -68,7 +67,7 @@ def callback(client_state, channel, method, properties, input_message):
             VALUES (%(name)s, %(meta)s, %(ancestor_id)s)
             RETURNING id
             """,
-            {"name": name, "meta": json.dumps({}), "ancestor_id": ancestor_id},
+            {"name": name, "meta": Json({}), "ancestor_id": ancestor_id},
         )
         dataset_id = cursor.fetchone()[0]
 
@@ -95,7 +94,7 @@ def callback(client_state, channel, method, properties, input_message):
 
 def insert_items(cursors, dataset_id, ids):
     cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id = ANY(%(ids)s)", {"ids": ids})
-    argslist = [(json.dumps(row[0]), dataset_id) for row in cursors["kingfisher_process"]]
+    argslist = [(Json(row[0]), dataset_id) for row in cursors["kingfisher_process"]]
     sql = "INSERT INTO data_item (data, dataset_id) VALUES %s RETURNING id"
     psycopg2.extras.execute_values(cursors["default"], sql, argslist, page_size=settings.EXTRACTOR_PAGE_SIZE)
 

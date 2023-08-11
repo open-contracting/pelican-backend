@@ -1,10 +1,8 @@
 import logging
 
-import simplejson as json
-
 from contracting_process.resource_level.definitions import definitions
 from pelican.util.checks import ReservoirSampler
-from pelican.util.services import commit, get_cursor
+from pelican.util.services import Json, commit, get_cursor
 
 logger = logging.getLogger("pelican.contracting_process.resource_level.examples")
 
@@ -69,7 +67,7 @@ def create(dataset_id):
                 INSERT INTO resource_level_check_examples (dataset_id, check_name, data)
                 VALUES (%(dataset_id)s, %(check_name)s, %(data)s)
                 """,
-                {"dataset_id": dataset_id, "check_name": check_name, "data": json.dumps(data)},
+                {"dataset_id": dataset_id, "check_name": check_name, "data": Json(data)},
             )
 
     commit()

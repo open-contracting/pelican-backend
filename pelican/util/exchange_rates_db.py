@@ -1,4 +1,3 @@
-import json
 import logging
 from datetime import date, timedelta
 
@@ -6,7 +5,7 @@ import psycopg2
 import requests
 
 from pelican.util import settings
-from pelican.util.services import commit, get_cursor, rollback
+from pelican.util.services import Json, commit, get_cursor, rollback
 
 logger = logging.getLogger("pelican.tools.exchange_rates_db")
 
@@ -91,7 +90,7 @@ def update_from_fixer_io() -> None:
                     logger.error("API request for currency rates on %s did not succeed.", date_str)
                     break
 
-                parameters = {"valid_on": date_str, "rates": json.dumps(data["rates"])}
+                parameters = {"valid_on": date_str, "rates": Json(data["rates"])}
                 cursor.execute(
                     """\
                     UPDATE exchange_rates
