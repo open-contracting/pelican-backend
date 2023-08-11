@@ -75,4 +75,4 @@ def test_failed_multiple():
         assert len(result["meta"]["passed_examples"]) >= 95
         assert len(result["meta"]["failed_examples"]) <= 5
         assert len([example for example in result["meta"]["passed_examples"] if example["status"] == "OK"]) >= 95
-        assert len([example for example in result["meta"]["failed_examples"] if example["status"] == "ERROR"]) <= 5
+        assert len([example for example in result["meta"]["failed_examples"] if example["status"] != "OK"]) <= 5

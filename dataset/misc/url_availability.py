@@ -68,7 +68,7 @@ def get_result(scope):
                 sample["status"] = "OK"
                 ok_status_num += 1
             else:
-                sample["status"] = "ERROR"
+                sample["status"] = response.status_code
         except requests.RequestException:
             sample["status"] = "ERROR"
 
@@ -79,7 +79,7 @@ def get_result(scope):
         "total_passed": ok_status_num,
         "total_failed": samples_num - ok_status_num,
         "passed_examples": [sample for sample in scope["samples"] if sample["status"] == "OK"],
-        "failed_examples": [sample for sample in scope["samples"] if sample["status"] == "ERROR"],
+        "failed_examples": [sample for sample in scope["samples"] if sample["status"] != "OK"],
     }
 
     return result
