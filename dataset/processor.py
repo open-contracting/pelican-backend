@@ -4,7 +4,6 @@ import simplejson as json
 
 from dataset import meta_data_aggregator
 from dataset.definitions import definitions
-from pelican.util import settings
 from pelican.util.services import get_cursor
 
 logger = logging.getLogger("pelican.dataset.processor")
@@ -22,13 +21,6 @@ def do_work(dataset_id):
 
         for i, item in enumerate(named_cursor, 1):
             for check_name, check in definitions.items():
-                logger.log(
-                    settings.CustomLogLevels.CHECK_TRACE,
-                    "Computing %s check for item_id %s.",
-                    check_name,
-                    item["id"],
-                )
-
                 check_scope.setdefault(check_name, {})
                 check_scope[check_name] = check.add_item(check_scope[check_name], item["data"], item["id"])
 

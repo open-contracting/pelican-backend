@@ -3,7 +3,6 @@ import random
 
 import simplejson as json
 
-from pelican.util import settings
 from pelican.util.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
 from pelican.util.services import get_cursor
 from time_variance.definitions import definitions
@@ -48,13 +47,6 @@ def do_work(dataset_id):
             new_item = item[3]
 
             for check_name, check in definitions.items():
-                logger.log(
-                    settings.CustomLogLevels.CHECK_TRACE,
-                    "Computing %s check for item_id %s.",
-                    check_name,
-                    ancestor_item_id,
-                )
-
                 scope.setdefault(check_name, get_empty_result_time_variance_scope())
 
                 filtering_result = check.filter(

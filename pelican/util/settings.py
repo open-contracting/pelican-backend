@@ -16,10 +16,6 @@ class Steps:
     REPORT = "report"
 
 
-class CustomLogLevels:
-    CHECK_TRACE = 8
-
-
 logging.config.dictConfig(
     {
         "version": 1,

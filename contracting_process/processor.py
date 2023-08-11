@@ -38,29 +38,18 @@ def do_work(dataset_id, items):
 
 
 def resource_level_checks(data, item_id, dataset_id):
-    logger.log(
-        settings.CustomLogLevels.CHECK_TRACE,
-        "Computing resource level checks for item_id = %s, dataset_id = %s.",
-        item_id,
-        dataset_id,
-    )
+    logger.debug("Dataset %s: Item %s: Calculating compiled release-level checks", dataset_id, item_id)
 
     result = {"meta": {"ocid": data["ocid"], "item_id": item_id}, "checks": {}}
 
     for check_name, check in resource_level_definitions.items():
-        logger.log(settings.CustomLogLevels.CHECK_TRACE, "Computing %s check.", check_name)
         result["checks"][check_name] = check(data)
 
     return (json.dumps(result), item_id, dataset_id)
 
 
 def field_level_checks(data, item_id, dataset_id, do_field_quality=True):
-    logger.log(
-        settings.CustomLogLevels.CHECK_TRACE,
-        "Computing field level checks for item_id = %s, dataset_id = %s.",
-        item_id,
-        dataset_id,
-    )
+    logger.debug("Dataset %s: Item %s: Calculating field-level checks", dataset_id, item_id)
 
     result = {"meta": {"ocid": data["ocid"], "item_id": item_id}, "checks": {}}
 
@@ -110,13 +99,6 @@ def field_level_checks(data, item_id, dataset_id, do_field_quality=True):
                     counter += 1
 
                     for check, check_name in coverage_checks:
-                        logger.log(
-                            settings.CustomLogLevels.CHECK_TRACE,
-                            "Computing %s check in %s path.",
-                            check_name,
-                            path,
-                        )
-
                         if field_result["coverage"]["check_results"] is None:
                             field_result["coverage"]["check_results"] = []
 
@@ -129,13 +111,6 @@ def field_level_checks(data, item_id, dataset_id, do_field_quality=True):
 
                     if do_field_quality and field_result["coverage"]["overall_result"]:
                         for check, check_name in checks:
-                            logger.log(
-                                settings.CustomLogLevels.CHECK_TRACE,
-                                "Computing %s check in %s path.",
-                                check_name,
-                                path,
-                            )
-
                             if field_result["quality"]["check_results"] is None:
                                 field_result["quality"]["check_results"] = []
 
