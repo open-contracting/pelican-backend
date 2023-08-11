@@ -1,18 +1,19 @@
 """
 The 3 most frequent ``amount`` and ``currency`` pairs appear in fewer than 10% of cases.
+
+The test is skipped if there are no pairs.
 """
 
 import functools
 import heapq
-import random
 
-from pelican.util.checks import get_empty_result_dataset
-from pelican.util.getter import get_values
+from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
+from pelican.util.getter import deep_get, get_values
 
 version = 1.0
 sample_size = 10
-most_frequent_cap = 5
-most_frequent_computation = 3
+most_frequent_report_limit = 5
+most_frequent_test_limit = 3
 
 
 class ModuleType:
@@ -22,40 +23,31 @@ class ModuleType:
 
 
 def add_item(scope, item, item_id, path):
-    ocid = get_values(item, "ocid", value_only=True)[0]
+    ocid = item["ocid"]
 
-    values = get_values(item, f"{path}.value", value_only=True)
-    if not values:
-        return scope
+    # Use get_values(), since `path` can contain an array as an ancestor.
+    for value in get_values(item, f"{path}.value", value_only=True):
+        currency = deep_get(value, "currency")
+        if currency is None:
+            continue
 
-    # check whether amount and currency fields are set
-    values = [
-        v
-        for v in values
-        if ("amount" in v and "currency" in v and v["amount"] is not None and v["currency"] is not None)
-    ]
+        amount = deep_get(value, "amount")
+        if amount is None:
+            continue
 
-    # intermediate computation
-    for value in values:
-        key = (value["amount"], value["currency"])
-        if key not in scope:
-            scope[key] = {
-                "amount": value["amount"],
-                "currency": value["currency"],
-                "value_str": f"{value['amount']} {value['currency']}",
-                "count": 0,
-                "examples": [],
-            }
+        key = (amount, currency)
+        # Note: The scope is returned in meta, so any changes can affect pelican-frontend.
+        scope.setdefault(
+            key,
+            {
+                "amount": amount,
+                "currency": currency,
+                "value_str": f"{amount} {currency}",
+                "examples": ReservoirSampler(sample_size),
+            },
+        )
 
-        # reservoir sampling
-        if scope[key]["count"] < sample_size:
-            scope[key]["examples"].append({"item_id": item_id, "ocid": ocid})
-        else:
-            r = random.randint(0, scope[key]["count"])
-            if r < sample_size:
-                scope[key]["examples"][r] = {"item_id": item_id, "ocid": ocid}
-
-        scope[key]["count"] += 1
+        scope[key]["examples"].process({"item_id": item_id, "ocid": ocid})
 
     return scope
 
@@ -72,22 +64,22 @@ def get_result(scope):
 
     # Use `i` as tie-breaker.
     for i, (key, value) in enumerate(scope.items()):
-        item = (value["count"], -i, key)
-        if len(most_frequent) < most_frequent_cap:
+        item = (value["examples"].index, -i, key)
+        if len(most_frequent) < most_frequent_report_limit:
             heapq.heappush(most_frequent, item)
         else:
             heapq.heappushpop(most_frequent, item)
-        total_count += value["count"]
+        total_count += value["examples"].index
 
     most_frequent = [(key, count) for count, _, key in sorted(most_frequent, reverse=True)]
-
-    most_frequent_count = sum(count for _, count in most_frequent[:most_frequent_computation])
-
+    most_frequent_count = sum(count for _, count in most_frequent[:most_frequent_test_limit])
     most_frequent_share = most_frequent_count / total_count
     passed = most_frequent_share < 0.1
 
     for key, count in most_frequent:
         scope[key]["share"] = count / total_count
+        scope[key]["count"] = scope[key]["examples"].index
+        scope[key]["examples"] = scope[key].pop("examples").sample  # re-order to end
 
     result["result"] = passed
     result["value"] = 100 * most_frequent_share
