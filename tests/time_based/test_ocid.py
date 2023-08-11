@@ -1,4 +1,4 @@
-from pelican.util.checks import get_empty_result_time_variance_scope
+from pelican.util.checks import get_empty_result_time_based_scope
 from time_variance.checks import ocid
 
 ancestor = {
@@ -11,7 +11,7 @@ new_item = {
 
 
 def test_filter():
-    scope = get_empty_result_time_variance_scope()
+    scope = get_empty_result_time_based_scope()
     result = ocid.filter(scope, ancestor, 1, new_item, 1024)
     assert result is True
 
@@ -25,7 +25,7 @@ ok_ancestor = {
 
 
 def test_evaluate():
-    scope = get_empty_result_time_variance_scope()
+    scope = get_empty_result_time_based_scope()
     scope, result = ocid.evaluate(scope, ancestor, 1, None, None)
     assert result is False
 

@@ -34,7 +34,7 @@ def get_empty_result_dataset(version: float = 1.0) -> dict[str, Any]:
     }
 
 
-def get_empty_result_time_variance(version: float = 1.0) -> dict[str, Any]:
+def get_empty_result_time_based(version: float = 1.0) -> dict[str, Any]:
     """
     Initialize a time-based check result.
 
@@ -50,7 +50,7 @@ def get_empty_result_time_variance(version: float = 1.0) -> dict[str, Any]:
     }
 
 
-def get_empty_result_time_variance_scope() -> dict[str, Any]:
+def get_empty_result_time_based_scope() -> dict[str, Any]:
     """
     Initialize a time-based check result accumulator.
     """

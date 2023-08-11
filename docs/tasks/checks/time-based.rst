@@ -26,14 +26,14 @@ The accumulator is initialized as:
 
 .. literalinclude:: ../../../pelican/util/checks.py
    :language: python
-   :start-after: get_empty_result_time_variance_scope
+   :start-after: get_empty_result_time_based_scope
    :end-at: }
 
 ``time_variance/processor.py`` then prepares the ``result`` dict. An empty ``result`` dict looks like:
 
 .. literalinclude:: ../../../pelican/util/checks.py
    :language: python
-   :start-after: get_empty_result_time_variance
+   :start-after: get_empty_result_time_based
    :end-at: }
 
 Storage

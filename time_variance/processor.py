@@ -1,7 +1,7 @@
 import logging
 import random
 
-from pelican.util.checks import get_empty_result_time_variance, get_empty_result_time_variance_scope
+from pelican.util.checks import get_empty_result_time_based, get_empty_result_time_based_scope
 from pelican.util.services import Json, get_cursor
 from time_variance.definitions import definitions
 
@@ -45,7 +45,7 @@ def do_work(dataset_id):
             new_item = item[3]
 
             for check_name, check in definitions.items():
-                scope.setdefault(check_name, get_empty_result_time_variance_scope())
+                scope.setdefault(check_name, get_empty_result_time_based_scope())
 
                 filtering_result = check.filter(
                     scope[check_name], ancestor_item, ancestor_item_id, new_item, new_item_id
@@ -135,7 +135,7 @@ def do_work(dataset_id):
 
 
 def get_result(scope, version):
-    result = get_empty_result_time_variance(version)
+    result = get_empty_result_time_based(version)
 
     if scope["coverage_count"] > 0:
         result["check_value"] = round(scope["ok_count"] / (scope["coverage_count"] / 100))
