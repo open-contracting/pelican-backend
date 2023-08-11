@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Callable
+from functools import cache
 from math import ceil
 from typing import Any
 
@@ -20,6 +21,7 @@ from pelican.util.services import (
 logger = logging.getLogger(__name__)
 
 
+@cache
 def is_step_required(*steps: str) -> bool:
     """
     Return whether to run the step(s).
