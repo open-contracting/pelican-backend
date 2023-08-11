@@ -35,7 +35,7 @@ def test_field_level_checks_invalid():
                 "overall_result": False,
             },
             "path": "tender.tenderers.contactPoint",
-            "quality": {"check_results": None, "overall_result": None},
+            "quality": {"check_results": [], "overall_result": None},
         }
     ]
     assert item_id == 123

@@ -52,7 +52,7 @@ The results for each item are stored in a single row in the ``field_level_check`
                {
                    "path": "id",
                    "quality": {
-                       "check_results": null,
+                       "check_results": [],
                        "overall_result": null
                    },
                    "coverage": {

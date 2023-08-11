@@ -53,74 +53,61 @@ def field_level_checks(data, item_id, dataset_id, do_field_quality=True):
     result = {"meta": {"ocid": data["ocid"], "item_id": item_id}, "checks": {}}
 
     for path, checks in field_level_definitions.items():
-        # get the parent/parents
-        path_chunks = path.split(".")
-
-        values = []
-        if len(path_chunks) > 1:
+        if "." in path:
             # dive deeper in tree
-            values = get_values(data, ".".join(path_chunks[:-1]))
+            ancestors, leaf = path.rsplit(".", 1)
+            values = get_values(data, ancestors)
         else:
             # checking top level item
+            leaf = path
             values = [{"path": "", "value": data}]
 
-        if values:
-            # adding path to result
-            result["checks"][path] = []
+        if not values:
+            continue
 
-            # iterate over parents and perform checks
-            for value in values:
-                list_result = True
+        result["checks"][path] = []
 
-                # create list from plain values
-                if type(value["value"]) is not list:
-                    value["value"] = [value["value"]]
-                    list_result = False
+        # iterate over parents and perform checks
+        for value in values:
+            list_result = type(value["value"]) is list
 
-                # iterate over all returned values and check those
-                counter = 0
-                for item in value["value"]:
-                    field_result = {
-                        "path": None,
-                        "coverage": {"overall_result": None, "check_results": None},
-                        "quality": {"overall_result": None, "check_results": None},
-                    }
+            # create list from plain values
+            if not list_result:
+                value["value"] = [value["value"]]
 
-                    # construct path based on "is the parent a list?"
-                    if list_result:
-                        field_result["path"] = f"{value['path']}[{counter}].{path_chunks[-1]}"
-                    else:
-                        if value["path"]:
-                            field_result["path"] = f"{value['path']}.{path_chunks[-1]}"
-                        else:
-                            field_result["path"] = path_chunks[-1]
+            # iterate over all returned values and check those
+            for i, item in enumerate(value["value"]):
+                field_result = {
+                    "coverage": {"overall_result": None, "check_results": []},
+                    "quality": {"overall_result": None, "check_results": []},
+                }
 
-                    counter += 1
+                # construct path based on "is the parent a list?"
+                if list_result:
+                    field_result["path"] = f"{value['path']}[{i}].{leaf}"
+                elif value["path"]:
+                    field_result["path"] = f"{value['path']}.{leaf}"
+                else:
+                    field_result["path"] = leaf
 
-                    for check, check_name in coverage_checks:
-                        if field_result["coverage"]["check_results"] is None:
-                            field_result["coverage"]["check_results"] = []
-
-                        check_result = check(item, path_chunks[-1])
-                        field_result["coverage"]["check_results"].append(check_result)
-                        field_result["coverage"]["overall_result"] = check_result["result"]
-
-                        if check_result["result"] is False:
-                            break
-
-                    if do_field_quality and field_result["coverage"]["overall_result"]:
+                for check, check_name in coverage_checks:
+                    check_result = check(item, leaf)
+                    passed = check_result["result"]
+                    field_result["coverage"]["check_results"].append(check_result)
+                    field_result["coverage"]["overall_result"] = passed
+                    if passed is False:
+                        break
+                else:  # field_result["coverage"]["overall_result"] is True
+                    if do_field_quality:
                         for check, check_name in checks:
-                            if field_result["quality"]["check_results"] is None:
-                                field_result["quality"]["check_results"] = []
-
-                            check_result = check(item, path_chunks[-1])
+                            check_result = check(item, leaf)
+                            passed = check_result["result"]
                             field_result["quality"]["check_results"].append(check_result)
-                            field_result["quality"]["overall_result"] = check_result["result"]
-
-                            if check_result["result"] is False:
+                            field_result["quality"]["overall_result"] = passed
+                            if passed is False:
                                 break
 
-                    result["checks"][path].append(field_result)
+                result["checks"][path].append(field_result)
 
     return (Json(result), item_id, dataset_id)
 
