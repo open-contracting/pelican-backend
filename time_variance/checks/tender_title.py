@@ -1,35 +1,23 @@
-from pelican.util.getter import get_values
+"""
+The tender title is invariant across time.
+
+If a compiled release in the older collection sets the ``tender.title`` field, then its pair in the newer collection
+has a matching ``tender.title`` field. Values are lowercased and whitespace-normalized for matching.
+"""
+
+from pelican.util.getter import deep_get
 
 version = 1.0
 
 
-def filter(scope, item, item_id, new_item, new_item_id):
-    # entry filtering - check makes sense only for tenders with a title filled in
-    if item:
-        values = get_values(item, "tender.title", value_only=True)
-        if values:
-            title = " ".join(values[0].lower().split())
-            if title:
-                return True
+def _get_title(item):
+    if title := deep_get(item, "tender.title"):
+        return " ".join(title.lower().split())
 
-    return False
+
+def filter(scope, item, item_id, new_item, new_item_id):
+    return bool(_get_title(item))
 
 
 def evaluate(scope, item, item_id, new_item, new_item_id):
-    values = get_values(item, "tender.title", value_only=True)
-    if values:
-        title = " ".join(values[0].lower().split())
-
-        if new_item:
-            new_values = get_values(new_item, "tender.title", value_only=True)
-
-            new_title = None
-            if new_values:
-                new_title = " ".join(new_values[0].lower().split())
-
-            if title == new_title:
-                return scope, True
-            else:
-                return scope, False
-
-    return scope, False
+    return scope, _get_title(item) == _get_title(new_item)

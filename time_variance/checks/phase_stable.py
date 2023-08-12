@@ -1,37 +1,36 @@
-from pelican.util.getter import get_values
+"""
+A compiled release in the newer collection has at least the same number of ``planning``, ``tender``, ``awards``
+and ``contracts`` objects as its pair in the older collection.
+"""
+
+from pelican.util.getter import deep_get
 
 version = 1.0
 
 
 def filter(scope, item, item_id, new_item, new_item_id):
-    # entry filtering - check makes sense only for tenders with a title filled in
-    if item:
-        return True
+    return bool(item)
 
 
 def evaluate(scope, item, item_id, new_item, new_item_id):
-    ancestor_values = get_values(item, "tender", value_only=True)
-    if ancestor_values and len(ancestor_values[0]) > 0:
-        new_values = get_values(new_item, "tender", value_only=True)
-        if not new_values or len(new_values[0]) < 1:
+    if deep_get(item, "tender", dict):
+        if not deep_get(new_item, "tender", dict):
             return scope, False
 
-    ancestor_values = get_values(item, "planning", value_only=True)
-    if ancestor_values and len(ancestor_values[0]) > 0:
-        new_values = get_values(new_item, "planning", value_only=True)
-        if not new_values or len(new_values[0]) < 1:
+    if deep_get(item, "planning", dict):
+        if not deep_get(new_item, "planning", dict):
             return scope, False
 
-    ancestor_values = get_values(item, "awards", value_only=True)
-    if ancestor_values and len(ancestor_values) > 0:
-        new_values = get_values(new_item, "awards", value_only=True)
-        if not new_values or len(new_values) < len(ancestor_values):
+    old_array = deep_get(item, "awards", list)
+    if old_array:
+        new_array = deep_get(new_item, "awards", list)
+        if len(new_array) < len(old_array):
             return scope, False
 
-    ancestor_values = get_values(item, "contracts", value_only=True)
-    if ancestor_values and len(ancestor_values) > 0:
-        new_values = get_values(new_item, "contracts", value_only=True)
-        if not new_values or len(new_values) < len(ancestor_values):
+    old_array = deep_get(item, "contracts", list)
+    if old_array:
+        new_array = deep_get(new_item, "contracts", list)
+        if len(new_array) < len(old_array):
             return scope, False
 
     return scope, True
