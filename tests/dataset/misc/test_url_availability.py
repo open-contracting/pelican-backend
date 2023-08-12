@@ -64,10 +64,10 @@ def test_failed_multiple():
     with patch.object(url_availability, "settings", new=mock_settings):
         scope = {}
 
-        id = 0
+        item_id = 0
         for item in items_test_failed_multiple:
-            scope = url_availability.add_item(scope, item, id)
-            id += 1
+            scope = url_availability.add_item(scope, item, item_id)
+            item_id += 1
 
         result = url_availability.get_result(scope)
         assert result["result"] is False

@@ -57,10 +57,10 @@ items_test_passed = [
 def test_passed():
     scope = {}
 
-    id = 0
+    item_id = 0
     for item in items_test_passed:
-        scope = related_process_title.add_item(scope, item, id)
-        id += 1
+        scope = related_process_title.add_item(scope, item, item_id)
+        item_id += 1
 
     result = related_process_title.get_result(scope)
     assert result["result"] is True
@@ -130,14 +130,14 @@ items_test_failed = [
 def test_failed():
     scope = {}
 
-    id = 0
+    item_id = 0
     for item in items_test_failed:
-        scope = related_process_title.add_item(scope, item, id)
-        id += 1
+        scope = related_process_title.add_item(scope, item, item_id)
+        item_id += 1
 
     result = related_process_title.get_result(scope)
     assert result["result"] is False
-    assert result["value"] == 100 * (2 / 3)
+    assert result["value"] == 100 * 2 / 3
     assert result["meta"] == {
         "total_processed": 3,
         "total_passed": 2,

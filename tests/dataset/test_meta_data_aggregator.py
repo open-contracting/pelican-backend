@@ -13,8 +13,8 @@ items_test_compiled_releases = [
 
 def test_compiled_releases():
     scope = {}
-    for id in range(len(items_test_compiled_releases)):
-        scope = add_item(scope, items_test_compiled_releases[id], id)
+    for item_id in range(len(items_test_compiled_releases)):
+        scope = add_item(scope, items_test_compiled_releases[item_id], item_id)
     result = get_result(scope)
 
     assert result["compiled_releases"]["total_unique_ocids"] == 2
@@ -32,8 +32,8 @@ items_test_tender_lifecycle = [
 
 def test_tender_lifecycle():
     scope = {}
-    for id in range(len(items_test_tender_lifecycle)):
-        scope = add_item(scope, items_test_tender_lifecycle[id], id)
+    for item_id in range(len(items_test_tender_lifecycle)):
+        scope = add_item(scope, items_test_tender_lifecycle[item_id], item_id)
     result = get_result(scope)
 
     assert result["compiled_releases"]["total_unique_ocids"] == 1
