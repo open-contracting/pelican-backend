@@ -14,8 +14,7 @@ sample_size = 100
 
 
 def add_item(scope, item, item_id):
-    tender_id = deep_get(item, "tender.id", str)
-    if tender_id:
+    if tender_id := deep_get(item, "tender.id", str):
         scope.setdefault(tender_id, [])
         scope[tender_id].append({"item_id": item_id, "ocid": item["ocid"]})
 
