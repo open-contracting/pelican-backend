@@ -1,7 +1,15 @@
-import random
+"""
+If a related process has a ``scheme`` of 'ocid' and its ``identifier`` is present, then its ``identifier`` matches the
+``ocid`` of a compiled release. The related process fields are:
 
-from pelican.util.checks import get_empty_result_dataset
-from pelican.util.getter import get_values
+-  ``contracts.relatedProcesses``
+-  ``relatedProcesses``
+"""
+
+import itertools
+
+from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
+from pelican.util.getter import deep_get, get_values
 
 version = 2.0
 sample_size = 100
@@ -10,62 +18,58 @@ sample_size = 100
 def add_item(scope, item, item_id):
     if not scope:
         scope = {
-            "original_ocid": {},
+            "ocids": {},
             "related_processes": {},
             "meta": {
                 "total_processed": 0,
                 "total_passed": 0,
                 "total_failed": 0,
-                "passed_examples": [],
-                "failed_examples": [],
+                "passed_examples": ReservoirSampler(sample_size),
+                "failed_examples": ReservoirSampler(sample_size),
             },
         }
 
     ocid = item["ocid"]
 
     if ocid:
-        if ocid in scope["original_ocid"]:
-            scope["original_ocid"][ocid]["found"] = True
-            for key in scope["original_ocid"][ocid]["pending_related_processes"]:
-                scope = pick_examples(scope, key, True)
-                del scope["related_processes"][key]
-
-            scope["original_ocid"][ocid]["pending_related_processes"].clear()
+        if ocid in scope["ocids"]:
+            scope["ocids"][ocid]["found"] = True  # run before _add_example()
+            for ref in scope["ocids"][ocid]["pending"]:
+                scope = _add_example(scope, scope["related_processes"][ref])
+                # Delete resolved references.
+                del scope["related_processes"][ref]
+            scope["ocids"][ocid]["pending"].clear()
         else:
-            scope["original_ocid"][ocid] = {"pending_related_processes": [], "found": True}
+            scope["ocids"][ocid] = {"pending": [], "found": True}
 
-    related_processes = []
-    related_processes.extend(get_values(item, "relatedProcesses"))
-    related_processes.extend(get_values(item, "contracts.relatedProcesses"))
-
-    for related_process in related_processes:
-        # checking if all required fields are set
-        if "scheme" not in related_process["value"] or related_process["value"]["scheme"] != "ocid":
+    for related_process in itertools.chain(
+        get_values(item, "relatedProcesses"), get_values(item, "contracts.relatedProcesses")
+    ):
+        scheme = deep_get(related_process["value"], "scheme")
+        if scheme != "ocid":
             continue
 
-        if "identifier" not in related_process["value"] or related_process["value"]["identifier"] is None:
+        ocid_reference = deep_get(related_process["value"], "identifier")
+        if ocid_reference is None:
             continue
 
-        key = (ocid, related_process["value"]["identifier"])
-        scope["related_processes"][key] = {
+        example = {
             "item_id": item_id,
             "ocid": ocid,
-            "related_ocid": related_process["value"]["identifier"],
             "related_path": related_process["path"],
+            "related_ocid": ocid_reference,
         }
 
-        if related_process["value"]["identifier"] in scope["original_ocid"]:
-            if scope["original_ocid"][related_process["value"]["identifier"]]["found"]:
-                scope = pick_examples(scope, key, True)
-                del scope["related_processes"][key]
-            else:
-                scope["original_ocid"][related_process["value"]["identifier"]]["pending_related_processes"].append(key)
-
+        seen = ocid_reference in scope["ocids"]
+        if seen and scope["ocids"][ocid_reference]["found"]:
+            scope = _add_example(scope, example)
         else:
-            scope["original_ocid"][related_process["value"]["identifier"]] = {
-                "pending_related_processes": [key],
-                "found": False,
-            }
+            ref = (ocid, ocid_reference)
+            if seen:
+                scope["ocids"][ocid_reference]["pending"].append(ref)
+            else:
+                scope["ocids"][ocid_reference] = {"pending": [ref], "found": False}
+            scope["related_processes"][ref] = example
 
     return scope
 
@@ -73,46 +77,32 @@ def add_item(scope, item, item_id):
 def get_result(scope):
     result = get_empty_result_dataset(version)
 
-    for key in scope["related_processes"]:
-        scope = pick_examples(scope, key, False)
+    for ref, example in scope["related_processes"].items():
+        scope = _add_example(scope, example)
 
-    if scope["meta"]["total_processed"] == 0:
+    if not scope["meta"]["total_processed"]:
         result["meta"] = {"reason": "no pair of related processes sets necessary fields"}
-    else:
-        result["result"] = scope["meta"]["total_passed"] == scope["meta"]["total_processed"]
-        result["value"] = 100 * (scope["meta"]["total_passed"] / scope["meta"]["total_processed"])
-        result["meta"] = scope["meta"]
+        return result
+
+    scope["meta"]["passed_examples"] = scope["meta"]["passed_examples"].sample
+    scope["meta"]["failed_examples"] = scope["meta"]["failed_examples"].sample
+
+    result["result"] = scope["meta"]["total_passed"] == scope["meta"]["total_processed"]
+    result["value"] = 100 * scope["meta"]["total_passed"] / scope["meta"]["total_processed"]
+    result["meta"] = scope["meta"]
 
     return result
 
 
-def pick_examples(scope, related_process_key, result):
-    example = {
-        "item_id": scope["related_processes"][related_process_key]["item_id"],
-        "ocid": scope["related_processes"][related_process_key]["ocid"],
-        "related_process": scope["related_processes"][related_process_key],
-        "result": result,
-    }
+def _add_example(scope, example):
+    passed = scope["ocids"][example["related_ocid"]]["found"]
 
-    if result:
-        if scope["meta"]["total_passed"] < sample_size:
-            scope["meta"]["passed_examples"].append(example)
-        else:
-            r = random.randint(0, scope["meta"]["total_passed"])
-            if r < sample_size:
-                scope["meta"]["passed_examples"][r] = example
-
+    if passed:
         scope["meta"]["total_passed"] += 1
+        scope["meta"]["passed_examples"].process(example)
     else:
-        if scope["meta"]["total_failed"] < sample_size:
-            scope["meta"]["failed_examples"].append(example)
-        else:
-            r = random.randint(0, scope["meta"]["total_failed"])
-            if r < sample_size:
-                scope["meta"]["failed_examples"][r] = example
-
         scope["meta"]["total_failed"] += 1
-
+        scope["meta"]["failed_examples"].process(example)
     scope["meta"]["total_processed"] += 1
 
     return scope

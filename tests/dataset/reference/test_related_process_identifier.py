@@ -45,35 +45,20 @@ def test_passed():
             {
                 "ocid": "1",
                 "item_id": 1,
-                "related_process": {
-                    "ocid": "1",
-                    "item_id": 1,
-                    "related_ocid": "0",
-                    "related_path": "relatedProcesses[0]",
-                },
-                "result": True,
+                "related_path": "relatedProcesses[0]",
+                "related_ocid": "0",
             },
             {
                 "ocid": "2",
                 "item_id": 2,
-                "related_process": {
-                    "ocid": "2",
-                    "item_id": 2,
-                    "related_ocid": "0",
-                    "related_path": "contracts[0].relatedProcesses[0]",
-                },
-                "result": True,
+                "related_path": "contracts[0].relatedProcesses[0]",
+                "related_ocid": "0",
             },
             {
                 "ocid": "2",
                 "item_id": 2,
-                "related_process": {
-                    "ocid": "2",
-                    "item_id": 2,
-                    "related_ocid": "1",
-                    "related_path": "contracts[0].relatedProcesses[1]",
-                },
-                "result": True,
+                "related_path": "contracts[0].relatedProcesses[1]",
+                "related_ocid": "1",
             },
         ],
         "failed_examples": [],
@@ -111,37 +96,22 @@ def test_failed():
             {
                 "item_id": 1,
                 "ocid": "1",
-                "related_process": {
-                    "item_id": 1,
-                    "ocid": "1",
-                    "related_ocid": "0",
-                    "related_path": "relatedProcesses[0]",
-                },
-                "result": True,
+                "related_path": "relatedProcesses[0]",
+                "related_ocid": "0",
             },
             {
                 "item_id": 2,
                 "ocid": "2",
-                "related_process": {
-                    "item_id": 2,
-                    "ocid": "2",
-                    "related_ocid": "0",
-                    "related_path": "contracts[0].relatedProcesses[0]",
-                },
-                "result": True,
+                "related_path": "contracts[0].relatedProcesses[0]",
+                "related_ocid": "0",
             },
         ],
         "failed_examples": [
             {
                 "item_id": 2,
                 "ocid": "2",
-                "related_process": {
-                    "item_id": 2,
-                    "ocid": "2",
-                    "related_ocid": "unknown",
-                    "related_path": "contracts[0].relatedProcesses[1]",
-                },
-                "result": False,
+                "related_path": "contracts[0].relatedProcesses[1]",
+                "related_ocid": "unknown",
             }
         ],
     }
