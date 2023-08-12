@@ -37,10 +37,10 @@ items_test_undefined_multiple2 = [
 def test_undefined_multiple():
     scope = {}
 
-    id = 0
+    item_id = 0
     for item in items_test_undefined_multiple1:
-        scope = buyer.add_item(scope, item, id)
-        id += 1
+        scope = buyer.add_item(scope, item, item_id)
+        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is None
@@ -49,10 +49,10 @@ def test_undefined_multiple():
 
     scope = {}
 
-    id = 0
+    item_id = 0
     for item in items_test_undefined_multiple2:
-        scope = buyer.add_item(scope, item, id)
-        id += 1
+        scope = buyer.add_item(scope, item, item_id)
+        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is None
@@ -75,10 +75,10 @@ items_test_failed2.extend(
 def test_failed():
     scope = {}
 
-    id = 0
+    item_id = 0
     for item in items_test_failed1:
-        scope = buyer.add_item(scope, item, id)
-        id += 1
+        scope = buyer.add_item(scope, item, item_id)
+        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is False
@@ -91,10 +91,10 @@ def test_failed():
 
     scope = {}
 
-    id = 0
+    item_id = 0
     for item in items_test_failed2:
-        scope = buyer.add_item(scope, item, id)
-        id += 1
+        scope = buyer.add_item(scope, item, item_id)
+        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is False
@@ -110,34 +110,34 @@ def test_failed():
 
 items_test_passed_multiple = []
 items_test_passed_multiple.extend(
-    [{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": id}}} for id in range(100)]
+    [{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}} for item_id in range(100)]
 )
 items_test_passed_multiple.extend(
     [
-        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": id}}}
+        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}}
         for _ in range(1, 3)
-        for id in range(100, 200)
+        for item_id in range(100, 200)
     ]
 )
 items_test_passed_multiple.extend(
     [
-        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": id}}}
+        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}}
         for _ in range(3, 24)
-        for id in range(200, 300)
+        for item_id in range(200, 300)
     ]
 )
 items_test_passed_multiple.extend(
     [
-        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": id}}}
+        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}}
         for _ in range(24, 75)
-        for id in range(300, 400)
+        for item_id in range(300, 400)
     ]
 )
 items_test_passed_multiple.extend(
     [
-        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": id}}}
+        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}}
         for _ in range(75, 176)
-        for id in range(400, 500)
+        for item_id in range(400, 500)
     ]
 )
 
@@ -145,10 +145,10 @@ items_test_passed_multiple.extend(
 def test_passed_multiple():
     scope = {}
 
-    id = 0
+    item_id = 0
     for item in items_test_passed_multiple:
-        scope = buyer.add_item(scope, item, id)
-        id += 1
+        scope = buyer.add_item(scope, item, item_id)
+        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is True

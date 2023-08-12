@@ -18,12 +18,12 @@ def add_item(scope, item, item_id):
     if not scope:
         scope = {"buyers": {}, "total_ocid_count": 0}
 
-    scheme = deep_get(item, "buyer.identifier.scheme", str)
-    ident = deep_get(item, "buyer.identifier.id", str)
-    if not scheme or not ident:
+    scheme = deep_get(item, "buyer.identifier.scheme")
+    ident = deep_get(item, "buyer.identifier.id")
+    if scheme is None or ident is None:
         return scope
 
-    identifier = (scheme, ident)
+    identifier = (str(scheme), str(ident))
     if identifier not in scope["buyers"]:
         scope["buyers"][identifier] = {"count": 1, "example": {"item_id": item_id, "ocid": item["ocid"]}}
     else:

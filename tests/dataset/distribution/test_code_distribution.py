@@ -29,10 +29,10 @@ def test_no_test_values():
     # items_multiple_items
     distribution = CodeDistribution(["awards.status"], limit=20)
     scope = {}
-    id = 0
+    item_id = 0
     for item in items_multiple_items:
-        scope = distribution.add_item(scope, item, id)
-        id += 1
+        scope = distribution.add_item(scope, item, item_id)
+        item_id += 1
 
     result = distribution.get_result(scope)
     assert result["result"] is True
@@ -45,10 +45,10 @@ def test_no_test_values():
     # items_complex_structure
     distribution = CodeDistribution(["contracts.implementation.milestones.status"], limit=20)
     scope = {}
-    id = 0
+    item_id = 0
     for item in items_complex_structure:
-        scope = distribution.add_item(scope, item, id)
-        id += 1
+        scope = distribution.add_item(scope, item, item_id)
+        item_id += 1
 
     result = distribution.get_result(scope)
     assert result["result"] is True
@@ -61,10 +61,10 @@ def test_no_test_values():
     # items_multiple_paths
     distribution = CodeDistribution(["planning.documents.documentType", "tender.documents.documentType"], limit=20)
     scope = {}
-    id = 0
+    item_id = 0
     for item in items_multiple_paths:
-        scope = distribution.add_item(scope, item, id)
-        id += 1
+        scope = distribution.add_item(scope, item, item_id)
+        item_id += 1
 
     result = distribution.get_result(scope)
     assert result["result"] is True
@@ -95,10 +95,10 @@ def test_passed():
     # test_passed1
     distribution = CodeDistribution(["awards.status"], ["pending", "active", "cancelled", "unsuccessful"], limit=20)
     scope = {}
-    id = 0
+    item_id = 0
     for item in items_passed1:
-        scope = distribution.add_item(scope, item, id)
-        id += 1
+        scope = distribution.add_item(scope, item, item_id)
+        item_id += 1
 
     result = distribution.get_result(scope)
     assert result["result"] is True
@@ -115,10 +115,10 @@ def test_passed():
     # test_passed2
     distribution = CodeDistribution(["awards.status"], ["pending"], limit=20)
     scope = {}
-    id = 0
+    item_id = 0
     for item in items_passed2:
-        scope = distribution.add_item(scope, item, id)
-        id += 1
+        scope = distribution.add_item(scope, item, item_id)
+        item_id += 1
 
     result = distribution.get_result(scope)
     assert result["result"] is True
@@ -131,10 +131,10 @@ def test_passed():
     # test_passed3
     distribution = CodeDistribution(["awards.status"], ["pending", "active"], limit=20)
     scope = {}
-    id = 0
+    item_id = 0
     for item in items_passed3:
-        scope = distribution.add_item(scope, item, id)
-        id += 1
+        scope = distribution.add_item(scope, item, item_id)
+        item_id += 1
 
     result = distribution.get_result(scope)
     assert result["result"] is True
@@ -157,10 +157,10 @@ def test_failed():
     # test_failed1
     distribution = CodeDistribution(["awards.status"], ["pending"], limit=20)
     scope = {}
-    id = 0
+    item_id = 0
     for item in items_failed1:
-        scope = distribution.add_item(scope, item, id)
-        id += 1
+        scope = distribution.add_item(scope, item, item_id)
+        item_id += 1
 
     result = distribution.get_result(scope)
     assert result["result"] is False
@@ -172,10 +172,10 @@ def test_failed():
     # test_failed2
     distribution = CodeDistribution(["awards.status"], ["pending"], limit=20)
     scope = {}
-    id = 0
+    item_id = 0
     for item in items_failed2:
-        scope = distribution.add_item(scope, item, id)
-        id += 1
+        scope = distribution.add_item(scope, item, item_id)
+        item_id += 1
 
     result = distribution.get_result(scope)
     assert result["result"] is False
@@ -188,10 +188,10 @@ def test_failed():
     # test_failed2
     distribution = CodeDistribution(["awards.status"], ["pending"], limit=20)
     scope = {}
-    id = 0
+    item_id = 0
     for item in items_failed3:
-        scope = distribution.add_item(scope, item, id)
-        id += 1
+        scope = distribution.add_item(scope, item, item_id)
+        item_id += 1
 
     result = distribution.get_result(scope)
     assert result["result"] is False

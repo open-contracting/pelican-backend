@@ -56,7 +56,7 @@ def test_passed():
     result = contracts_value_repetition.get_result(scope)
     assert result["result"] is True
     assert result["value"] == 100 * 3 * 0.005
-    assert len(result["meta"]["most_frequent"]) == value_repetition.most_frequent_cap
+    assert len(result["meta"]["most_frequent"]) == value_repetition.most_frequent_report_limit
     assert all(el["share"] == 0.005 for el in result["meta"]["most_frequent"])
     assert all(el["count"] == 1 for el in result["meta"]["most_frequent"])
 
