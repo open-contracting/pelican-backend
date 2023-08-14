@@ -31,7 +31,7 @@ def add_item(scope, item, item_id, path):
         if currency is None:
             continue
 
-        amount = deep_get(value, "amount")
+        amount = deep_get(value, "amount", float)
         if amount is None:
             continue
 
