@@ -9,7 +9,7 @@ version = 1.0
 
 
 def filter(scope, item, item_id, new_item, new_item_id):
-    return bool(item)
+    return True
 
 
 def evaluate(scope, item, item_id, new_item, new_item_id):
