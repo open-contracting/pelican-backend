@@ -14,7 +14,7 @@ import requests
 
 from pelican.util import settings
 from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
-from pelican.util.getter import deep_get
+from pelican.util.getter import get_values
 
 version = 1.0
 min_items = 100
@@ -34,7 +34,8 @@ def add_item(scope, item, item_id):
     ocid = item["ocid"]
 
     for path in paths:
-        for value in deep_get(item, path, list):
+        # Use get_values(), since `path` can contain an array as an ancestor.
+        for value in get_values(item, path, value_only=True):
             if type(value) is str:
                 scope["sampler"].process({"value": value, "item_id": item_id, "ocid": ocid})
 

@@ -26,7 +26,7 @@ def test_undefined():
     result = url_availability.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "no compiled releases set necessary fields"}
+    assert result["meta"] == {"reason": "fewer than 100 occurrences of necessary fields"}
 
 
 item_test_passed = {
