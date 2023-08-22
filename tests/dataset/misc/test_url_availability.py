@@ -39,6 +39,7 @@ item_test_passed = {
 
 
 @pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
+@pytest.mark.filterwarnings("ignore:unclosed <socket.socket fd=:ResourceWarning")
 def test_passed():
     scope = {}
     scope = url_availability.add_item(scope, item_test_passed, 0)
@@ -60,6 +61,7 @@ items_test_failed_multiple.append(
 
 
 @pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
+@pytest.mark.filterwarnings("ignore:unclosed <socket.socket fd=:ResourceWarning")
 def test_failed_multiple():
     with patch.object(url_availability, "settings", new=mock_settings):
         scope = {}
