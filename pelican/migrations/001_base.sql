@@ -78,6 +78,7 @@ CREATE TABLE progress_monitor_item (
 );
 
 -- Column referencing foreign key, plus state or item_id.
+CREATE INDEX progress_monitor_item_item_id_idx ON progress_monitor_item (item_id);
 -- get_processed_items_count()
 CREATE INDEX progress_monitor_item_dataset_id_state_idx ON progress_monitor_item (dataset_id, state);
 -- update_items_state()
@@ -120,6 +121,7 @@ CREATE TABLE field_level_check (
 
 -- Column referencing foreign key.
 CREATE INDEX field_level_check_dataset_id_idx ON field_level_check (dataset_id);
+CREATE INDEX field_level_check_data_item_id_idx ON field_level_check (data_item_id);
 
 CREATE TABLE field_level_check_examples (
     id bigserial PRIMARY KEY,
@@ -145,6 +147,7 @@ CREATE TABLE resource_level_check (
 
 -- Column referencing foreign key.
 CREATE INDEX resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
+CREATE INDEX resource_level_check_data_item_id_idx ON resource_level_check (data_item_id);
 
 CREATE TABLE resource_level_check_examples (
     id bigserial PRIMARY KEY,
