@@ -112,7 +112,7 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
         for index, key in enumerate(("published_from", "published_to")):
             value = parse_datetime(dates[index])
             if value:
-                meta_data["collection_metadata"][key] = parse_datetime(value).strftime(DATETIME_STR_FORMAT)
+                meta_data["collection_metadata"][key] = value.strftime(DATETIME_STR_FORMAT)
 
     #####################################
     # collection metadata from packages #
