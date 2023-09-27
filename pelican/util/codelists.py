@@ -1,14 +1,24 @@
 import csv
+import logging
+import time
 from collections import defaultdict
 from io import StringIO
 
 import cachetools.func
 import requests
 
+logger = logging.getLogger(__name__)
+
 
 @cachetools.func.ttl_cache(ttl=86400)  # 1 day
 def _get(url: str) -> list[dict[str, str]]:
-    response = requests.get(url)
+    while True:
+        response = requests.get(url)
+        if response.status_code == 429:
+            logger.warning("HTTP 429 %s %s", url, response.headers)
+            time.sleep(1)  # time.sleep() blocks the IO loop. An asynchronous version like asyncio.sleep() wouldn't.
+        else:
+            break
     response.raise_for_status()
     return list(csv.DictReader(StringIO(response.text)))
 
