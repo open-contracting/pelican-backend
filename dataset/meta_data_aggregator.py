@@ -112,15 +112,15 @@ def get_kingfisher_meta_data(collection_id):
         logger.warning("No rows found in `release` or `record` where collection_id = %s", proprietary_id)
         return meta_data
 
+    #######################
+    # collection metadata #
+    #######################
+
     kingfisher_process_cursor.execute(
         "SELECT data FROM package_data WHERE id = %(id)s LIMIT 1",
         {"id": result["package_data_id"]},
     )
     package_data_row = kingfisher_process_cursor.fetchone()
-
-    #######################
-    # collection metadata #
-    #######################
 
     if package_data_row:
         package_data = package_data_row["data"]
@@ -168,13 +168,9 @@ def get_kingfisher_meta_data(collection_id):
 
     if result and result[0] and parse_datetime(result[0]):
         meta_data["collection_metadata"]["published_from"] = parse_datetime(result[0]).strftime(DATETIME_STR_FORMAT)
-    else:
-        meta_data["collection_metadata"]["published_from"] = None
 
     if result and result[1] and parse_datetime(result[1]):
         meta_data["collection_metadata"]["published_to"] = parse_datetime(result[1]).strftime(DATETIME_STR_FORMAT)
-    else:
-        meta_data["collection_metadata"]["published_to"] = None
 
     kingfisher_process_cursor.close()
     kingfisher_process_connection.close()
