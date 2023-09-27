@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import logging
+
 import click
 import psycopg2.extras
 
@@ -9,6 +11,7 @@ from pelican.util.workers import process_items
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
 routing_key = "extractor"
+logger = logging.getLogger("pelican.workers.extract.kingfisher_process")
 
 
 @click.command()
@@ -23,18 +26,18 @@ def callback(client_state, channel, method, properties, input_message):
     if settings.FIXER_IO_API_KEY:
         exchange_rates_db.update_from_fixer_io()
 
+    name = input_message["name"]
+    collection_id = input_message["collection_id"]
+    max_items = input_message.get("max_items")
+    ancestor_id = input_message.get("ancestor_id")
+
     cursor = get_cursor()
-    kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
-    kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    kingfisher_process_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
+    kingfisher_process_cursor = kingfisher_process_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     try:
-        name = input_message["name"]
-        collection_id = input_message["collection_id"]
-        max_items = input_message.get("max_items")
-        ancestor_id = input_message.get("ancestor_id")
-
         if max_items is None:
-            kf_cursor.execute(
+            kingfisher_process_cursor.execute(
                 """\
                 SELECT compiled_release.data_id
                 FROM compiled_release
@@ -46,7 +49,7 @@ def callback(client_state, channel, method, properties, input_message):
                 {"collection_id": collection_id, "max_size": settings.KINGFISHER_PROCESS_MAX_SIZE},
             )
         else:
-            kf_cursor.execute(
+            kingfisher_process_cursor.execute(
                 """\
                 SELECT compiled_release.data_id
                 FROM compiled_release
@@ -59,36 +62,39 @@ def callback(client_state, channel, method, properties, input_message):
                 {"collection_id": collection_id, "max_size": settings.KINGFISHER_PROCESS_MAX_SIZE, "limit": max_items},
             )
 
-        ids = [row[0] for row in kf_cursor]
+        ids = [row[0] for row in kingfisher_process_cursor]
 
-        cursor.execute(
-            """\
-            INSERT INTO dataset (name, meta, ancestor_id)
-            VALUES (%(name)s, %(meta)s, %(ancestor_id)s)
-            RETURNING id
-            """,
-            {"name": name, "meta": Json({}), "ancestor_id": ancestor_id},
-        )
-        dataset_id = cursor.fetchone()[0]
+        if ids:
+            cursor.execute(
+                """\
+                INSERT INTO dataset (name, meta, ancestor_id)
+                VALUES (%(name)s, %(meta)s, %(ancestor_id)s)
+                RETURNING id
+                """,
+                {"name": name, "meta": Json({}), "ancestor_id": ancestor_id},
+            )
+            dataset_id = cursor.fetchone()[0]
 
-        meta_data = meta_data_aggregator.get_kingfisher_meta_data(collection_id)
-        meta_data_aggregator.update_meta_data(meta_data, dataset_id)
+            meta_data = meta_data_aggregator.get_kingfisher_meta_data(collection_id)
+            meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
-        commit()
+            commit()
 
-        process_items(
-            client_state=client_state,
-            channel=channel,
-            method=method,
-            routing_key=routing_key,
-            cursors={"default": cursor, "kingfisher_process": kf_cursor},
-            dataset_id=dataset_id,
-            ids=ids,
-            insert_items=insert_items,
-        )
+            process_items(
+                client_state=client_state,
+                channel=channel,
+                method=method,
+                routing_key=routing_key,
+                cursors={"default": cursor, "kingfisher_process": kingfisher_process_cursor},
+                dataset_id=dataset_id,
+                ids=ids,
+                insert_items=insert_items,
+            )
+        else:
+            logger.error("No rows found in `compiled_release` where collection_id = %s", collection_id)
     finally:
-        kf_cursor.close()
-        kf_connection.close()
+        kingfisher_process_cursor.close()
+        kingfisher_process_connection.close()
         cursor.close()
 
 
