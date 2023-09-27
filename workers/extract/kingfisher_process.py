@@ -3,6 +3,7 @@ import logging
 
 import click
 import psycopg2.extras
+from yapw.methods import nack
 
 import dataset.meta_data_aggregator as meta_data_aggregator
 from pelican.util import exchange_rates_db, settings
@@ -81,6 +82,7 @@ def callback(client_state, channel, method, properties, input_message):
             )
         else:
             logger.error("No rows found in `compiled_release` where collection_id = %s", collection_id)
+            nack(client_state, channel, method.delivery_tag, requeue=False)
     finally:
         kingfisher_process_cursor.close()
         kingfisher_process_connection.close()
