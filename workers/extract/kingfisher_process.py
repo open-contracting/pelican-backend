@@ -36,32 +36,21 @@ def callback(client_state, channel, method, properties, input_message):
     kingfisher_process_cursor = kingfisher_process_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     try:
-        if max_items is None:
-            kingfisher_process_cursor.execute(
-                """\
-                SELECT compiled_release.data_id
-                FROM compiled_release
-                JOIN data ON compiled_release.data_id = data.id
-                WHERE
-                    compiled_release.collection_id = %(collection_id)s
-                    AND pg_column_size(data.data) < %(max_size)s
-                """,
-                {"collection_id": collection_id, "max_size": settings.KINGFISHER_PROCESS_MAX_SIZE},
-            )
-        else:
-            kingfisher_process_cursor.execute(
-                """\
-                SELECT compiled_release.data_id
-                FROM compiled_release
-                JOIN data ON compiled_release.data_id = data.id
-                WHERE
-                    compiled_release.collection_id = %(collection_id)s
-                    AND pg_column_size(data.data) < %(max_size)s
-                LIMIT %(limit)s
-                """,
-                {"collection_id": collection_id, "max_size": settings.KINGFISHER_PROCESS_MAX_SIZE, "limit": max_items},
-            )
+        sql = """\
+            SELECT compiled_release.data_id
+            FROM compiled_release
+            JOIN data ON compiled_release.data_id = data.id
+            WHERE
+                compiled_release.collection_id = %(collection_id)s
+                AND pg_column_size(data.data) < %(max_size)s
+        """
+        variables = {"collection_id": collection_id, "max_size": settings.KINGFISHER_PROCESS_MAX_SIZE}
 
+        if max_items:
+            sql += "LIMIT %(limit)s"
+            variables["limit"] = max_items
+
+        kingfisher_process_cursor.execute(sql, variables)
         ids = [row[0] for row in kingfisher_process_cursor]
 
         if ids:
