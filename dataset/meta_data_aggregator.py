@@ -1,9 +1,7 @@
 import logging
 
-import psycopg2.extras
 import requests
 
-from pelican.util import settings
 from pelican.util.getter import deep_get, deep_has, get_values, parse_datetime
 from pelican.util.services import Json, get_cursor
 
@@ -38,10 +36,7 @@ def get_result(scope):
     return scope
 
 
-def get_kingfisher_meta_data(collection_id):
-    kingfisher_process_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
-    kingfisher_process_cursor = kingfisher_process_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
+def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
     meta_data = {
         "kingfisher_metadata": {"collection_id": None, "processing_start": None, "processing_end": None},
         "collection_metadata": {

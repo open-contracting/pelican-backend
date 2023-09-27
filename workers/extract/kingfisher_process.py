@@ -65,7 +65,7 @@ def callback(client_state, channel, method, properties, input_message):
             )
             dataset_id = cursor.fetchone()[0]
 
-            meta_data = meta_data_aggregator.get_kingfisher_meta_data(collection_id)
+            meta_data = meta_data_aggregator.get_kingfisher_meta_data(kingfisher_process_cursor, collection_id)
             meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
             commit()
