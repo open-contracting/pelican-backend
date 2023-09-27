@@ -39,8 +39,8 @@ def get_result(scope):
 
 
 def get_kingfisher_meta_data(collection_id):
-    kf_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
-    kf_cursor = kf_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    kingfisher_process_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
+    kingfisher_process_cursor = kingfisher_process_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     meta_data = {
         "kingfisher_metadata": {"collection_id": None, "processing_start": None, "processing_end": None},
@@ -61,7 +61,7 @@ def get_kingfisher_meta_data(collection_id):
     meta_data["kingfisher_metadata"] = {}
 
     # Select whole chain of ascendants of the given child (inclusive). This child must be last in the chain.
-    kf_cursor.execute(
+    kingfisher_process_cursor.execute(
         """\
         WITH RECURSIVE tree(id, parent, root, deep) AS (
             SELECT c.id, c.transform_from_collection_id AS parent, c.id AS root, 1 AS deep
@@ -81,7 +81,7 @@ def get_kingfisher_meta_data(collection_id):
         """,
         {"root": collection_id},
     )
-    result = kf_cursor.fetchall()
+    result = kingfisher_process_cursor.fetchall()
 
     if not result:
         logger.warning("No rows found in `collection` where id = %s", collection_id)
@@ -98,25 +98,25 @@ def get_kingfisher_meta_data(collection_id):
     ##########################################
     proprietary_id = result[-1][0]
 
-    kf_cursor.execute(
+    kingfisher_process_cursor.execute(
         "SELECT * FROM release WHERE collection_id = %(collection_id)s LIMIT 1", {"collection_id": proprietary_id}
     )
-    result = kf_cursor.fetchone()
+    result = kingfisher_process_cursor.fetchone()
     if result is None:
-        kf_cursor.execute(
+        kingfisher_process_cursor.execute(
             "SELECT * FROM record WHERE collection_id = %(collection_id)s LIMIT 1", {"collection_id": proprietary_id}
         )
-        result = kf_cursor.fetchone()
+        result = kingfisher_process_cursor.fetchone()
 
     if result is None:
         logger.warning("No rows found in `release` or `record` where collection_id = %s", proprietary_id)
         return meta_data
 
-    kf_cursor.execute(
+    kingfisher_process_cursor.execute(
         "SELECT data FROM package_data WHERE id = %(id)s LIMIT 1",
         {"id": result["package_data_id"]},
     )
-    package_data_row = kf_cursor.fetchone()
+    package_data_row = kingfisher_process_cursor.fetchone()
 
     #######################
     # collection metadata #
@@ -150,7 +150,7 @@ def get_kingfisher_meta_data(collection_id):
             except requests.RequestException:
                 pass
 
-    kf_cursor.execute(
+    kingfisher_process_cursor.execute(
         """\
         SELECT MIN(data.data->>'date'), MAX(data.data->>'date')
         FROM compiled_release
@@ -164,7 +164,7 @@ def get_kingfisher_meta_data(collection_id):
         """,
         {"collection_id": collection_id},
     )
-    result = kf_cursor.fetchone()
+    result = kingfisher_process_cursor.fetchone()
 
     if result and result[0] and parse_datetime(result[0]):
         meta_data["collection_metadata"]["published_from"] = parse_datetime(result[0]).strftime(DATETIME_STR_FORMAT)
@@ -176,8 +176,8 @@ def get_kingfisher_meta_data(collection_id):
     else:
         meta_data["collection_metadata"]["published_to"] = None
 
-    kf_cursor.close()
-    kf_connection.close()
+    kingfisher_process_cursor.close()
+    kingfisher_process_connection.close()
 
     return meta_data
 
