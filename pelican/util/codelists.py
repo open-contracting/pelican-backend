@@ -51,5 +51,6 @@ def get_media_type_codelist() -> tuple[str, ...]:
 
 
 def get_ocid_prefix_codelist() -> tuple[str, ...]:
-    url = "https://docs.google.com/spreadsheets/d/1Am3gq0B77xN034-8hDjhb45wOuq-8qW6kGOdp40rN4M/pub?gid=506986894&single=true&output=csv"  # noqa: E501
+    # https://docs.google.com/spreadsheets/d/1E5ZVhc8VhGOakCq4GegvkyFYT974QQb-sSjvOfaxH7s/pubhtml?gid=506986894&single=true&widget=true
+    url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQP8EwbUhsfxN7Fx7vX3mTA6Y8CXyGi04bHUepdcfxvM6VRVP9f5BWAYEG6MPbnJjWJp-La81DgG8wx/pub?gid=506986894&single=true&output=csv"  # noqa: E501
     return _codes(url, "OCID")
