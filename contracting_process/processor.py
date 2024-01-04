@@ -13,7 +13,6 @@ from pelican.util.workers import is_step_required
 logger = logging.getLogger("pelican.contracting_process.processor")
 
 
-# item: (data, item_id)
 def do_work(dataset_id, items):
     field_level_check_arglist = []
     resource_level_check_arglist = []
@@ -22,13 +21,16 @@ def do_work(dataset_id, items):
     do_resource_level = is_step_required(settings.Steps.COMPILED_RELEASE)
     do_field_quality = is_step_required(settings.Steps.FIELD_QUALITY)
 
-    for item in items:
+    for data, item_id in items:
+        if "ocid" not in data:
+            logger.error("data_item %s has no ocid", item_id)
+            continue
         if do_field_level:
-            field_level_check_arglist.append(field_level_checks(*item, dataset_id, do_field_quality=do_field_quality))
+            field_level_check_arglist.append(field_level_checks(data, item_id, dataset_id, do_field_quality))
         if do_resource_level:
-            resource_level_check_arglist.append(resource_level_checks(*item, dataset_id))
+            resource_level_check_arglist.append(resource_level_checks(data, item_id, dataset_id))
 
-    update_items_state(dataset_id, (item[1] for item in items), state.OK)
+    update_items_state(dataset_id, (item_id for _, item_id in items), state.OK)
 
     if do_field_level:
         save_field_level_checks(field_level_check_arglist)
