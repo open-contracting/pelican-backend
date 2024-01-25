@@ -134,6 +134,8 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
         logger.warning("No rows found in `release` or `record` where collection_id = %s", root_id)
         return meta_data
 
+    meta_data["collection_metadata"]["ocid_prefix"] = release_or_record["ocid"][:11]
+
     kingfisher_process_cursor.execute(
         "SELECT data FROM package_data WHERE id = %(id)s LIMIT 1",
         {"id": release_or_record["package_data_id"]},
@@ -142,11 +144,6 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
 
     if package_data_row:
         package_data = package_data_row["data"]
-
-        value = deep_get(release_or_record, "ocid")
-        if value and type(value) is str:
-            meta_data["collection_metadata"]["ocid_prefix"] = value[:11]
-
         if value := deep_get(package_data, "publisher.name"):
             meta_data["collection_metadata"]["publisher"] = value
 
