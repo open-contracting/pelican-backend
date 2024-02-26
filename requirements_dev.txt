@@ -66,7 +66,7 @@ mypy-extensions==0.4.3
     # via black
 nodeenv==1.6.0
     # via pre-commit
-orjson==3.9.1
+orjson==3.9.15
     # via
     #   -r requirements.txt
     #   yapw
@@ -145,7 +145,9 @@ virtualenv==20.25.0
 wheel==0.38.4
     # via pip-tools
 yapw[perf]==0.1.4
-    # via -r requirements.txt
+    # via
+    #   -r requirements.txt
+    #   yapw
 zipp==3.6.0
     # via importlib-metadata
 

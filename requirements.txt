@@ -18,7 +18,7 @@ idna==2.8
     # via requests
 jsonref==1.0.0.post1
     # via -r requirements.in
-orjson==3.9.1
+orjson==3.9.15
     # via
     #   -r requirements.in
     #   yapw
