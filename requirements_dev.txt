@@ -8,7 +8,7 @@ attrs==21.2.0
     # via
     #   jsonschema
     #   pytest
-black==23.7.0
+black==24.3.0
     # via -r requirements_dev.in
 build==0.10.0
     # via pip-tools
@@ -145,9 +145,7 @@ virtualenv==20.25.0
 wheel==0.38.4
     # via pip-tools
 yapw[perf]==0.1.4
-    # via
-    #   -r requirements.txt
-    #   yapw
+    # via -r requirements.txt
 zipp==3.6.0
     # via importlib-metadata
 
