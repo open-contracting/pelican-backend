@@ -14,7 +14,7 @@ charset-normalizer==3.1.0
     # via requests
 click==8.1.6
     # via -r requirements.in
-idna==2.8
+idna==3.7
     # via requests
 jsonref==1.0.0.post1
     # via -r requirements.in
