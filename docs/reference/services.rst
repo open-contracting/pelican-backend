@@ -9,11 +9,11 @@ RabbitMQ
 .. seealso::
 
    -  :ref:`worker-design`
-   -  Having trouble? See :doc:`../tasks/troubleshoot`
+   -  Having trouble? See :doc:`../tasks/troubleshoot`.
 
 This project uses a direct exchange in the same way as the `default exchange <https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchange-default>`__, in which every queue is bound using a routing key that is the same as the queue's name.
 
-In each worker, the queue name and binding key is set by ``consume_routing_key``, and the routing key of published messages is set by ``routing_key``. Queue names and routing keys are prefixed by the exchange name, set by the ``RABBIT_EXCHANGE_NAME`` environment variable.
+In each worker, the queue name and binding key is set by ``consume_routing_key``. The routing key of published messages is set by ``routing_key``. Queue names and routing keys are prefixed by the exchange name, set by the ``RABBIT_EXCHANGE_NAME`` environment variable.
 
 .. list-table::
    :header-rows: 1
