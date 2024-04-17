@@ -6,6 +6,10 @@ Technical overview
 Worker design
 -------------
 
+.. seealso::
+
+   `RabbitMQ design decisions <https://ocp-software-handbook.readthedocs.io/en/latest/services/rabbitmq.html#design-decisions>`__
+
 Workers communicate via a :ref:`rabbitmq` exchange to extract and assess OCDS data, writing the results to a :ref:`postgresql` database.
 
 Workers can be daemonized and run in parallel. The pipeline is:
