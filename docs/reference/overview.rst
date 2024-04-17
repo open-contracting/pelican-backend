@@ -20,12 +20,6 @@ Workers can be daemonized and run in parallel. The pipeline is:
 #. The :ref:`check-time-based` worker performs the time-based checks. After, it publishes the ID of the dataset.
 #. The :ref:`report` worker creates field-level and compiled release-level reports, picks field-level and compiled release-level examples, and updates the dataset's metadata.
 
-Workers are `Click <https://click.palletsprojects.com/>`__ programs that are:
-
--  as stateless as possible, since messages can arrive in any order
--  as idempotent as possible, since messages can be redelivered
--  able to run in parallel, to maximize throughput
-
 .. _repository-structure:
 
 Repository structure
