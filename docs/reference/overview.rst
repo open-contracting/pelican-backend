@@ -67,7 +67,7 @@ Repository structure
 Pelican frontend integration
 ----------------------------
 
-Pelican backend (*DQT* in the diagram) and `Pelican frontend <https://pelican-frontend.readthedocs.io/en/latest/>`__ (*DQV*) are composed as in this image:
+Pelican backend and `Pelican frontend <https://pelican-frontend.readthedocs.io/en/latest/>`__ are composed as in this image:
 
 .. image:: ../_static/components.png
 

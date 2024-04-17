@@ -43,7 +43,7 @@ def callback(client_state, channel, method, properties, input_message):
         field_level_report_examples.create(dataset_id)
 
         logger.info("Dataset %s: Updating with Pelican metadata", dataset_id)
-        meta_data = meta_data_aggregator.get_dqt_meta_data(dataset_id)
+        meta_data = meta_data_aggregator.get_pelican_meta_data(dataset_id)
         meta_data_aggregator.update_meta_data(meta_data, dataset_id)
 
     finish_callback(client_state, channel, method, dataset_id, phase=phase.CHECKED)

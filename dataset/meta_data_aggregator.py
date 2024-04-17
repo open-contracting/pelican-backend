@@ -168,7 +168,7 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
     return meta_data
 
 
-def get_dqt_meta_data(dataset_id):
+def get_pelican_meta_data(dataset_id):
     meta_data = {"data_quality_tool_metadata": {"processing_start": None, "processing_end": None}}
 
     with get_cursor() as cursor:
