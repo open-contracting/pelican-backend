@@ -70,6 +70,5 @@ Pelican frontend integration
 Pelican backend (*DQT* in the diagram) and `Pelican frontend <https://pelican-frontend.readthedocs.io/en/latest/>`__ (*DQV*) are composed as in this image:
 
 .. image:: ../_static/components.png
-   :target: ../_static/components.png
 
 .. https://app.diagrams.net/?page-id=eUBU3am9u6r-Z2GVQuAO#G10GykQCg41pxzQglRFYs2aa4OPHz-ivCS
