@@ -105,8 +105,6 @@ CREATE INDEX data_item_dataset_id_ocid_idx ON data_item (dataset_id, (data ->> '
 -- 10000 is the maximum.
 -- https://www.postgresql.org/docs/current/sql-alterstatistics.html
 -- https://www.postgresql.org/docs/current/planner-stats.html
-ALTER INDEX data_item_ocid_idx
-    ALTER COLUMN expr SET STATISTICS 10000;
 ALTER TABLE data_item
     ALTER COLUMN dataset_id SET STATISTICS 10000;
 
