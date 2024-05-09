@@ -73,17 +73,15 @@ CREATE TABLE IF NOT EXISTS progress_monitor_item (
     item_id character varying(255),
     state character varying(255),
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    -- update_items_state()
+    CONSTRAINT unique_dataset_id_item_id UNIQUE (dataset_id, item_id)
 );
 
 -- Column referencing foreign key, plus state or item_id.
 CREATE INDEX IF NOT EXISTS progress_monitor_item_item_id_idx ON progress_monitor_item (item_id);
 -- get_processed_items_count()
 CREATE INDEX IF NOT EXISTS progress_monitor_item_dataset_id_state_idx ON progress_monitor_item (dataset_id, state);
--- update_items_state()
-CREATE UNIQUE INDEX IF NOT EXISTS unique_dataset_id_item_id ON progress_monitor_item (dataset_id, item_id);
-ALTER TABLE progress_monitor_item
-    ADD CONSTRAINT unique_dataset_id_item_id UNIQUE USING INDEX unique_dataset_id_item_id;
 
 CREATE TABLE IF NOT EXISTS data_item (
     id bigserial PRIMARY KEY,
