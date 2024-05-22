@@ -5,8 +5,10 @@ import pytest
 
 from dataset.misc import url_availability
 
+TEST_URL = os.getenv("TEST_URL", "http://httpbingo.org")
+
 item_unset = {"ocid": "0"}
-item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": "https://postman-echo.com/status/200"}]}}
+item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": f"{TEST_URL}/status/200"}]}}
 
 
 class mock_settings:
@@ -31,10 +33,10 @@ def test_undefined():
 
 item_test_passed = {
     "ocid": "0",
-    "planning": {"documents": [{"url": "https://postman-echo.com/status/200"} for _ in range(25)]},
-    "tender": {"documents": [{"url": "https://postman-echo.com/status/200"} for _ in range(25)]},
-    "awards": [{"documents": [{"url": "https://postman-echo.com/status/200"}]} for _ in range(25)],
-    "contracts": [{"documents": [{"url": "https://postman-echo.com/status/200"}]} for _ in range(25)],
+    "planning": {"documents": [{"url": f"{TEST_URL}/status/200"} for _ in range(25)]},
+    "tender": {"documents": [{"url": f"{TEST_URL}/status/200"} for _ in range(25)]},
+    "awards": [{"documents": [{"url": f"{TEST_URL}/status/200"}]} for _ in range(25)],
+    "contracts": [{"documents": [{"url": f"{TEST_URL}/status/200"}]} for _ in range(25)],
 }
 
 
@@ -52,12 +54,9 @@ def test_passed():
 
 
 items_test_failed_multiple = [
-    {"ocid": str(num), "planning": {"documents": [{"url": "https://postman-echo.com/status/200"}]}}
-    for num in range(99)
+    {"ocid": str(num), "planning": {"documents": [{"url": f"{TEST_URL}/status/200"}]}} for num in range(99)
 ]
-items_test_failed_multiple.append(
-    {"ocid": "99", "planning": {"documents": [{"url": "https://postman-echo.com/delay/10"}]}}
-)
+items_test_failed_multiple.append({"ocid": "99", "planning": {"documents": [{"url": f"{TEST_URL}/delay/10"}]}})
 
 
 @pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
@@ -73,8 +72,8 @@ def test_failed_multiple():
 
         result = url_availability.get_result(scope)
         assert result["result"] is False
-        assert result["value"] >= 90
-        assert len(result["meta"]["passed_examples"]) >= 90
-        assert len(result["meta"]["failed_examples"]) <= 10
-        assert sum(1 for example in result["meta"]["passed_examples"] if example["status"] == "OK") >= 90
-        assert sum(1 for example in result["meta"]["failed_examples"] if example["status"] != "OK") <= 10
+        assert result["value"] == 99
+        assert len(result["meta"]["passed_examples"]) == 99
+        assert len(result["meta"]["failed_examples"]) == 1
+        assert sum(1 for example in result["meta"]["passed_examples"] if example["status"] == "OK") == 99
+        assert sum(1 for example in result["meta"]["failed_examples"] if example["status"] != "OK") == 1
