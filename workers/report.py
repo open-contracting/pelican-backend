@@ -6,7 +6,7 @@ import click
 import contracting_process.field_level.report_examples as field_level_report_examples
 import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
-from dataset import meta_data_aggregator
+from dataset import metadata_aggregator
 from pelican.util import settings
 from pelican.util.services import consume, phase
 from pelican.util.workers import finish_callback, is_step_required
@@ -43,8 +43,8 @@ def callback(client_state, channel, method, properties, input_message):
         field_level_report_examples.create(dataset_id)
 
         logger.info("Dataset %s: Updating with Pelican metadata", dataset_id)
-        meta_data = meta_data_aggregator.get_pelican_meta_data(dataset_id)
-        meta_data_aggregator.update_meta_data(meta_data, dataset_id)
+        metadata = metadata_aggregator.get_pelican_metadata(dataset_id)
+        metadata_aggregator.update_metadata(metadata, dataset_id)
 
     finish_callback(client_state, channel, method, dataset_id, phase=phase.CHECKED)
 

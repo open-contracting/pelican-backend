@@ -1,4 +1,4 @@
-from dataset.meta_data_aggregator import add_item, get_result
+from dataset.metadata_aggregator import add_item, get_result
 from pelican.util.currency_converter import bootstrap
 
 bootstrap()
@@ -11,6 +11,15 @@ items_test_compiled_releases = [
 ]
 
 
+items_test_tender_lifecycle = [
+    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "tender": {}},
+    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "tender": {}, "planning": {}},
+    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "contracts": [{}, {}, {}]},
+    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "awards": [{}, {}, {}]},
+    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "contracts": [{"implementation": {}}]},
+]
+
+
 def test_compiled_releases():
     scope = {}
     for item_id in range(len(items_test_compiled_releases)):
@@ -19,15 +28,6 @@ def test_compiled_releases():
 
     assert result["compiled_releases"]["total_unique_ocids"] == 2
     assert sum(result["tender_lifecycle"].values()) == 0
-
-
-items_test_tender_lifecycle = [
-    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "tender": {}},
-    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "tender": {}, "planning": {}},
-    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "contracts": [{}, {}, {}]},
-    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "awards": [{}, {}, {}]},
-    {"ocid": "0", "date": "2019-01-10T22:00:00+01:00", "contracts": [{"implementation": {}}]},
-]
 
 
 def test_tender_lifecycle():

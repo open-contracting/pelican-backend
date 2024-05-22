@@ -5,7 +5,7 @@ import click
 import psycopg2.extras
 from yapw.methods import nack
 
-import dataset.meta_data_aggregator as meta_data_aggregator
+from dataset import metadata_aggregator
 from pelican.util import exchange_rates_db, settings
 from pelican.util.services import Json, commit, consume, get_cursor
 from pelican.util.workers import process_items
@@ -65,8 +65,8 @@ def callback(client_state, channel, method, properties, input_message):
             )
             dataset_id = cursor.fetchone()[0]
 
-            meta_data = meta_data_aggregator.get_kingfisher_meta_data(kingfisher_process_cursor, collection_id)
-            meta_data_aggregator.update_meta_data(meta_data, dataset_id)
+            metadata = metadata_aggregator.get_kingfisher_metadata(kingfisher_process_cursor, collection_id)
+            metadata_aggregator.update_metadata(metadata, dataset_id)
 
             commit()
 

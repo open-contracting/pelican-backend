@@ -73,7 +73,7 @@ Tables
    * - ``dataset``
      - Extracted collections
      - ``workers.extract``
-     - ``workers.extract.dataset_filter``, ``dataset/meta_data_aggregator``, ``time_variance/processor``
+     - ``workers.extract.dataset_filter``, ``dataset/metadata_aggregator``, ``time_variance/processor``
    * - ``data_item``
      - Extracted compiled releases
      - ``workers.extract``

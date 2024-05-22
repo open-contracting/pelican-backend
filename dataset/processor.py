@@ -1,6 +1,6 @@
 import logging
 
-from dataset import meta_data_aggregator
+from dataset import metadata_aggregator
 from dataset.definitions import definitions
 from pelican.util.services import Json, get_cursor
 
@@ -9,7 +9,7 @@ logger = logging.getLogger("pelican.dataset.processor")
 
 def do_work(dataset_id):
     check_scope = {}
-    meta_data_aggregator_scope = {}
+    metadata_aggregator_scope = {}
 
     with get_cursor(name="dataset") as named_cursor:
         named_cursor.execute(
@@ -22,8 +22,8 @@ def do_work(dataset_id):
                 check_scope.setdefault(check_name, {})
                 check_scope[check_name] = check.add_item(check_scope[check_name], item["data"], item["id"])
 
-            meta_data_aggregator_scope = meta_data_aggregator.add_item(
-                meta_data_aggregator_scope, item["data"], item["id"]
+            metadata_aggregator_scope = metadata_aggregator.add_item(
+                metadata_aggregator_scope, item["data"], item["id"]
             )
 
             if not i % 50000:  # about once per 15s
@@ -58,5 +58,5 @@ def do_work(dataset_id):
             )
 
     logger.info("Dataset %s: Updating with dataset metadata", dataset_id)
-    meta_data = meta_data_aggregator.get_result(meta_data_aggregator_scope)
-    meta_data_aggregator.update_meta_data(meta_data, dataset_id)
+    metadata = metadata_aggregator.get_result(metadata_aggregator_scope)
+    metadata_aggregator.update_metadata(metadata, dataset_id)

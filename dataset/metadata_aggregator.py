@@ -36,8 +36,8 @@ def get_result(scope):
     return scope
 
 
-def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
-    meta_data = {
+def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
+    metadata = {
         "kingfisher_metadata": {"collection_id": None, "processing_start": None, "processing_end": None},
         "collection_metadata": {
             "publisher": None,
@@ -53,7 +53,7 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
     #######################
     # kingfisher metadata #
     #######################
-    meta_data["kingfisher_metadata"] = {}
+    metadata["kingfisher_metadata"] = {}
 
     # Select whole chain of ascendants of the given child (inclusive). This child must be last in the chain.
     kingfisher_process_cursor.execute(
@@ -80,13 +80,13 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
 
     if not tree:
         logger.warning("No rows found in `collection` where id = %s", collection_id)
-        return meta_data
+        return metadata
 
-    meta_data["kingfisher_metadata"]["collection_id"] = collection_id
+    metadata["kingfisher_metadata"]["collection_id"] = collection_id
     # store_start_at of the last record in the chain by deep (first parent)
-    meta_data["kingfisher_metadata"]["processing_start"] = tree[-1][1].strftime(DATETIME_STR_FORMAT)
+    metadata["kingfisher_metadata"]["processing_start"] = tree[-1][1].strftime(DATETIME_STR_FORMAT)
     # store_end_at of the first record in the chain by deep (last child)
-    meta_data["kingfisher_metadata"]["processing_end"] = tree[0][2].strftime(DATETIME_STR_FORMAT)
+    metadata["kingfisher_metadata"]["processing_end"] = tree[0][2].strftime(DATETIME_STR_FORMAT)
 
     ##############################################
     # collection metadata from compiled releases #
@@ -112,7 +112,7 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
         for index, key in enumerate(("published_from", "published_to")):
             value = parse_datetime(dates[index])
             if value:
-                meta_data["collection_metadata"][key] = value.strftime(DATETIME_STR_FORMAT)
+                metadata["collection_metadata"][key] = value.strftime(DATETIME_STR_FORMAT)
 
     #####################################
     # collection metadata from packages #
@@ -132,9 +132,9 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
 
     if not release_or_record:
         logger.warning("No rows found in `release` or `record` where collection_id = %s", root_id)
-        return meta_data
+        return metadata
 
-    meta_data["collection_metadata"]["ocid_prefix"] = release_or_record["ocid"][:11]
+    metadata["collection_metadata"]["ocid_prefix"] = release_or_record["ocid"][:11]
 
     kingfisher_process_cursor.execute(
         "SELECT data FROM package_data WHERE id = %(id)s LIMIT 1",
@@ -145,13 +145,13 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
     if package_data_row:
         package_data = package_data_row["data"]
         if value := deep_get(package_data, "publisher.name"):
-            meta_data["collection_metadata"]["publisher"] = value
+            metadata["collection_metadata"]["publisher"] = value
 
         if value := deep_get(package_data, "license"):
-            meta_data["collection_metadata"]["data_license"] = value
+            metadata["collection_metadata"]["data_license"] = value
 
         if value := deep_get(package_data, "publicationPolicy"):
-            meta_data["collection_metadata"]["publication_policy"] = value
+            metadata["collection_metadata"]["publication_policy"] = value
 
         for repository_url in deep_get(package_data, "extensions", list):
             try:
@@ -161,29 +161,29 @@ def get_kingfisher_meta_data(kingfisher_process_cursor, collection_id):
 
                 extension = response.json()
                 extension["repositoryUrl"] = repository_url
-                meta_data["collection_metadata"]["extensions"].append(extension)
+                metadata["collection_metadata"]["extensions"].append(extension)
             except requests.RequestException:
                 pass
 
-    return meta_data
+    return metadata
 
 
-def get_pelican_meta_data(dataset_id):
-    meta_data = {"data_quality_tool_metadata": {"processing_start": None, "processing_end": None}}
+def get_pelican_metadata(dataset_id):
+    metadata = {"data_quality_tool_metadata": {"processing_start": None, "processing_end": None}}
 
     with get_cursor() as cursor:
         cursor.execute("SELECT created, now() FROM dataset WHERE id = %(id)s", {"id": dataset_id})
         row = cursor.fetchone()
 
-    meta_data["data_quality_tool_metadata"]["processing_start"] = row[0].strftime(DATETIME_STR_FORMAT)
-    meta_data["data_quality_tool_metadata"]["processing_end"] = row[1].strftime(DATETIME_STR_FORMAT)
+    metadata["data_quality_tool_metadata"]["processing_start"] = row[0].strftime(DATETIME_STR_FORMAT)
+    metadata["data_quality_tool_metadata"]["processing_end"] = row[1].strftime(DATETIME_STR_FORMAT)
 
-    return meta_data
+    return metadata
 
 
-def update_meta_data(meta_data, dataset_id):
+def update_metadata(metadata, dataset_id):
     with get_cursor() as cursor:
         cursor.execute(
             "UPDATE dataset SET meta = meta || %(meta)s, modified = now() WHERE id = %(id)s",
-            {"meta": Json(meta_data), "id": dataset_id},
+            {"meta": Json(metadata), "id": dataset_id},
         )
