@@ -37,7 +37,12 @@ def format_checker():
 @pytest.fixture(scope="session")
 def kingfisher_process_cursor():
     connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
-    return connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    with open(os.path.join("tests", "fixtures", "kingfisher_process.sql")) as f:
+        cursor.execute(f.read())
+
+    return cursor
 
 
 @pytest.fixture(scope="session")
@@ -180,3 +185,48 @@ def data_rows(kingfisher_process_cursor):
     max_data_id = kingfisher_process_cursor.fetchone()[0]
 
     return min_data_id, max_data_id
+
+
+@pytest.fixture(scope="session")
+def data_and_package_data_rows(kingfisher_process_cursor):
+    kingfisher_process_cursor.execute(
+        """\
+        INSERT INTO data (
+            hash_md5,
+            data
+        ) VALUES (
+            'empty',
+            '{}'::jsonb
+        )
+        """
+    )
+    kingfisher_process_cursor.execute("SELECT MAX(id) FROM data")
+    data_id = kingfisher_process_cursor.fetchone()[0]
+
+    kingfisher_process_cursor.execute(
+        """\
+        INSERT INTO package_data (
+            hash_md5,
+            data
+        ) VALUES (
+            'package',
+            %(data)s::jsonb
+        )
+        """,
+        {
+            "data": json.dumps(
+                {
+                    "publisher": {"name": "Acme Inc."},
+                    "license": "https://creativecommons.org/licenses/by/4.0/",
+                    "publicationPolicy": "https://example.com/policy",
+                    "extensions": [
+                        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_process_title_extension/master/extension.json",  # noqa: E501
+                    ],
+                }
+            )
+        },
+    )
+    kingfisher_process_cursor.execute("SELECT MAX(id) FROM package_data")
+    package_data_id = kingfisher_process_cursor.fetchone()[0]
+
+    return data_id, package_data_id

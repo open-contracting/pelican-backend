@@ -1,5 +1,3 @@
-import json
-
 from dataset.metadata_aggregator import add_item, get_kingfisher_metadata, get_result
 from pelican.util.currency_converter import bootstrap
 
@@ -149,51 +147,13 @@ def test_get_kingfisher_metadata_compiled_release(
 
 
 def test_get_kingfisher_metadata_release(
-    kingfisher_process_cursor, collection_rows, collection_file_item, data_rows, caplog
+    kingfisher_process_cursor, collection_rows, collection_file_item, data_rows, data_and_package_data_rows, caplog
 ):
     original, compiled = collection_rows
 
     create_compiled_release(kingfisher_process_cursor, compiled, collection_file_item, data_rows)
 
-    kingfisher_process_cursor.execute(
-        """\
-        INSERT INTO data (
-            hash_md5,
-            data
-        ) VALUES (
-            'empty',
-            '{}'::jsonb
-        )
-        """
-    )
-    kingfisher_process_cursor.execute("SELECT MAX(id) FROM data")
-    data_id = kingfisher_process_cursor.fetchone()[0]
-
-    kingfisher_process_cursor.execute(
-        """\
-        INSERT INTO package_data (
-            hash_md5,
-            data
-        ) VALUES (
-            'package',
-            %(data)s::jsonb
-        )
-        """,
-        {
-            "data": json.dumps(
-                {
-                    "publisher": {"name": "Acme Inc."},
-                    "license": "https://creativecommons.org/licenses/by/4.0/",
-                    "publicationPolicy": "https://example.com/policy",
-                    "extensions": [
-                        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_process_title_extension/master/extension.json",  # noqa: E501
-                    ],
-                }
-            )
-        },
-    )
-    kingfisher_process_cursor.execute("SELECT MAX(id) FROM package_data")
-    package_data_id = kingfisher_process_cursor.fetchone()[0]
+    data_id, package_data_id = data_and_package_data_rows
 
     kingfisher_process_cursor.execute(
         """\
@@ -206,6 +166,74 @@ def test_get_kingfisher_metadata_release(
             package_data_id
         ) VALUES (
             '1',
+            'ocds-lcuori-1',
+            %(collection_id)s,
+            %(collection_file_item_id)s,
+            %(data_id)s,
+            %(package_data_id)s
+        )
+        """,
+        {
+            "collection_id": original,
+            "collection_file_item_id": collection_file_item,
+            "data_id": data_id,
+            "package_data_id": package_data_id,
+        },
+    )
+
+    assert get_kingfisher_metadata(kingfisher_process_cursor, compiled) == {
+        "collection_metadata": {
+            "data_license": "https://creativecommons.org/licenses/by/4.0/",
+            "extensions": [
+                {
+                    "compatibility": ["1.1"],
+                    "contactPoint": {
+                        "email": "data@open-contracting.org",
+                        "name": "Open Contracting Partnership",
+                    },
+                    "description": {
+                        "en": "For providing overall process titles and descriptions, often to give a summary of the contracting process as a whole.",  # noqa: E501
+                    },
+                    "documentationUrl": {"en": "https://extensions.open-contracting.org/en/extensions/process_title/"},
+                    "name": {"en": "Process level title and description"},
+                    "repositoryUrl": "https://raw.githubusercontent.com/open-contracting-extensions/ocds_process_title_extension/master/extension.json",  # noqa: E501
+                    "schemas": ["release-schema.json"],
+                },
+            ],
+            "ocid_prefix": "ocds-lcuori",
+            "publication_policy": "https://example.com/policy",
+            "published_from": "1970-01-01 00.00.00",
+            "published_to": "2038-01-01 00.00.00",
+            "publisher": "Acme Inc.",
+        },
+        "kingfisher_metadata": {
+            "collection_id": compiled,
+            "processing_end": "2001-02-03 07.08.09",
+            "processing_start": "2001-02-03 04.05.06",
+        },
+    }
+
+    assert len(caplog.records) == 0
+
+
+def test_get_kingfisher_metadata_record(
+    kingfisher_process_cursor, collection_rows, collection_file_item, data_rows, data_and_package_data_rows, caplog
+):
+    original, compiled = collection_rows
+
+    create_compiled_release(kingfisher_process_cursor, compiled, collection_file_item, data_rows)
+
+    data_id, package_data_id = data_and_package_data_rows
+
+    kingfisher_process_cursor.execute(
+        """\
+        INSERT INTO record (
+            ocid,
+            collection_id,
+            collection_file_item_id,
+            data_id,
+            package_data_id
+        ) VALUES (
             'ocds-lcuori-1',
             %(collection_id)s,
             %(collection_file_item_id)s,
