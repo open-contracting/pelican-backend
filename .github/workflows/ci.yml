@@ -17,6 +17,7 @@ jobs:
           psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -c "\copy exchange_rates (valid_on, rates) from 'pelican/static/exchange_rates_dump.csv' delimiter ',' csv header;"
       - env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
+          KINGFISHER_PROCESS_DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
           TEST_URL: http://localhost:${{ job.services.httpbin.ports[8080] }}
         # For requests.get() in pelican.util.codelists._get() (from unittest tests).
         run: |
