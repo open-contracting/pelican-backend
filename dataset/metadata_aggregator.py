@@ -37,6 +37,10 @@ def get_result(scope):
 
 
 def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
+    """
+    :param kingfisher_process_cursor: the cursor must be initialized with `cursor_factory=psycopg2.extras.DictCursor`
+    :param collection_id: the ID of the compiled collection
+    """
     metadata = {
         "kingfisher_metadata": {"collection_id": None, "processing_start": None, "processing_end": None},
         "collection_metadata": {
@@ -58,23 +62,45 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
     # Select whole chain of ascendants of the given child (inclusive). This child must be last in the chain.
     kingfisher_process_cursor.execute(
         """\
-        WITH RECURSIVE tree(id, parent, root, deep) AS (
-            SELECT c.id, c.transform_from_collection_id AS parent, c.id AS root, 1 AS deep
-            FROM collection c
-            LEFT JOIN collection c2 ON c2.transform_from_collection_id = c.id
-            WHERE c2 IS NULL
-        UNION ALL
-            SELECT c.id, c.transform_from_collection_id, t.root, t.deep + 1
-            FROM collection c, tree t
-            WHERE c.id = t.parent
+        WITH RECURSIVE tree (
+            id,
+            transform_from_collection_id,
+            leaf,
+            deep
+        ) AS (
+            SELECT
+                collection.id,
+                collection.transform_from_collection_id,
+                collection.id AS leaf,
+                1 AS deep
+            FROM
+                collection
+                LEFT JOIN collection child ON child.transform_from_collection_id = collection.id
+            WHERE
+                child IS NULL
+            UNION ALL
+            SELECT
+                collection.id,
+                collection.transform_from_collection_id,
+                tree.leaf,
+                tree.deep + 1
+            FROM
+                collection
+                JOIN tree ON tree.transform_from_collection_id = collection.id
         )
-        SELECT c.id, c.store_start_at, c.store_end_at
-        FROM tree t
-        JOIN collection c on t.id = c.id
-        WHERE t.root = %(root)s
-        ORDER BY deep ASC
+        SELECT
+            collection.id,
+            store_start_at,
+            store_end_at
+        FROM
+            tree
+            JOIN collection ON collection.id = tree.id
+        WHERE
+            tree.leaf = %(collection_id)s
+        ORDER BY
+            deep ASC
         """,
-        {"root": collection_id},
+        {"collection_id": collection_id},
     )
     tree = kingfisher_process_cursor.fetchall()
 
@@ -83,9 +109,7 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
         return metadata
 
     metadata["kingfisher_metadata"]["collection_id"] = collection_id
-    # store_start_at of the last record in the chain by deep (first parent)
     metadata["kingfisher_metadata"]["processing_start"] = tree[-1][1].strftime(DATETIME_STR_FORMAT)
-    # store_end_at of the first record in the chain by deep (last child)
     metadata["kingfisher_metadata"]["processing_end"] = tree[0][2].strftime(DATETIME_STR_FORMAT)
 
     ##############################################
@@ -94,66 +118,78 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
 
     kingfisher_process_cursor.execute(
         """\
-        SELECT MIN(data.data->>'date'), MAX(data.data->>'date')
-        FROM compiled_release
-        JOIN data ON compiled_release.data_id = data.id
+        SELECT
+            LEFT(MAX(ocid), 11) AS ocid_prefix,
+            MIN(data ->> 'date') AS published_from,
+            MAX(data ->> 'date') AS published_to
+        FROM
+            compiled_release
+            JOIN data ON data.id = data_id
         WHERE
-            compiled_release.collection_id = %(collection_id)s
-            AND data.data ? 'date'
-            AND data.data->>'date' IS NOT NULL
-            AND data.data->>'date' <> ''
-        LIMIT 1
+            collection_id = %(collection_id)s
+            AND data ? 'date'
+            AND data ->> 'date' IS NOT NULL
+            AND data ->> 'date' <> ''
         """,
         {"collection_id": collection_id},
     )
-    dates = kingfisher_process_cursor.fetchone()
 
-    if dates:
-        for index, key in enumerate(("published_from", "published_to")):
-            value = parse_datetime(dates[index])
-            if value:
+    row = kingfisher_process_cursor.fetchone()
+
+    if any(row):
+        metadata["collection_metadata"]["ocid_prefix"] = row["ocid_prefix"]
+        for key in ("published_from", "published_to"):
+            if value := parse_datetime(row[key]):
                 metadata["collection_metadata"][key] = value.strftime(DATETIME_STR_FORMAT)
+    else:
+        logger.warning("No rows found in `compiled_release` where collection_id = %s", collection_id)
 
     #####################################
     # collection metadata from packages #
     #####################################
 
-    root_id = tree[-1][0]
+    original_collection_id = tree[-1][0]
 
     kingfisher_process_cursor.execute(
-        "SELECT * FROM release WHERE collection_id = %(collection_id)s LIMIT 1", {"collection_id": root_id}
+        """\
+        SELECT
+            data,
+            data -> 'publisher' ->> 'name' AS publisher,
+            data ->> 'license' AS data_license,
+            data ->> 'publicationPolicy' AS publication_policy
+        FROM (
+            (
+                SELECT
+                    data
+                FROM
+                    package_data
+                    JOIN record ON package_data_id = package_data.id
+                WHERE
+                    collection_id = %(collection_id)s
+                LIMIT 1
+            )
+            UNION ALL
+            (
+                SELECT
+                    data
+                FROM
+                    package_data
+                    JOIN release ON package_data_id = package_data.id
+                WHERE
+                    collection_id = %(collection_id)s
+                LIMIT 1
+            )
+        ) t
+        """,
+        {"collection_id": original_collection_id},
     )
-    release_or_record = kingfisher_process_cursor.fetchone()
-    if not release_or_record:
-        kingfisher_process_cursor.execute(
-            "SELECT * FROM record WHERE collection_id = %(collection_id)s LIMIT 1", {"collection_id": root_id}
-        )
-        release_or_record = kingfisher_process_cursor.fetchone()
 
-    if not release_or_record:
-        logger.warning("No rows found in `release` or `record` where collection_id = %s", root_id)
-        return metadata
+    if row := kingfisher_process_cursor.fetchone():
+        for key in ("publisher", "data_license", "publication_policy"):
+            if row[key]:
+                metadata["collection_metadata"][key] = row[key]
 
-    metadata["collection_metadata"]["ocid_prefix"] = release_or_record["ocid"][:11]
-
-    kingfisher_process_cursor.execute(
-        "SELECT data FROM package_data WHERE id = %(id)s LIMIT 1",
-        {"id": release_or_record["package_data_id"]},
-    )
-    package_data_row = kingfisher_process_cursor.fetchone()
-
-    if package_data_row:
-        package_data = package_data_row["data"]
-        if value := deep_get(package_data, "publisher.name"):
-            metadata["collection_metadata"]["publisher"] = value
-
-        if value := deep_get(package_data, "license"):
-            metadata["collection_metadata"]["data_license"] = value
-
-        if value := deep_get(package_data, "publicationPolicy"):
-            metadata["collection_metadata"]["publication_policy"] = value
-
-        for repository_url in deep_get(package_data, "extensions", list):
+        for repository_url in deep_get(row["data"], "extensions", list):
             try:
                 response = requests.get(repository_url, timeout=30)
                 if response.status_code != 200:
@@ -164,6 +200,8 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
                 metadata["collection_metadata"]["extensions"].append(extension)
             except requests.RequestException:
                 pass
+    else:
+        logger.warning("No rows found in `release` or `record` where collection_id = %s", original_collection_id)
 
     return metadata
 

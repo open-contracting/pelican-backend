@@ -112,9 +112,11 @@ def test_get_kingfisher_metadata_tree(kingfisher_process_cursor, collection_rows
         },
     }
 
-    assert len(caplog.records) == 1
+    assert len(caplog.records) == 2
+    assert caplog.records[0].levelname == "WARNING"
+    assert caplog.records[0].message == f"No rows found in `compiled_release` where collection_id = {compiled}"
     assert caplog.records[-1].levelname == "WARNING"
-    assert caplog.records[-1].message == (f"No rows found in `release` or `record` where collection_id = {original}")
+    assert caplog.records[-1].message == f"No rows found in `release` or `record` where collection_id = {original}"
 
 
 def test_get_kingfisher_metadata_compiled_release(
@@ -128,7 +130,7 @@ def test_get_kingfisher_metadata_compiled_release(
         "collection_metadata": {
             "data_license": None,
             "extensions": [],
-            "ocid_prefix": None,
+            "ocid_prefix": "ocds-lcuori",
             "publication_policy": None,
             "published_from": "1970-01-01 00.00.00",
             "published_to": "2038-01-01 00.00.00",
@@ -143,7 +145,7 @@ def test_get_kingfisher_metadata_compiled_release(
 
     assert len(caplog.records) == 1
     assert caplog.records[-1].levelname == "WARNING"
-    assert caplog.records[-1].message == (f"No rows found in `release` or `record` where collection_id = {original}")
+    assert caplog.records[-1].message == f"No rows found in `release` or `record` where collection_id = {original}"
 
 
 def test_get_kingfisher_metadata_release(
