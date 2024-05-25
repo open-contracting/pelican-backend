@@ -58,31 +58,34 @@ def callback(client_state, channel, method, properties, input_message):
 
         cursor.execute(
             """\
-            SELECT EXISTS (
-                SELECT 1
-                FROM dataset
-                WHERE id = %(dataset_id)s
-            )
-            AND EXISTS (
-                SELECT 1
-                FROM progress_monitor_dataset
-                WHERE dataset_id = %(dataset_id)s AND phase = 'CHECKED'
-            )
+            SELECT meta
+            FROM dataset
+            JOIN progress_monitor_dataset ON dataset_id = dataset.id
+            WHERE
+                dataset.id = %(dataset_id)s
+                AND phase = 'CHECKED'
             """,
             {"dataset_id": dataset_id_original},
         )
-        if not cursor.fetchone()[0]:
+        row = cursor.fetchone()
+        if not row:
             logger.error("No dataset in phase CHECKED with id %s, skipping", dataset_id_original)
             nack(client_state, channel, method.delivery_tag, requeue=False)
             return
 
+        meta = {
+            k: v
+            for k, v in row[0].items()
+            if k not in {"tender_lifecycle", "compiled_releases", "data_quality_tool_metadata"}
+        }
+
         cursor.execute(
             """\
             INSERT INTO dataset (name, meta, ancestor_id)
-            SELECT name, '{}'::jsonb, NULL FROM dataset WHERE id = %(dataset_id)s
+            SELECT name, %(meta)s, NULL FROM dataset WHERE id = %(dataset_id)s
             RETURNING id
             """,
-            {"dataset_id": dataset_id_original},
+            {"dataset_id": dataset_id_original, "meta": Json(meta)},
         )
         dataset_id_filtered = cursor.fetchone()[0]
         commit()
