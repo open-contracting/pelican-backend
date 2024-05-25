@@ -79,7 +79,7 @@ def callback(client_state, channel, method, properties, input_message):
         cursor.execute(
             """\
             INSERT INTO dataset (name, meta, ancestor_id)
-            SELECT name, meta, NULL FROM dataset WHERE id = %(dataset_id)s
+            SELECT name, '{}'::jsonb, NULL FROM dataset WHERE id = %(dataset_id)s
             RETURNING id
             """,
             {"dataset_id": dataset_id_original},

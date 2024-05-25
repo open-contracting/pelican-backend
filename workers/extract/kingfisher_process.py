@@ -58,10 +58,10 @@ def callback(client_state, channel, method, properties, input_message):
             cursor.execute(
                 """\
                 INSERT INTO dataset (name, meta, ancestor_id)
-                VALUES (%(name)s, %(meta)s, %(ancestor_id)s)
+                VALUES (%(name)s, '{}'::jsonb, %(ancestor_id)s)
                 RETURNING id
                 """,
-                {"name": name, "meta": Json({}), "ancestor_id": ancestor_id},
+                {"name": name, "ancestor_id": ancestor_id},
             )
             dataset_id = cursor.fetchone()[0]
 
