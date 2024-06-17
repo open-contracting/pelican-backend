@@ -133,7 +133,7 @@ six==1.16.0
     #   -r requirements.txt
     #   python-dateutil
     #   rfc3339-validator
-urllib3==2.0.7
+urllib3==2.2.2
     # via
     #   -r requirements.txt
     #   requests
