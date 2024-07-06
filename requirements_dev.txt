@@ -14,7 +14,7 @@ build==0.10.0
     # via pip-tools
 cachetools==4.2.4
     # via -r requirements.txt
-certifi==2023.7.22
+certifi==2024.7.4
     # via
     #   -r requirements.txt
     #   requests
