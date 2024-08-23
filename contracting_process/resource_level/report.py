@@ -58,7 +58,7 @@ def create(dataset_id):
         elif row["result"] is None:
             report[row["check_name"]]["undefined_count"] = row["count"]
         else:
-            raise ValueError()
+            raise ValueError
 
         report[row["check_name"]]["total_count"] += row["count"]
 
