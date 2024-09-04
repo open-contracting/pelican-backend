@@ -4,7 +4,6 @@ coveralls
 flake8
 isort
 jsonschema
-pip-tools
 pre-commit
 psycopg2-binary
 pytest
