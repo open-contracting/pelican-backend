@@ -38,6 +38,8 @@ def get_result(scope):
 
 def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
     """
+    Return metadata from Kingfisher Process.
+
     :param kingfisher_process_cursor: the cursor must be initialized with `cursor_factory=psycopg2.extras.DictCursor`
     :param collection_id: the ID of the compiled collection
     """
@@ -192,7 +194,7 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
         for repository_url in deep_get(row["data"], "extensions", list):
             try:
                 response = requests.get(repository_url, timeout=30)
-                if response.status_code != 200:
+                if response.status_code != requests.codes.ok:
                     continue
 
                 extension = response.json()

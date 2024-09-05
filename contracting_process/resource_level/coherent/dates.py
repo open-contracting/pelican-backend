@@ -1,4 +1,6 @@
 """
+Coherence check for the contracting process timeline.
+
 .. seealso::
 
    :func:`pelican.util.checks.coherent_dates_check

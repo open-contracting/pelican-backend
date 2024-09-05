@@ -57,17 +57,17 @@ logging.getLogger("pika").setLevel(logging.WARNING)
 # Project configuration
 
 # Extractors insert this many rows into data_item at a time.
-EXTRACTOR_PAGE_SIZE = int(os.getenv("EXTRACTOR_PAGE_SIZE", 1000))
+EXTRACTOR_PAGE_SIZE = int(os.getenv("EXTRACTOR_PAGE_SIZE", "1000"))
 # Extractors collect this number of items before publishing a message. To publish the least number of messages, it
 # should divide evenly into EXTRACTOR_PAGE_SIZE.
-EXTRACTOR_MAX_BATCH_SIZE = min(EXTRACTOR_PAGE_SIZE, int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", 100)))
+EXTRACTOR_MAX_BATCH_SIZE = min(EXTRACTOR_PAGE_SIZE, int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", "100")))
 
 # Do not import compiled releases whose size is larger than this number of bytes.
 #
 # In practice, very large releases create very large results and cause processing to fail. Since less than 0.005%
 # of releases in Kingfisher Process exceed 300 kB, these releases are simply excluded instead of pursing another
 # solution. (2021-10-27: n=6.12318e+07: >300 kB: 2650 0.005%; >30 kB: 195009 0.3%)
-KINGFISHER_PROCESS_MAX_SIZE = int(os.getenv("KINGFISHER_PROCESS_MAX_SIZE", 300000))
+KINGFISHER_PROCESS_MAX_SIZE = int(os.getenv("KINGFISHER_PROCESS_MAX_SIZE", "300000"))
 
 # Timeout for URL availability check.
 REQUESTS_TIMEOUT = 30
@@ -84,7 +84,7 @@ CURRENCY_CONVERTER_INTERPOLATION = os.getenv("CURRENCY_CONVERTER_INTERPOLATION",
 # If the distance to the nearby date(s) is greater than this number of days, the value is not converted. Set to -1 to
 # set the limit to infinity.
 CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK = int(
-    os.getenv("CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK", 90)
+    os.getenv("CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK", "90")
 )
 
 # Extrapolation refers to the behavior when the date is outside dates with known rates. if disabled, the value is not
@@ -93,7 +93,7 @@ CURRENCY_CONVERTER_EXTRAPOLATION = os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION",
 # If the distance to the closest date is greater than this number of days, the value is not converted. Set to -1 to
 # set the limit to infinity.
 CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK = int(
-    os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", 180)
+    os.getenv("CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK", "180")
 )
 
 # A comma-separated list of steps to run (default all). Note: If field_quality is set, then field_coverage is run,

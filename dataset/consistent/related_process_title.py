@@ -1,6 +1,7 @@
 """
-A related process object has the same value for its ``title`` field as the ``tender.title`` field of the compiled
-release it references. The related process fields are:
+The ``title`` of a related process is equal to the ``tender.title`` of the compiled release it references.
+
+The related process fields are:
 
 -  ``contracts.relatedProcesses``
 -  ``relatedProcesses``
@@ -84,7 +85,7 @@ def add_item(scope, item, item_id):
 def get_result(scope):
     result = get_empty_result_dataset(version)
 
-    for ref, example in scope["related_processes"].items():
+    for example in scope["related_processes"].values():
         if scope["ocids"][example["related_ocid"]]["found"]:
             scope = _add_example(scope, example)
 

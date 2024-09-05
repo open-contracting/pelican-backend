@@ -7,7 +7,7 @@ from contracting_process.field_level.definitions import definitions as field_lev
 from contracting_process.resource_level.definitions import definitions as resource_level_definitions
 from pelican.util import settings
 from pelican.util.getter import get_values
-from pelican.util.services import Json, get_cursor, state, update_items_state
+from pelican.util.services import Json, State, get_cursor, update_items_state
 from pelican.util.workers import is_step_required
 
 logger = logging.getLogger("pelican.contracting_process.processor")
@@ -26,11 +26,13 @@ def do_work(dataset_id, items):
             logger.error("data_item %s has no ocid", item_id)
             continue
         if do_field_level:
-            field_level_check_arglist.append(field_level_checks(data, item_id, dataset_id, do_field_quality))
+            field_level_check_arglist.append(
+                field_level_checks(data, item_id, dataset_id, do_field_quality=do_field_quality)
+            )
         if do_resource_level:
             resource_level_check_arglist.append(resource_level_checks(data, item_id, dataset_id))
 
-    update_items_state(dataset_id, (item_id for _, item_id in items), state.OK)
+    update_items_state(dataset_id, (item_id for _, item_id in items), State.OK)
 
     if do_field_level:
         save_field_level_checks(field_level_check_arglist)
@@ -49,7 +51,7 @@ def resource_level_checks(data, item_id, dataset_id):
     return (Json(result), item_id, dataset_id)
 
 
-def field_level_checks(data, item_id, dataset_id, do_field_quality=True):
+def field_level_checks(data, item_id, dataset_id, *, do_field_quality=True):
     logger.debug("Dataset %s: Item %s: Calculating field-level checks", dataset_id, item_id)
 
     result = {"meta": {"ocid": data["ocid"], "item_id": item_id}, "checks": {}}
@@ -92,7 +94,7 @@ def field_level_checks(data, item_id, dataset_id, do_field_quality=True):
                 else:
                     field_result["path"] = leaf
 
-                for check, check_name in coverage_checks:
+                for check, _ in coverage_checks:
                     check_result = check(item, leaf)
                     passed = check_result["result"]
                     field_result["coverage"]["check_results"].append(check_result)
@@ -101,7 +103,7 @@ def field_level_checks(data, item_id, dataset_id, do_field_quality=True):
                         break
                 else:  # field_result["coverage"]["overall_result"] is True
                     if do_field_quality:
-                        for check, check_name in checks:
+                        for check, _ in checks:
                             check_result = check(item, leaf)
                             passed = check_result["result"]
                             field_result["quality"]["check_results"].append(check_result)

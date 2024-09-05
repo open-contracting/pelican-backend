@@ -1,6 +1,7 @@
 """
-If a related process has a ``scheme`` of 'ocid' and its ``identifier`` is present, then its ``identifier`` matches the
-``ocid`` of a compiled release. The related process fields are:
+The ``identifier`` of a related process whose ``scheme`` is 'ocid' matches the ``ocid`` of a compiled release.
+
+The related process fields are:
 
 -  ``contracts.relatedProcesses``
 -  ``relatedProcesses``
@@ -77,7 +78,7 @@ def add_item(scope, item, item_id):
 def get_result(scope):
     result = get_empty_result_dataset(version)
 
-    for ref, example in scope["related_processes"].items():
+    for example in scope["related_processes"].values():
         scope = _add_example(scope, example)
 
     if not scope["meta"]["total_processed"]:

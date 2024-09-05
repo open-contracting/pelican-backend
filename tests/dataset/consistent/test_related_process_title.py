@@ -57,10 +57,8 @@ items_test_passed = [
 def test_passed():
     scope = {}
 
-    item_id = 0
-    for item in items_test_passed:
+    for item_id, item in enumerate(items_test_passed):
         scope = related_process_title.add_item(scope, item, item_id)
-        item_id += 1
 
     result = related_process_title.get_result(scope)
     assert result["result"] is True
@@ -124,10 +122,8 @@ items_test_failed = [
 def test_failed():
     scope = {}
 
-    item_id = 0
-    for item in items_test_failed:
+    for item_id, item in enumerate(items_test_failed):
         scope = related_process_title.add_item(scope, item, item_id)
-        item_id += 1
 
     result = related_process_title.get_result(scope)
     assert result["result"] is False

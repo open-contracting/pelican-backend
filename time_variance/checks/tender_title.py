@@ -13,6 +13,7 @@ version = 1.0
 def _get_title(item):
     if title := deep_get(item, "tender.title"):
         return " ".join(title.lower().split())
+    return None
 
 
 def filter(scope, item, item_id, new_item, new_item_id):

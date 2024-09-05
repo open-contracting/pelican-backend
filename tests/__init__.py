@@ -14,12 +14,12 @@ def read(basename):
         return json.load(f)
 
 
-class override_settings(AbstractContextManager):
+class OverrideSettings(AbstractContextManager):
     def __init__(self, **kwargs):
         self.new = kwargs
         self.old = {}
 
-        for key, value in self.new.items():
+        for key in self.new:
             self.old[key] = getattr(settings, key)
 
     def __enter__(self):
@@ -62,10 +62,7 @@ class FieldCoverageTests:
         for params in self.failing:
             item = params[0]
             reason = params[1]
-            if len(params) > 2:
-                return_value = params[2]
-            else:
-                return_value = None
+            return_value = params[2] if len(params) > 2 else None
 
             with self.subTest(item=item):
                 result = self.module.calculate(item, "key")
@@ -110,10 +107,7 @@ class FieldQualityTests:
         for params in self.failing:
             value = params[0]
             reason = params[1]
-            if len(params) > 2:
-                return_value = params[2]
-            else:
-                return_value = value
+            return_value = params[2] if len(params) > 2 else value
 
             with self.subTest(value=value):
                 result = self.method({"xxx": value}, "xxx", **self.failing_kwargs)

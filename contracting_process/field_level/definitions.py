@@ -26,7 +26,7 @@ def _definitions(properties, path=None, refs=None):
         refs = ()
 
     for key, value in properties.items():
-        new_path = path + (key,)
+        new_path = (*path, key)
         dot_path = ".".join(new_path)
 
         if "object" in value["type"] and "properties" in value:
@@ -58,10 +58,7 @@ def _definitions(properties, path=None, refs=None):
                 if key == "description":
                     checks.append((document_description_length.calculate, document_description_length.name))
                 elif key == "documentType":
-                    if refs[1] == "Implementation":
-                        index = 1
-                    else:
-                        index = 0
+                    index = 1 if refs[1] == "Implementation" else 0
                     checks.append(
                         (
                             functools.partial(document_type.calculate_section, section=refs[index].lower()),
@@ -84,7 +81,7 @@ def _definitions(properties, path=None, refs=None):
             elif refs[-1] == "Tender":
                 if key == "numberOfTenderers":
                     checks.append((number.calculate, number.name))
-            elif refs[-1] == "Value":
+            elif refs[-1] == "Value":  # noqa: SIM102 # consistency
                 if key == "amount" and new_path[-3] in ("transactions", "unit"):
                     checks.append((number.calculate, number.name))
 

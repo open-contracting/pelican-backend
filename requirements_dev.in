@@ -1,8 +1,5 @@
 -r requirements.txt
-black
 coveralls
-flake8
-isort
 jsonschema
 pre-commit
 psycopg2-binary
@@ -11,3 +8,4 @@ pytest-cov
 pytest-subtests
 rfc3339-validator
 rfc3986-validator
+ruff

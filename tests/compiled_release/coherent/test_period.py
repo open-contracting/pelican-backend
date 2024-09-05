@@ -124,7 +124,6 @@ item_test_multiple_fails_and_passes = {
 
 def test_multiple_fails_and_passes():
     result = calculate(item_test_multiple_fails_and_passes)
-    print(result)
     assert type(result) is dict
     assert result["result"] is False
     assert result["application_count"] == 3

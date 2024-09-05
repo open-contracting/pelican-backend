@@ -1,6 +1,7 @@
 """
-The total value of the top 1% of values is less than the total value of the remaining values. Failure indicates extreme
-outliers in the top 1%. All values are converted to USD as of the compiled release's ``date``.
+The total value of the top 1% of values is less than the total value of the remaining values.
+
+Failure indicates extreme outliers in the top 1%. Values are converted to USD as of the compiled release's ``date``.
 
 The test is skipped if fewer than 100 values are included. A value is excluded if an amount is missing, negative or
 non-numeric, if a currency is missing or unknown, or if currency conversion is necessary and the release date is

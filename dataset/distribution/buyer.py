@@ -1,6 +1,8 @@
 """
-Fewer than 50% of all buyers are identified in only one compiled release. Failure indicates issues in buyer
-identification. Buyers are identified by ``buyer.identifier.scheme`` and ``buyer.identifier.id``.
+Fewer than 50% of all buyers are identified in only one compiled release.
+
+Failure indicates issues in buyer identification. Buyers are identified by ``buyer.identifier.scheme`` and
+``buyer.identifier.id``.
 
 The test is skipped if the ``buyer.identifier.scheme`` and ``buyer.identifier.id`` fields are both present in fewer
 than 1,000 compiled releases.

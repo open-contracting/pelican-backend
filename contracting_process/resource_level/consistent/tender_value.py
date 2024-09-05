@@ -1,6 +1,7 @@
 """
-``planning.budget.amount`` isn't less than 50%, or more than 150%, of ``tender.value``, after conversion to USD if
-necessary.
+``planning.budget.amount`` isn't less than 50%, or more than 150%, of ``tender.value``.
+
+Values are converted to USD if necessary.
 
 The test is skipped if an amount is missing, zero or non-numeric, if a currency is missing or unknown, if the two
 amounts aren't both positive or both negative, or if currency conversion is necessary and the release date is invalid,

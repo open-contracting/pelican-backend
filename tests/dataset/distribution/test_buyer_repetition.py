@@ -31,10 +31,8 @@ items_test_passed2.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO
 def test_passed():
     scope = {}
 
-    item_id = 0
-    for item in items_test_passed1:
+    for item_id, item in enumerate(items_test_passed1):
         scope = buyer_repetition.add_item(scope, item, item_id)
-        item_id += 1
 
     result = buyer_repetition.get_result(scope)
     assert result["result"] is True
@@ -49,10 +47,8 @@ def test_passed():
 
     scope = {}
 
-    item_id = 0
-    for item in items_test_passed2:
+    for item_id, item in enumerate(items_test_passed2):
         scope = buyer_repetition.add_item(scope, item, item_id)
-        item_id += 1
 
     result = buyer_repetition.get_result(scope)
     assert result["result"] is True
@@ -80,10 +76,8 @@ items_test_failed2.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO
 def test_failed():
     scope = {}
 
-    item_id = 0
-    for item in items_test_failed1:
+    for item_id, item in enumerate(items_test_failed1):
         scope = buyer_repetition.add_item(scope, item, item_id)
-        item_id += 1
 
     result = buyer_repetition.get_result(scope)
     assert result["result"] is False
@@ -98,10 +92,8 @@ def test_failed():
 
     scope = {}
 
-    item_id = 0
-    for item in items_test_failed2:
+    for item_id, item in enumerate(items_test_failed2):
         scope = buyer_repetition.add_item(scope, item, item_id)
-        item_id += 1
 
     result = buyer_repetition.get_result(scope)
     assert result["result"] is False

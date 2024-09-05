@@ -1,6 +1,7 @@
 """
-For each award, the sum of its contracts' values isn't less than 50%, or more than 150%, of the award's value, after
-conversion to USD if necessary.
+For each award, the sum of its contracts' values isn't less than 50%, or more than 150%, of the award's value.
+
+Values are converted to USD if necessary.
 
 Since the test operates on all award and contract values, the test silently ignores:
 

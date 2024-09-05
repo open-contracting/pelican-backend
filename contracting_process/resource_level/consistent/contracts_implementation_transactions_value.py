@@ -1,6 +1,7 @@
 """
-For each contract, the sum of its transaction's values is less than or equal to the contract's value, after conversion
-to USD if necessary.
+For each contract, the sum of its transaction's values is less than or equal to the contract's value.
+
+Valeus are converted to USD if necessary.
 
 Since the test operates on all contract and transaction objects, the test silently ignores any missing or non-numeric
 amounts and any missing or unknown currencies. If currency conversion is necessary, but the release date is invalid,

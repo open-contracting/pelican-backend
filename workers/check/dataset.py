@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import logging
 
 import click
@@ -8,13 +7,13 @@ from dataset import processor
 from pelican.util import settings
 from pelican.util.currency_converter import bootstrap
 from pelican.util.services import (
+    Phase,
+    State,
     commit,
     consume,
     get_dataset_progress,
     get_processed_items_count,
     get_total_items_count,
-    phase,
-    state,
     update_dataset_state,
 )
 from pelican.util.workers import finish_callback, is_step_required
@@ -39,15 +38,15 @@ def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
     dataset = get_dataset_progress(dataset_id)
 
-    if dataset["phase"] == phase.CONTRACTING_PROCESS and dataset["state"] == state.IN_PROGRESS:
+    if dataset["phase"] == Phase.CONTRACTING_PROCESS and dataset["state"] == State.IN_PROGRESS:
         logger.info("Dataset %s: CONTRACTING_PROCESS phase still in-progress", dataset_id)
         ack(client_state, channel, delivery_tag)
         return
-    if dataset["phase"] == phase.DATASET and dataset["state"] == state.IN_PROGRESS:
+    if dataset["phase"] == Phase.DATASET and dataset["state"] == State.IN_PROGRESS:
         logger.info("Dataset %s: DATASET phase already in-progress", dataset_id)
         ack(client_state, channel, delivery_tag)
         return
-    if dataset["phase"] in (phase.DATASET, phase.TIME_VARIANCE, phase.CHECKED, phase.DELETED):
+    if dataset["phase"] in (Phase.DATASET, Phase.TIME_VARIANCE, Phase.CHECKED, Phase.DELETED):
         logger.info("Dataset %s: DATASET phase already complete", dataset_id)
         ack(client_state, channel, delivery_tag)
         return
@@ -63,19 +62,19 @@ def callback(client_state, channel, method, properties, input_message):
         return
 
     if not is_step_required(settings.Steps.DATASET):
-        finish_callback(client_state, channel, method, dataset_id, phase=phase.DATASET, routing_key=routing_key)
+        finish_callback(client_state, channel, method, dataset_id, phase=Phase.DATASET, routing_key=routing_key)
         return
 
-    if dataset["phase"] == phase.CONTRACTING_PROCESS and dataset["state"] == state.OK and not difference:
+    if dataset["phase"] == Phase.CONTRACTING_PROCESS and dataset["state"] == State.OK and not difference:
         logger.info(
             "Dataset %s: Processed all %s items, starting dataset-level checks...", dataset_id, processed_count
         )
-        update_dataset_state(dataset_id, phase.DATASET, state.IN_PROGRESS)
+        update_dataset_state(dataset_id, Phase.DATASET, State.IN_PROGRESS)
         commit()
 
         processor.do_work(dataset_id)
 
-        finish_callback(client_state, channel, method, dataset_id, phase=phase.DATASET, routing_key=routing_key)
+        finish_callback(client_state, channel, method, dataset_id, phase=Phase.DATASET, routing_key=routing_key)
     else:
         logger.error(
             "Dataset %s is in an unexpected state (phase=%s, state=%s).",

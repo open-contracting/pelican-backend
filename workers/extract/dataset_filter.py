@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import logging
 
 import click
@@ -21,21 +20,19 @@ def start():
     consume(on_message_callback=callback, queue=consume_routing_key)
 
 
-# input message example
-# {
-#     "dataset_id_original": 2,
-#     "filter_message": {
-#         "release_date_from": '2019-12-02',
-#         "release_date_to": '2020-02-02',
-#         "buyer": ["ministry_of_finance", "state"],
-#         "buyer_regex": "Development$",
-#         "procuring_entity": ["a", "b"],
-#         "procuring_entity_regex": "(a|b)casdf+"
-
-
-#     },
-#     "max_items": 5000
-# }
+# Sample message:
+# > {
+# >     "dataset_id_original": 2,
+# >     "filter_message": {
+# >         "release_date_from": '2019-12-02',
+# >         "release_date_to": '2020-02-02',
+# >         "buyer": ["ministry_of_finance", "state"],
+# >         "buyer_regex": "Development$",
+# >         "procuring_entity": ["a", "b"],
+# >         "procuring_entity_regex": "(a|b)casdf+"
+# >     },
+# >     "max_items": 5000
+# > }
 def callback(client_state, channel, method, properties, input_message):
     cursor = get_cursor()
 
@@ -103,37 +100,41 @@ def callback(client_state, channel, method, properties, input_message):
         )
         commit()
 
-        query = sql.SQL("SELECT id FROM data_item WHERE dataset_id = ") + sql.Literal(dataset_id_original)
+        variables = {"dataset_id_original": dataset_id_original}
+        parts = ["SELECT id FROM data_item WHERE dataset_id = %(dataset_id_original)s"]
+
         if "release_date_from" in filter_message:
-            expr = sql.SQL("data->>'date' >= ") + sql.Literal(filter_message["release_date_from"])
-            query += sql.SQL(" AND ") + expr
+            variables["release_date_from"] = filter_message["release_date_from"]
+            parts.append("AND data->>'date' >= %(release_date_from)s")
+
         if "release_date_to" in filter_message:
-            expr = sql.SQL("data->>'date' <= ") + sql.Literal(filter_message["release_date_to"])
-            query += sql.SQL(" AND ") + expr
+            variables["release_date_to"] = filter_message["release_date_to"]
+            parts.append("AND data->>'date' <= %(release_date_to)s")
+
         if "buyer" in filter_message:
-            expr = sql.SQL(", ").join([sql.Literal(buyer) for buyer in filter_message["buyer"]])
-            expr = sql.SQL("data->'buyer'->>'name' IN ") + sql.SQL("(") + expr + sql.SQL(")")
-            query += sql.SQL(" AND ") + expr
+            variables["buyer"] = tuple(filter_message["buyer"])
+            parts.append("AND data->'buyer'->>'name' IN %(buyer)s")
+
         if "buyer_regex" in filter_message:
-            expr = sql.SQL("data->'buyer'->>'name' ILIKE ") + sql.Literal(filter_message["buyer_regex"])
-            query += sql.SQL(" AND ") + expr
+            variables["buyer_regex"] = filter_message["buyer_regex"]
+            parts.append("AND data->'buyer'->>'name' ILIKE %(buyer_regex)s")
+
         if "procuring_entity" in filter_message:
-            expr = sql.SQL(", ").join(
-                [sql.Literal(procuring_entity) for procuring_entity in filter_message["procuring_entity"]]
-            )
-            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' IN ") + sql.SQL("(") + expr + sql.SQL(")")
-            query += sql.SQL(" AND ") + expr
+            variables["procuring_entity"] = tuple(filter_message["procuring_entity"])
+            parts.append("AND data->'tender'->'procuringEntity'->>'name' IN %(procuring_entity)s")
+
         if "procuring_entity_regex" in filter_message:
-            expr = sql.SQL("data->'tender'->'procuringEntity'->>'name' ILIKE ") + sql.Literal(
-                filter_message["procuring_entity_regex"]
-            )
-            query += sql.SQL(" AND ") + expr
+            variables["procuring_entity_regex"] = filter_message["procuring_entity_regex"]
+            parts.append("AND data->'tender'->'procuringEntity'->>'name' ILIKE %(procuring_entity_regex)s")
+
         if max_items is not None:
-            query += sql.SQL(" LIMIT ") + sql.Literal(max_items)
+            variables["limit"] = max_items
+            parts.append("LIMIT %(limit)s")
 
-        logger.info(query.as_string(cursor))
+        statement = sql.SQL(" ".join(parts))
+        logger.info(statement.as_string(cursor))
 
-        cursor.execute(query)
+        cursor.execute(statement, variables)
         ids = [row[0] for row in cursor]
 
         process_items(

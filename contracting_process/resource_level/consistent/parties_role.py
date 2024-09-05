@@ -1,5 +1,7 @@
 """
-For each role of each party, there is an organization reference. The roles to test are:
+For each role of each party, there is an organization reference.
+
+The roles to test are:
 
 -  procuringEntity
 -  tenderer

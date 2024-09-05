@@ -1,6 +1,7 @@
 """
-A compiled release in the newer collection has at least the same number of ``planning``, ``tender``, ``awards``
-and ``contracts`` objects as its pair in the older collection.
+A compiled release in the newer collection has at least the same number of objects as its pair in the older collection.
+
+The relevant objects are: ``planning``, ``tender``, ``awards`` entries and ``contracts`` entries.
 """
 
 from pelican.util.getter import deep_get
@@ -13,13 +14,11 @@ def filter(scope, item, item_id, new_item, new_item_id):
 
 
 def evaluate(scope, item, item_id, new_item, new_item_id):
-    if deep_get(item, "tender", dict):
-        if not deep_get(new_item, "tender", dict):
-            return scope, False
+    if deep_get(item, "tender", dict) and not deep_get(new_item, "tender", dict):
+        return scope, False
 
-    if deep_get(item, "planning", dict):
-        if not deep_get(new_item, "planning", dict):
-            return scope, False
+    if deep_get(item, "planning", dict) and not deep_get(new_item, "planning", dict):
+        return scope, False
 
     old_array = deep_get(item, "awards", list)
     if old_array:

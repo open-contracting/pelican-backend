@@ -1,6 +1,7 @@
 """
-If an award's ``status`` is inactive ('pending', 'cancelled', 'unsuccessful'), then no contract's ``awardID`` matches
-the award's ``id``.
+If an award's ``status`` is inactive, then no contract's ``awardID`` matches the award's ``id``.
+
+Inactive statuses are: 'pending', 'cancelled' are 'unsuccessful'.
 """
 
 from pelican.util.checks import complete_result_resource, get_empty_result_resource

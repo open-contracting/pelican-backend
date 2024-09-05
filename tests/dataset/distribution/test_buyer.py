@@ -37,10 +37,8 @@ items_test_undefined_multiple2 = [
 def test_undefined_multiple():
     scope = {}
 
-    item_id = 0
-    for item in items_test_undefined_multiple1:
+    for item_id, item in enumerate(items_test_undefined_multiple1):
         scope = buyer.add_item(scope, item, item_id)
-        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is None
@@ -49,10 +47,8 @@ def test_undefined_multiple():
 
     scope = {}
 
-    item_id = 0
-    for item in items_test_undefined_multiple2:
+    for item_id, item in enumerate(items_test_undefined_multiple2):
         scope = buyer.add_item(scope, item, item_id)
-        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is None
@@ -75,10 +71,8 @@ items_test_failed2.extend(
 def test_failed():
     scope = {}
 
-    item_id = 0
-    for item in items_test_failed1:
+    for item_id, item in enumerate(items_test_failed1):
         scope = buyer.add_item(scope, item, item_id)
-        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is False
@@ -91,10 +85,8 @@ def test_failed():
 
     scope = {}
 
-    item_id = 0
-    for item in items_test_failed2:
+    for item_id, item in enumerate(items_test_failed2):
         scope = buyer.add_item(scope, item, item_id)
-        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is False
@@ -145,10 +137,8 @@ items_test_passed_multiple.extend(
 def test_passed_multiple():
     scope = {}
 
-    item_id = 0
-    for item in items_test_passed_multiple:
+    for item_id, item in enumerate(items_test_passed_multiple):
         scope = buyer.add_item(scope, item, item_id)
-        item_id += 1
 
     result = buyer.get_result(scope)
     assert result["result"] is True

@@ -1,13 +1,14 @@
 import pytest
 
+from pelican.exceptions import NonPositiveLimitError
 from pelican.util.checks import ReservoirSampler
 
 
 def test_reservoir_sampler():
-    with pytest.raises(ValueError):
+    with pytest.raises(NonPositiveLimitError):
         sampler = ReservoirSampler(-1)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(NonPositiveLimitError):
         sampler = ReservoirSampler(0)
 
     sampler = ReservoirSampler(5)

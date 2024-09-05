@@ -2,6 +2,7 @@ import random
 from collections.abc import Callable, Sequence
 from typing import Any
 
+from pelican.exceptions import NonPositiveLimitError
 from pelican.util.getter import parse_date
 
 
@@ -119,6 +120,8 @@ def field_coverage_check(
     name: str, test: Callable[[dict[str, Any], str], tuple[bool, str]], version: float = 1.0
 ) -> Callable[[dict[str, Any], str], dict[str, Any]]:
     """
+    Return a function that calculates a coverage check.
+
     :param name: the machine name of the check
     :param test: a function that accepts a dict and a key and returns a tuple of a boolean (whether the test passed)
                  and a string (the reason for any failed test)
@@ -149,6 +152,8 @@ def field_quality_check(
     return_value: Callable[[Any], Any] | None = None,
 ) -> Callable[[dict[str, Any], str], dict[str, Any]]:
     """
+    Return a function that calculates a quality check.
+
     :param name: the machine name of the check
     :param test: a function that accepts a value and returns a tuple of a boolean (whether the test passed) and a
                  string (the reason for any failed test)
@@ -249,7 +254,7 @@ def _prepare_field_result(
 class ReservoirSampler:
     def __init__(self, limit: int):
         if limit < 1:
-            raise ValueError("limit must be a positive integer")
+            raise NonPositiveLimitError
 
         self._limit = limit
         self.index = 0

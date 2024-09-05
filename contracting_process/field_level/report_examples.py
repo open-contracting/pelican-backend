@@ -118,7 +118,7 @@ def create(dataset_id):
             check_group["passed_examples"] = check_group["passed_examples"].sample
             check_group["failed_examples"] = check_group["failed_examples"].sample
 
-            for check_name, check in check_group["checks"].items():
+            for check in check_group["checks"].values():
                 check["passed_examples"] = check["passed_examples"].sample
                 check["failed_examples"] = check["failed_examples"].sample
 

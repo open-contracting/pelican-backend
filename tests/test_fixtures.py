@@ -2,7 +2,7 @@ import os
 import warnings
 
 import pytest
-from jsonschema.validators import Draft4Validator as validator
+from jsonschema.validators import Draft4Validator as Validator
 
 
 def custom_warning_formatter(message, category, filename, lineno, line=None):
@@ -37,7 +37,7 @@ def get_test_cases():
             for key, value in module.__dict__.items():
                 if key.startswith("__"):
                     continue
-                if isinstance(value, (dict, list)):
+                if isinstance(value, dict | list):
                     yield filename, key, value
 
 
@@ -48,7 +48,7 @@ def add_id(value, *keys):
                 item.setdefault("id", str(i))
 
 
-@pytest.mark.parametrize("filename,key,values", list(get_test_cases()))
+@pytest.mark.parametrize(("filename", "key", "values"), list(get_test_cases()))
 def test_valid(filename, key, values, schema, format_checker):
     errors = 0
 
@@ -90,11 +90,10 @@ def test_valid(filename, key, values, schema, format_checker):
                     add_id(item["implementation"], "documents", "milestones", "transactions")
 
         # Validate the item.
-        for error in validator(schema, format_checker=format_checker).iter_errors(value):
+        for error in Validator(schema, format_checker=format_checker).iter_errors(value):
             errors += 1
-            # warnings.warn(json.dumps(error.instance, indent=2))
             if not invalid:
-                warnings.warn(f"{key} {error.message} ({'/'.join(error.absolute_schema_path)})\n")
+                warnings.warn(f"{key} {error.message} ({'/'.join(error.absolute_schema_path)})\n", stacklevel=2)
 
     if invalid:
         assert errors, f"{filename}:{key} is valid, but is expected to be invalid"

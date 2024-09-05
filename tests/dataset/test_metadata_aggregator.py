@@ -192,11 +192,11 @@ def test_get_kingfisher_metadata_release(
                         "name": "Open Contracting Partnership",
                     },
                     "description": {
-                        "en": "For providing overall process titles and descriptions, often to give a summary of the contracting process as a whole.",  # noqa: E501
+                        "en": "For providing overall process titles and descriptions, often to give a summary of the contracting process as a whole.",
                     },
                     "documentationUrl": {"en": "https://extensions.open-contracting.org/en/extensions/process_title/"},
                     "name": {"en": "Process level title and description"},
-                    "repositoryUrl": "https://raw.githubusercontent.com/open-contracting-extensions/ocds_process_title_extension/master/extension.json",  # noqa: E501
+                    "repositoryUrl": "https://raw.githubusercontent.com/open-contracting-extensions/ocds_process_title_extension/master/extension.json",
                     "schemas": ["release-schema.json"],
                 },
             ],
@@ -260,11 +260,11 @@ def test_get_kingfisher_metadata_record(
                         "name": "Open Contracting Partnership",
                     },
                     "description": {
-                        "en": "For providing overall process titles and descriptions, often to give a summary of the contracting process as a whole.",  # noqa: E501
+                        "en": "For providing overall process titles and descriptions, often to give a summary of the contracting process as a whole.",
                     },
                     "documentationUrl": {"en": "https://extensions.open-contracting.org/en/extensions/process_title/"},
                     "name": {"en": "Process level title and description"},
-                    "repositoryUrl": "https://raw.githubusercontent.com/open-contracting-extensions/ocds_process_title_extension/master/extension.json",  # noqa: E501
+                    "repositoryUrl": "https://raw.githubusercontent.com/open-contracting-extensions/ocds_process_title_extension/master/extension.json",
                     "schemas": ["release-schema.json"],
                 },
             ],

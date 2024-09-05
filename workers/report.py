@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import logging
 
 import click
@@ -8,7 +7,7 @@ import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
 from dataset import metadata_aggregator
 from pelican.util import settings
-from pelican.util.services import consume, phase
+from pelican.util.services import Phase, consume
 from pelican.util.workers import finish_callback, is_step_required
 
 consume_routing_key = "time_variance_checker"
@@ -46,7 +45,7 @@ def callback(client_state, channel, method, properties, input_message):
         metadata = metadata_aggregator.get_pelican_metadata(dataset_id)
         metadata_aggregator.update_metadata(metadata, dataset_id)
 
-    finish_callback(client_state, channel, method, dataset_id, phase=phase.CHECKED)
+    finish_callback(client_state, channel, method, dataset_id, phase=Phase.CHECKED)
 
 
 if __name__ == "__main__":

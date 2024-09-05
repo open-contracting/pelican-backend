@@ -25,6 +25,6 @@ def calculate(item):
 
     return complete_result_resource_pass_fail(
         result,
-        number_of_tenderers == 0 or number_of_tenderers == 1,
+        number_of_tenderers in {0, 1},
         {"numberOfTenderers": item["tender"]["numberOfTenderers"]},
     )

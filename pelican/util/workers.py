@@ -6,15 +6,15 @@ from typing import Any
 
 import pika
 from yapw.methods import ack, publish
-from yapw.types import State
+from yapw.types import State as ClientState
 
 from pelican.util import settings
 from pelican.util.services import (
+    Phase,
+    State,
     commit,
     initialize_dataset_state,
     initialize_items_state,
-    phase,
-    state,
     update_dataset_state,
 )
 
@@ -36,7 +36,7 @@ def is_step_required(*steps: str) -> bool:
 
 
 def process_items(
-    client_state: State,
+    client_state: ClientState,
     channel: pika.channel.Channel,
     method: pika.spec.Basic.Deliver,
     routing_key: str,
@@ -46,6 +46,8 @@ def process_items(
     insert_items: Callable[[dict[str, Any], int, list[int]], None],
 ) -> None:
     """
+    Load items into Pelican.
+
     Ack the message, initialize the dataset's and items' progress, insert items into the database in batches, and
     publish messages to process the items in batches.
 
@@ -72,8 +74,8 @@ def process_items(
             items_inserted += len(item_ids_batch)
 
             initialize_items_state(dataset_id, item_ids_batch)
-            dataset_state = state.OK if items_inserted >= len(ids) else state.IN_PROGRESS
-            update_dataset_state(dataset_id, phase.CONTRACTING_PROCESS, dataset_state, size=items_inserted)
+            dataset_state = State.OK if items_inserted >= len(ids) else State.IN_PROGRESS
+            update_dataset_state(dataset_id, Phase.CONTRACTING_PROCESS, dataset_state, size=items_inserted)
             commit()
 
             publish(client_state, channel, {"item_ids": item_ids_batch, "dataset_id": dataset_id}, routing_key)
@@ -89,7 +91,7 @@ def process_items(
 
 
 def finish_callback(
-    client_state: State,
+    client_state: ClientState,
     channel: pika.channel.Channel,
     method: pika.spec.Basic.Deliver,
     dataset_id: int,
@@ -104,7 +106,7 @@ def finish_callback(
     :param routing_key: the routing key for the outgoing message
     """
     if phase:
-        update_dataset_state(dataset_id, phase, state.OK)
+        update_dataset_state(dataset_id, phase, State.OK)
     commit()
     if routing_key:
         publish(client_state, channel, {"dataset_id": dataset_id}, routing_key)

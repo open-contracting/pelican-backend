@@ -149,9 +149,7 @@ def collection_file_item(kingfisher_process_cursor, collection_rows):
         {"collection_file_id": collection_file_id},
     )
     kingfisher_process_cursor.execute("SELECT MAX(id) FROM collection_file_item")
-    collection_file_item_id = kingfisher_process_cursor.fetchone()[0]
-
-    return collection_file_item_id
+    return kingfisher_process_cursor.fetchone()[0]
 
 
 @pytest.fixture(scope="session")
@@ -220,7 +218,7 @@ def data_and_package_data_rows(kingfisher_process_cursor):
                     "license": "https://creativecommons.org/licenses/by/4.0/",
                     "publicationPolicy": "https://example.com/policy",
                     "extensions": [
-                        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_process_title_extension/master/extension.json",  # noqa: E501
+                        "https://raw.githubusercontent.com/open-contracting-extensions/ocds_process_title_extension/master/extension.json",
                     ],
                 }
             )

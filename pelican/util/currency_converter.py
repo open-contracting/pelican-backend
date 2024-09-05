@@ -19,9 +19,6 @@ def bootstrap() -> None:
 
 
 def import_data(data: list[tuple[datetime.date, dict[str, float]]]) -> None:
-    global rates
-    global bounds
-    global currencies
     rates.clear()
     bounds.clear()
     currencies.clear()
@@ -57,7 +54,7 @@ def import_data(data: list[tuple[datetime.date, dict[str, float]]]) -> None:
                     elif settings.CURRENCY_CONVERTER_INTERPOLATION == "linear":
                         interpolation_linear(currency, previous, date)
                     else:
-                        raise AttributeError()
+                        raise AttributeError
 
                 previous = date
     else:
@@ -73,7 +70,7 @@ def import_data(data: list[tuple[datetime.date, dict[str, float]]]) -> None:
 
 def interpolation_closest(currency, start_date, end_date):
     """
-    start_date exclusive, end_date exclusive
+    start_date and end_date are exclusive.
     """
     start_date_rate = rates[start_date][currency]
     end_date_rate = rates[end_date][currency]
@@ -94,7 +91,7 @@ def interpolation_closest(currency, start_date, end_date):
                 days=distance_to_end - settings.CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK
             )
             continue
-        elif distance_to_start < distance_to_end:
+        if distance_to_start < distance_to_end:
             rates.setdefault(current_date, {})
             rates[current_date][currency] = start_date_rate
         else:
@@ -106,7 +103,7 @@ def interpolation_closest(currency, start_date, end_date):
 
 def interpolation_linear(currency, start_date, end_date):
     """
-    start_date exclusive, end_date exclusive
+    start_date and end_date are exclusive.
     """
     start_date_rate = rates[start_date][currency]
     end_date_rate = rates[end_date][currency]
@@ -127,14 +124,13 @@ def interpolation_linear(currency, start_date, end_date):
                 days=distance_to_end - settings.CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK
             )
             continue
-        else:
-            rates.setdefault(current_date, {})
-            rates[current_date][currency] = round(
-                start_date_rate
-                + (current_date - start_date).days
-                * ((end_date_rate - start_date_rate) / (end_date - start_date).days),
-                6,
-            )
+
+        rates.setdefault(current_date, {})
+        rates[current_date][currency] = round(
+            start_date_rate
+            + (current_date - start_date).days * (end_date_rate - start_date_rate) / (end_date - start_date).days,
+            6,
+        )
 
         current_date += datetime.timedelta(days=1)
 
@@ -148,11 +144,13 @@ def extrapolation_closest_rate(currency, rel_date):
     ):
         return rates[bound[0]][currency]
 
-    elif bound[1] < rel_date and (
+    if bound[1] < rel_date and (
         (rel_date - bound[1]).days <= settings.CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK
         or settings.CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK == -1
     ):
         return rates[bound[1]][currency]
+
+    return None
 
 
 def convert(amount, original_currency, target_currency, rel_date):

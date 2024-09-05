@@ -26,7 +26,7 @@ def test_get(get, func):
     get.return_value = MagicMock()
     get.return_value.text = ""
 
-    for i in range(10):
+    for _ in range(10):
         func()
 
     assert get.call_count <= 1

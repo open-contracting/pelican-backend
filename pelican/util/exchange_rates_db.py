@@ -1,31 +1,19 @@
+import datetime
 import logging
-from datetime import date, timedelta
 
 import psycopg2
 import requests
 
+from pelican.exceptions import EmptyExchangeRatesTableError
 from pelican.util import settings
 from pelican.util.services import Json, commit, get_cursor, rollback
 
 logger = logging.getLogger("pelican.tools.exchange_rates_db")
 
-# Datlab had already downloaded the exchange rates to EUR from another project. Changing the base would require
-# re-downloading decades of exchange rates. It makes no difference to the application's logic, as all currency
-# operations are performed in USD.
-#
-# The Basic plan is required to request rates for all base currencies. The Professional plan supports the Time-Series
-# Endpoint, which can request rates for multiple dates at once. https://fixer.io/documentation
-#
-# "The Fixer API delivers EOD / End of Day historical exchange rates, which become available at 00:05am GMT for the
-# previous day and are time stamped at one second before midnight." https://fixer.io/faq
-FIXER_IO_URL = "https://data.fixer.io/api/{date}?access_key={access_key}&base=EUR&symbols={symbols}"
+BASE_URL = "https://data.fixer.io/api"
 
 
-class EmptyExchangeRatesTable(Exception):
-    pass
-
-
-def load() -> list[tuple[date, dict[str, float]]]:
+def load() -> list[tuple[datetime.date, dict[str, float]]]:
     with get_cursor() as cursor:
         cursor.execute("SELECT valid_on, rates FROM exchange_rates")
         return cursor.fetchall()
@@ -39,10 +27,10 @@ def update_from_fixer_io() -> None:
         query_result = cursor.fetchone()
 
         if query_result is None:
-            raise EmptyExchangeRatesTable
+            raise EmptyExchangeRatesTableError
 
         max_date = query_result[0]
-        date_now = date.today()
+        date_now = datetime.datetime.now(tz=datetime.UTC).date()
         length = (date_now - max_date).days
 
         if not length:
@@ -55,10 +43,10 @@ def update_from_fixer_io() -> None:
         try:
             # To get the list of currencies for testing:
             # curl 'https://data.fixer.io/api/symbols?access_key=' | jq '.symbols | keys | join(",")'
-            response = requests.get(f"https://data.fixer.io/api/symbols?access_key={access_key}")
+            response = requests.get(f"{BASE_URL}/symbols?access_key={access_key}", timeout=10)
             response.raise_for_status()
-        except requests.RequestException as e:
-            logger.error("Couldn't retrieve currency symbols: %s", e)
+        except requests.RequestException:
+            logger.exception("Couldn't retrieve currency symbols")
             return
 
         data = response.json()
@@ -75,13 +63,21 @@ def update_from_fixer_io() -> None:
                 date_str = target_date.strftime("%Y-%m-%d")
                 logger.info("Fetching exchange rates for %s.", date_str)
 
+                # Datlab had already downloaded the exchange rates to EUR from another project. Changing the base would require
+                # re-downloading decades of exchange rates. It makes no difference to the application's logic, as all currency
+                # operations are performed in USD.
+                #
+                # The Basic plan is required to request rates for all base currencies. The Professional plan supports the Time-Series
+                # Endpoint, which can request rates for multiple dates at once. https://fixer.io/documentation
+                #
+                # "The Fixer API delivers EOD / End of Day historical exchange rates, which become available at 00:05am GMT for the
+                # previous day and are time stamped at one second before midnight." https://fixer.io/faq
                 response = requests.get(
-                    FIXER_IO_URL.format(date=date_str, access_key=access_key, symbols=symbols),
-                    timeout=10,
+                    f"{BASE_URL}/{date_str}?access_key={access_key}&base=EUR&symbols={symbols}", timeout=10
                 )
                 response.raise_for_status()
-            except requests.RequestException as e:
-                logger.error("Couldn't retrieve currency rates: %s", e)
+            except requests.RequestException:
+                logger.exception("Couldn't retrieve currency rates")
                 break
 
             try:
@@ -107,14 +103,14 @@ def update_from_fixer_io() -> None:
                     """,
                     parameters,
                 )
-            except psycopg2.Error as e:
-                logger.error("Couldn't insert exchange rate: %s", e)
+            except psycopg2.Error:
+                logger.exception("Couldn't insert exchange rate")
                 rollback()
                 break
 
             else:
                 commit()
 
-            target_date += timedelta(days=1)
+            target_date += datetime.timedelta(days=1)
 
         logger.info("Exchange rates update finished.")

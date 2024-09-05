@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta, timezone
 
 import pytest
 
@@ -38,7 +38,7 @@ def test_parse_datetime_invalid(value):
 
 
 @pytest.mark.parametrize(
-    "value,components",
+    ("value", "components"),
     [
         ("2001", (2001, 1, 1, 0, 0)),
         ("2001-02", (2001, 2, 1, 0, 0)),
@@ -47,7 +47,7 @@ def test_parse_datetime_invalid(value):
     ],
 )
 def test_parse_datetime_date(value, components):
-    assert parse_datetime(value) == datetime(*components)
+    assert parse_datetime(value) == datetime(*components, tzinfo=UTC)
 
 
 # The tests serve to document the formats that are accepted. We don't test week formats.
@@ -57,17 +57,17 @@ def test_parse_datetime_date(value, components):
 #
 # https://dateutil.readthedocs.io/en/stable/parser.html#dateutil.parser.isoparse
 @pytest.mark.parametrize(
-    "suffix,tz",
+    ("suffix", "tz"),
     [
         ("", None),
-        ("Z", timezone.utc),
+        ("Z", UTC),
         # UTC.
-        ("+00", timezone.utc),
-        ("-00", timezone.utc),
-        ("+0000", timezone.utc),
-        ("-0000", timezone.utc),
-        ("+00:00", timezone.utc),
-        ("-00:00", timezone.utc),
+        ("+00", UTC),
+        ("-00", UTC),
+        ("+0000", UTC),
+        ("-0000", UTC),
+        ("+00:00", UTC),
+        ("-00:00", UTC),
         # Non-UTC.
         ("+07", timezone(timedelta(seconds=25200))),
         ("-07", timezone(timedelta(seconds=-25200))),
@@ -78,7 +78,7 @@ def test_parse_datetime_date(value, components):
     ],
 )
 @pytest.mark.parametrize(
-    "value,components",
+    ("value", "components"),
     [
         # With separators.
         ("2001-02-03T04", (2001, 2, 3, 4, 0)),
@@ -103,16 +103,16 @@ def test_parse_datetime_dateutil(value, components, suffix, tz):
 
 # The datetime library can handle short components and long timezones.
 @pytest.mark.parametrize(
-    "suffix,tz",
+    ("suffix", "tz"),
     [
-        ("Z", timezone.utc),
+        ("Z", UTC),
         # UTC.
-        ("+0000", timezone.utc),
-        ("-0000", timezone.utc),
-        ("+00:00", timezone.utc),
-        ("-00:00", timezone.utc),
-        ("+00:00:00", timezone.utc),
-        ("-00:00:00", timezone.utc),
+        ("+0000", UTC),
+        ("-0000", UTC),
+        ("+00:00", UTC),
+        ("-00:00", UTC),
+        ("+00:00:00", UTC),
+        ("-00:00:00", UTC),
         # Non-UTC.
         ("+0708", timezone(timedelta(seconds=25680))),
         ("-0708", timezone(timedelta(seconds=-25680))),
@@ -142,7 +142,7 @@ def test_parse_date_invalid(value):
 
 
 @pytest.mark.parametrize(
-    "value,components",
+    ("value", "components"),
     [
         # Date only.
         ("2001", (2001, 1, 1)),
@@ -157,11 +157,11 @@ def test_parse_date_invalid(value):
     ],
 )
 def test_parse_date(value, components):
-    assert parse_date(value) == datetime(*components).date()
+    assert parse_date(value) == datetime(*components, tzinfo=UTC).date()
 
 
 @pytest.mark.parametrize(
-    "data,expected,actual",
+    ("data", "expected", "actual"),
     [
         ({}, "tender.buyer.id", None),
         ({"tender": {"buyer": {"id": "1"}}}, "tender.buyer.id", "1"),
@@ -172,7 +172,7 @@ def test_deep_get(data, expected, actual):
 
 
 @pytest.mark.parametrize(
-    "data,expected,force,actual",
+    ("data", "expected", "force", "actual"),
     [
         ({}, "unset", dict, {}),
         ({}, "unset", list, []),
@@ -207,7 +207,7 @@ def test_deep_get(data, expected, actual):
         ({"emptydict": {}}, "emptydict.unset", int, None),
         # date and datetime
         ({"todate": "2001-02-03"}, "todate", date, date(2001, 2, 3)),
-        ({"todatetime": "2001-02-03T04:05:06"}, "todatetime", datetime, datetime(2001, 2, 3, 4, 5, 6)),
+        ({"todatetime": "2001-02-03T04:05:06"}, "todatetime", datetime, datetime(2001, 2, 3, 4, 5, 6, tzinfo=UTC)),
         # dict
         ({"todict": None}, "todict", dict, {}),
         ({"todict": ["list"]}, "todict", dict, {}),

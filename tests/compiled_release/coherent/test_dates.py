@@ -27,11 +27,11 @@ item_ok = {
         "tenderPeriod": {"endDate": "2014-12-31T00:00:00Z"},
         "contractPeriod": {"startDate": "2015-12-31T00:00:00Z"},
     },
+    "awards": [{"date": "2015-12-30T00:00:00Z", "id": "1"}, {"date": "2017-12-30T00:00:00Z", "id": "2"}],
     "contracts": [
         {"dateSigned": "2015-12-31T00:00:00Z", "awardID": "1"},
         {"dateSigned": "2017-12-31T00:00:00Z", "awardID": "2"},
     ],
-    "awards": [{"date": "2015-12-30T00:00:00Z", "id": "1"}, {"date": "2017-12-30T00:00:00Z", "id": "2"}],
 }
 
 
@@ -50,11 +50,11 @@ item_failed = {
         "tenderPeriod": {"endDate": "2021-12-31T00:00:00Z"},
         "contractPeriod": {"startDate": "2020-12-31T00:00:00Z"},
     },
+    "awards": [{"date": "2015-12-31T00:00:00Z", "id": "1"}, {"date": "2017-12-31T00:00:00Z", "id": "3"}],
     "contracts": [
         {"dateSigned": "2015-12-30T00:00:00Z", "awardID": "1"},
         {"dateSigned": "2017-12-30T00:00:00Z", "awardID": "2"},
     ],
-    "awards": [{"date": "2015-12-31T00:00:00Z", "id": "1"}, {"date": "2017-12-31T00:00:00Z", "id": "3"}],
 }
 
 
@@ -62,7 +62,6 @@ def test_failed():
     result = calculate(item_failed)
     assert type(result) is dict
     assert result["result"] is False
-    # assert result["application_count"] == 11
     assert result["application_count"] == 10
     assert result["pass_count"] == 0
     assert result["meta"] == {

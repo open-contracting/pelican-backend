@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import click
 from yapw.methods import ack
 

@@ -1,6 +1,8 @@
 """
-The most common buyer is identified in 1% to 50% of compiled releases. Failure indicates issues in buyer identification
-or buyer over-representation. Buyers are identified by ``buyer.identifier.scheme`` and ``buyer.identifier.id``.
+The most common buyer is identified in 1% to 50% of compiled releases.
+
+Failure indicates issues in buyer identification or buyer over-representation. Buyers are identified by
+``buyer.identifier.scheme`` and ``buyer.identifier.id``.
 
 The test is skipped if the ``buyer.identifier.scheme`` and ``buyer.identifier.id`` fields are both present in fewer
 than 1,000 compiled releases.

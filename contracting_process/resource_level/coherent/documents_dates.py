@@ -1,4 +1,6 @@
 """
+Coherence check for document dates.
+
 .. seealso::
 
    :func:`pelican.util.checks.coherent_dates_check

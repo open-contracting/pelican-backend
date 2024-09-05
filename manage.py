@@ -2,7 +2,7 @@
 import click
 
 from pelican.util import exchange_rates_db, settings
-from pelican.util.services import commit, get_cursor, phase, publish, state, update_dataset_state
+from pelican.util.services import Phase, State, commit, get_cursor, publish, update_dataset_state
 
 
 @click.group()
@@ -52,18 +52,18 @@ def remove(dataset_id, include_filtered, force):
         {"dataset_id": dataset_id},
     )
     row = cursor.fetchone()
-    if not row or row[0] not in (phase.CHECKED, phase.DELETED) or row[1] != state.OK:
+    if not row or row[0] not in (Phase.CHECKED, Phase.DELETED) or row[1] != State.OK:
         if force:
             click.secho(
                 f"Forcefully removing dataset {dataset_id} (phase={row[0]}, state={row[1]}). (Its phase should be "
-                f"{phase.CHECKED} or {phase.DELETED}, and its state should be {state.OK}.)",
+                f"{Phase.CHECKED} or {Phase.DELETED}, and its state should be {State.OK}.)",
                 fg="yellow",
                 err=True,
             )
         else:
             click.secho(
                 f"Dataset {dataset_id} (phase={row[0]}, state={row[1]}) can't be removed. Its phase must be "
-                f"{phase.CHECKED} or {phase.DELETED}, and its state must be {state.OK}.",
+                f"{Phase.CHECKED} or {Phase.DELETED}, and its state must be {State.OK}.",
                 fg="red",
                 err=True,
             )
@@ -88,8 +88,8 @@ def remove(dataset_id, include_filtered, force):
                     )
                 """,
                 {
-                    "phases": [phase.CHECKED, phase.DELETED],
-                    "state": state.OK,
+                    "phases": [Phase.CHECKED, Phase.DELETED],
+                    "state": State.OK,
                     "dataset_ids": delete_dataset_ids,
                 },
             )
@@ -119,8 +119,8 @@ def remove(dataset_id, include_filtered, force):
         """,
         {
             "dataset_ids": delete_dataset_ids,
-            "phase": phase.DELETED,
-            "state": state.OK,
+            "phase": Phase.DELETED,
+            "state": State.OK,
         },
     )
 
@@ -146,8 +146,8 @@ def remove(dataset_id, include_filtered, force):
                 )
             """,
             {
-                "phase": phase.DELETED,
-                "state": state.OK,
+                "phase": Phase.DELETED,
+                "state": State.OK,
                 "dataset_ids": drop_dataset_ids,
             },
         )
@@ -182,7 +182,6 @@ def dev():
     """
     Commands for administrators and developers of Pelican backend.
     """
-    pass
 
 
 @dev.command()
@@ -191,7 +190,7 @@ def restart_dataset_check(dataset_id):
     """
     Restart the dataset check if the check.dataset worker failed.
     """
-    update_dataset_state(dataset_id, phase.CONTRACTING_PROCESS, state.OK)
+    update_dataset_state(dataset_id, Phase.CONTRACTING_PROCESS, State.OK)
     commit()
 
     message = {"dataset_id": dataset_id}

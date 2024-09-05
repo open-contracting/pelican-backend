@@ -1,5 +1,7 @@
 """
-A random sample of 100 URL values return responses without HTTP error codes. The URL fields are:
+A random sample of 100 URL values return responses without HTTP error codes.
+
+The URL fields are:
 
 -  ``planning.documents.url``
 -  ``tender.documents.url``
@@ -61,7 +63,7 @@ def get_result(scope):
     for sample in sampler:
         try:
             response = requests.get(sample["value"], timeout=settings.REQUESTS_TIMEOUT, stream=True)
-            if 200 <= response.status_code < 400:
+            if requests.codes.ok <= response.status_code < requests.codes.bad_request:
                 sample["status"] = "OK"
                 passed_examples.append(sample)
                 passed_count += 1

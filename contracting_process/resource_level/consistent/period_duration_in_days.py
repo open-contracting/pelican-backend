@@ -1,6 +1,8 @@
 """
-For each period, ``durationInDays`` is equal to the difference between ``startDate`` and ``endDate``. If ``endDate`` is
-blank or unparsable, then ``durationInDays`` is equal to the difference between ``startDate`` and ``maxExtentDate``.
+For each period, ``durationInDays`` is equal to the difference between ``startDate`` and ``endDate``.
+
+If ``endDate`` is blank or unparsable, then, for each period, ``durationInDays`` is equal to the difference between
+``startDate`` and ``maxExtentDate``.
 
 Since the test operates on all period objects, the test silently ignores any dates that can't be parsed.
 """

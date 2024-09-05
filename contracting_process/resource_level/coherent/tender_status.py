@@ -1,6 +1,7 @@
 """
-If ``tender.status`` is incomplete ('planning', 'planned', 'active', 'cancelled', 'unsuccessful' or 'withdrawn'), then
-``awards`` and ``contracts`` are blank.
+If ``tender.status`` is incomplete, then ``awards`` and ``contracts`` are blank.
+
+Incomplete statuses are: 'planning', 'planned', 'active', 'cancelled', 'unsuccessful' are 'withdrawn'.
 """
 
 from pelican.util.checks import complete_result_resource_pass_fail, get_empty_result_resource

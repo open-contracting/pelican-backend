@@ -10,7 +10,6 @@ from yapw.clients import AsyncConsumer, Blocking
 
 from pelican.util import settings
 
-global db_connected, db_connection
 db_connected = False
 db_connection = None
 db_cursor_idx = 0
@@ -113,12 +112,12 @@ def rollback() -> None:
     db_connection.rollback()
 
 
-class state:
+class State:
     IN_PROGRESS = "IN_PROGRESS"
     OK = "OK"
 
 
-class phase:
+class Phase:
     CONTRACTING_PROCESS = "CONTRACTING_PROCESS"
     DATASET = "DATASET"
     TIME_VARIANCE = "TIME_VARIANCE"
@@ -137,7 +136,7 @@ def initialize_dataset_state(dataset_id: int) -> None:
         VALUES (%(dataset_id)s, %(phase)s, %(state)s, 0)
     """
     with get_cursor() as cursor:
-        cursor.execute(sql, {"dataset_id": dataset_id, "phase": phase.CONTRACTING_PROCESS, "state": state.IN_PROGRESS})
+        cursor.execute(sql, {"dataset_id": dataset_id, "phase": Phase.CONTRACTING_PROCESS, "state": State.IN_PROGRESS})
 
 
 def update_dataset_state(dataset_id: int, phase: str, state: str, size: int | None = None) -> None:
@@ -178,7 +177,7 @@ def initialize_items_state(dataset_id: int, item_ids: list[int]) -> None:
         VALUES %s
     """
     with get_cursor() as cursor:
-        psycopg2.extras.execute_values(cursor, sql, [(dataset_id, item_id, state.IN_PROGRESS) for item_id in item_ids])
+        psycopg2.extras.execute_values(cursor, sql, [(dataset_id, item_id, State.IN_PROGRESS) for item_id in item_ids])
 
 
 def update_items_state(dataset_id: int, item_ids: list[int], state: str) -> None:
@@ -208,7 +207,7 @@ def get_processed_items_count(dataset_id: int) -> int:
     with get_cursor() as cursor:
         cursor.execute(
             "SELECT COUNT(*) cnt FROM progress_monitor_item WHERE dataset_id = %(dataset_id)s AND state = %(state)s",
-            {"dataset_id": dataset_id, "state": state.OK},
+            {"dataset_id": dataset_id, "state": State.OK},
         )
         return cursor.fetchone()["cnt"]
 

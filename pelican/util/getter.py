@@ -1,5 +1,5 @@
+import datetime
 import re
-from datetime import date, datetime
 from typing import Any
 
 from dateutil.parser import isoparse
@@ -12,12 +12,13 @@ regex = re.compile(r"^([^[]*)\[([\d]*)\]$")
 def get_amount(no_conversion, amount, currency, date):
     if no_conversion:
         return amount
-    elif date is not None:
+    if date is not None:
         return convert(amount, currency, "USD", date)
+    return None
 
 
 # https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
-def parse_datetime(string: str | None) -> datetime | None:
+def parse_datetime(string: str | None) -> datetime.datetime | None:
     """
     Parse a string to a datetime.
 
@@ -30,12 +31,12 @@ def parse_datetime(string: str | None) -> datetime | None:
     except ValueError:
         pass
     try:
-        return datetime.strptime(string, "%Y-%m-%dT%H:%M:%S%z")
+        return datetime.datetime.strptime(string, "%Y-%m-%dT%H:%M:%S%z")
     except ValueError:
         return None
 
 
-def parse_date(string: str | None) -> date | None:
+def parse_date(string: str | None) -> datetime.date | None:
     """
     Parse a string to a date.
 
@@ -48,14 +49,14 @@ def parse_date(string: str | None) -> date | None:
     except ValueError:
         pass
     try:
-        return datetime.strptime(string[:10], "%Y-%m-%d").date()
+        return datetime.datetime.strptime(string[:10], "%Y-%m-%d").replace(tzinfo=datetime.UTC).date()
     except ValueError:
         return None
 
 
 def deep_has(value: Any, path: str) -> bool:
     """
-    Returns whether a nested value exists in nested dicts, safely.
+    Return whether a nested value exists in nested dicts, safely.
 
     Use this instead of :func:`deep_get` to check for the presence of a key. For example,
     ``deep_get({"id": 0}, "id")`` is falsy.
@@ -74,8 +75,9 @@ def deep_has(value: Any, path: str) -> bool:
 
 def deep_get(value: Any, path: str, force: type[Any] | None = None) -> Any:
     """
-    Gets a nested value from nested dicts, safely. If ``force`` is provided and the nested value is not of that type,
-    then if ``force`` is ...
+    Get a nested value from nested dicts, safely.
+
+    If ``force`` is provided and the nested value is not of that type, then if ``force`` is ...
 
     -  ``datetime.date``, ``datetime.datetime``: Parse the nested value as ISO 8601. On failure, return ``None``.
     -  ``dict``, ``list``: Return an empty ``dict`` or ``list``, respectively.
@@ -97,11 +99,11 @@ def deep_get(value: Any, path: str, force: type[Any] | None = None) -> Any:
             return None
 
     if force and type(value) is not force:
-        if force is date:
+        if force is datetime.date:
             return parse_date(value)
-        elif force is datetime:
+        if force is datetime.datetime:
             return parse_datetime(value)
-        elif force in (dict, list):
+        if force in (dict, list):
             value = force()
         elif force in (float, int, str):
             try:
@@ -114,7 +116,7 @@ def deep_get(value: Any, path: str, force: type[Any] | None = None) -> Any:
     return value
 
 
-def get_values(item: Any, str_path: str, value_only: bool | None = False) -> list[Any]:
+def get_values(item: Any, str_path: str, *, value_only: bool | None = False) -> list[Any]:
     index: int | None
 
     if item is None:
@@ -124,8 +126,7 @@ def get_values(item: Any, str_path: str, value_only: bool | None = False) -> lis
     if not str_path or str_path == "":
         if value_only:
             return [item]
-        else:
-            return [{"path": str_path, "value": item}]
+        return [{"path": str_path, "value": item}]
 
     # return the value for key in the item
     if "." not in str_path and str_path in item:
@@ -138,11 +139,9 @@ def get_values(item: Any, str_path: str, value_only: bool | None = False) -> lis
                     values.append({"path": f"{str_path}[{index}]", "value": item[str_path][index]})
 
             return values
-        else:
-            if value_only:
-                return [item[str_path]]
-            else:
-                return [{"path": str_path, "value": item[str_path]}]
+        if value_only:
+            return [item[str_path]]
+        return [{"path": str_path, "value": item[str_path]}]
 
     # indexing used
     field = None
@@ -155,14 +154,14 @@ def get_values(item: Any, str_path: str, value_only: bool | None = False) -> lis
         except (IndexError, TypeError, ValueError):
             pass
 
-    if field is not None and index is not None and field in item:
-        if type(item[field]) is list and len(item[field]) > index:
-            if value_only:
-                values = [item[field][index]]
-            else:
-                values = [{"path": f"{field}[{index}]", "value": item[field][index]}]
-
-            return values
+    if (
+        field is not None
+        and index is not None
+        and field in item
+        and type(item[field]) is list
+        and len(item[field]) > index
+    ):
+        return [item[field][index]] if value_only else [{"path": f"{field}[{index}]", "value": item[field][index]}]
 
     # get new key identifying the new item
     path = str_path.split(".")
@@ -183,29 +182,24 @@ def get_values(item: Any, str_path: str, value_only: bool | None = False) -> lis
             else:
                 values = result
 
-            for list_item in values:
-                if not value_only and list_item and "path" in list_item:
-                    list_item["path"] = f"{key}.{list_item['path']}"
+            for value in values:
+                if not value_only and value and "path" in value:
+                    value["path"] = f"{key}.{value['path']}"
             return values
 
         # inner value is an array { "key" : [{"aaa":"bbb"}, {"ccc": "ddd"}]}
         # iterate over the items and read the rest of the path from the
         if type(item[key]) is list:
-            index_counter = 0
             result = []
-            for list_item in item[key]:
+            for index, list_item in enumerate(item[key]):
                 values = get_values(list_item, ".".join(path[1:]), value_only=value_only)
 
-                for list_item in values:
+                for value in values:
                     if value_only:
-                        result.append(list_item)
-                    else:
-                        if list_item and "path" in list_item:
-                            list_item["path"] = f"{key}[{index_counter}].{list_item['path']}"
-
-                            result.append(list_item)
-
-                index_counter += 1
+                        result.append(value)
+                    elif value and "path" in value:
+                        value["path"] = f"{key}[{index}].{value['path']}"
+                        result.append(value)
 
             return result
 
@@ -228,22 +222,25 @@ def get_values(item: Any, str_path: str, value_only: bool | None = False) -> lis
         except (IndexError, TypeError, ValueError):
             pass
 
-    if field is not None and index is not None and field in item:
-        if type(item[field]) is list and len(item[field]) > index:
-            result = []
+    if (
+        field is not None
+        and index is not None
+        and field in item
+        and type(item[field]) is list
+        and len(item[field]) > index
+    ):
+        result = []
 
-            values = get_values(item[field][index], ".".join(path[1:]), value_only=value_only)
+        values = get_values(item[field][index], ".".join(path[1:]), value_only=value_only)
 
-            for list_item in values:
-                if value_only:
-                    result.append(list_item)
-                else:
-                    if list_item and "path" in list_item:
-                        list_item["path"] = f"{field}[{index}].{list_item['path']}"
+        for value in values:
+            if value_only:
+                result.append(value)
+            elif value and "path" in value:
+                value["path"] = f"{field}[{index}].{value['path']}"
+                result.append(value)
 
-                        result.append(list_item)
-
-            return result
+        return result
 
     # nothing found
     return []

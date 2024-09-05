@@ -1,6 +1,9 @@
 """
-If ``test_values`` is set, then each test value occurs in between 0.1% and 99% of cases. Otherwise, no test is
-performed. The test is skipped if the ``paths`` are never present.
+If ``test_values`` is set, then each test value occurs in between 0.1% and 99% of cases.
+
+Otherwise, no test is performed.
+
+The test is skipped if the ``paths`` are never present.
 """
 
 from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
@@ -8,7 +11,7 @@ from pelican.util.getter import get_values
 
 
 class CodeDistribution:
-    def __init__(self, paths, test_values=[], limit=20):
+    def __init__(self, paths, test_values=(), limit=20):
         self.paths = paths
         self.test_values = set(test_values)
         self.limit = limit

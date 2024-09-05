@@ -11,7 +11,7 @@ item_unset = {"ocid": "0"}
 item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": f"{TEST_URL}/status/200"}]}}
 
 
-class mock_settings:
+class MockSettings:
     REQUESTS_TIMEOUT = 1
 
 
@@ -62,13 +62,11 @@ items_test_failed_multiple.append({"ocid": "99", "planning": {"documents": [{"ur
 @pytest.mark.skipif("CI" not in os.environ, reason="skipping slow test in development")
 @pytest.mark.filterwarnings("ignore:unclosed <socket.socket fd=:ResourceWarning")
 def test_failed_multiple():
-    with patch.object(url_availability, "settings", new=mock_settings):
+    with patch.object(url_availability, "settings", new=MockSettings):
         scope = {}
 
-        item_id = 0
-        for item in items_test_failed_multiple:
+        for item_id, item in items_test_failed_multiple:
             scope = url_availability.add_item(scope, item, item_id)
-            item_id += 1
 
         result = url_availability.get_result(scope)
         assert result["result"] is False
