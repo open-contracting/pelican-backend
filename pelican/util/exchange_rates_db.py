@@ -63,15 +63,17 @@ def update_from_fixer_io() -> None:
                 date_str = target_date.strftime("%Y-%m-%d")
                 logger.info("Fetching exchange rates for %s.", date_str)
 
-                # Datlab had already downloaded the exchange rates to EUR from another project. Changing the base would require
-                # re-downloading decades of exchange rates. It makes no difference to the application's logic, as all currency
-                # operations are performed in USD.
+                # Datlab had already downloaded the exchange rates to EUR from another project. Changing the base would
+                # require re-downloading decades of exchange rates. It makes no difference to the application's logic,
+                # as all currency operations are performed in USD.
                 #
-                # The Basic plan is required to request rates for all base currencies. The Professional plan supports the Time-Series
-                # Endpoint, which can request rates for multiple dates at once. https://fixer.io/documentation
+                # The Basic plan is required to request rates for all base currencies. The Professional plan supports
+                # the Time-Series Endpoint, which can request rates for multiple dates at once.
+                # https://fixer.io/documentation
                 #
-                # "The Fixer API delivers EOD / End of Day historical exchange rates, which become available at 00:05am GMT for the
-                # previous day and are time stamped at one second before midnight." https://fixer.io/faq
+                # "The Fixer API delivers EOD / End of Day historical exchange rates, which become available at 00:05am
+                # GMT for the previous day and are time stamped at one second before midnight."
+                # https://fixer.io/faq
                 response = requests.get(
                     f"{BASE_URL}/{date_str}?access_key={access_key}&base=EUR&symbols={symbols}", timeout=10
                 )

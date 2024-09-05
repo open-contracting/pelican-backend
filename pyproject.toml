@@ -11,7 +11,7 @@ select = ["ALL"]
 ignore = [
   "ANN", "COM", "EM",
   # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
-  "W191", "E501", "D206", "Q000", "Q001", "Q002", "Q003", "ISC001",
+  "W191", "D206", "Q000", "Q001", "Q002", "Q003", "ISC001",
   "D203", "D212",  # ignore incompatible rules
   "D200",  # documentation preferences
   "C901", "PLR091",  # complexity preferences

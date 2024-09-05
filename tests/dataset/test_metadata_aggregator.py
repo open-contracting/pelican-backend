@@ -192,7 +192,7 @@ def test_get_kingfisher_metadata_release(
                         "name": "Open Contracting Partnership",
                     },
                     "description": {
-                        "en": "For providing overall process titles and descriptions, often to give a summary of the contracting process as a whole.",
+                        "en": "For providing overall process titles and descriptions, often to give a summary of the contracting process as a whole.",  # noqa: E501
                     },
                     "documentationUrl": {"en": "https://extensions.open-contracting.org/en/extensions/process_title/"},
                     "name": {"en": "Process level title and description"},
@@ -260,7 +260,7 @@ def test_get_kingfisher_metadata_record(
                         "name": "Open Contracting Partnership",
                     },
                     "description": {
-                        "en": "For providing overall process titles and descriptions, often to give a summary of the contracting process as a whole.",
+                        "en": "For providing overall process titles and descriptions, often to give a summary of the contracting process as a whole.",  # noqa: E501
                     },
                     "documentationUrl": {"en": "https://extensions.open-contracting.org/en/extensions/process_title/"},
                     "name": {"en": "Process level title and description"},
