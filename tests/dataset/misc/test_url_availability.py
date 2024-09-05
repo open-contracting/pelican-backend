@@ -65,7 +65,7 @@ def test_failed_multiple():
     with patch.object(url_availability, "settings", new=MockSettings):
         scope = {}
 
-        for item_id, item in items_test_failed_multiple:
+        for item_id, item in enumerate(items_test_failed_multiple):
             scope = url_availability.add_item(scope, item, item_id)
 
         result = url_availability.get_result(scope)
