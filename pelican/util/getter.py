@@ -49,7 +49,7 @@ def parse_date(string: str | None) -> datetime.date | None:
     except ValueError:
         pass
     try:
-        return datetime.datetime.strptime(string[:10], "%Y-%m-%d").replace(tzinfo=datetime.UTC).date()
+        return datetime.datetime.strptime(string[:10], "%Y-%m-%d").date()
     except ValueError:
         return None
 

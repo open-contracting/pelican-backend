@@ -19,6 +19,7 @@ ignore = [
   "PTH",  # pathlib
   "A001",  # filter function
   "ARG001",  # yapw callbacks
+  "DTZ001", "DTZ007",  # allow naive datetimes from JSON data
   "FBT001",  # bool argument
   "PLR2004",  # magic values
   "PLW0603",  # db globals

@@ -47,7 +47,7 @@ def test_parse_datetime_invalid(value):
     ],
 )
 def test_parse_datetime_date(value, components):
-    assert parse_datetime(value) == datetime(*components, tzinfo=UTC)
+    assert parse_datetime(value) == datetime(*components)
 
 
 # The tests serve to document the formats that are accepted. We don't test week formats.
@@ -157,7 +157,7 @@ def test_parse_date_invalid(value):
     ],
 )
 def test_parse_date(value, components):
-    assert parse_date(value) == datetime(*components, tzinfo=UTC).date()
+    assert parse_date(value) == datetime(*components).date()
 
 
 @pytest.mark.parametrize(
@@ -207,7 +207,7 @@ def test_deep_get(data, expected, actual):
         ({"emptydict": {}}, "emptydict.unset", int, None),
         # date and datetime
         ({"todate": "2001-02-03"}, "todate", date, date(2001, 2, 3)),
-        ({"todatetime": "2001-02-03T04:05:06"}, "todatetime", datetime, datetime(2001, 2, 3, 4, 5, 6, tzinfo=UTC)),
+        ({"todatetime": "2001-02-03T04:05:06"}, "todatetime", datetime, datetime(2001, 2, 3, 4, 5, 6)),
         # dict
         ({"todict": None}, "todict", dict, {}),
         ({"todict": ["list"]}, "todict", dict, {}),
