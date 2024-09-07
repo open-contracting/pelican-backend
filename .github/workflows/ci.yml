@@ -21,16 +21,8 @@ jobs:
           TEST_URL: http://localhost:${{ job.services.httpbin.ports[8080] }}
         # For requests.get() in pelican.util.codelists._get() (from unittest tests).
         run: |
-          pytest -W error -W ignore::ResourceWarning -rs \
-            --cov contracting_process \
-            --cov dataset \
-            --cov manage \
-            --cov pelican \
-            --cov time_variance \
-            --cov workers
-      - env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: coveralls --service=github
+          coverage run --source=contracting_process,dataset,manage,pelican,time_variance,workers -m pytest -W error -W ignore::ResourceWarning -rs
+      - uses: coverallsapp/github-action@v2
     services:
       postgres:
         image: postgres:12

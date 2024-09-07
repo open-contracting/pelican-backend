@@ -1,9 +1,9 @@
 -r requirements.txt
-coveralls
+coverage
 jsonschema
+pre-commit
 psycopg2-binary
 pytest
-pytest-cov
 pytest-subtests
 rfc3339-validator
 rfc3986-validator
