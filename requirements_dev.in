@@ -1,7 +1,6 @@
 -r requirements.txt
 coverage
 jsonschema
-pre-commit
 psycopg2-binary
 pytest
 pytest-subtests
