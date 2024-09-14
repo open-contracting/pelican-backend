@@ -44,16 +44,13 @@ class FieldCoverageTests:
             with self.subTest(item=item):
                 result = self.module.calculate(item, "key")
 
-                self.assertEqual(
-                    result,
-                    {
-                        "name": self.module.name,
-                        "result": True,
-                        "value": None,
-                        "reason": None,
-                        "version": 1.0,
-                    },
-                )
+                assert result == {
+                    "name": self.module.name,
+                    "result": True,
+                    "value": None,
+                    "reason": None,
+                    "version": 1.0,
+                }
 
     def test_failing(self):
         # Ensure the child class is configured.
@@ -67,16 +64,13 @@ class FieldCoverageTests:
             with self.subTest(item=item):
                 result = self.module.calculate(item, "key")
 
-                self.assertEqual(
-                    result,
-                    {
-                        "name": self.module.name,
-                        "result": False,
-                        "value": return_value,
-                        "reason": reason,
-                        "version": 1.0,
-                    },
-                )
+                assert result == {
+                    "name": self.module.name,
+                    "result": False,
+                    "value": return_value,
+                    "reason": reason,
+                    "version": 1.0,
+                }
 
 
 class FieldQualityTests:
@@ -92,16 +86,13 @@ class FieldQualityTests:
             with self.subTest(value=value):
                 result = self.method({"xxx": value}, "xxx", **self.passing_kwargs)
 
-                self.assertEqual(
-                    result,
-                    {
-                        "name": self.module.name,
-                        "result": True,
-                        "value": None,
-                        "reason": None,
-                        "version": 1.0,
-                    },
-                )
+                assert result == {
+                    "name": self.module.name,
+                    "result": True,
+                    "value": None,
+                    "reason": None,
+                    "version": 1.0,
+                }
 
     def test_failing(self):
         for params in self.failing:
@@ -112,16 +103,13 @@ class FieldQualityTests:
             with self.subTest(value=value):
                 result = self.method({"xxx": value}, "xxx", **self.failing_kwargs)
 
-                self.assertEqual(
-                    result,
-                    {
-                        "name": self.module.name,
-                        "result": False,
-                        "value": return_value,
-                        "reason": reason,
-                        "version": 1.0,
-                    },
-                )
+                assert result == {
+                    "name": self.module.name,
+                    "result": False,
+                    "value": return_value,
+                    "reason": reason,
+                    "version": 1.0,
+                }
 
 
 class CompiledReleaseTests:
@@ -140,45 +128,36 @@ class CompiledReleaseTests:
             with self.subTest(item=item):
                 result = self.method(item, **self.passing_kwargs)
 
-                self.assertEqual(
-                    result,
-                    {
-                        "result": None,
-                        "meta": {"reason": reason},
-                        "application_count": None,
-                        "pass_count": None,
-                        "version": 1.0,
-                    },
-                )
+                assert result == {
+                    "result": None,
+                    "meta": {"reason": reason},
+                    "application_count": None,
+                    "pass_count": None,
+                    "version": 1.0,
+                }
 
     def test_passing(self):
         for item, meta, count in self.passing:
             with self.subTest(item=item):
                 result = self.method(item, **self.passing_kwargs)
 
-                self.assertEqual(
-                    result,
-                    {
-                        "result": True,
-                        "meta": meta,
-                        "application_count": count,
-                        "pass_count": count,
-                        "version": 1.0,
-                    },
-                )
+                assert result == {
+                    "result": True,
+                    "meta": meta,
+                    "application_count": count,
+                    "pass_count": count,
+                    "version": 1.0,
+                }
 
     def test_failing(self):
         for item, meta, application_count, pass_count in self.failing:
             with self.subTest(item=item):
                 result = self.method(item, **self.failing_kwargs)
 
-                self.assertEqual(
-                    result,
-                    {
-                        "result": False,
-                        "meta": meta,
-                        "application_count": application_count,
-                        "pass_count": pass_count,
-                        "version": 1.0,
-                    },
-                )
+                assert result == {
+                    "result": False,
+                    "meta": meta,
+                    "application_count": application_count,
+                    "pass_count": pass_count,
+                    "version": 1.0,
+                }
