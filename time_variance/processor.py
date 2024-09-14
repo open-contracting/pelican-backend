@@ -44,7 +44,7 @@ def do_work(dataset_id):
             for check_name, check in definitions.items():
                 scope.setdefault(check_name, get_empty_result_time_based_scope())
 
-                if check.filter(scope[check_name], ancestor_item, ancestor_item_id, new_item, new_item_id):
+                if check.applicable(scope[check_name], ancestor_item, ancestor_item_id, new_item, new_item_id):
                     scope[check_name]["total_count"] += 1
 
                     # Time-based checks report two numbers: "pairs found" and "pairs passed" (as a percentage of

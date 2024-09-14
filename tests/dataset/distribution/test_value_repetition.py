@@ -13,8 +13,8 @@ def test_undefined():
     tender_value_repetition = value_repetition.ModuleType("tender")
 
     scope = {}
-    for id, item in enumerate(items_test_undefined_multiple):
-        scope = tender_value_repetition.add_item(scope, item, id)
+    for item_id, item in enumerate(items_test_undefined_multiple):
+        scope = tender_value_repetition.add_item(scope, item, item_id)
     result = tender_value_repetition.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
@@ -73,8 +73,8 @@ def test_failed():
     awards_value_repetition = value_repetition.ModuleType("awards")
 
     scope = {}
-    for id, item in enumerate(items_test_failed):
-        scope = awards_value_repetition.add_item(scope, item, id)
+    for item_id, item in enumerate(items_test_failed):
+        scope = awards_value_repetition.add_item(scope, item, item_id)
     result = awards_value_repetition.get_result(scope)
     assert result["result"] is False
     assert result["value"] == 10.2

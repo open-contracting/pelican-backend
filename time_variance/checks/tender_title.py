@@ -16,7 +16,7 @@ def _get_title(item):
     return None
 
 
-def filter(scope, item, item_id, new_item, new_item_id):
+def applicable(scope, item, item_id, new_item, new_item_id):
     return bool(_get_title(item))
 
 

@@ -85,7 +85,7 @@ Compiled release-level checks
 Dataset-level checks
   No results for ``add_item\((?!\w+, \w+(\[\w+\])?, \w+( \+ \d+)?\))``
 Time-based checks
-  No results for ``\b(filter|evaluate)\((?!\w+, \w+, \w+, \w+, \w+\))``
+  No results for ``\b(applicable|evaluate)\((?!\w+, \w+, \w+, \w+, \w+\))``
 
 Any exceptions to the above must be moved to the global scope, or manually validated.
 

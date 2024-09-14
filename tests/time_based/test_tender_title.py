@@ -29,9 +29,9 @@ ancestor_no_title_3 = {"ocid": "3", "tender": {"title": ""}}
 ancestor_title_1 = {"ocid": "4", "tender": {"title": "title"}}
 
 
-def test_filter():
+def test_applicable():
     scope = get_empty_result_time_based_scope()
-    assert tender_title.filter(scope, ancestor_no_title_1, 1, None, None) is False
-    assert tender_title.filter(scope, ancestor_no_title_2, 1, None, None) is False
-    assert tender_title.filter(scope, ancestor_no_title_3, 1, None, None) is False
-    assert tender_title.filter(scope, ancestor_title_1, 1, None, None) is True
+    assert tender_title.applicable(scope, ancestor_no_title_1, 1, None, None) is False
+    assert tender_title.applicable(scope, ancestor_no_title_2, 1, None, None) is False
+    assert tender_title.applicable(scope, ancestor_no_title_3, 1, None, None) is False
+    assert tender_title.applicable(scope, ancestor_title_1, 1, None, None) is True

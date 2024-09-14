@@ -10,12 +10,12 @@ new_item = {
 }
 
 
-def test_filter():
+def test_applicable():
     scope = get_empty_result_time_based_scope()
-    result = ocid.filter(scope, ancestor, 1, new_item, 1024)
+    result = ocid.applicable(scope, ancestor, 1, new_item, 1024)
     assert result is True
 
-    result = ocid.filter(scope, ancestor, 1, None, None)
+    result = ocid.applicable(scope, ancestor, 1, None, None)
     assert result is True
 
 

@@ -52,11 +52,11 @@ ancestor_contracts_big = {
 }
 
 
-def test_filter():
+def test_applicable():
     scope = get_empty_result_time_based_scope()
-    assert phase_stable.filter(scope, ancestor_empty, 1, None, None) is True
-    assert phase_stable.filter(scope, ancestor_tender, 1, None, None) is True
-    assert phase_stable.filter(scope, ancestor_planning, 1, None, None) is True
+    assert phase_stable.applicable(scope, ancestor_empty, 1, None, None) is True
+    assert phase_stable.applicable(scope, ancestor_tender, 1, None, None) is True
+    assert phase_stable.applicable(scope, ancestor_planning, 1, None, None) is True
 
 
 def test_evaluate_tender():

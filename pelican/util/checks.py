@@ -97,7 +97,9 @@ def complete_result_resource(
 
 
 def complete_result_resource_pass_fail(
-    result: dict[str, Any], passed: bool, meta: dict[str, Any] | None = None
+    result: dict[str, Any],
+    passed: bool,  # noqa: FBT001
+    meta: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Build a compiled release-level check result, for a pass-fail check.
@@ -239,7 +241,11 @@ def _empty_field_result(name: str, version: float = 1.0) -> dict[str, Any]:
 
 
 def _prepare_field_result(
-    obj: dict[str, Any], passed: bool, value: Any, reason: str, return_value: Callable[[Any], Any] | None = None
+    obj: dict[str, Any],
+    passed: bool,  # noqa: FBT001
+    value: Any,
+    reason: str,
+    return_value: Callable[[Any], Any] | None = None,
 ) -> dict[str, Any]:
     obj["result"] = passed
     if not passed:
@@ -265,7 +271,7 @@ class ReservoirSampler:
         if self.index < self._limit:
             self.sample.append(value)
         else:
-            r = random.randint(0, self.index)
+            r = random.randint(0, self.index)  # noqa: S311
             if r < self._limit:
                 self.sample[r] = value
 

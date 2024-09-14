@@ -17,13 +17,10 @@ ignore = [
   "C901", "PLR091",  # complexity preferences
   "D1",  # docstrings
   "PTH",  # pathlib
-  "A001",  # filter function
   "ARG001",  # yapw callbacks
   "DTZ001", "DTZ007",  # allow naive datetimes from JSON data
-  "FBT001",  # bool argument
   "PLR2004",  # magic values
   "PLW0603",  # db globals
-  "S311",  # random
 ]
 
 [tool.ruff.lint.flake8-builtins]

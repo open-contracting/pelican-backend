@@ -9,16 +9,16 @@ Time-based
       :start-after: definitions
       :end-at: phase_stable
 
-Each check is an object (usually a module) that has two attributes: ``filter`` and ``evaluate``.
+Each check is an object (usually a module) that has two attributes: ``applicable`` and ``evaluate``.
 
-Pairs of items with the same ocid are read in batches from the dataset and its ancestor. Each item is passed to the ``filter`` function, which:
+Pairs of items with the same ocid are read in batches from the dataset and its ancestor. Each item is passed to the ``applicable`` function, which:
 
 #. Accepts five arguments: an accumulator, an ancestor's item and its ID, and a dataset's item and its ID
 #. Returns whether the check can be calculated against the pair of items (for example, if both are present)
 
-If ``filter`` returns ``True``, and if the new item is present, then the ``evaluate`` function:
+If ``applicable`` returns ``True``, and if the new item is present, then the ``evaluate`` function:
 
-#. Accepts five arguments, like ``filter``
+#. Accepts five arguments, like ``applicable``
 #. Determines whether the check passes
 #. Returns the accumulator, and whether the check passes
 

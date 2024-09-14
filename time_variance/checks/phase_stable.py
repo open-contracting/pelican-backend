@@ -9,7 +9,7 @@ from pelican.util.getter import deep_get
 version = 1.0
 
 
-def filter(scope, item, item_id, new_item, new_item_id):
+def applicable(scope, item, item_id, new_item, new_item_id):
     return True
 
 
