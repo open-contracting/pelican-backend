@@ -98,7 +98,7 @@ def complete_result_resource(
 
 def complete_result_resource_pass_fail(
     result: dict[str, Any],
-    passed: bool,  # noqa: FBT001
+    passed: bool,  # noqa: FBT001 # UX
     meta: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
@@ -242,7 +242,7 @@ def _empty_field_result(name: str, version: float = 1.0) -> dict[str, Any]:
 
 def _prepare_field_result(
     obj: dict[str, Any],
-    passed: bool,  # noqa: FBT001
+    passed: bool,  # noqa: FBT001 # UX
     value: Any,
     reason: str,
     return_value: Callable[[Any], Any] | None = None,
@@ -271,7 +271,7 @@ class ReservoirSampler:
         if self.index < self._limit:
             self.sample.append(value)
         else:
-            r = random.randint(0, self.index)  # noqa: S311
+            r = random.randint(0, self.index)  # noqa: S311 # non-cryptographic
             if r < self._limit:
                 self.sample[r] = value
 

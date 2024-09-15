@@ -35,7 +35,7 @@ def get_result(scope):
 
     for tender_id, items in scope.items():
         # Pick the "main" item that others repeat, at random.
-        item = random.choice(items)  # noqa: S311
+        item = random.choice(items)  # noqa: S311 # non-cryptographic
         sample = {"tender_id": tender_id, "ocid": item["ocid"], "item_id": item["item_id"], "all_items": items}
         repetitions = len(items)
         if repetitions == 1:
