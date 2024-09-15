@@ -81,7 +81,7 @@ def get_cursor(name="") -> psycopg2.extensions.cursor:
     """
     Connect to the database, if needed, and return a database cursor.
     """
-    global db_connected, db_connection, db_cursor_idx
+    global db_connected, db_connection, db_cursor_idx  # noqa: PLW0603
     if not db_connected:
         db_connection = psycopg2.connect(settings.DATABASE_URL)
         db_connected = True

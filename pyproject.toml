@@ -20,7 +20,6 @@ ignore = [
   "ARG001",  # yapw callbacks
   "DTZ001", "DTZ007",  # allow naive datetimes from JSON data
   "PLR2004",  # magic values
-  "PLW0603",  # db globals
 ]
 
 [tool.ruff.lint.flake8-builtins]
