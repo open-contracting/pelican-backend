@@ -13,9 +13,7 @@ routing_key = "contracting_process_checker"
 
 @click.command()
 def start():
-    """
-    Perform the field-level and compiled release-level checks.
-    """
+    """Perform the field-level and compiled release-level checks."""
     bootstrap()
     consume(on_message_callback=callback, queue=consume_routing_key, prefetch_count=multiprocessing.cpu_count())
 

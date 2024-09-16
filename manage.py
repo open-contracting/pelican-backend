@@ -12,9 +12,7 @@ def cli():
 
 @cli.command()
 def update_exchange_rates():
-    """
-    Update the exchange rates.
-    """
+    """Update the exchange rates."""
     if settings.FIXER_IO_API_KEY:
         exchange_rates_db.update_from_fixer_io()
 
@@ -25,9 +23,7 @@ def update_exchange_rates():
 @click.option("--previous-dataset", type=int, help="ID of previous dataset for time-based checks.")
 @click.option("--sample", type=int, help="Number of compiled releases to import.")
 def add(name, collection_id, previous_dataset, sample):
-    """
-    Create a dataset.
-    """
+    """Create a dataset."""
     message = {"name": name, "collection_id": collection_id, "ancestor_id": previous_dataset, "max_items": sample}
     publish(message, "ocds_kingfisher_extractor_init")
 
@@ -37,9 +33,7 @@ def add(name, collection_id, previous_dataset, sample):
 @click.option("--include-filtered", is_flag=True, help="Remove its filtered datasets.")
 @click.option("--force", is_flag=True, help="Forcefully remove the dataset.")
 def remove(dataset_id, include_filtered, force):
-    """
-    Delete a dataset.
-    """
+    """Delete a dataset."""
     cursor = get_cursor()
 
     cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s)", {"id": dataset_id})
@@ -179,17 +173,13 @@ def remove(dataset_id, include_filtered, force):
 
 @cli.group()
 def dev():
-    """
-    Commands for administrators and developers of Pelican backend.
-    """
+    """Commands for administrators and developers of Pelican backend."""
 
 
 @dev.command()
 @click.argument("dataset_id", type=int)
 def restart_dataset_check(dataset_id):
-    """
-    Restart the dataset check if the check.dataset worker failed.
-    """
+    """Restart the dataset check if the check.dataset worker failed."""
     update_dataset_state(dataset_id, Phase.CONTRACTING_PROCESS, State.OK)
     commit()
 

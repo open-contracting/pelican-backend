@@ -16,9 +16,7 @@ logger = logging.getLogger("pelican.workers.extract.kingfisher_process")
 
 @click.command()
 def start():
-    """
-    Extract collections from Kingfisher Process.
-    """
+    """Extract collections from Kingfisher Process."""
     consume(on_message_callback=callback, queue=consume_routing_key)
 
 

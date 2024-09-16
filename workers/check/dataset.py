@@ -25,9 +25,7 @@ logger = logging.getLogger("pelican.workers.check.dataset")
 
 @click.command()
 def start():
-    """
-    Perform the dataset-level checks.
-    """
+    """Perform the dataset-level checks."""
     bootstrap()
     consume(on_message_callback=callback, queue=consume_routing_key)
 

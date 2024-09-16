@@ -11,9 +11,7 @@ routing_key = "time_variance_checker"
 
 @click.command()
 def start():
-    """
-    Perform the time-based checks.
-    """
+    """Perform the time-based checks."""
     consume(on_message_callback=callback, queue=consume_routing_key)
 
 

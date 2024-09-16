@@ -1,6 +1,4 @@
-"""
-All OCIDs in an older collection of a data source are present in this newer collection of the same source.
-"""
+"""All OCIDs in an older collection of a data source are present in this newer collection of the same source."""
 
 version = 1.0
 

@@ -1,6 +1,4 @@
-"""
-Each referencing ``id`` is present and matches the ``id`` of exactly one party.
-"""
+"""Each referencing ``id`` is present and matches the ``id`` of exactly one party."""
 
 from collections import Counter
 

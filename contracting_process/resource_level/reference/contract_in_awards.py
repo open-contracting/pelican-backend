@@ -1,6 +1,4 @@
-"""
-Each contract's ``awardID`` is present and matches the ``id`` of exactly one award.
-"""
+"""Each contract's ``awardID`` is present and matches the ``id`` of exactly one award."""
 
 from collections import Counter
 

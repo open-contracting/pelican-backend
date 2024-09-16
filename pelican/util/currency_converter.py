@@ -69,9 +69,7 @@ def import_data(data: list[tuple[datetime.date, dict[str, float]]]) -> None:
 
 
 def interpolation_closest(currency, start_date, end_date):
-    """
-    start_date and end_date are exclusive.
-    """
+    """start_date and end_date are exclusive."""
     start_date_rate = rates[start_date][currency]
     end_date_rate = rates[end_date][currency]
 
@@ -102,9 +100,7 @@ def interpolation_closest(currency, start_date, end_date):
 
 
 def interpolation_linear(currency, start_date, end_date):
-    """
-    start_date and end_date are exclusive.
-    """
+    """start_date and end_date are exclusive."""
     start_date_rate = rates[start_date][currency]
     end_date_rate = rates[end_date][currency]
 

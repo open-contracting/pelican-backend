@@ -16,9 +16,7 @@ logger = logging.getLogger("pelican.workers.report")
 
 @click.command()
 def start():
-    """
-    Create reports, pick examples, and update dataset metadata.
-    """
+    """Create reports, pick examples, and update dataset metadata."""
     consume(
         on_message_callback=callback,
         queue=consume_routing_key,

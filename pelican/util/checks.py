@@ -52,9 +52,7 @@ def get_empty_result_time_based(version: float = 1.0) -> dict[str, Any]:
 
 
 def get_empty_result_time_based_scope() -> dict[str, Any]:
-    """
-    Initialize a time-based check result accumulator.
-    """
+    """Initialize a time-based check result accumulator."""
     return {
         "total_count": 0,
         "coverage_count": 0,

@@ -8,9 +8,7 @@ consume_routing_key = "wiper_init"
 
 @click.command()
 def start():
-    """
-    Delete datasets.
-    """
+    """Delete datasets."""
     consume(on_message_callback=callback, queue=consume_routing_key)
 
 

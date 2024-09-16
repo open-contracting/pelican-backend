@@ -49,17 +49,13 @@ YAPW_KWARGS = {
 
 
 def consume(*args: Any, prefetch_count=1, **kwargs: Any) -> None:
-    """
-    Consume messages from RabbitMQ.
-    """
+    """Consume messages from RabbitMQ."""
     client = AsyncConsumer(*args, prefetch_count=prefetch_count, **kwargs, **YAPW_KWARGS)
     client.start()
 
 
 def publish(*args: Any, **kwargs: Any) -> None:
-    """
-    Publish a message to RabbitMQ.
-    """
+    """Publish a message to RabbitMQ."""
     client = Blocking(**YAPW_KWARGS)
     try:
         client.publish(*args, **kwargs)
@@ -78,9 +74,7 @@ class Json(psycopg2.extras.Json):
 
 
 def get_cursor(name="") -> psycopg2.extensions.cursor:
-    """
-    Connect to the database, if needed, and return a database cursor.
-    """
+    """Connect to the database, if needed, and return a database cursor."""
     global db_connected, db_connection, db_cursor_idx  # noqa: PLW0603
     if not db_connected:
         db_connection = psycopg2.connect(settings.DATABASE_URL)
@@ -99,16 +93,12 @@ def get_cursor(name="") -> psycopg2.extensions.cursor:
 
 
 def commit() -> None:
-    """
-    Commit the transaction.
-    """
+    """Commit the transaction."""
     db_connection.commit()
 
 
 def rollback() -> None:
-    """
-    Rollback the transaction.
-    """
+    """Rollback the transaction."""
     db_connection.rollback()
 
 
