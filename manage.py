@@ -46,7 +46,7 @@ def remove(dataset_id, include_filtered, force):
         {"dataset_id": dataset_id},
     )
     row = cursor.fetchone()
-    if not row or row[0] not in (Phase.CHECKED, Phase.DELETED) or row[1] != State.OK:
+    if not row or row[0] not in {Phase.CHECKED, Phase.DELETED} or row[1] != State.OK:
         if force:
             click.secho(
                 f"Forcefully removing dataset {dataset_id} (phase={row[0]}, state={row[1]}). (Its phase should be "

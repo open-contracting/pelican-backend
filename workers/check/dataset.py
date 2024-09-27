@@ -44,7 +44,7 @@ def callback(client_state, channel, method, properties, input_message):
         logger.info("Dataset %s: DATASET phase already in-progress", dataset_id)
         ack(client_state, channel, delivery_tag)
         return
-    if dataset["phase"] in (Phase.DATASET, Phase.TIME_VARIANCE, Phase.CHECKED, Phase.DELETED):
+    if dataset["phase"] in {Phase.DATASET, Phase.TIME_VARIANCE, Phase.CHECKED, Phase.DELETED}:
         logger.info("Dataset %s: DATASET phase already complete", dataset_id)
         ack(client_state, channel, delivery_tag)
         return

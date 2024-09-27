@@ -52,7 +52,7 @@ def _definitions(properties, path=None, refs=None):
             elif refs[-1] == "ContactPoint":
                 if key == "email":
                     checks.append((email.calculate, email.name))
-                elif key in ("faxNumber", "telephone"):
+                elif key in {"faxNumber", "telephone"}:
                     checks.append((telephone.calculate, telephone.name))
             elif refs[-1] == "Document":
                 if key == "description":
@@ -82,7 +82,7 @@ def _definitions(properties, path=None, refs=None):
                 if key == "numberOfTenderers":
                     checks.append((number.calculate, number.name))
             elif refs[-1] == "Value":  # noqa: SIM102 # consistency
-                if key == "amount" and new_path[-3] in ("transactions", "unit"):
+                if key == "amount" and new_path[-3] in {"transactions", "unit"}:
                     checks.append((number.calculate, number.name))
 
             yield dot_path, checks

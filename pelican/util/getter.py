@@ -93,7 +93,7 @@ def deep_get(value: Any, path: str, force: type[Any] | None = None) -> Any:
     for part in path.split("."):
         if type(value) is dict and part in value:
             value = value[part]
-        elif force in (dict, list, str):
+        elif force in {dict, list, str}:
             return force()
         else:
             return None
@@ -103,9 +103,9 @@ def deep_get(value: Any, path: str, force: type[Any] | None = None) -> Any:
             return parse_date(value)
         if force is datetime.datetime:
             return parse_datetime(value)
-        if force in (dict, list):
+        if force in {dict, list}:
             value = force()
-        elif force in (float, int, str):
+        elif force in {float, int, str}:
             try:
                 value = force(value)
             except (ValueError, TypeError):

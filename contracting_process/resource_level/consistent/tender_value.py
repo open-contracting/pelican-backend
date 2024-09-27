@@ -38,7 +38,7 @@ def calculate(item):
         planning_amount = convert(planning_amount, planning_currency, "USD", date)
         tender_amount = convert(tender_amount, tender_currency, "USD", date)
 
-    if planning_amount in (0, None) or tender_amount in (0, None):
+    if planning_amount in {0, None} or tender_amount in {0, None}:
         result["meta"] = {"reason": "an amount is zero or unconvertable"}
         return result
 
