@@ -192,9 +192,7 @@ def get_values(item: Any, str_path: str, *, value_only: bool | None = False) -> 
         if type(item[key]) is list:
             result = []
             for index, list_item in enumerate(item[key]):
-                values = get_values(list_item, ".".join(path[1:]), value_only=value_only)
-
-                for value in values:
+                for value in get_values(list_item, ".".join(path[1:]), value_only=value_only):
                     if value_only:
                         result.append(value)
                     elif value and "path" in value:
@@ -231,9 +229,7 @@ def get_values(item: Any, str_path: str, *, value_only: bool | None = False) -> 
     ):
         result = []
 
-        values = get_values(item[field][index], ".".join(path[1:]), value_only=value_only)
-
-        for value in values:
+        for value in get_values(item[field][index], ".".join(path[1:]), value_only=value_only):
             if value_only:
                 result.append(value)
             elif value and "path" in value:
