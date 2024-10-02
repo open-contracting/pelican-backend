@@ -119,5 +119,5 @@ RABBIT_EXCHANGE_NAME = os.getenv("RABBIT_EXCHANGE_NAME", "pelican_development")
 if "SENTRY_DSN" in os.environ:
     sentry_sdk.init(
         dsn=os.getenv("SENTRY_DSN"),
-        traces_sample_rate=0,  # The Sentry plan does not include Performance.
+        traces_sample_rate=1.0,
     )
