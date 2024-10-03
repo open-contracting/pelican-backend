@@ -69,7 +69,7 @@ def import_data(data: list[tuple[datetime.date, dict[str, float]]]) -> None:
 
 
 def interpolation_closest(currency, start_date, end_date):
-    """start_date and end_date are exclusive."""
+    # start_date and end_date are exclusive.
     start_date_rate = rates[start_date][currency]
     end_date_rate = rates[end_date][currency]
 
@@ -100,7 +100,7 @@ def interpolation_closest(currency, start_date, end_date):
 
 
 def interpolation_linear(currency, start_date, end_date):
-    """start_date and end_date are exclusive."""
+    # start_date and end_date are exclusive.
     start_date_rate = rates[start_date][currency]
     end_date_rate = rates[end_date][currency]
 
@@ -165,23 +165,19 @@ def convert(amount, original_currency, target_currency, rel_date):
         except (TypeError, ValueError):
             return None
 
-    # original currency
     original_currency_rate = None
     if rel_date in rates and original_currency in rates[rel_date]:
         original_currency_rate = rates[rel_date][original_currency]
     elif settings.CURRENCY_CONVERTER_EXTRAPOLATION == "closest":
         original_currency_rate = extrapolation_closest_rate(original_currency, rel_date)
-
     if original_currency_rate is None:
         return None
 
-    # target currency
     target_currency_rate = None
     if rel_date in rates and target_currency in rates[rel_date]:
         target_currency_rate = rates[rel_date][target_currency]
     elif settings.CURRENCY_CONVERTER_EXTRAPOLATION == "closest":
         target_currency_rate = extrapolation_closest_rate(target_currency, rel_date)
-
     if target_currency_rate is None:
         return None
 
