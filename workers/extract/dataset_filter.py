@@ -19,18 +19,18 @@ def start():
 
 
 # Sample message:
-# > {
-# >     "dataset_id_original": 2,
-# >     "filter_message": {
-# >         "release_date_from": '2019-12-02',
-# >         "release_date_to": '2020-02-02',
-# >         "buyer": ["ministry_of_finance", "state"],
-# >         "buyer_regex": "Development$",
-# >         "procuring_entity": ["a", "b"],
-# >         "procuring_entity_regex": "(a|b)casdf+"
-# >     },
-# >     "max_items": 5000
-# > }
+# {
+#     "dataset_id_original": 2,
+#     "filter_message": {
+#         "release_date_from": '2019-12-02',
+#         "release_date_to": '2020-02-02',
+#         "buyer": ["ministry_of_finance", "state"],
+#         "buyer_regex": "Development$",
+#         "procuring_entity": ["a", "b"],
+#         "procuring_entity_regex": "(a|b)casdf+"
+#     },
+#     "max_items": 5000
+# }
 def callback(client_state, channel, method, properties, input_message):
     cursor = get_cursor()
 

@@ -13,6 +13,7 @@ ignore = [
     "ARG001",  # pika
     "D1",
     "DTZ",
+    "ERA001",  # commented-out code
     "PLR2004",  # magic
     "PTH",
     "D200",  # https://github.com/astral-sh/ruff/issues/6269

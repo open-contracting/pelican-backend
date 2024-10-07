@@ -47,10 +47,10 @@ def calculate(item):
             # Multiple matches across different types are currently designed to pass. (This assumes users do not coerce
             # IDs to strings.) If we change this to a failure, uncomment the following lines.
             #
-            # > elif id_counts_str[str(award_id)] > 1:
-            # >     failed_paths.append(
-            # >       {"path": path, "awardID": award_id, "reason": "multiple awards match the awardID (types differ)"}
-            # >     )
+            # elif id_counts_str[str(award_id)] > 1:
+            #     failed_paths.append(
+            #       {"path": path, "awardID": award_id, "reason": "multiple awards match the awardID (types differ)"}
+            #     )
             else:
                 pass_count += 1
 
