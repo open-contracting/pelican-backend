@@ -29,17 +29,20 @@ def create_compiled_release(cursor, collection_id, collection_file_item_id, data
             ocid,
             collection_id,
             collection_file_item_id,
-            data_id
+            data_id,
+            release_date
         ) VALUES (
             'ocds-lcuori-1',
             %(collection_id)s,
             %(collection_file_item_id)s,
-            %(max_data_id)s
+            %(max_data_id)s,
+            '2038'
         ), (
             'ocds-lcuori-1',
             %(collection_id)s,
             %(collection_file_item_id)s,
-            %(min_data_id)s
+            %(min_data_id)s,
+            '1970'
         )
         """,
         {
@@ -163,14 +166,16 @@ def test_get_kingfisher_metadata_release(
             collection_id,
             collection_file_item_id,
             data_id,
-            package_data_id
+            package_data_id,
+            release_date
         ) VALUES (
             '1',
             'ocds-lcuori-1',
             %(collection_id)s,
             %(collection_file_item_id)s,
             %(data_id)s,
-            %(package_data_id)s
+            %(package_data_id)s,
+            ''
         )
         """,
         {

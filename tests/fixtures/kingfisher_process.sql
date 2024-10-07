@@ -38,7 +38,8 @@ CREATE TABLE IF NOT EXISTS compiled_release (
     ocid text NOT NULL,
     collection_id bigint NOT NULL,
     collection_file_item_id bigint NOT NULL,
-    data_id bigint NOT NULL
+    data_id bigint NOT NULL,
+    release_date text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS data (
@@ -69,5 +70,6 @@ CREATE TABLE IF NOT EXISTS release (
     collection_id bigint NOT NULL,
     collection_file_item_id bigint NOT NULL,
     data_id bigint NOT NULL,
-    package_data_id bigint NOT NULL
+    package_data_id bigint NOT NULL,
+    release_date text NOT NULL
 );
