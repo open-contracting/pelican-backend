@@ -122,16 +122,13 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
         """\
         SELECT
             LEFT(MAX(ocid), 11) AS ocid_prefix,
-            MIN(data ->> 'date') AS published_from,
-            MAX(data ->> 'date') AS published_to
+            MIN(release_date) AS published_from,
+            MAX(release_date) AS published_to
         FROM
             compiled_release
-            JOIN data ON data.id = data_id
         WHERE
             collection_id = %(collection_id)s
-            AND data ? 'date'
-            AND data ->> 'date' IS NOT NULL
-            AND data ->> 'date' <> ''
+            AND release_date <> ''
         """,
         {"collection_id": collection_id},
     )
