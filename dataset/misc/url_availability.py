@@ -62,6 +62,7 @@ def get_result(scope):
     failed_examples = []
     for sample in sampler:
         try:
+            # Security: Potential SSRF via user-provided URL (within OCDS publication).
             response = requests.get(sample["value"], timeout=settings.REQUESTS_TIMEOUT, stream=True)
             if requests.codes.ok <= response.status_code < requests.codes.bad_request:
                 sample["status"] = "OK"

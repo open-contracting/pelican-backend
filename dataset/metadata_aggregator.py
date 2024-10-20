@@ -188,14 +188,15 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
             if row[key]:
                 metadata["collection_metadata"][key] = row[key]
 
-        for repository_url in deep_get(row["data"], "extensions", list):
+        for extension_url in deep_get(row["data"], "extensions", list):
             try:
-                response = requests.get(repository_url, timeout=30)
+                # Security: Potential SSRF via user-provided URL (within OCDS publication).
+                response = requests.get(extension_url, timeout=30)
                 if response.status_code != requests.codes.ok:
                     continue
 
                 extension = response.json()
-                extension["repositoryUrl"] = repository_url
+                extension["repositoryUrl"] = extension_url
                 metadata["collection_metadata"]["extensions"].append(extension)
             except requests.RequestException:
                 pass
