@@ -190,7 +190,7 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
 
         for extension_url in deep_get(row["data"], "extensions", list):
             try:
-                # Security: Potential SSRF via user-provided URL (within OCDS publication).
+                # Security: Potential SSRF via extension URLs (within OCDS publication).
                 response = requests.get(extension_url, timeout=30)
                 if response.status_code != requests.codes.ok:
                     continue
