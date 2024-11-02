@@ -27,17 +27,11 @@ CREATE TABLE IF NOT EXISTS collection_file (
     collection_id bigint NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS collection_file_item (
-    id bigserial PRIMARY KEY,
-    number integer NOT NULL,
-    collection_file_id bigint NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS compiled_release (
     id bigserial PRIMARY KEY,
     ocid text NOT NULL,
     collection_id bigint NOT NULL,
-    collection_file_item_id bigint NOT NULL,
+    collection_file_id bigint NOT NULL,
     data_id bigint NOT NULL,
     release_date text NOT NULL
 );
@@ -58,7 +52,7 @@ CREATE TABLE IF NOT EXISTS record (
     id bigserial PRIMARY KEY,
     ocid text NOT NULL,
     collection_id bigint NOT NULL,
-    collection_file_item_id bigint NOT NULL,
+    collection_file_id bigint NOT NULL,
     data_id bigint NOT NULL,
     package_data_id bigint NOT NULL
 );
@@ -68,7 +62,7 @@ CREATE TABLE IF NOT EXISTS release (
     release_id text NOT NULL,
     ocid text NOT NULL,
     collection_id bigint NOT NULL,
-    collection_file_item_id bigint NOT NULL,
+    collection_file_id bigint NOT NULL,
     data_id bigint NOT NULL,
     package_data_id bigint NOT NULL,
     release_date text NOT NULL
