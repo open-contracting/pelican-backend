@@ -20,7 +20,7 @@ items_test_tender_lifecycle = [
 ]
 
 
-def create_compiled_release(cursor, collection_id, collection_file_item_id, data_rows):
+def create_compiled_release(cursor, collection_id, collection_file_id, data_rows):
     min_data_id, max_data_id = data_rows
 
     cursor.execute(
@@ -28,26 +28,26 @@ def create_compiled_release(cursor, collection_id, collection_file_item_id, data
         INSERT INTO compiled_release (
             ocid,
             collection_id,
-            collection_file_item_id,
+            collection_file_id,
             data_id,
             release_date
         ) VALUES (
             'ocds-lcuori-1',
             %(collection_id)s,
-            %(collection_file_item_id)s,
+            %(collection_file_id)s,
             %(max_data_id)s,
             '2038'
         ), (
             'ocds-lcuori-1',
             %(collection_id)s,
-            %(collection_file_item_id)s,
+            %(collection_file_id)s,
             %(min_data_id)s,
             '1970'
         )
         """,
         {
             "collection_id": collection_id,
-            "collection_file_item_id": collection_file_item_id,
+            "collection_file_id": collection_file_id,
             "min_data_id": min_data_id,
             "max_data_id": max_data_id,
         },
@@ -121,11 +121,11 @@ def test_get_kingfisher_metadata_tree(kingfisher_process_cursor, collection_rows
 
 
 def test_get_kingfisher_metadata_compiled_release(
-    kingfisher_process_cursor, collection_rows, collection_file_item, data_rows, caplog
+    kingfisher_process_cursor, collection_rows, collection_file, data_rows, caplog
 ):
     original, compiled = collection_rows
 
-    create_compiled_release(kingfisher_process_cursor, compiled, collection_file_item, data_rows)
+    create_compiled_release(kingfisher_process_cursor, compiled, collection_file, data_rows)
 
     assert get_kingfisher_metadata(kingfisher_process_cursor, compiled) == {
         "collection_metadata": {
@@ -150,11 +150,11 @@ def test_get_kingfisher_metadata_compiled_release(
 
 
 def test_get_kingfisher_metadata_release(
-    kingfisher_process_cursor, collection_rows, collection_file_item, data_rows, data_and_package_data_rows, caplog
+    kingfisher_process_cursor, collection_rows, collection_file, data_rows, data_and_package_data_rows, caplog
 ):
     original, compiled = collection_rows
 
-    create_compiled_release(kingfisher_process_cursor, compiled, collection_file_item, data_rows)
+    create_compiled_release(kingfisher_process_cursor, compiled, collection_file, data_rows)
 
     data_id, package_data_id = data_and_package_data_rows
 
@@ -164,7 +164,7 @@ def test_get_kingfisher_metadata_release(
             release_id,
             ocid,
             collection_id,
-            collection_file_item_id,
+            collection_file_id,
             data_id,
             package_data_id,
             release_date
@@ -172,7 +172,7 @@ def test_get_kingfisher_metadata_release(
             '1',
             'ocds-lcuori-1',
             %(collection_id)s,
-            %(collection_file_item_id)s,
+            %(collection_file_id)s,
             %(data_id)s,
             %(package_data_id)s,
             ''
@@ -180,7 +180,7 @@ def test_get_kingfisher_metadata_release(
         """,
         {
             "collection_id": original,
-            "collection_file_item_id": collection_file_item,
+            "collection_file_id": collection_file,
             "data_id": data_id,
             "package_data_id": package_data_id,
         },
@@ -222,11 +222,11 @@ def test_get_kingfisher_metadata_release(
 
 
 def test_get_kingfisher_metadata_record(
-    kingfisher_process_cursor, collection_rows, collection_file_item, data_rows, data_and_package_data_rows, caplog
+    kingfisher_process_cursor, collection_rows, collection_file, data_rows, data_and_package_data_rows, caplog
 ):
     original, compiled = collection_rows
 
-    create_compiled_release(kingfisher_process_cursor, compiled, collection_file_item, data_rows)
+    create_compiled_release(kingfisher_process_cursor, compiled, collection_file, data_rows)
 
     data_id, package_data_id = data_and_package_data_rows
 
@@ -235,20 +235,20 @@ def test_get_kingfisher_metadata_record(
         INSERT INTO record (
             ocid,
             collection_id,
-            collection_file_item_id,
+            collection_file_id,
             data_id,
             package_data_id
         ) VALUES (
             'ocds-lcuori-1',
             %(collection_id)s,
-            %(collection_file_item_id)s,
+            %(collection_file_id)s,
             %(data_id)s,
             %(package_data_id)s
         )
         """,
         {
             "collection_id": original,
-            "collection_file_item_id": collection_file_item,
+            "collection_file_id": collection_file,
             "data_id": data_id,
             "package_data_id": package_data_id,
         },

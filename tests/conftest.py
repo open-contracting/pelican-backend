@@ -118,7 +118,7 @@ def collection_rows(kingfisher_process_cursor):
 
 
 @pytest.fixture(scope="session")
-def collection_file_item(kingfisher_process_cursor, collection_rows):
+def collection_file(kingfisher_process_cursor, collection_rows):
     kingfisher_process_cursor.execute(
         """\
         INSERT INTO collection_file (
@@ -134,21 +134,6 @@ def collection_file_item(kingfisher_process_cursor, collection_rows):
         {"collection_id": collection_rows[1]},
     )
     kingfisher_process_cursor.execute("SELECT MAX(id) FROM collection_file")
-    collection_file_id = kingfisher_process_cursor.fetchone()[0]
-
-    kingfisher_process_cursor.execute(
-        """\
-        INSERT INTO collection_file_item (
-            number,
-            collection_file_id
-        ) VALUES (
-            0,
-            %(collection_file_id)s
-        )
-        """,
-        {"collection_file_id": collection_file_id},
-    )
-    kingfisher_process_cursor.execute("SELECT MAX(id) FROM collection_file_item")
     return kingfisher_process_cursor.fetchone()[0]
 
 
