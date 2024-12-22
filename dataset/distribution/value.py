@@ -10,6 +10,7 @@ invalid, before 1999, or in the future.
 
 import datetime
 import functools
+from operator import itemgetter
 
 from pelican.util.checks import get_empty_result_dataset
 from pelican.util.getter import deep_get, get_amount, get_values
@@ -71,7 +72,7 @@ def get_result(scope):
         result["meta"] = {"reason": "sum is 0, causing division by zero error"}
         return result
 
-    sorted_values = sorted(values, key=lambda item: item["abs_amount"], reverse=True)
+    sorted_values = sorted(values, key=itemgetter("abs_amount"), reverse=True)
     percent_size = int(count / 100)
     percent_index_1 = percent_size
     percent_index_5 = 5 * percent_size

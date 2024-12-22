@@ -1,5 +1,6 @@
 import datetime
 import os
+from operator import itemgetter
 
 from pelican.util import settings
 
@@ -26,7 +27,7 @@ def import_data(data: list[tuple[datetime.date, dict[str, float]]]) -> None:
     for item in data:
         currencies.update(item[1].keys())
 
-    data.sort(key=lambda k: k[0])
+    data.sort(key=itemgetter(0))
 
     if settings.CURRENCY_CONVERTER_INTERPOLATION:
         real_data_dates: dict[str, list[datetime.date]] = {currency: [] for currency in currencies}
