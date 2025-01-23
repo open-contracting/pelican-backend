@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS report (
 -- pelican-frontend/backend/api/views.py (FieldLevelDetail, ResourceLevelDetail)
 -- pelican-frontend/backend/exporter/template_tags/field.py
 -- pelican-frontend/backend/exporter/template_tags/resource.py
-CREATE INDEX IF NOT EXISTS report_dataset_id_type_data_idx ON report USING btree_gin (dataset_id, type, data);
+CREATE INDEX IF NOT EXISTS report_dataset_id_type_data_idx ON report USING gin (dataset_id, type, data);
 
 CREATE TABLE IF NOT EXISTS progress_monitor_dataset (
     id bigserial PRIMARY KEY,
