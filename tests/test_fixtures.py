@@ -1,3 +1,4 @@
+import importlib.util
 import os
 import warnings
 
@@ -28,8 +29,6 @@ def get_test_cases():
             filename = os.path.join(root, file)
 
             # https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
-            import importlib.util
-
             spec = importlib.util.spec_from_file_location("dummy", filename)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
