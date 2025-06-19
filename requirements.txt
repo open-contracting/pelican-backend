@@ -34,7 +34,7 @@ sentry-sdk==2.8.0
     # via -r requirements.in
 six==1.16.0
     # via python-dateutil
-urllib3==2.2.2
+urllib3==2.5.0
     # via
     #   requests
     #   sentry-sdk
