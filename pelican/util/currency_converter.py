@@ -6,9 +6,9 @@ from pelican.util import settings
 
 # https://docs.pytest.org/en/latest/example/simple.html#pytest-current-test-environment-variable
 if "PYTEST_CURRENT_TEST" in os.environ:
-    import pelican.util.exchange_rates_db as exchange_rates
-else:
     import pelican.util.exchange_rates_file as exchange_rates
+else:
+    import pelican.util.exchange_rates_db as exchange_rates
 
 rates: dict[datetime.date, dict[str, float]] = {}
 bounds: dict[str, tuple[datetime.date, datetime.date]] = {}
