@@ -1,4 +1,4 @@
-from validate_email import validate_email  # noqa: A005
+from validate_email import validate_email
 
 from pelican.util.checks import field_quality_check
 
