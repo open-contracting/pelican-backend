@@ -100,7 +100,7 @@ CURRENCY_CONVERTER_EXTRAPOLATION_MAX_DAYS_FALLBACK = int(
 # because it is a dependency.
 STEPS = os.getenv(
     "PELICAN_BACKEND_STEPS",
-    ",".join(getattr(Steps, attr) for attr in dir(Steps) if not attr.startswith("__")),
+    ",".join(getattr(Steps, attr) for attr in vars(Steps) if not attr.startswith("__")),
 ).split(",")
 
 # Dependency configuration
