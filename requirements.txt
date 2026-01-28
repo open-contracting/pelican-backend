@@ -14,7 +14,7 @@ idna==3.7
     # via requests
 jsonref==1.0.0.post1
     # via -r requirements.in
-orjson==3.11.4
+orjson==3.11.5
     # via
     #   -r requirements.in
     #   yapw
@@ -40,5 +40,5 @@ urllib3==2.6.3
     #   sentry-sdk
 validate-email==1.3
     # via -r requirements.in
-yapw[perf]==0.1.4
+yapw==0.1.4
     # via -r requirements.in
