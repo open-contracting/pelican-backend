@@ -31,3 +31,6 @@ ignore-variadic-names = true
     "ARG001", "D", "FBT003", "INP001", "PLR2004", "S", "TRY003",
     "RUF012",  # examples
 ]
+
+[tool.uv.pip]
+exclude-newer = "1 week"
