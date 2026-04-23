@@ -7,3 +7,6 @@ jobs:
       contents: write
     secrets:
       personal-access-token: ${{ secrets.PAT }}
+    with:
+      # Copy of release-schema.json to generate checks.
+      ocds-schema-exceptions: release-schema.json
