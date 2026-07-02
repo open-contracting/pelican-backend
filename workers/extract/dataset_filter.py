@@ -1,7 +1,7 @@
 import logging
 
 import click
-from psycopg2 import sql
+from psycopg import sql
 from yapw.methods import nack
 
 from pelican.util.services import Json, commit, consume, get_cursor
@@ -70,7 +70,7 @@ def callback(client_state, channel, method, properties, input_message):
 
         meta = {
             k: v
-            for k, v in row[0].items()
+            for k, v in row["meta"].items()
             if k not in {"tender_lifecycle", "compiled_releases", "data_quality_tool_metadata"}
         }
 
@@ -82,7 +82,7 @@ def callback(client_state, channel, method, properties, input_message):
             """,
             {"dataset_id": dataset_id_original, "meta": Json(meta)},
         )
-        dataset_id_filtered = cursor.fetchone()[0]
+        dataset_id_filtered = cursor.fetchone()["id"]
         commit()
 
         cursor.execute(
@@ -133,7 +133,7 @@ def callback(client_state, channel, method, properties, input_message):
         logger.info(statement.as_string(cursor))
 
         cursor.execute(statement, variables)
-        ids = [row[0] for row in cursor]
+        ids = [row["id"] for row in cursor]
 
         process_items(
             client_state=client_state,
@@ -158,6 +158,7 @@ def insert_items(cursors, dataset_id, ids):
         """,
         {"dataset_id": dataset_id, "ids": ids},
     )
+    return [row["id"] for row in cursors["default"]]
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import json
 import os
 
-import psycopg2.extras
+import psycopg
 import pytest
 from jsonschema import FormatChecker
 
@@ -36,8 +36,8 @@ def format_checker():
 
 @pytest.fixture(scope="session")
 def kingfisher_process_cursor():
-    connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
-    cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    connection = psycopg.connect(settings.KINGFISHER_PROCESS_DATABASE_URL, row_factory=psycopg.rows.dict_row)
+    cursor = connection.cursor()
 
     with open(os.path.join("tests", "fixtures", "kingfisher_process.sql")) as f:
         cursor.execute(f.read())
@@ -133,8 +133,8 @@ def collection_file(kingfisher_process_cursor, collection_rows):
         """,
         {"collection_id": collection_rows[1]},
     )
-    kingfisher_process_cursor.execute("SELECT MAX(id) FROM collection_file")
-    return kingfisher_process_cursor.fetchone()[0]
+    kingfisher_process_cursor.execute("SELECT MAX(id) AS id FROM collection_file")
+    return kingfisher_process_cursor.fetchone()["id"]
 
 
 @pytest.fixture(scope="session")
@@ -150,8 +150,8 @@ def data_rows(kingfisher_process_cursor):
         )
         """
     )
-    kingfisher_process_cursor.execute("SELECT MAX(id) FROM data")
-    min_data_id = kingfisher_process_cursor.fetchone()[0]
+    kingfisher_process_cursor.execute("SELECT MAX(id) AS id FROM data")
+    min_data_id = kingfisher_process_cursor.fetchone()["id"]
 
     kingfisher_process_cursor.execute(
         """\
@@ -164,8 +164,8 @@ def data_rows(kingfisher_process_cursor):
         )
         """
     )
-    kingfisher_process_cursor.execute("SELECT MAX(id) FROM data")
-    max_data_id = kingfisher_process_cursor.fetchone()[0]
+    kingfisher_process_cursor.execute("SELECT MAX(id) AS id FROM data")
+    max_data_id = kingfisher_process_cursor.fetchone()["id"]
 
     return min_data_id, max_data_id
 
@@ -183,8 +183,8 @@ def data_and_package_data_rows(kingfisher_process_cursor):
         )
         """
     )
-    kingfisher_process_cursor.execute("SELECT MAX(id) FROM data")
-    data_id = kingfisher_process_cursor.fetchone()[0]
+    kingfisher_process_cursor.execute("SELECT MAX(id) AS id FROM data")
+    data_id = kingfisher_process_cursor.fetchone()["id"]
 
     kingfisher_process_cursor.execute(
         """\
@@ -209,7 +209,7 @@ def data_and_package_data_rows(kingfisher_process_cursor):
             )
         },
     )
-    kingfisher_process_cursor.execute("SELECT MAX(id) FROM package_data")
-    package_data_id = kingfisher_process_cursor.fetchone()[0]
+    kingfisher_process_cursor.execute("SELECT MAX(id) AS id FROM package_data")
+    package_data_id = kingfisher_process_cursor.fetchone()["id"]
 
     return data_id, package_data_id

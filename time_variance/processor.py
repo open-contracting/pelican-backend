@@ -24,7 +24,11 @@ def do_work(dataset_id):
     with get_cursor(name="time_based") as named_cursor:
         named_cursor.execute(
             """\
-            SELECT ancestor_data_item.id, ancestor_data_item.data, new_data_item.id, new_data_item.data
+            SELECT
+                ancestor_data_item.id AS ancestor_item_id,
+                ancestor_data_item.data AS ancestor_item_data,
+                new_data_item.id AS new_item_id,
+                new_data_item.data AS new_item_data
             FROM data_item ancestor_data_item
             LEFT JOIN data_item new_data_item ON
                 ancestor_data_item.data->>'ocid' = new_data_item.data->>'ocid'
@@ -36,10 +40,10 @@ def do_work(dataset_id):
         )
 
         for i, item in enumerate(named_cursor, 1):
-            ancestor_item_id = item[0]
-            ancestor_item = item[1]
-            new_item_id = item[2]
-            new_item = item[3]
+            ancestor_item_id = item["ancestor_item_id"]
+            ancestor_item = item["ancestor_item_data"]
+            new_item_id = item["new_item_id"]
+            new_item = item["new_item_data"]
 
             for check_name, check in definitions.items():
                 scope.setdefault(check_name, get_empty_result_time_based_scope())

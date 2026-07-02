@@ -1,12 +1,2 @@
-cachetools
-click
-jsonref
-orjson
-phonenumbers
-pika
-psycopg2
-python-dateutil
-requests
-validate_email
-sentry-sdk
-yapw[perf]
+-r requirements_base.txt
+psycopg[c]

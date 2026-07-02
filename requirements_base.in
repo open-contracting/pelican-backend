@@ -1,0 +1,11 @@
+cachetools
+click
+jsonref
+orjson
+phonenumbers
+pika
+python-dateutil
+requests
+validate_email
+sentry-sdk
+yapw[perf]

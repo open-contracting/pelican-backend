@@ -1,7 +1,7 @@
--r requirements.txt
+-r requirements_base.txt
+psycopg[binary]
 coverage
 jsonschema
-psycopg2-binary
 pytest
 pytest-subtests
 rfc3339-validator

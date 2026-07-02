@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-import psycopg2
+import psycopg
 import requests
 
 from pelican.exceptions import EmptyExchangeRatesTableError
@@ -16,20 +16,20 @@ BASE_URL = "https://data.fixer.io/api"
 def load() -> list[tuple[datetime.date, dict[str, float]]]:
     with get_cursor() as cursor:
         cursor.execute("SELECT valid_on, rates FROM exchange_rates")
-        return cursor.fetchall()
+        return [(row["valid_on"], row["rates"]) for row in cursor]
 
 
 def update_from_fixer_io() -> None:
     logger.info("Starting currency exchange rates update.")
 
     with get_cursor() as cursor:
-        cursor.execute("SELECT max(valid_on) FROM exchange_rates")
+        cursor.execute("SELECT max(valid_on) AS max_valid_on FROM exchange_rates")
         query_result = cursor.fetchone()
 
         if query_result is None:
             raise EmptyExchangeRatesTableError
 
-        max_date = query_result[0]
+        max_date = query_result["max_valid_on"]
         date_now = datetime.datetime.now(tz=datetime.UTC).date()
         length = (date_now - max_date).days
 
@@ -105,7 +105,7 @@ def update_from_fixer_io() -> None:
                     """,
                     parameters,
                 )
-            except psycopg2.Error:
+            except psycopg.Error:
                 logger.exception("Couldn't insert exchange rate")
                 rollback()
                 break
