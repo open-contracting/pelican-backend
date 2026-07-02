@@ -4,8 +4,9 @@ from functools import cache
 from typing import Any
 
 import orjson
-import psycopg2.extensions
-import psycopg2.extras
+import psycopg
+from psycopg.rows import dict_row
+from psycopg.types.json import Jsonb, set_json_loads
 from yapw.clients import AsyncConsumer, Blocking
 
 from pelican.util import settings
@@ -65,31 +66,30 @@ def publish(*args: Any, **kwargs: Any) -> None:
 
 # PostgreSQL
 
-psycopg2.extras.register_default_jsonb(loads=orjson.loads, globally=True)
+set_json_loads(orjson.loads)
 
 
-class Json(psycopg2.extras.Json):
-    def dumps(self, obj):
-        return orjson.dumps(obj)
+class Json(Jsonb):
+    def __init__(self, obj):
+        super().__init__(obj, dumps=orjson.dumps)
 
 
-def get_cursor(name="") -> psycopg2.extensions.cursor:
+def get_cursor(name="") -> psycopg.Cursor:
     """Connect to the database, if needed, and return a database cursor."""
     global db_connected, db_connection, db_cursor_idx  # noqa: PLW0603
     if not db_connected:
-        db_connection = psycopg2.connect(settings.DATABASE_URL)
+        db_connection = psycopg.connect(settings.DATABASE_URL, row_factory=dict_row)
         db_connected = True
 
-    kwargs = {}
     if name:
         # https://github.com/django/django/blob/stable/4.2.x/django/db/backends/postgresql/base.py#L469
         db_cursor_idx += 1
-        kwargs["name"] = f"{name}-{threading.current_thread().ident}-{db_cursor_idx}"
+        cursor_name = f"{name}-{threading.current_thread().ident}-{db_cursor_idx}"
         # Avoid "named cursor isn't valid anymore". Another option is to use a separate connection.
-        # https://www.psycopg.org/docs/usage.html#server-side-cursors
-        kwargs["withhold"] = True
+        # https://www.psycopg.org/psycopg3/docs/advanced/cursors.html#server-side-cursors
+        return db_connection.cursor(name=cursor_name, withhold=True)
 
-    return db_connection.cursor(cursor_factory=psycopg2.extras.DictCursor, **kwargs)
+    return db_connection.cursor()
 
 
 def commit() -> None:
@@ -162,12 +162,14 @@ def initialize_items_state(dataset_id: int, item_ids: list[int]) -> None:
     :param dataset_id: the dataset's ID
     :param item_ids: the data items' IDs
     """
-    sql = """\
-        INSERT INTO progress_monitor_item (dataset_id, item_id, state)
-        VALUES %s
-    """
     with get_cursor() as cursor:
-        psycopg2.extras.execute_values(cursor, sql, [(dataset_id, item_id, State.IN_PROGRESS) for item_id in item_ids])
+        cursor.executemany(
+            """\
+            INSERT INTO progress_monitor_item (dataset_id, item_id, state)
+            VALUES (%(dataset_id)s, %(item_id)s, %(state)s)
+            """,
+            [{"dataset_id": dataset_id, "item_id": item_id, "state": State.IN_PROGRESS} for item_id in item_ids],
+        )
 
 
 def update_items_state(dataset_id: int, item_ids: list[int], state: str) -> None:
@@ -178,14 +180,15 @@ def update_items_state(dataset_id: int, item_ids: list[int], state: str) -> None
     :param item_ids: the data items' IDs
     :param state: the state to set
     """
-    sql = """\
-        UPDATE progress_monitor_item
-        SET state = data.state, modified = now()
-        FROM (VALUES %s) AS data (dataset_id, item_id, state)
-        WHERE progress_monitor_item.dataset_id = data.dataset_id AND progress_monitor_item.item_id = data.item_id
-    """
     with get_cursor() as cursor:
-        psycopg2.extras.execute_values(cursor, sql, [(dataset_id, item_id, state) for item_id in item_ids])
+        cursor.executemany(
+            """\
+            UPDATE progress_monitor_item
+            SET state = %(state)s, modified = now()
+            WHERE dataset_id = %(dataset_id)s AND item_id = %(item_id)s
+            """,
+            [{"dataset_id": dataset_id, "item_id": item_id, "state": state} for item_id in item_ids],
+        )
 
 
 def get_processed_items_count(dataset_id: int) -> int:

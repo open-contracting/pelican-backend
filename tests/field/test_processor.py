@@ -8,7 +8,7 @@ from tests import read
 @pytest.mark.filterwarnings("ignore:unclosed <ssl.SSLSocket fd=:ResourceWarning")
 def test_field_level_checks():
     json, item_id, dataset_id = field_level_checks(read("compiled-release"), 123, 1)
-    result = json.adapted
+    result = json.obj
 
     assert result == read("field-result")
     assert item_id == 123
@@ -17,7 +17,7 @@ def test_field_level_checks():
 
 def test_field_level_checks_invalid():
     json, item_id, dataset_id = field_level_checks({"ocid": "1", "tender": {"tenderers": "string"}}, 123, 1)
-    result = json.adapted
+    result = json.obj
 
     assert "tender.tenderers.contactPoint.name" not in result["checks"]
     assert result["checks"]["tender.tenderers.contactPoint"] == [

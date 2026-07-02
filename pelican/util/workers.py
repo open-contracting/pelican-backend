@@ -43,7 +43,7 @@ def process_items(
     cursors: dict[str, Any],
     dataset_id: int,
     ids: list[int],
-    insert_items: Callable[[dict[str, Any], int, list[int]], None],
+    insert_items: Callable[[dict[str, Any], int, list[int]], list[int]],
 ) -> None:
     """
     Load items into Pelican.
@@ -55,7 +55,8 @@ def process_items(
     :param cursors: the database cursors ("default" is required)
     :param dataset_id: the dataset's ID
     :param ids: the ID's of rows to import
-    :param insert_items: a function to insert the items, taking ``cursors``, ``dataset_id``, ``ids``
+    :param insert_items: a function to insert the items, taking ``cursors``, ``dataset_id``, ``ids`` and returning the
+        id's of the rows inserted into the ``data_item`` table
     """
     # Acknowledge early when using the Splitter pattern.
     ack(client_state, channel, method.delivery_tag)
@@ -65,11 +66,9 @@ def process_items(
     items_inserted = 0
 
     for page_number, i in enumerate(range(0, len(ids), settings.EXTRACTOR_PAGE_SIZE)):
-        insert_items(cursors, dataset_id, ids[i : i + settings.EXTRACTOR_PAGE_SIZE])
-        commit()
-
         # insert_items() returns the id's of the rows inserted into the data_item table.
-        item_ids = [row[0] for row in cursors["default"]]
+        item_ids = insert_items(cursors, dataset_id, ids[i : i + settings.EXTRACTOR_PAGE_SIZE])
+        commit()
         for j in range(0, len(item_ids), settings.EXTRACTOR_MAX_BATCH_SIZE):
             item_ids_batch = item_ids[j : j + settings.EXTRACTOR_MAX_BATCH_SIZE]
             items_inserted += len(item_ids_batch)

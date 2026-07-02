@@ -40,7 +40,7 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
     """
     Return metadata from Kingfisher Process.
 
-    :param kingfisher_process_cursor: the cursor must be initialized with `cursor_factory=psycopg2.extras.DictCursor`
+    :param kingfisher_process_cursor: the cursor must be initialized with `row_factory=psycopg.rows.dict_row`
     :param collection_id: the ID of the compiled collection
     """
     metadata = {
@@ -111,8 +111,8 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
         return metadata
 
     metadata["kingfisher_metadata"]["collection_id"] = collection_id
-    metadata["kingfisher_metadata"]["processing_start"] = tree[-1][1].strftime(DATETIME_STR_FORMAT)
-    metadata["kingfisher_metadata"]["processing_end"] = tree[0][2].strftime(DATETIME_STR_FORMAT)
+    metadata["kingfisher_metadata"]["processing_start"] = tree[-1]["store_start_at"].strftime(DATETIME_STR_FORMAT)
+    metadata["kingfisher_metadata"]["processing_end"] = tree[0]["store_end_at"].strftime(DATETIME_STR_FORMAT)
 
     ##############################################
     # collection metadata from compiled releases #
@@ -135,7 +135,7 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
 
     row = kingfisher_process_cursor.fetchone()
 
-    if any(row):
+    if any(row.values()):
         metadata["collection_metadata"]["ocid_prefix"] = row["ocid_prefix"]
         for key in ("published_from", "published_to"):
             if value := parse_datetime(row[key]):
@@ -147,7 +147,7 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
     # collection metadata from packages #
     #####################################
 
-    original_collection_id = tree[-1][0]
+    original_collection_id = tree[-1]["id"]
 
     kingfisher_process_cursor.execute(
         """\
@@ -210,11 +210,11 @@ def get_pelican_metadata(dataset_id):
     metadata = {"data_quality_tool_metadata": {"processing_start": None, "processing_end": None}}
 
     with get_cursor() as cursor:
-        cursor.execute("SELECT created, now() FROM dataset WHERE id = %(id)s", {"id": dataset_id})
+        cursor.execute("SELECT created, now() AS now FROM dataset WHERE id = %(id)s", {"id": dataset_id})
         row = cursor.fetchone()
 
-    metadata["data_quality_tool_metadata"]["processing_start"] = row[0].strftime(DATETIME_STR_FORMAT)
-    metadata["data_quality_tool_metadata"]["processing_end"] = row[1].strftime(DATETIME_STR_FORMAT)
+    metadata["data_quality_tool_metadata"]["processing_start"] = row["created"].strftime(DATETIME_STR_FORMAT)
+    metadata["data_quality_tool_metadata"]["processing_end"] = row["now"].strftime(DATETIME_STR_FORMAT)
 
     return metadata
 

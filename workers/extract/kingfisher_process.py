@@ -1,7 +1,7 @@
 import logging
 
 import click
-import psycopg2.extras
+import psycopg
 from yapw.methods import nack
 
 from dataset import metadata_aggregator
@@ -30,8 +30,10 @@ def callback(client_state, channel, method, properties, input_message):
     ancestor_id = input_message.get("ancestor_id")
 
     cursor = get_cursor()
-    kingfisher_process_connection = psycopg2.connect(settings.KINGFISHER_PROCESS_DATABASE_URL)
-    kingfisher_process_cursor = kingfisher_process_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    kingfisher_process_connection = psycopg.connect(
+        settings.KINGFISHER_PROCESS_DATABASE_URL, row_factory=psycopg.rows.dict_row
+    )
+    kingfisher_process_cursor = kingfisher_process_connection.cursor()
 
     try:
         sql = """\
@@ -49,7 +51,7 @@ def callback(client_state, channel, method, properties, input_message):
             variables["limit"] = max_items
 
         kingfisher_process_cursor.execute(sql, variables)
-        ids = [row[0] for row in kingfisher_process_cursor]
+        ids = [row["data_id"] for row in kingfisher_process_cursor]
 
         if ids:
             cursor.execute(
@@ -60,7 +62,7 @@ def callback(client_state, channel, method, properties, input_message):
                 """,
                 {"name": name, "ancestor_id": ancestor_id},
             )
-            dataset_id = cursor.fetchone()[0]
+            dataset_id = cursor.fetchone()["id"]
 
             metadata = metadata_aggregator.get_kingfisher_metadata(kingfisher_process_cursor, collection_id)
             metadata_aggregator.update_metadata(metadata, dataset_id)
@@ -88,9 +90,21 @@ def callback(client_state, channel, method, properties, input_message):
 
 def insert_items(cursors, dataset_id, ids):
     cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id = ANY(%(ids)s)", {"ids": ids})
-    argslist = [(Json(row[0]), dataset_id) for row in cursors["kingfisher_process"]]
-    sql = "INSERT INTO data_item (data, dataset_id) VALUES %s RETURNING id"
-    psycopg2.extras.execute_values(cursors["default"], sql, argslist, page_size=settings.EXTRACTOR_PAGE_SIZE)
+    argslist = [(Json(row["data"]), dataset_id) for row in cursors["kingfisher_process"]]
+    if not argslist:
+        return []
+
+    default_cursor = cursors["default"]
+    default_cursor.executemany(
+        "INSERT INTO data_item (data, dataset_id) VALUES (%s, %s) RETURNING id", argslist, returning=True
+    )
+
+    item_ids = []
+    while True:
+        item_ids.extend(row["id"] for row in default_cursor.fetchall())
+        if not default_cursor.nextset():
+            break
+    return item_ids
 
 
 if __name__ == "__main__":

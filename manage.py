@@ -36,8 +36,8 @@ def remove(dataset_id, include_filtered, force):
     """Delete a dataset."""
     cursor = get_cursor()
 
-    cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s)", {"id": dataset_id})
-    if not cursor.fetchone()[0]:
+    cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s) AS exists", {"id": dataset_id})
+    if not cursor.fetchone()["exists"]:
         click.secho(f"Dataset {dataset_id} doesn't exist.", err=True, fg="red")
         return
 
@@ -46,18 +46,18 @@ def remove(dataset_id, include_filtered, force):
         {"dataset_id": dataset_id},
     )
     row = cursor.fetchone()
-    if not row or row[0] not in {Phase.CHECKED, Phase.DELETED} or row[1] != State.OK:
+    if not row or row["phase"] not in {Phase.CHECKED, Phase.DELETED} or row["state"] != State.OK:
         if force:
             click.secho(
-                f"Forcefully removing dataset {dataset_id} (phase={row[0]}, state={row[1]}). (Its phase should be "
-                f"{Phase.CHECKED} or {Phase.DELETED}, and its state should be {State.OK}.)",
+                f"Forcefully removing dataset {dataset_id} (phase={row['phase']}, state={row['state']}). (Its phase "
+                f"should be {Phase.CHECKED} or {Phase.DELETED}, and its state should be {State.OK}.)",
                 fg="yellow",
                 err=True,
             )
         else:
             click.secho(
-                f"Dataset {dataset_id} (phase={row[0]}, state={row[1]}) can't be removed. Its phase must be "
-                f"{Phase.CHECKED} or {Phase.DELETED}, and its state must be {State.OK}.",
+                f"Dataset {dataset_id} (phase={row['phase']}, state={row['state']}) can't be removed. Its phase "
+                f"must be {Phase.CHECKED} or {Phase.DELETED}, and its state must be {State.OK}.",
                 fg="red",
                 err=True,
             )
@@ -87,7 +87,7 @@ def remove(dataset_id, include_filtered, force):
                     "dataset_ids": delete_dataset_ids,
                 },
             )
-            new_delete_dataset_ids = [row[0] for row in cursor] + [dataset_id]
+            new_delete_dataset_ids = [row["dataset_id"] for row in cursor] + [dataset_id]
             if sorted(delete_dataset_ids) == sorted(new_delete_dataset_ids):
                 break
 
@@ -145,7 +145,7 @@ def remove(dataset_id, include_filtered, force):
                 "dataset_ids": drop_dataset_ids,
             },
         )
-        new_drop_dataset_ids = [row[0] for row in cursor]
+        new_drop_dataset_ids = [row["dataset_id"] for row in cursor]
         if sorted(drop_dataset_ids) == sorted(new_drop_dataset_ids):
             break
 
