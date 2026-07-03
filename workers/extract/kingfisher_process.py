@@ -2,6 +2,7 @@ import logging
 
 import click
 import psycopg
+from psycopg import sql
 from psycopg.types.json import Jsonb
 from yapw.methods import nack
 
@@ -91,23 +92,14 @@ def callback(client_state, channel, method, properties, input_message):
 
 def insert_items(cursors, dataset_id, ids):
     cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id = ANY(%(ids)s)", {"ids": ids})
-    argslist = [{"data": Jsonb(row["data"]), "dataset_id": dataset_id} for row in cursors["kingfisher_process"]]
-    if not argslist:
+    data_values = [Jsonb(row["data"]) for row in cursors["kingfisher_process"]]
+    if not data_values:
         return []
 
-    default_cursor = cursors["default"]
-    default_cursor.executemany(
-        "INSERT INTO data_item (data, dataset_id) VALUES (%(data)s, %(dataset_id)s) RETURNING id",
-        argslist,
-        returning=True,
-    )
-
-    item_ids = []
-    while True:
-        item_ids.extend(row["id"] for row in default_cursor.fetchall())
-        if not default_cursor.nextset():
-            break
-    return item_ids
+    records = sql.SQL(", ").join(sql.SQL("(%s, %s)") for _ in data_values)
+    statement = sql.SQL("INSERT INTO data_item (data, dataset_id) VALUES {} RETURNING id").format(records)
+    cursors["default"].execute(statement, [parameter for data in data_values for parameter in (data, dataset_id)])
+    return [row["id"] for row in cursors["default"]]
 
 
 if __name__ == "__main__":
