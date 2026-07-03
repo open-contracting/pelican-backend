@@ -5,6 +5,7 @@ from typing import Any
 
 import orjson
 import psycopg
+from psycopg import sql
 from psycopg.rows import dict_row
 from psycopg.types.json import set_json_dumps, set_json_loads
 from yapw.clients import AsyncConsumer, Blocking
@@ -176,15 +177,21 @@ def update_items_state(dataset_id: int, item_ids: list[int], state: str) -> None
     :param item_ids: the data items' IDs
     :param state: the state to set
     """
+    item_ids = list(item_ids)
+    if not item_ids:
+        return
+
     with get_cursor() as cursor:
-        cursor.executemany(
+        records = sql.SQL(", ").join(sql.SQL("(%s, %s, %s)") for _ in item_ids)
+        statement = sql.SQL(
             """\
             UPDATE progress_monitor_item
-            SET state = %(state)s, modified = now()
-            WHERE dataset_id = %(dataset_id)s AND item_id = %(item_id)s
-            """,
-            [{"dataset_id": dataset_id, "item_id": item_id, "state": state} for item_id in item_ids],
-        )
+            SET state = data.state, modified = now()
+            FROM (VALUES {}) AS data (dataset_id, item_id, state)
+            WHERE progress_monitor_item.dataset_id = data.dataset_id AND progress_monitor_item.item_id = data.item_id
+            """
+        ).format(records)
+        cursor.execute(statement, [parameter for item_id in item_ids for parameter in (dataset_id, item_id, state)])
 
 
 def get_processed_items_count(dataset_id: int) -> int:
