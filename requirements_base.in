@@ -4,6 +4,7 @@ jsonref
 orjson
 phonenumbers
 pika
+psycopg
 python-dateutil
 requests
 validate_email

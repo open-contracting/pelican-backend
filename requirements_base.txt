@@ -24,6 +24,8 @@ pika==1.3.2
     # via
     #   -r requirements_base.in
     #   yapw
+psycopg==3.3.4
+    # via -r requirements_base.in
 python-dateutil==2.8.0
     # via -r requirements_base.in
 requests==2.33.0
