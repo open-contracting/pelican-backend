@@ -91,13 +91,15 @@ def callback(client_state, channel, method, properties, input_message):
 
 def insert_items(cursors, dataset_id, ids):
     cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id = ANY(%(ids)s)", {"ids": ids})
-    argslist = [(Jsonb(row["data"]), dataset_id) for row in cursors["kingfisher_process"]]
+    argslist = [{"data": Jsonb(row["data"]), "dataset_id": dataset_id} for row in cursors["kingfisher_process"]]
     if not argslist:
         return []
 
     default_cursor = cursors["default"]
     default_cursor.executemany(
-        "INSERT INTO data_item (data, dataset_id) VALUES (%s, %s) RETURNING id", argslist, returning=True
+        "INSERT INTO data_item (data, dataset_id) VALUES (%(data)s, %(dataset_id)s) RETURNING id",
+        argslist,
+        returning=True,
     )
 
     item_ids = []

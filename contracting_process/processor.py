@@ -48,7 +48,7 @@ def resource_level_checks(data, item_id, dataset_id):
     for check_name, check in resource_level_definitions.items():
         result["checks"][check_name] = check(data)
 
-    return (Jsonb(result), item_id, dataset_id)
+    return {"result": Jsonb(result), "data_item_id": item_id, "dataset_id": dataset_id}
 
 
 def field_level_checks(data, item_id, dataset_id, *, do_field_quality=True):
@@ -113,18 +113,22 @@ def field_level_checks(data, item_id, dataset_id, *, do_field_quality=True):
 
                 result["checks"][path].append(field_result)
 
-    return (Jsonb(result), item_id, dataset_id)
+    return {"result": Jsonb(result), "data_item_id": item_id, "dataset_id": dataset_id}
 
 
 def save_field_level_checks(arglist):
     with get_cursor() as cursor:
         cursor.executemany(
-            "INSERT INTO field_level_check (result, data_item_id, dataset_id) VALUES (%s, %s, %s)", arglist
+            "INSERT INTO field_level_check (result, data_item_id, dataset_id) "
+            "VALUES (%(result)s, %(data_item_id)s, %(dataset_id)s)",
+            arglist,
         )
 
 
 def save_resource_level_check(arglist):
     with get_cursor() as cursor:
         cursor.executemany(
-            "INSERT INTO resource_level_check (result, data_item_id, dataset_id) VALUES (%s, %s, %s)", arglist
+            "INSERT INTO resource_level_check (result, data_item_id, dataset_id) "
+            "VALUES (%(result)s, %(data_item_id)s, %(dataset_id)s)",
+            arglist,
         )
