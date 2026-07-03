@@ -1,7 +1,9 @@
 import logging
 
+from psycopg.types.json import Jsonb
+
 from pelican.util.checks import get_empty_result_time_based, get_empty_result_time_based_scope
-from pelican.util.services import Json, get_cursor
+from pelican.util.services import get_cursor
 from time_variance.definitions import definitions
 
 logger = logging.getLogger("pelican.time_variance.processor")
@@ -116,7 +118,7 @@ def do_work(dataset_id):
                     "check_result": result["check_result"],
                     "check_value": result["check_value"],
                     "dataset_id": dataset_id,
-                    "meta": Json(result["meta"]),
+                    "meta": Jsonb(result["meta"]),
                 },
             )
 

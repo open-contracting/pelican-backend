@@ -1,8 +1,10 @@
 import logging
 
+from psycopg.types.json import Jsonb
+
 from dataset import metadata_aggregator
 from dataset.definitions import definitions
-from pelican.util.services import Json, get_cursor
+from pelican.util.services import get_cursor
 
 logger = logging.getLogger("pelican.dataset.processor")
 
@@ -52,7 +54,7 @@ def do_work(dataset_id):
                     "check_name": check_name,
                     "result": result["result"],
                     "value": result["value"],
-                    "meta": Json(result["meta"]),
+                    "meta": Jsonb(result["meta"]),
                     "dataset_id": dataset_id,
                 },
             )
