@@ -66,7 +66,6 @@ def publish(*args: Any, **kwargs: Any) -> None:
 
 # PostgreSQL
 
-# Use orjson to (de)serialize JSON. Insert values with psycopg.types.json.Jsonb (all JSON columns are jsonb).
 set_json_dumps(orjson.dumps)
 set_json_loads(orjson.loads)
 

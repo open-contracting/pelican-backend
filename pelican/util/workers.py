@@ -55,8 +55,8 @@ def process_items(
     :param cursors: the database cursors ("default" is required)
     :param dataset_id: the dataset's ID
     :param ids: the ID's of rows to import
-    :param insert_items: a function to insert the items, taking ``cursors``, ``dataset_id``, ``ids`` and returning the
-        id's of the rows inserted into the ``data_item`` table
+    :param insert_items: a function to insert the items, taking ``cursors``, ``dataset_id``, ``ids``
+        and returning the id's of the rows inserted into the ``data_item`` table
     """
     # Acknowledge early when using the Splitter pattern.
     ack(client_state, channel, method.delivery_tag)
