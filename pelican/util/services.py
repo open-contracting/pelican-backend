@@ -74,7 +74,7 @@ class Json(Jsonb):
         super().__init__(obj, dumps=orjson.dumps)
 
 
-def get_cursor(name="") -> psycopg.Cursor:
+def get_cursor(name="") -> psycopg.Cursor[dict[str, Any]]:
     """Connect to the database, if needed, and return a database cursor."""
     global db_connected, db_connection, db_cursor_idx  # noqa: PLW0603
     if not db_connected:
