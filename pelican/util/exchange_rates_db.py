@@ -3,10 +3,11 @@ import logging
 
 import psycopg
 import requests
+from psycopg.types.json import Jsonb
 
 from pelican.exceptions import EmptyExchangeRatesTableError
 from pelican.util import settings
-from pelican.util.services import Json, commit, get_cursor, rollback
+from pelican.util.services import commit, get_cursor, rollback
 
 logger = logging.getLogger("pelican.tools.exchange_rates_db")
 
@@ -88,7 +89,7 @@ def update_from_fixer_io() -> None:
                     logger.error("API request for currency rates on %s did not succeed.", date_str)
                     break
 
-                parameters = {"valid_on": date_str, "rates": Json(data["rates"])}
+                parameters = {"valid_on": date_str, "rates": Jsonb(data["rates"])}
                 cursor.execute(
                     """\
                     UPDATE exchange_rates

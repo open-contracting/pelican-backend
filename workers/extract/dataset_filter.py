@@ -2,9 +2,10 @@ import logging
 
 import click
 from psycopg import sql
+from psycopg.types.json import Jsonb
 from yapw.methods import nack
 
-from pelican.util.services import Json, commit, consume, get_cursor
+from pelican.util.services import commit, consume, get_cursor
 from pelican.util.workers import process_items
 
 consume_routing_key = "dataset_filter_extractor_init"
@@ -80,7 +81,7 @@ def callback(client_state, channel, method, properties, input_message):
             SELECT name, %(meta)s, NULL FROM dataset WHERE id = %(dataset_id)s
             RETURNING id
             """,
-            {"dataset_id": dataset_id_original, "meta": Json(meta)},
+            {"dataset_id": dataset_id_original, "meta": Jsonb(meta)},
         )
         dataset_id_filtered = cursor.fetchone()["id"]
         commit()
@@ -93,7 +94,7 @@ def callback(client_state, channel, method, properties, input_message):
             {
                 "dataset_id_original": dataset_id_original,
                 "dataset_id_filtered": dataset_id_filtered,
-                "filter_message": Json(filter_message),
+                "filter_message": Jsonb(filter_message),
             },
         )
         commit()

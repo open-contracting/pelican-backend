@@ -1,9 +1,10 @@
 import logging
 
 import requests
+from psycopg.types.json import Jsonb
 
 from pelican.util.getter import deep_get, deep_has, get_values, parse_datetime
-from pelican.util.services import Json, get_cursor
+from pelican.util.services import get_cursor
 
 DATE_STR_FORMAT = "%b-%-y"
 DATETIME_STR_FORMAT = "%Y-%m-%d %H.%M.%S"
@@ -223,5 +224,5 @@ def update_metadata(metadata, dataset_id):
     with get_cursor() as cursor:
         cursor.execute(
             "UPDATE dataset SET meta = meta || %(meta)s, modified = now() WHERE id = %(id)s",
-            {"meta": Json(metadata), "id": dataset_id},
+            {"meta": Jsonb(metadata), "id": dataset_id},
         )

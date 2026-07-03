@@ -1,8 +1,10 @@
 import logging
 
+from psycopg.types.json import Jsonb
+
 from contracting_process.field_level.definitions import coverage_checks, definitions
 from pelican.util.checks import ReservoirSampler
-from pelican.util.services import Json, commit, get_cursor
+from pelican.util.services import commit, get_cursor
 
 logger = logging.getLogger("pelican.contracting_process.field_level.report_examples")
 
@@ -106,7 +108,7 @@ def create(dataset_id):
     logger.info("Dataset %s: Inserting field-level check report", dataset_id)
     cursor.execute(
         "INSERT INTO report (dataset_id, type, data) VALUES (%(dataset_id)s, 'field_level_check', %(data)s)",
-        {"dataset_id": dataset_id, "data": Json(report)},
+        {"dataset_id": dataset_id, "data": Jsonb(report)},
     )
 
     commit()
@@ -127,7 +129,7 @@ def create(dataset_id):
             INSERT INTO field_level_check_examples (dataset_id, path, data)
             VALUES (%(dataset_id)s, %(path)s, %(data)s)
             """,
-            {"dataset_id": dataset_id, "path": path, "data": Json(check_groups)},
+            {"dataset_id": dataset_id, "path": path, "data": Jsonb(check_groups)},
         )
 
     commit()

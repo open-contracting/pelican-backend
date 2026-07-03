@@ -2,11 +2,12 @@ import logging
 
 import click
 import psycopg
+from psycopg.types.json import Jsonb
 from yapw.methods import nack
 
 from dataset import metadata_aggregator
 from pelican.util import exchange_rates_db, settings
-from pelican.util.services import Json, commit, consume, get_cursor
+from pelican.util.services import commit, consume, get_cursor
 from pelican.util.workers import process_items
 
 consume_routing_key = "ocds_kingfisher_extractor_init"
@@ -90,7 +91,7 @@ def callback(client_state, channel, method, properties, input_message):
 
 def insert_items(cursors, dataset_id, ids):
     cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id = ANY(%(ids)s)", {"ids": ids})
-    argslist = [(Json(row["data"]), dataset_id) for row in cursors["kingfisher_process"]]
+    argslist = [(Jsonb(row["data"]), dataset_id) for row in cursors["kingfisher_process"]]
     if not argslist:
         return []
 

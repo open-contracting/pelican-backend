@@ -1,11 +1,13 @@
 import logging
 
+from psycopg.types.json import Jsonb
+
 from contracting_process.field_level.definitions import coverage_checks
 from contracting_process.field_level.definitions import definitions as field_level_definitions
 from contracting_process.resource_level.definitions import definitions as resource_level_definitions
 from pelican.util import settings
 from pelican.util.getter import get_values
-from pelican.util.services import Json, State, get_cursor, update_items_state
+from pelican.util.services import State, get_cursor, update_items_state
 from pelican.util.workers import is_step_required
 
 logger = logging.getLogger("pelican.contracting_process.processor")
@@ -46,7 +48,7 @@ def resource_level_checks(data, item_id, dataset_id):
     for check_name, check in resource_level_definitions.items():
         result["checks"][check_name] = check(data)
 
-    return (Json(result), item_id, dataset_id)
+    return (Jsonb(result), item_id, dataset_id)
 
 
 def field_level_checks(data, item_id, dataset_id, *, do_field_quality=True):
@@ -111,7 +113,7 @@ def field_level_checks(data, item_id, dataset_id, *, do_field_quality=True):
 
                 result["checks"][path].append(field_result)
 
-    return (Json(result), item_id, dataset_id)
+    return (Jsonb(result), item_id, dataset_id)
 
 
 def save_field_level_checks(arglist):
