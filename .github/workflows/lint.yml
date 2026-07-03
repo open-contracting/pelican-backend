@@ -8,6 +8,6 @@ jobs:
     secrets:
       personal-access-token: ${{ secrets.PAT }}
     with:
+      standard-maintenance-scripts-files: requirements_base.in
       # Copy of release-schema.json to generate checks.
       ocds-schema-exceptions: release-schema.json
-      standard-maintenance-scripts-files: requirements_base.in
