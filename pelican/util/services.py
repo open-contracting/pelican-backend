@@ -6,7 +6,7 @@ from typing import Any
 import orjson
 import psycopg
 from psycopg.rows import dict_row
-from psycopg.types.json import Jsonb, set_json_loads
+from psycopg.types.json import Jsonb, set_json_dumps, set_json_loads
 from yapw.clients import AsyncConsumer, Blocking
 
 from pelican.util import settings
@@ -66,12 +66,11 @@ def publish(*args: Any, **kwargs: Any) -> None:
 
 # PostgreSQL
 
+set_json_dumps(orjson.dumps)
 set_json_loads(orjson.loads)
 
-
-class Json(Jsonb):
-    def __init__(self, obj):
-        super().__init__(obj, dumps=orjson.dumps)
+# All JSON columns are jsonb. orjson is configured as the (de)serializer above.
+Json = Jsonb
 
 
 def get_cursor(name="") -> psycopg.Cursor[dict[str, Any]]:
