@@ -1,6 +1,6 @@
 import json
-import os
 from contextlib import AbstractContextManager
+from pathlib import Path
 
 from pelican.util import settings
 
@@ -10,7 +10,7 @@ def is_subset_dict(subset, superset):
 
 
 def read(basename):
-    with open(os.path.join("tests", "fixtures", f"{basename}.json")) as f:
+    with Path("tests", "fixtures", f"{basename}.json").open() as f:
         return json.load(f)
 
 

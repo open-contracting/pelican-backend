@@ -1,5 +1,5 @@
 import json
-import os
+from pathlib import Path
 
 from dataset.distribution import value_repetition
 
@@ -22,7 +22,7 @@ def test_undefined():
 
 
 def get_currencies():
-    with open(os.path.join("pelican", "static", "release-schema.json")) as f:
+    with Path("pelican", "static", "release-schema.json").open() as f:
         schema = json.load(f)
         return schema["definitions"]["Value"]["properties"]["currency"]["enum"]
 

@@ -1,13 +1,14 @@
 import importlib.util
 import os
 import warnings
+from pathlib import Path
 
 import pytest
 from jsonschema.validators import Draft4Validator as Validator
 
 
 def custom_warning_formatter(message, category, filename, lineno, line=None):
-    return str(message).replace(os.getcwd() + os.sep, "")
+    return str(message).replace(f"{Path.cwd()}{os.sep}", "")
 
 
 warnings.formatwarning = custom_warning_formatter
@@ -26,7 +27,7 @@ def get_test_cases():
             if not file.startswith("test_") or not file.endswith(".py") or file in excluded_files:
                 continue
 
-            filename = os.path.join(root, file)
+            filename = Path(root) / file
 
             # https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
             spec = importlib.util.spec_from_file_location("dummy", filename)

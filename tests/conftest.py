@@ -1,5 +1,5 @@
 import json
-import os
+from pathlib import Path
 
 import psycopg
 import pytest
@@ -21,7 +21,7 @@ def schema():
             for value in data.values():
                 set_additional_properties_false(value)
 
-    with open(os.path.join("pelican", "static", "release-schema.json")) as f:
+    with Path("pelican", "static", "release-schema.json").open() as f:
         schema = json.load(f)
 
     set_additional_properties_false(schema)
@@ -39,8 +39,7 @@ def kingfisher_process_cursor():
     connection = psycopg.connect(settings.KINGFISHER_PROCESS_DATABASE_URL, row_factory=psycopg.rows.dict_row)
     cursor = connection.cursor()
 
-    with open(os.path.join("tests", "fixtures", "kingfisher_process.sql")) as f:
-        cursor.execute(f.read())
+    cursor.execute(Path("tests", "fixtures", "kingfisher_process.sql").read_text())
 
     return cursor
 
