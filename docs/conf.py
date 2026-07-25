@@ -32,6 +32,11 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "furo"
 html_static_path = ["_static"]
+# Eduard Rüppell, Philipp Jakob Cretzschmar, Karl Heinrich Georg von Heyden & Friedrich Sigismund Leuckart,
+# "Atlas zu der Reise im nördlichen Afrika" (1826-1828).
+# Digitized by the Biodiversity Heritage Library (https://doi.org/10.5962/bhl.title.53779),
+# courtesy of Field Museum of Natural History Library. Public domain. https://flic.kr/p/bAXJcz
+html_logo = "_static/logo.jpg"
 
 # -- Extension configuration -------------------------------------------------
 
