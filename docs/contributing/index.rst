@@ -92,12 +92,6 @@ Any exceptions to the above must be moved to the global scope, or manually valid
 OCDS upgrades
 ^^^^^^^^^^^^^
 
--  Update file fixtures:
-
-   .. code-block:: bash
-
-      curl -sS https://raw.githubusercontent.com/open-contracting/sample-data/main/fictional-example/1.1/record/ocds-213czf-000-00001.json | jq '.records[0].compiledRelease' > tests/fixtures/compiled-release.json
-
 -  Review ``definitions.py`` files, to be sure that checks account for new fields.
 -  Update :ref:`code fixtures<code-fixtures>` to use new fields.
 -  Decide whether to add new checks for new fields.
