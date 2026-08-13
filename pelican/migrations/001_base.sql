@@ -1,7 +1,7 @@
 -- Regarding GIN indexes, pelican-backend doesn't use the key-exists operators ?, ?| or ?&, the containment operator
 -- @>, or the jsonpath match operators @? and @@. pelican-frontend uses the key-exists operator ? (has_key).
 -- https://www.postgresql.org/docs/current/datatype-json.html#JSON-INDEXING
--- https://docs.djangoproject.com/en/4.2/topics/db/queries/#querying-jsonfield
+-- https://docs.djangoproject.com/en/stable/topics/db/queries/#querying-jsonfield
 
 CREATE TABLE IF NOT EXISTS dataset (
     id bigserial PRIMARY KEY,
