@@ -96,7 +96,6 @@ OCDS upgrades
 
    .. code-block:: bash
 
-      curl -sS https://raw.githubusercontent.com/open-contracting/sample-data/main/blank-template/release-template-1__1__5.json -o tests/fixtures/blank.json
       curl -sS https://raw.githubusercontent.com/open-contracting/sample-data/main/fictional-example/1.1/record/ocds-213czf-000-00001.json | jq '.records[0].compiledRelease' > tests/fixtures/compiled-release.json
 
 -  Review ``definitions.py`` files, to be sure that checks account for new fields.
