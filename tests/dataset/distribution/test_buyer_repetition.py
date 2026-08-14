@@ -20,12 +20,12 @@ def test_undefined():
 
 
 items_test_passed1 = []
-items_test_passed1.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": -1}}} for _ in range(20)])
-items_test_passed1.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": num}}} for num in range(980)])
+items_test_passed1.extend([{"ocid": "0", "buyer": {"id": -1}} for _ in range(20)])
+items_test_passed1.extend([{"ocid": "0", "buyer": {"id": num}} for num in range(980)])
 
 items_test_passed2 = []
-items_test_passed2.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": -1}}} for _ in range(490)])
-items_test_passed2.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": num}}} for num in range(510)])
+items_test_passed2.extend([{"ocid": "0", "buyer": {"id": -1}} for _ in range(490)])
+items_test_passed2.extend([{"ocid": "0", "buyer": {"id": num}} for num in range(510)])
 
 
 def test_passed():
@@ -42,7 +42,7 @@ def test_passed():
         "ocid_count": 20,
         "ocid_share": 20 / 1000,
         "examples": [{"ocid": "0", "item_id": item_id} for item_id in range(20)],
-        "specifics": {"buyer.identifier.id": "-1", "buyer.identifier.scheme": "ICO"},
+        "specifics": {"buyer.id": "-1"},
     }
 
     scope = {}
@@ -58,19 +58,19 @@ def test_passed():
             "total_ocid_count": 1000,
             "ocid_count": 490,
             "ocid_share": 490 / 1000,
-            "specifics": {"buyer.identifier.id": "-1", "buyer.identifier.scheme": "ICO"},
+            "specifics": {"buyer.id": "-1"},
         },
         result["meta"],
     )
 
 
 items_test_failed1 = []
-items_test_failed1.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": -1}}} for _ in range(10)])
-items_test_failed1.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": num}}} for num in range(990)])
+items_test_failed1.extend([{"ocid": "0", "buyer": {"id": -1}} for _ in range(10)])
+items_test_failed1.extend([{"ocid": "0", "buyer": {"id": num}} for num in range(990)])
 
 items_test_failed2 = []
-items_test_failed2.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": -1}}} for _ in range(500)])
-items_test_failed2.extend([{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": num}}} for num in range(500)])
+items_test_failed2.extend([{"ocid": "0", "buyer": {"id": -1}} for _ in range(500)])
+items_test_failed2.extend([{"ocid": "0", "buyer": {"id": num}} for num in range(500)])
 
 
 def test_failed():
@@ -87,7 +87,7 @@ def test_failed():
         "ocid_count": 10,
         "ocid_share": 10 / 1000,
         "examples": [{"ocid": "0", "item_id": item_id} for item_id in range(10)],
-        "specifics": {"buyer.identifier.id": "-1", "buyer.identifier.scheme": "ICO"},
+        "specifics": {"buyer.id": "-1"},
     }
 
     scope = {}
@@ -103,7 +103,7 @@ def test_failed():
             "total_ocid_count": 1000,
             "ocid_count": 500,
             "ocid_share": 500 / 1000,
-            "specifics": {"buyer.identifier.id": "-1", "buyer.identifier.scheme": "ICO"},
+            "specifics": {"buyer.id": "-1"},
         },
         result["meta"],
     )

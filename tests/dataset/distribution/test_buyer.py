@@ -23,15 +23,9 @@ items_test_undefined_multiple1 = [
         "ocid": "0",
     },
     {"ocid": "1", "buyer": {}},
-    {"ocid": "2", "buyer": {"identifier": {}}},
-    {"ocid": "3", "buyer": {"identifier": {"scheme": None, "id": None}}},
-    {"ocid": "4", "buyer": {"identifier": {"scheme": "ICO", "id": None}}},
-    {"ocid": "5", "buyer": {"identifier": {"scheme": None, "id": "5"}}},
 ]
 
-items_test_undefined_multiple2 = [
-    {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": "0"}}} for _ in range(buyer.min_items - 1)
-]
+items_test_undefined_multiple2 = [{"ocid": "0", "buyer": {"id": "0"}} for _ in range(buyer.min_items - 1)]
 
 
 def test_undefined_multiple():
@@ -56,16 +50,10 @@ def test_undefined_multiple():
     assert result["meta"] == {"reason": "fewer than 1000 occurrences of necessary fields"}
 
 
-items_test_failed1 = [
-    {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": num}}} for num in range(buyer.min_items)
-]
+items_test_failed1 = [{"ocid": "0", "buyer": {"id": num}} for num in range(buyer.min_items)]
 
-items_test_failed2 = [
-    {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": num}}} for num in range(buyer.min_items)
-]
-items_test_failed2.extend(
-    [{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": -1}}} for _ in range(buyer.min_items)]
-)
+items_test_failed2 = [{"ocid": "0", "buyer": {"id": num}} for num in range(buyer.min_items)]
+items_test_failed2.extend([{"ocid": "0", "buyer": {"id": -1}} for _ in range(buyer.min_items)])
 
 
 def test_failed():
@@ -101,36 +89,18 @@ def test_failed():
 
 
 items_test_passed_multiple = []
+items_test_passed_multiple.extend([{"ocid": "0", "buyer": {"id": buyer_id}} for buyer_id in range(100)])
 items_test_passed_multiple.extend(
-    [{"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}} for item_id in range(100)]
+    [{"ocid": "0", "buyer": {"id": buyer_id}} for _ in range(1, 3) for buyer_id in range(100, 200)]
 )
 items_test_passed_multiple.extend(
-    [
-        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}}
-        for _ in range(1, 3)
-        for item_id in range(100, 200)
-    ]
+    [{"ocid": "0", "buyer": {"id": buyer_id}} for _ in range(3, 24) for buyer_id in range(200, 300)]
 )
 items_test_passed_multiple.extend(
-    [
-        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}}
-        for _ in range(3, 24)
-        for item_id in range(200, 300)
-    ]
+    [{"ocid": "0", "buyer": {"id": buyer_id}} for _ in range(24, 75) for buyer_id in range(300, 400)]
 )
 items_test_passed_multiple.extend(
-    [
-        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}}
-        for _ in range(24, 75)
-        for item_id in range(300, 400)
-    ]
-)
-items_test_passed_multiple.extend(
-    [
-        {"ocid": "0", "buyer": {"identifier": {"scheme": "ICO", "id": item_id}}}
-        for _ in range(75, 176)
-        for item_id in range(400, 500)
-    ]
+    [{"ocid": "0", "buyer": {"id": buyer_id}} for _ in range(75, 176) for buyer_id in range(400, 500)]
 )
 
 

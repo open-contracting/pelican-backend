@@ -3,6 +3,12 @@ Changelog
 
 This changelog only notes major changes, to notify other developers.
 
+2026-08-14
+----------
+
+-  fix: ``distribution.buyer`` and ``distribution.buyer_repetition`` now identify buyers by ``buyer.id``, instead of ``buyer.identifier.scheme`` and ``buyer.identifier.id`` (deprecated in OCDS 1.1). Bump their ``version`` to 2.0. :issue:`169`
+-  feat: Add :func:`~pelican.util.getter.get_organization_identifier`.
+
 2023-01-20
 ----------
 

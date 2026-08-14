@@ -1,17 +1,15 @@
 """
 Fewer than 50% of all buyers are identified in only one compiled release.
 
-Failure indicates issues in buyer identification. Buyers are identified by ``buyer.identifier.scheme`` and
-``buyer.identifier.id``.
+Failure indicates issues in buyer identification. Buyers are identified by ``buyer.id``.
 
-The test is skipped if the ``buyer.identifier.scheme`` and ``buyer.identifier.id`` fields are both present in fewer
-than 1,000 compiled releases.
+The test is skipped if the ``buyer.id`` field is present in fewer than 1,000 compiled releases.
 """
 
 from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
 from pelican.util.getter import deep_get
 
-version = 1.0
+version = 2.0
 min_items = 1000
 sample_size = 20
 
@@ -20,16 +18,15 @@ def add_item(scope, item, item_id):
     if not scope:
         scope = {"buyers": {}, "total_ocid_count": 0}
 
-    scheme = deep_get(item, "buyer.identifier.scheme")
-    ident = deep_get(item, "buyer.identifier.id")
-    if scheme is None or ident is None:
+    buyer_id = deep_get(item, "buyer.id")
+    if buyer_id is None:
         return scope
 
-    identifier = (str(scheme), str(ident))
-    if identifier not in scope["buyers"]:
-        scope["buyers"][identifier] = {"count": 1, "example": {"item_id": item_id, "ocid": item["ocid"]}}
+    buyer_id = str(buyer_id)
+    if buyer_id not in scope["buyers"]:
+        scope["buyers"][buyer_id] = {"count": 1, "example": {"item_id": item_id, "ocid": item["ocid"]}}
     else:
-        scope["buyers"][identifier]["count"] += 1
+        scope["buyers"][buyer_id]["count"] += 1
     scope["total_ocid_count"] += 1
 
     return scope
