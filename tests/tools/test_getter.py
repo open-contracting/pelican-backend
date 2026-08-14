@@ -2,7 +2,7 @@ from datetime import UTC, date, datetime, timedelta, timezone
 
 import pytest
 
-from pelican.util.getter import deep_get, get_values, parse_date, parse_datetime
+from pelican.util.getter import deep_get, get_organization_identifier, get_values, parse_date, parse_datetime
 
 EMPTY = [None, "", 0, 0.0, False, set(), (), [], {}]
 NON_STR = [None, 1, 1.0, True, {1}, (1,), [1], {1}]
@@ -249,6 +249,43 @@ def test_deep_get(data, expected, actual):
 )
 def test_deep_get_force(data, expected, force, actual):
     assert deep_get(data, expected, force) == actual
+
+
+@pytest.mark.parametrize(
+    ("data", "actual"),
+    [
+        ({}, None),
+        ({"buyer": {}}, None),
+        # The reference matches no party.
+        ({"buyer": {"id": "1"}}, None),
+        ({"buyer": {"id": "1"}, "parties": "string"}, None),
+        ({"buyer": {"id": "1"}, "parties": [{"identifier": {"scheme": "ICO", "id": "1"}}]}, None),
+        ({"buyer": {"id": "1"}, "parties": [{"id": "2", "identifier": {"scheme": "ICO", "id": "1"}}]}, None),
+        # The party sets no identifier.
+        ({"buyer": {"id": "1"}, "parties": [{"id": "1"}]}, None),
+        ({"buyer": {"id": "1"}, "parties": [{"id": "1", "identifier": {"scheme": "ICO"}}]}, None),
+        ({"buyer": {"id": "1"}, "parties": [{"id": "1", "identifier": {"id": "1"}}]}, None),
+        ({"buyer": {"id": "1"}, "parties": [{"id": "1", "identifier": {"scheme": None, "id": None}}]}, None),
+        # The party sets the identifier.
+        ({"buyer": {"id": "1"}, "parties": [{"id": "1", "identifier": {"scheme": "ICO", "id": "1"}}]}, ("ICO", "1")),
+        # Values are cast as str.
+        ({"buyer": {"id": 1}, "parties": [{"id": "1", "identifier": {"scheme": "ICO", "id": 1}}]}, ("ICO", "1")),
+        # The first party that sets both fields wins.
+        (
+            {
+                "buyer": {"id": "1"},
+                "parties": [
+                    {"id": "1"},
+                    {"id": "1", "identifier": {"scheme": "ICO", "id": "1"}},
+                    {"id": "1", "identifier": {"scheme": "ICO", "id": "2"}},
+                ],
+            },
+            ("ICO", "1"),
+        ),
+    ],
+)
+def test_get_organization_identifier(data, actual):
+    assert get_organization_identifier(data, "buyer") == actual
 
 
 def test_get_values_invalid():

@@ -116,6 +116,33 @@ def deep_get(value: Any, path: str, force: type[Any] | None = None) -> Any:
     return value
 
 
+def get_organization_identifier(item: Any, path: str) -> tuple[str, str] | None:
+    """
+    Get the ``identifier.scheme`` and ``identifier.id`` of the party referenced by an organization reference.
+
+    Return ``None`` if the reference sets no ``id``, or if no party with a matching ``id`` sets both fields.
+
+    ``id`` values are cast as ``str`` for matching, and the returned values are cast as ``str``.
+
+    :param item: a compiled release
+    :param path: a period-separated list of keys to an organization reference
+    """
+    reference_id = deep_get(item, f"{path}.id")
+    if reference_id is None:
+        return None
+
+    for party in deep_get(item, "parties", list):
+        if not deep_has(party, "id") or str(party["id"]) != str(reference_id):
+            continue
+
+        scheme = deep_get(party, "identifier.scheme")
+        identifier = deep_get(party, "identifier.id")
+        if scheme is not None and identifier is not None:
+            return str(scheme), str(identifier)
+
+    return None
+
+
 def get_values(item: Any, str_path: str, *, value_only: bool | None = False) -> list[Any]:
     index: int | None
 
