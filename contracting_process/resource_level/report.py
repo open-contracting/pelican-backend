@@ -1,14 +1,12 @@
 from psycopg.types.json import Jsonb
 
 from contracting_process.resource_level.definitions import definitions
-from pelican.util.services import commit, get_cursor
+from pelican.util.services import commit, execute
 
 
 def create(dataset_id):
-    cursor = get_cursor()
-
     # Delete existing data in case of duplicate messages.
-    cursor.execute(
+    execute(
         "DELETE FROM report WHERE dataset_id = %(dataset_id)s and type = 'resource_level_check'",
         {"dataset_id": dataset_id},
     )
@@ -32,7 +30,7 @@ def create(dataset_id):
         }
 
     # total counts
-    cursor.execute(
+    rows = execute(
         """\
         SELECT sub.check_name, sub.result, count(*) AS count
         FROM (
@@ -52,7 +50,7 @@ def create(dataset_id):
         {"dataset_id": dataset_id},
     )
 
-    for row in cursor:
+    for row in rows:
         if row["result"] is True:
             report[row["check_name"]]["passed_count"] = row["count"]
         elif row["result"] is False:
@@ -65,7 +63,7 @@ def create(dataset_id):
         report[row["check_name"]]["total_count"] += row["count"]
 
     # individual counts
-    cursor.execute(
+    rows = execute(
         """\
         SELECT
             sub.check_name,
@@ -91,16 +89,14 @@ def create(dataset_id):
         {"dataset_id": dataset_id},
     )
 
-    for row in cursor:
+    for row in rows:
         report[row["check_name"]]["individual_passed_count"] = row["pass_count"]
         report[row["check_name"]]["individual_failed_count"] = row["application_count"] - row["pass_count"]
         report[row["check_name"]]["individual_application_count"] = row["application_count"]
 
-    cursor.execute(
+    execute(
         "INSERT INTO report (dataset_id, type, data) VALUES (%(dataset_id)s, 'resource_level_check', %(data)s)",
         {"dataset_id": dataset_id, "data": Jsonb(report)},
     )
 
     commit()
-
-    cursor.close()

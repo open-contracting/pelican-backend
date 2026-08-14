@@ -4,7 +4,7 @@ import click
 
 from contracting_process import processor
 from pelican.util.currency_converter import bootstrap
-from pelican.util.services import consume, get_cursor
+from pelican.util.services import consume, execute
 from pelican.util.workers import finish_callback
 
 consume_routing_key = "extractor"
@@ -22,9 +22,8 @@ def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
     item_ids = input_message["item_ids"]
 
-    with get_cursor() as cursor:
-        cursor.execute("SELECT data, id FROM data_item WHERE id = ANY(%(ids)s)", {"ids": item_ids})
-        processor.do_work(dataset_id, [(row["data"], row["id"]) for row in cursor])
+    rows = execute("SELECT data, id FROM data_item WHERE id = ANY(%(ids)s)", {"ids": item_ids})
+    processor.do_work(dataset_id, [(row["data"], row["id"]) for row in rows])
 
     finish_callback(client_state, channel, method, dataset_id, routing_key=routing_key)
 

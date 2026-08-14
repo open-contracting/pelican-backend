@@ -1,19 +1,20 @@
 import logging
 import threading
+from collections.abc import Iterable
 from functools import cache
 from typing import Any
 
 import orjson
 import psycopg
 from psycopg import sql
+from psycopg.abc import Params, QueryNoTemplate
 from psycopg.rows import dict_row
 from psycopg.types.json import set_json_dumps, set_json_loads
 from yapw.clients import AsyncConsumer, Blocking
 
 from pelican.util import settings
 
-db_connected = False
-db_connection = None
+db_connection: psycopg.Connection[dict[str, Any]] | None = None
 db_cursor_idx = 0
 
 logger = logging.getLogger(__name__)
@@ -71,12 +72,19 @@ set_json_dumps(orjson.dumps)
 set_json_loads(orjson.loads)
 
 
-def get_cursor(name="") -> psycopg.Cursor[dict[str, Any]]:
-    """Connect to the database, if needed, and return a database cursor."""
-    global db_connected, db_connection, db_cursor_idx  # noqa: PLW0603
-    if not db_connected:
+def get_connection() -> psycopg.Connection[dict[str, Any]]:
+    """Connect to the database, if needed, and return the database connection."""
+    global db_connection  # noqa: PLW0603
+    if db_connection is None:
         db_connection = psycopg.connect(settings.DATABASE_URL, row_factory=dict_row)
-        db_connected = True
+
+    return db_connection
+
+
+def get_cursor(name="") -> psycopg.Cursor[dict[str, Any]]:
+    """Return a database cursor. If a name is provided, the cursor is server-side."""
+    global db_cursor_idx  # noqa: PLW0603
+    connection = get_connection()
 
     if name:
         # https://github.com/django/django/blob/stable/4.2.x/django/db/backends/postgresql/base.py#L469
@@ -84,19 +92,30 @@ def get_cursor(name="") -> psycopg.Cursor[dict[str, Any]]:
         cursor_name = f"{name}-{threading.current_thread().ident}-{db_cursor_idx}"
         # Avoid "named cursor isn't valid anymore". Another option is to use a separate connection.
         # https://www.psycopg.org/psycopg3/docs/advanced/cursors.html#server-side-cursors
-        return db_connection.cursor(name=cursor_name, withhold=True)
+        return connection.cursor(name=cursor_name, withhold=True)
 
-    return db_connection.cursor()
+    return connection.cursor()
+
+
+def execute(statement: QueryNoTemplate, variables: Params | None = None) -> psycopg.Cursor[dict[str, Any]]:
+    """Execute a one-off statement, and return the cursor."""
+    return get_connection().execute(statement, variables)
+
+
+def executemany(statement: QueryNoTemplate, variables_seq: Iterable[Params]) -> None:
+    """Execute a one-off statement against all parameter sequences."""
+    with get_connection().cursor() as cursor:
+        cursor.executemany(statement, variables_seq)
 
 
 def commit() -> None:
     """Commit the transaction."""
-    db_connection.commit()
+    get_connection().commit()
 
 
 def rollback() -> None:
     """Rollback the transaction."""
-    db_connection.rollback()
+    get_connection().rollback()
 
 
 class State:
@@ -118,12 +137,13 @@ def initialize_dataset_state(dataset_id: int) -> None:
 
     :param dataset_id: the dataset's ID
     """
-    sql = """\
+    execute(
+        """\
         INSERT INTO progress_monitor_dataset (dataset_id, phase, state, size)
         VALUES (%(dataset_id)s, %(phase)s, %(state)s, 0)
-    """
-    with get_cursor() as cursor:
-        cursor.execute(sql, {"dataset_id": dataset_id, "phase": Phase.CONTRACTING_PROCESS, "state": State.IN_PROGRESS})
+        """,
+        {"dataset_id": dataset_id, "phase": Phase.CONTRACTING_PROCESS, "state": State.IN_PROGRESS},
+    )
 
 
 def update_dataset_state(dataset_id: int, phase: str, state: str, size: int | None = None) -> None:
@@ -136,20 +156,19 @@ def update_dataset_state(dataset_id: int, phase: str, state: str, size: int | No
     :param size: number of data items to process
     """
     variables = {"phase": phase, "state": state, "dataset_id": dataset_id}
-    sql = """\
+    statement = """\
         UPDATE progress_monitor_dataset
         SET phase = %(phase)s, state = %(state)s, modified = now()
         WHERE dataset_id = %(dataset_id)s
     """
     if size:
         variables["size"] = size
-        sql = """\
+        statement = """\
             UPDATE progress_monitor_dataset
             SET phase = %(phase)s, state = %(state)s, modified = now(), size = %(size)s
             WHERE dataset_id = %(dataset_id)s
         """
-    with get_cursor() as cursor:
-        cursor.execute(sql, variables)
+    execute(statement, variables)
 
 
 def initialize_items_state(dataset_id: int, item_ids: list[int]) -> None:
@@ -159,14 +178,13 @@ def initialize_items_state(dataset_id: int, item_ids: list[int]) -> None:
     :param dataset_id: the dataset's ID
     :param item_ids: the data items' IDs
     """
-    with get_cursor() as cursor:
-        cursor.executemany(
-            """\
-            INSERT INTO progress_monitor_item (dataset_id, item_id, state)
-            VALUES (%(dataset_id)s, %(item_id)s, %(state)s)
-            """,
-            [{"dataset_id": dataset_id, "item_id": item_id, "state": State.IN_PROGRESS} for item_id in item_ids],
-        )
+    executemany(
+        """\
+        INSERT INTO progress_monitor_item (dataset_id, item_id, state)
+        VALUES (%(dataset_id)s, %(item_id)s, %(state)s)
+        """,
+        [{"dataset_id": dataset_id, "item_id": item_id, "state": State.IN_PROGRESS} for item_id in item_ids],
+    )
 
 
 def update_items_state(dataset_id: int, item_ids: list[int], state: str) -> None:
@@ -181,17 +199,16 @@ def update_items_state(dataset_id: int, item_ids: list[int], state: str) -> None
     if not item_ids:
         return
 
-    with get_cursor() as cursor:
-        records = sql.SQL(", ").join(sql.SQL("(%s, %s, %s)") for _ in item_ids)
-        statement = sql.SQL(
-            """\
-            UPDATE progress_monitor_item
-            SET state = data.state, modified = now()
-            FROM (VALUES {}) AS data (dataset_id, item_id, state)
-            WHERE progress_monitor_item.dataset_id = data.dataset_id AND progress_monitor_item.item_id = data.item_id
-            """
-        ).format(records)
-        cursor.execute(statement, [parameter for item_id in item_ids for parameter in (dataset_id, item_id, state)])
+    records = sql.SQL(", ").join(sql.SQL("(%s, %s, %s)") for _ in item_ids)
+    statement = sql.SQL(
+        """\
+        UPDATE progress_monitor_item
+        SET state = data.state, modified = now()
+        FROM (VALUES {}) AS data (dataset_id, item_id, state)
+        WHERE progress_monitor_item.dataset_id = data.dataset_id AND progress_monitor_item.item_id = data.item_id
+        """
+    ).format(records)
+    execute(statement, [parameter for item_id in item_ids for parameter in (dataset_id, item_id, state)])
 
 
 def get_processed_items_count(dataset_id: int) -> int:
@@ -200,12 +217,10 @@ def get_processed_items_count(dataset_id: int) -> int:
 
     :param dataset_id: the dataset's ID
     """
-    with get_cursor() as cursor:
-        cursor.execute(
-            "SELECT COUNT(*) cnt FROM progress_monitor_item WHERE dataset_id = %(dataset_id)s AND state = %(state)s",
-            {"dataset_id": dataset_id, "state": State.OK},
-        )
-        return cursor.fetchone()["cnt"]
+    return execute(
+        "SELECT COUNT(*) cnt FROM progress_monitor_item WHERE dataset_id = %(dataset_id)s AND state = %(state)s",
+        {"dataset_id": dataset_id, "state": State.OK},
+    ).fetchone()["cnt"]
 
 
 # The check.dataset worker calls this function when phase=CONTRACTING_PROCESS and state=OK, at which point size is set.
@@ -216,21 +231,17 @@ def get_total_items_count(dataset_id: int) -> int:
 
     :param dataset_id: the dataset's ID
     """
-    with get_cursor() as cursor:
-        cursor.execute(
-            "SELECT size FROM progress_monitor_dataset WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
-        )
-        return cursor.fetchone()["size"]
+    return execute(
+        "SELECT size FROM progress_monitor_dataset WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
+    ).fetchone()["size"]
 
 
-def get_dataset_progress(dataset_id: int) -> tuple[Any, ...] | None:
+def get_dataset_progress(dataset_id: int) -> dict[str, Any] | None:
     """
     Return the dataset's progress.
 
     :param dataset_id: the dataset's ID
     """
-    with get_cursor() as cursor:
-        cursor.execute(
-            "SELECT * FROM progress_monitor_dataset WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
-        )
-        return cursor.fetchone()
+    return execute(
+        "SELECT * FROM progress_monitor_dataset WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
+    ).fetchone()

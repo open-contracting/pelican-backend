@@ -4,7 +4,7 @@ from psycopg.types.json import Jsonb
 
 from contracting_process.field_level.definitions import coverage_checks, definitions
 from pelican.util.checks import ReservoirSampler
-from pelican.util.services import commit, get_cursor
+from pelican.util.services import commit, execute, get_cursor
 
 logger = logging.getLogger("pelican.contracting_process.field_level.report_examples")
 
@@ -12,12 +12,10 @@ sample_size = 20
 
 
 def create(dataset_id):
-    cursor = get_cursor()
-
     # Delete existing data in case of duplicate messages.
     parameters = {"dataset_id": dataset_id}
-    cursor.execute("DELETE FROM report WHERE dataset_id = %(dataset_id)s AND type = 'field_level_check'", parameters)
-    cursor.execute("DELETE FROM field_level_check_examples WHERE dataset_id = %(dataset_id)s", parameters)
+    execute("DELETE FROM report WHERE dataset_id = %(dataset_id)s AND type = 'field_level_check'", parameters)
+    execute("DELETE FROM field_level_check_examples WHERE dataset_id = %(dataset_id)s", parameters)
 
     report = {}
     examples = {}
@@ -106,7 +104,7 @@ def create(dataset_id):
                 logger.info("Dataset %s: Processed %s field-level check results", dataset_id, i)
 
     logger.info("Dataset %s: Inserting field-level check report", dataset_id)
-    cursor.execute(
+    execute(
         "INSERT INTO report (dataset_id, type, data) VALUES (%(dataset_id)s, 'field_level_check', %(data)s)",
         {"dataset_id": dataset_id, "data": Jsonb(report)},
     )
@@ -124,7 +122,7 @@ def create(dataset_id):
                 check["passed_examples"] = check["passed_examples"].sample
                 check["failed_examples"] = check["failed_examples"].sample
 
-        cursor.execute(
+        execute(
             """\
             INSERT INTO field_level_check_examples (dataset_id, path, data)
             VALUES (%(dataset_id)s, %(path)s, %(data)s)
@@ -133,5 +131,3 @@ def create(dataset_id):
         )
 
     commit()
-
-    cursor.close()

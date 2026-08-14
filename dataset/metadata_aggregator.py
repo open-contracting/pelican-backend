@@ -4,7 +4,7 @@ import requests
 from psycopg.types.json import Jsonb
 
 from pelican.util.getter import deep_get, deep_has, get_values, parse_datetime
-from pelican.util.services import get_cursor
+from pelican.util.services import execute
 
 DATE_STR_FORMAT = "%b-%-y"
 DATETIME_STR_FORMAT = "%Y-%m-%d %H.%M.%S"
@@ -210,9 +210,7 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
 def get_pelican_metadata(dataset_id):
     metadata = {"data_quality_tool_metadata": {"processing_start": None, "processing_end": None}}
 
-    with get_cursor() as cursor:
-        cursor.execute("SELECT created, now() AS now FROM dataset WHERE id = %(id)s", {"id": dataset_id})
-        row = cursor.fetchone()
+    row = execute("SELECT created, now() AS now FROM dataset WHERE id = %(id)s", {"id": dataset_id}).fetchone()
 
     metadata["data_quality_tool_metadata"]["processing_start"] = row["created"].strftime(DATETIME_STR_FORMAT)
     metadata["data_quality_tool_metadata"]["processing_end"] = row["now"].strftime(DATETIME_STR_FORMAT)
@@ -221,8 +219,7 @@ def get_pelican_metadata(dataset_id):
 
 
 def update_metadata(metadata, dataset_id):
-    with get_cursor() as cursor:
-        cursor.execute(
-            "UPDATE dataset SET meta = meta || %(meta)s, modified = now() WHERE id = %(id)s",
-            {"meta": Jsonb(metadata), "id": dataset_id},
-        )
+    execute(
+        "UPDATE dataset SET meta = meta || %(meta)s, modified = now() WHERE id = %(id)s",
+        {"meta": Jsonb(metadata), "id": dataset_id},
+    )

@@ -7,7 +7,7 @@ from psycopg.types.json import Jsonb
 
 from pelican.exceptions import EmptyExchangeRatesTableError
 from pelican.util import settings
-from pelican.util.services import commit, get_cursor, rollback
+from pelican.util.services import commit, execute, get_cursor, rollback
 
 logger = logging.getLogger("pelican.tools.exchange_rates_db")
 
@@ -15,17 +15,15 @@ BASE_URL = "https://data.fixer.io/api"
 
 
 def load() -> list[tuple[datetime.date, dict[str, float]]]:
-    with get_cursor() as cursor:
-        cursor.execute("SELECT valid_on, rates FROM exchange_rates")
-        return [(row["valid_on"], row["rates"]) for row in cursor]
+    rows = execute("SELECT valid_on, rates FROM exchange_rates")
+    return [(row["valid_on"], row["rates"]) for row in rows]
 
 
 def update_from_fixer_io() -> None:
     logger.info("Starting currency exchange rates update.")
 
     with get_cursor() as cursor:
-        cursor.execute("SELECT max(valid_on) AS max_valid_on FROM exchange_rates")
-        query_result = cursor.fetchone()
+        query_result = cursor.execute("SELECT max(valid_on) AS max_valid_on FROM exchange_rates").fetchone()
 
         if query_result is None:
             raise EmptyExchangeRatesTableError

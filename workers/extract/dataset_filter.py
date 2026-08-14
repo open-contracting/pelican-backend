@@ -52,7 +52,7 @@ def callback(client_state, channel, method, properties, input_message):
         filter_message = input_message["filter_message"]
         max_items = input_message.get("max_items")
 
-        cursor.execute(
+        row = cursor.execute(
             """\
             SELECT meta
             FROM dataset
@@ -62,8 +62,7 @@ def callback(client_state, channel, method, properties, input_message):
                 AND phase = 'CHECKED'
             """,
             {"dataset_id": dataset_id_original},
-        )
-        row = cursor.fetchone()
+        ).fetchone()
         if not row:
             logger.error("No dataset in phase CHECKED with id %s, skipping", dataset_id_original)
             nack(client_state, channel, method.delivery_tag, requeue=False)
@@ -75,15 +74,14 @@ def callback(client_state, channel, method, properties, input_message):
             if k not in {"tender_lifecycle", "compiled_releases", "data_quality_tool_metadata"}
         }
 
-        cursor.execute(
+        dataset_id_filtered = cursor.execute(
             """\
             INSERT INTO dataset (name, meta, ancestor_id)
             SELECT name, %(meta)s, NULL FROM dataset WHERE id = %(dataset_id)s
             RETURNING id
             """,
             {"dataset_id": dataset_id_original, "meta": Jsonb(meta)},
-        )
-        dataset_id_filtered = cursor.fetchone()["id"]
+        ).fetchone()["id"]
         commit()
 
         cursor.execute(
@@ -133,8 +131,7 @@ def callback(client_state, channel, method, properties, input_message):
         statement = sql.SQL(" ".join(parts))
         logger.info(statement.as_string(cursor))
 
-        cursor.execute(statement, variables)
-        ids = [row["id"] for row in cursor]
+        ids = [row["id"] for row in cursor.execute(statement, variables)]
 
         process_items(
             client_state=client_state,
@@ -151,7 +148,7 @@ def callback(client_state, channel, method, properties, input_message):
 
 
 def insert_items(cursors, dataset_id, ids):
-    cursors["default"].execute(
+    rows = cursors["default"].execute(
         """\
         INSERT INTO data_item (data, dataset_id)
         SELECT data, %(dataset_id)s FROM data_item WHERE id = ANY(%(ids)s)
@@ -159,7 +156,7 @@ def insert_items(cursors, dataset_id, ids):
         """,
         {"dataset_id": dataset_id, "ids": ids},
     )
-    return [row["id"] for row in cursors["default"]]
+    return [row["id"] for row in rows]
 
 
 if __name__ == "__main__":

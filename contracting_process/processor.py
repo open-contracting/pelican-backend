@@ -7,7 +7,7 @@ from contracting_process.field_level.definitions import definitions as field_lev
 from contracting_process.resource_level.definitions import definitions as resource_level_definitions
 from pelican.util import settings
 from pelican.util.getter import get_values
-from pelican.util.services import State, get_cursor, update_items_state
+from pelican.util.services import State, executemany, update_items_state
 from pelican.util.workers import is_step_required
 
 logger = logging.getLogger("pelican.contracting_process.processor")
@@ -117,18 +117,16 @@ def field_level_checks(data, item_id, dataset_id, *, do_field_quality=True):
 
 
 def save_field_level_checks(arglist):
-    with get_cursor() as cursor:
-        cursor.executemany(
-            "INSERT INTO field_level_check (result, data_item_id, dataset_id) "
-            "VALUES (%(result)s, %(data_item_id)s, %(dataset_id)s)",
-            arglist,
-        )
+    executemany(
+        "INSERT INTO field_level_check (result, data_item_id, dataset_id) "
+        "VALUES (%(result)s, %(data_item_id)s, %(dataset_id)s)",
+        arglist,
+    )
 
 
 def save_resource_level_check(arglist):
-    with get_cursor() as cursor:
-        cursor.executemany(
-            "INSERT INTO resource_level_check (result, data_item_id, dataset_id) "
-            "VALUES (%(result)s, %(data_item_id)s, %(dataset_id)s)",
-            arglist,
-        )
+    executemany(
+        "INSERT INTO resource_level_check (result, data_item_id, dataset_id) "
+        "VALUES (%(result)s, %(data_item_id)s, %(dataset_id)s)",
+        arglist,
+    )

@@ -2,7 +2,7 @@
 import click
 
 from pelican.util import exchange_rates_db, settings
-from pelican.util.services import Phase, State, commit, get_cursor, publish, update_dataset_state
+from pelican.util.services import Phase, State, commit, execute, publish, update_dataset_state
 
 
 @click.group()
@@ -34,18 +34,15 @@ def add(name, collection_id, previous_dataset, sample):
 @click.option("--force", is_flag=True, help="Forcefully remove the dataset.")
 def remove(dataset_id, include_filtered, force):
     """Delete a dataset."""
-    cursor = get_cursor()
-
-    cursor.execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s) AS exists", {"id": dataset_id})
-    if not cursor.fetchone()["exists"]:
+    row = execute("SELECT EXISTS (SELECT 1 FROM dataset WHERE id = %(id)s) AS exists", {"id": dataset_id}).fetchone()
+    if not row["exists"]:
         click.secho(f"Dataset {dataset_id} doesn't exist.", err=True, fg="red")
         return
 
-    cursor.execute(
+    row = execute(
         "SELECT phase, state FROM progress_monitor_dataset WHERE dataset_id = %(dataset_id)s",
         {"dataset_id": dataset_id},
-    )
-    row = cursor.fetchone()
+    ).fetchone()
     if not row or row["phase"] not in {Phase.CHECKED, Phase.DELETED} or row["state"] != State.OK:
         if force:
             click.secho(
@@ -66,7 +63,7 @@ def remove(dataset_id, include_filtered, force):
     delete_dataset_ids = [dataset_id]
     if include_filtered:
         while True:
-            cursor.execute(
+            rows = execute(
                 """\
                 SELECT p.dataset_id
                 FROM progress_monitor_dataset p
@@ -87,7 +84,7 @@ def remove(dataset_id, include_filtered, force):
                     "dataset_ids": delete_dataset_ids,
                 },
             )
-            new_delete_dataset_ids = [row["dataset_id"] for row in cursor] + [dataset_id]
+            new_delete_dataset_ids = [row["dataset_id"] for row in rows] + [dataset_id]
             if sorted(delete_dataset_ids) == sorted(new_delete_dataset_ids):
                 break
 
@@ -96,16 +93,16 @@ def remove(dataset_id, include_filtered, force):
     click.echo(f"Removing dataset(s) {', '.join(map(str, delete_dataset_ids))}... ", nl=False)
 
     parameters = {"dataset_ids": delete_dataset_ids}
-    cursor.execute("DELETE FROM field_level_check             WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-    cursor.execute("DELETE FROM field_level_check_examples    WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-    cursor.execute("DELETE FROM resource_level_check          WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-    cursor.execute("DELETE FROM resource_level_check_examples WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-    cursor.execute("DELETE FROM report                        WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-    cursor.execute("DELETE FROM dataset_level_check           WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-    cursor.execute("DELETE FROM time_variance_level_check     WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-    cursor.execute("DELETE FROM progress_monitor_item         WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-    cursor.execute("DELETE FROM data_item                     WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-    cursor.execute(
+    execute("DELETE FROM field_level_check             WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+    execute("DELETE FROM field_level_check_examples    WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+    execute("DELETE FROM resource_level_check          WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+    execute("DELETE FROM resource_level_check_examples WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+    execute("DELETE FROM report                        WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+    execute("DELETE FROM dataset_level_check           WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+    execute("DELETE FROM time_variance_level_check     WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+    execute("DELETE FROM progress_monitor_item         WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+    execute("DELETE FROM data_item                     WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+    execute(
         """\
         UPDATE progress_monitor_dataset
         SET phase = %(phase)s, state = %(state)s, modified = now()
@@ -124,7 +121,7 @@ def remove(dataset_id, include_filtered, force):
     click.echo("Checking if rows can be deleted in dataset, dataset_filter, progress_monitor_dataset...")
     drop_dataset_ids = []
     while True:
-        cursor.execute(
+        rows = execute(
             """\
             SELECT p.dataset_id
             FROM progress_monitor_dataset p
@@ -145,7 +142,7 @@ def remove(dataset_id, include_filtered, force):
                 "dataset_ids": drop_dataset_ids,
             },
         )
-        new_drop_dataset_ids = [row["dataset_id"] for row in cursor]
+        new_drop_dataset_ids = [row["dataset_id"] for row in rows]
         if sorted(drop_dataset_ids) == sorted(new_drop_dataset_ids):
             break
 
@@ -155,20 +152,18 @@ def remove(dataset_id, include_filtered, force):
         click.echo(f"Purging dataset(s) {', '.join(map(str, drop_dataset_ids))}... ", nl=False)
 
         parameters = {"dataset_ids": drop_dataset_ids}
-        cursor.execute("DELETE FROM progress_monitor_dataset WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
-        cursor.execute(
+        execute("DELETE FROM progress_monitor_dataset WHERE dataset_id = ANY(%(dataset_ids)s)", parameters)
+        execute(
             """\
             DELETE FROM dataset_filter
             WHERE dataset_id_original = ANY(%(dataset_ids)s) OR dataset_id_filtered = ANY(%(dataset_ids)s)
             """,
             parameters,
         )
-        cursor.execute("DELETE FROM dataset WHERE id = ANY(%(dataset_ids)s)", parameters)
+        execute("DELETE FROM dataset WHERE id = ANY(%(dataset_ids)s)", parameters)
 
         commit()
         click.echo("done")
-
-    cursor.close()
 
 
 @cli.group()

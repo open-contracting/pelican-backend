@@ -3,23 +3,20 @@ import logging
 from psycopg.types.json import Jsonb
 
 from pelican.util.checks import get_empty_result_time_based, get_empty_result_time_based_scope
-from pelican.util.services import get_cursor
+from pelican.util.services import execute, get_cursor
 from time_variance.definitions import definitions
 
 logger = logging.getLogger("pelican.time_variance.processor")
 
 
 def do_work(dataset_id):
-    with get_cursor() as cursor:
-        cursor.execute("SELECT * FROM dataset WHERE id = %(id)s", {"id": dataset_id})
-        ancestor_id = cursor.fetchone()["ancestor_id"]
+    ancestor_id = execute("SELECT * FROM dataset WHERE id = %(id)s", {"id": dataset_id}).fetchone()["ancestor_id"]
 
     if not ancestor_id:
         logger.info("Dataset %s: No ancestor available, skipping time-based checks", dataset_id)
         return
 
-    with get_cursor() as cursor:
-        cursor.execute("ANALYZE data_item")
+    execute("ANALYZE data_item")
 
     scope = {}
 

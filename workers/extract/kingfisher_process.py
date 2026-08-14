@@ -31,14 +31,14 @@ def callback(client_state, channel, method, properties, input_message):
     max_items = input_message.get("max_items")
     ancestor_id = input_message.get("ancestor_id")
 
-    cursor = get_cursor()
-    kingfisher_process_connection = psycopg.connect(
-        settings.KINGFISHER_PROCESS_DATABASE_URL, row_factory=psycopg.rows.dict_row
-    )
-    kingfisher_process_cursor = kingfisher_process_connection.cursor()
-
-    try:
-        sql = """\
+    with (
+        get_cursor() as cursor,
+        psycopg.connect(
+            settings.KINGFISHER_PROCESS_DATABASE_URL, row_factory=psycopg.rows.dict_row
+        ) as kingfisher_process_connection,
+        kingfisher_process_connection.cursor() as kingfisher_process_cursor,
+    ):
+        statement = """\
             SELECT compiled_release.data_id
             FROM compiled_release
             JOIN data ON compiled_release.data_id = data.id
@@ -49,22 +49,21 @@ def callback(client_state, channel, method, properties, input_message):
         variables = {"collection_id": collection_id, "max_size": settings.KINGFISHER_PROCESS_MAX_SIZE}
 
         if max_items:
-            sql += "LIMIT %(limit)s"
+            statement += "LIMIT %(limit)s"
             variables["limit"] = max_items
 
-        kingfisher_process_cursor.execute(sql, variables)
+        kingfisher_process_cursor.execute(statement, variables)
         ids = [row["data_id"] for row in kingfisher_process_cursor]
 
         if ids:
-            cursor.execute(
+            dataset_id = cursor.execute(
                 """\
                 INSERT INTO dataset (name, meta, ancestor_id)
                 VALUES (%(name)s, '{}'::jsonb, %(ancestor_id)s)
                 RETURNING id
                 """,
                 {"name": name, "ancestor_id": ancestor_id},
-            )
-            dataset_id = cursor.fetchone()["id"]
+            ).fetchone()["id"]
 
             metadata = metadata_aggregator.get_kingfisher_metadata(kingfisher_process_cursor, collection_id)
             metadata_aggregator.update_metadata(metadata, dataset_id)
@@ -84,15 +83,11 @@ def callback(client_state, channel, method, properties, input_message):
         else:
             logger.error("No rows found in `compiled_release` where collection_id = %s", collection_id)
             nack(client_state, channel, method.delivery_tag, requeue=False)
-    finally:
-        kingfisher_process_cursor.close()
-        kingfisher_process_connection.close()
-        cursor.close()
 
 
 def insert_items(cursors, dataset_id, ids):
-    cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id = ANY(%(ids)s)", {"ids": ids})
-    data_values = [Jsonb(row["data"]) for row in cursors["kingfisher_process"]]
+    rows = cursors["kingfisher_process"].execute("SELECT data FROM data WHERE data.id = ANY(%(ids)s)", {"ids": ids})
+    data_values = [Jsonb(row["data"]) for row in rows]
     if not data_values:
         return []
 

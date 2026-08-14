@@ -4,7 +4,7 @@ from psycopg.types.json import Jsonb
 
 from contracting_process.resource_level.definitions import definitions
 from pelican.util.checks import ReservoirSampler
-from pelican.util.services import commit, get_cursor
+from pelican.util.services import commit, execute, get_cursor
 
 logger = logging.getLogger("pelican.contracting_process.resource_level.examples")
 
@@ -12,11 +12,8 @@ sample_size = 20
 
 
 def create(dataset_id):
-    with get_cursor() as cursor:
-        # Delete existing data in case of duplicate messages.
-        cursor.execute(
-            "DELETE FROM resource_level_check_examples WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id}
-        )
+    # Delete existing data in case of duplicate messages.
+    execute("DELETE FROM resource_level_check_examples WHERE dataset_id = %(dataset_id)s", {"dataset_id": dataset_id})
 
     check_samplers = {
         check_name: {
