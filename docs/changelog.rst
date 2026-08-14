@@ -6,8 +6,9 @@ This changelog only notes major changes, to notify other developers.
 2026-08-14
 ----------
 
--  fix: ``distribution.buyer`` and ``distribution.buyer_repetition`` now identify buyers by ``buyer.id``, instead of ``buyer.identifier.scheme`` and ``buyer.identifier.id`` (deprecated in OCDS 1.1). Bump their ``version`` to 2.0. :issue:`169`
 -  feat: Add :func:`~pelican.util.getter.get_organization_identifier`.
+-  feat: Add ``PREFETCH_COUNT`` setting, to limit the ``check.data_item`` worker's threads and database connections.
+-  fix: ``distribution.buyer`` and ``distribution.buyer_repetition`` now identify buyers by ``buyer.id``, instead of ``buyer.identifier.scheme`` and ``buyer.identifier.id`` (deprecated in OCDS 1.1). Bump their ``version`` to 2.0. :issue:`169`
 -  fix: Workers open one database connection per thread, instead of sharing one connection across threads. :issue:`88`
 -  refactor: Add :func:`~pelican.util.services.get_connection`, :func:`~pelican.util.services.execute` and :func:`~pelican.util.services.executemany`. :issue:`88`
 

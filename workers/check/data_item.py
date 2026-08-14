@@ -1,8 +1,7 @@
-import multiprocessing
-
 import click
 
 from contracting_process import processor
+from pelican.util import settings
 from pelican.util.currency_converter import bootstrap
 from pelican.util.services import consume, execute
 from pelican.util.workers import finish_callback
@@ -15,7 +14,7 @@ routing_key = "contracting_process_checker"
 def start():
     """Perform the field-level and compiled release-level checks."""
     bootstrap()
-    consume(on_message_callback=callback, queue=consume_routing_key, prefetch_count=multiprocessing.cpu_count())
+    consume(on_message_callback=callback, queue=consume_routing_key, prefetch_count=settings.PREFETCH_COUNT)
 
 
 def callback(client_state, channel, method, properties, input_message):
