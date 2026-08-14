@@ -14,8 +14,7 @@ from yapw.clients import AsyncConsumer, Blocking
 
 from pelican.util import settings
 
-db_connection: psycopg.Connection[dict[str, Any]] | None = None
-db_cursor_idx = 0
+db = threading.local()
 
 logger = logging.getLogger(__name__)
 
@@ -74,22 +73,22 @@ set_json_loads(orjson.loads)
 
 def get_connection() -> psycopg.Connection[dict[str, Any]]:
     """Connect to the database, if needed, and return the database connection."""
-    global db_connection  # noqa: PLW0603
-    if db_connection is None:
-        db_connection = psycopg.connect(settings.DATABASE_URL, row_factory=dict_row)
+    # A consumer callback runs in a worker thread. Each thread needs its own connection, so that a thread's commit
+    # doesn't commit another thread's incomplete work.
+    if not hasattr(db, "connection"):
+        db.connection = psycopg.connect(settings.DATABASE_URL, row_factory=dict_row)
 
-    return db_connection
+    return db.connection
 
 
 def get_cursor(name="") -> psycopg.Cursor[dict[str, Any]]:
     """Return a database cursor. If a name is provided, the cursor is server-side."""
-    global db_cursor_idx  # noqa: PLW0603
     connection = get_connection()
 
     if name:
         # https://github.com/django/django/blob/stable/4.2.x/django/db/backends/postgresql/base.py#L469
-        db_cursor_idx += 1
-        cursor_name = f"{name}-{threading.current_thread().ident}-{db_cursor_idx}"
+        db.cursor_idx = getattr(db, "cursor_idx", 0) + 1
+        cursor_name = f"{name}-{threading.current_thread().ident}-{db.cursor_idx}"
         # Avoid "named cursor isn't valid anymore". Another option is to use a separate connection.
         # https://www.psycopg.org/psycopg3/docs/advanced/cursors.html#server-side-cursors
         return connection.cursor(name=cursor_name, withhold=True)

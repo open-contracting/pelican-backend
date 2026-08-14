@@ -60,6 +60,8 @@ In each worker, the queue name and binding key is set by ``consume_routing_key``
 PostgreSQL
 ----------
 
+A worker opens one connection per thread, so that a thread's commit doesn't commit another thread's incomplete work. Each worker uses one thread, except the :ref:`check-data-item` worker, which uses one thread per CPU.
+
 Tables
 ~~~~~~
 
