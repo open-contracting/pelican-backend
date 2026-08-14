@@ -19,6 +19,7 @@ author = "Open Contracting Partnership"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.extlinks",
     "sphinx.ext.viewcode",
@@ -32,6 +33,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "furo"
 html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 # Eduard Rüppell, Philipp Jakob Cretzschmar, Karl Heinrich Georg von Heyden & Friedrich Sigismund Leuckart,
 # "Atlas zu der Reise im nördlichen Afrika" (1826-1828).
 # Digitized by the Biodiversity Heritage Library (https://doi.org/10.5962/bhl.title.53779),
