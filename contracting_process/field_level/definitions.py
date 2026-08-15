@@ -8,8 +8,6 @@ from contracting_process.field_level.coverage import exists, non_empty
 from contracting_process.field_level.format import email, ocid, telephone
 from contracting_process.field_level.range import date_time, document_description_length, number
 
-BASE_DIR = Path(__file__).resolve().parents[2]
-
 
 def _descend(value, new_path, dot_path, refs):
     if hasattr(value, "__reference__"):
@@ -88,7 +86,7 @@ def _definitions(properties, path=None, refs=None):
             yield dot_path, checks
 
 
-with (BASE_DIR / "pelican" / "static" / "release-schema.json").open() as f:
+with (Path(__file__).resolve().parents[2] / "pelican" / "static" / "release-schema.json").open() as f:
     schema = jsonref.load(f)
 
 coverage_checks = [(exists.calculate, exists.name), (non_empty.calculate, non_empty.name)]
