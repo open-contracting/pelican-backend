@@ -17,7 +17,7 @@ jobs:
       - run: |
           psql postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres -v ON_ERROR_STOP=1 \
             -c "CREATE EXTENSION btree_gin" \
-            -f pelican/migrations/*.sql \
+            $(printf -- '-f %s ' pelican/migrations/*.sql) \
             -c "\copy exchange_rates (valid_on, rates) from 'pelican/static/exchange_rates_dump.csv' delimiter ',' csv header;"
       - env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
