@@ -77,6 +77,7 @@ class FieldQualityTests:
     passing_kwargs = {}
     failing_kwargs = {}
     method = "calculate"
+    version = 1.0
 
     def setUp(self):
         self.method = getattr(self.module, self.method)
@@ -91,7 +92,7 @@ class FieldQualityTests:
                     "result": True,
                     "value": None,
                     "reason": None,
-                    "version": 1.0,
+                    "version": self.version,
                 }
 
     def test_failing(self):
@@ -108,7 +109,7 @@ class FieldQualityTests:
                     "result": False,
                     "value": return_value,
                     "reason": reason,
-                    "version": 1.0,
+                    "version": self.version,
                 }
 
 

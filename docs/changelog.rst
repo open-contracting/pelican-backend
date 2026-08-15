@@ -6,6 +6,7 @@ This changelog only notes major changes, to notify other developers.
 2026-08-14
 ----------
 
+-  feat: ``date_time`` now fails on future dates, for the fields whose values are the dates of events that have already occurred (``date``, ``dateMet``, ``dateModified``, ``datePublished``, ``dateSigned``). Bump its ``version`` to 2.0. :issue:`135`
 -  feat: Add :func:`~pelican.util.getter.get_organization_identifier`.
 -  feat: Add ``PREFETCH_COUNT`` setting, to limit the ``check.data_item`` worker's threads and database connections.
 -  fix: ``distribution.buyer`` and ``distribution.buyer_repetition`` now identify buyers by ``buyer.id``, instead of ``buyer.identifier.scheme`` and ``buyer.identifier.id`` (deprecated in OCDS 1.1). Bump their ``version`` to 2.0. :issue:`169`

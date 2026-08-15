@@ -8,6 +8,9 @@ from contracting_process.field_level.coverage import exists, non_empty
 from contracting_process.field_level.format import email, ocid, telephone
 from contracting_process.field_level.range import date_time, document_description_length, number
 
+# Fields whose values are the dates of events that have already occurred.
+PAST_DATE_FIELDS = {"date", "dateMet", "dateModified", "datePublished", "dateSigned"}
+
 
 def _descend(value, new_path, dot_path, refs):
     if hasattr(value, "__reference__"):
@@ -40,7 +43,10 @@ def _definitions(properties, path=None, refs=None):
             checks = []
 
             if "format" in value and value["format"] == "date-time":
-                checks.append((date_time.calculate, date_time.name))
+                if key in PAST_DATE_FIELDS:
+                    checks.append((date_time.calculate_past, date_time.name))
+                else:
+                    checks.append((date_time.calculate, date_time.name))
 
             if not refs:
                 if key == "language":
