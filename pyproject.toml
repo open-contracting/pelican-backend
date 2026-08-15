@@ -31,5 +31,38 @@ ignore-variadic-names = true
     "RUF012",  # examples
 ]
 
+[tool.sqlfluff.core]
+dialect = "postgres"
+max_line_length = 119
+exclude_rules = [
+    # Preferences
+    "ST07",  # structure.using
+    # The report.type column can't be renamed.
+    "RF04",  # references.keywords
+    # Migrations run at setup, against an empty database.
+    "PG01",  # postgres.excessive_locks
+]
+
+[tool.sqlfluff.rules.capitalisation.keywords]
+capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.capitalisation.literals]
+capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.capitalisation.functions]
+extended_capitalisation_policy = "lower"
+
+[tool.sqlfluff.rules.capitalisation.identifiers]
+extended_capitalisation_policy = "lower"
+
+[tool.sqlfluff.rules.capitalisation.types]
+extended_capitalisation_policy = "lower"
+
+[tool.sqlfluff.rules.convention.casting_style]
+preferred_type_casting_style = "shorthand"
+
+[tool.sqlfluff.rules.convention.not_equal]
+preferred_not_equal_style = "ansi"
+
 [tool.uv.pip]
 exclude-newer = "1 week"

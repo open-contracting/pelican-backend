@@ -19,4 +19,3 @@ TRUNCATE TABLE resource_level_check_examples;
 TRUNCATE TABLE dataset_level_check;
 
 TRUNCATE TABLE time_variance_level_check;
-

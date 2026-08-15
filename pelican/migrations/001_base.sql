@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS dataset (
     name character varying(255),
     meta jsonb,
     ancestor_id bigint,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- pelican-frontend/backend/api/views.py (find_by_name)
@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS dataset_filter (
     dataset_id_original bigint,
     dataset_id_filtered bigint,
     filter_message jsonb,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- manage.py
@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS report (
     dataset_id bigint,
     type report_type,
     data jsonb,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- Column referencing foreign key, plus type and data.
@@ -58,22 +58,24 @@ CREATE TABLE IF NOT EXISTS progress_monitor_dataset (
     state character varying(255),
     phase character varying(255),
     size integer,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp,
     CONSTRAINT unique_dataset_id UNIQUE (dataset_id)
 );
 
 -- Column referencing foreign key, plus phase or with unique constraint.
 -- workers/extract/dataset_filter.py
-CREATE INDEX IF NOT EXISTS progress_monitor_dataset_dataset_id_phase_idx ON progress_monitor_dataset (dataset_id, phase);
+CREATE INDEX IF NOT EXISTS progress_monitor_dataset_dataset_id_phase_idx ON progress_monitor_dataset (
+    dataset_id, phase
+);
 
 CREATE TABLE IF NOT EXISTS progress_monitor_item (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     item_id character varying(255),
     state character varying(255),
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp,
     -- update_items_state()
     CONSTRAINT unique_dataset_id_item_id UNIQUE (dataset_id, item_id)
 );
@@ -87,8 +89,8 @@ CREATE TABLE IF NOT EXISTS data_item (
     id bigserial PRIMARY KEY,
     data jsonb,
     dataset_id bigint,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- Column referencing foreign key, plus ocid.
@@ -103,15 +105,15 @@ CREATE INDEX IF NOT EXISTS data_item_dataset_id_ocid_idx ON data_item (dataset_i
 -- https://www.postgresql.org/docs/current/sql-alterstatistics.html
 -- https://www.postgresql.org/docs/current/planner-stats.html
 ALTER TABLE data_item
-    ALTER COLUMN dataset_id SET STATISTICS 10000;
+ALTER COLUMN dataset_id SET STATISTICS 10000;
 
 CREATE TABLE IF NOT EXISTS field_level_check (
     id bigserial PRIMARY KEY,
     data_item_id bigint,
     dataset_id bigint,
     result jsonb,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- Column referencing foreign key.
@@ -123,21 +125,23 @@ CREATE TABLE IF NOT EXISTS field_level_check_examples (
     dataset_id bigint,
     data jsonb,
     path character varying,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- Column referencing foreign key, plus path.
 -- pelican-frontend/backend/api/views.py (FieldLevelDetail)
-CREATE INDEX IF NOT EXISTS field_level_check_examples_dataset_id_path_idx ON field_level_check_examples (dataset_id, path);
+CREATE INDEX IF NOT EXISTS field_level_check_examples_dataset_id_path_idx ON field_level_check_examples (
+    dataset_id, path
+);
 
 CREATE TABLE IF NOT EXISTS resource_level_check (
     id bigserial PRIMARY KEY,
     data_item_id bigint,
     dataset_id bigint,
     result jsonb,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- Column referencing foreign key.
@@ -149,13 +153,15 @@ CREATE TABLE IF NOT EXISTS resource_level_check_examples (
     dataset_id bigint,
     data jsonb,
     check_name character varying,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- Column referencing foreign key, plus check_name.
 -- pelican-frontend/backend/api/views.py (ResourceLevelDetail)
-CREATE INDEX IF NOT EXISTS resource_level_check_examples_dataset_id_check_name_idx ON resource_level_check_examples (dataset_id, check_name);
+CREATE INDEX IF NOT EXISTS resource_level_check_examples_dataset_id_check_name_idx ON resource_level_check_examples (
+    dataset_id, check_name
+);
 
 CREATE TABLE IF NOT EXISTS dataset_level_check (
     id bigserial PRIMARY KEY,
@@ -164,13 +170,15 @@ CREATE TABLE IF NOT EXISTS dataset_level_check (
     value int,
     meta jsonb,
     dataset_id bigint,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- Column referencing foreign key, plus check_name.
 -- pelican-frontend/backend/exporter/template_tags/dataset.py
-CREATE INDEX IF NOT EXISTS dataset_level_check_dataset_id_check_name_idx ON dataset_level_check (dataset_id, check_name);
+CREATE INDEX IF NOT EXISTS dataset_level_check_dataset_id_check_name_idx ON dataset_level_check (
+    dataset_id, check_name
+);
 
 CREATE TABLE IF NOT EXISTS time_variance_level_check (
     id bigserial PRIMARY KEY,
@@ -181,20 +189,22 @@ CREATE TABLE IF NOT EXISTS time_variance_level_check (
     check_value int,
     meta jsonb,
     dataset_id bigint,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- Column referencing foreign key, plus check_name.
 -- Note: pelican-frontend doesn't yet export time-based check results.
-CREATE INDEX IF NOT EXISTS time_variance_level_check_dataset_id_check_name_idx ON time_variance_level_check (dataset_id, check_name);
+CREATE INDEX IF NOT EXISTS time_variance_level_check_dataset_id_check_name_idx ON time_variance_level_check (
+    dataset_id, check_name
+);
 
 CREATE TABLE IF NOT EXISTS exchange_rates (
     id bigserial PRIMARY KEY,
     valid_on date NOT NULL UNIQUE,
     rates jsonb NOT NULL,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    modified timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT current_timestamp,
+    modified timestamp without time zone DEFAULT current_timestamp
 );
 
 -- rates appears with valid_on in a WHERE clause. The unique index on valid_on is sufficient.
