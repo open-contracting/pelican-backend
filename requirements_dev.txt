@@ -72,6 +72,8 @@ six==1.16.0
     #   -r requirements_base.txt
     #   python-dateutil
     #   rfc3339-validator
+typing-extensions==4.16.0
+    # via psycopg
 urllib3==2.7.0
     # via
     #   -r requirements_base.txt
