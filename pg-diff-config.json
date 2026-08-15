@@ -1,0 +1,20 @@
+{
+    "development": {
+        "sourceClient": {
+            "database": "pelican_backend_dev"
+        },
+        "targetClient": {
+            "database": "pelican_backend"
+        },
+        "compareOptions": {
+            "outputDirectory": "pelican/migrations",
+            "getAuthorFromGit": true,
+            "schemaCompare": {
+                "roles": ["pelican_backend"]
+            },
+            "dataCompare": {
+                "enable": false
+            }
+        }
+    }
+}

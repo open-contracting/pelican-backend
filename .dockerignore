@@ -16,6 +16,7 @@ README.md
 README.rst
 
 # Configuration
+pg-diff-config.json
 pyproject.toml
 
 # Testing
