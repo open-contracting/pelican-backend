@@ -1,3 +1,6 @@
+-- Kingfisher Process uses `data` and `options`. (references.keywords)
+-- noqa: disable=RF04
+
 CREATE TABLE IF NOT EXISTS collection (
     id bigserial PRIMARY KEY,
     source_id text NOT NULL,

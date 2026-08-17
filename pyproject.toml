@@ -34,14 +34,6 @@ ignore-variadic-names = true
 [tool.sqlfluff.core]
 dialect = "postgres"
 max_line_length = 119
-exclude_rules = [
-    # Preferences
-    "ST07",  # structure.using
-    # The report.type column can't be renamed.
-    "RF04",  # references.keywords
-    # Migrations run at setup, against an empty database.
-    "PG01",  # postgres.excessive_locks
-]
 
 [tool.sqlfluff.rules.capitalisation.keywords]
 capitalisation_policy = "upper"

@@ -3,7 +3,12 @@
 -- https://www.postgresql.org/docs/current/datatype-json.html#JSON-INDEXING
 -- https://docs.djangoproject.com/en/stable/topics/db/queries/#querying-jsonfield
 
-CREATE TABLE IF NOT EXISTS dataset (
+-- This migration is only run on an empty database. (postgres.excessive_locks)
+-- noqa: disable=PG01
+-- Avoid churn renaming: data, name, path, type, value. (references.keywords)
+-- noqa: disable=RF04
+
+CREATE TABLE dataset (
     id bigserial PRIMARY KEY,
     name character varying(255),
     meta jsonb,
@@ -13,9 +18,9 @@ CREATE TABLE IF NOT EXISTS dataset (
 );
 
 -- pelican-frontend/backend/api/views.py (find_by_name)
-CREATE INDEX IF NOT EXISTS dataset_name_idx ON dataset (name);
+CREATE INDEX dataset_name_idx ON dataset (name);
 
-CREATE TABLE IF NOT EXISTS dataset_filter (
+CREATE TABLE dataset_filter (
     id bigserial PRIMARY KEY,
     dataset_id_original bigint,
     dataset_id_filtered bigint,
@@ -25,7 +30,7 @@ CREATE TABLE IF NOT EXISTS dataset_filter (
 );
 
 -- manage.py
-CREATE INDEX IF NOT EXISTS dataset_filter_dataset_ids_idx ON dataset_filter (dataset_id_original, dataset_id_filtered);
+CREATE INDEX dataset_filter_dataset_ids_idx ON dataset_filter (dataset_id_original, dataset_id_filtered);
 
 CREATE TYPE report_type AS ENUM (
     'field_level_check',
@@ -33,7 +38,7 @@ CREATE TYPE report_type AS ENUM (
     'dataset_level_check'
 );
 
-CREATE TABLE IF NOT EXISTS report (
+CREATE TABLE report (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     type report_type,
@@ -50,9 +55,9 @@ CREATE TABLE IF NOT EXISTS report (
 -- pelican-frontend/backend/api/views.py (FieldLevelDetail, ResourceLevelDetail)
 -- pelican-frontend/backend/exporter/template_tags/field.py
 -- pelican-frontend/backend/exporter/template_tags/resource.py
-CREATE INDEX IF NOT EXISTS report_dataset_id_type_data_idx ON report USING gin (dataset_id, type, data);
+CREATE INDEX report_dataset_id_type_data_idx ON report USING gin (dataset_id, type, data);
 
-CREATE TABLE IF NOT EXISTS progress_monitor_dataset (
+CREATE TABLE progress_monitor_dataset (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     state character varying(255),
@@ -65,11 +70,11 @@ CREATE TABLE IF NOT EXISTS progress_monitor_dataset (
 
 -- Column referencing foreign key, plus phase or with unique constraint.
 -- workers/extract/dataset_filter.py
-CREATE INDEX IF NOT EXISTS progress_monitor_dataset_dataset_id_phase_idx ON progress_monitor_dataset (
+CREATE INDEX progress_monitor_dataset_dataset_id_phase_idx ON progress_monitor_dataset (
     dataset_id, phase
 );
 
-CREATE TABLE IF NOT EXISTS progress_monitor_item (
+CREATE TABLE progress_monitor_item (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     item_id character varying(255),
@@ -81,11 +86,11 @@ CREATE TABLE IF NOT EXISTS progress_monitor_item (
 );
 
 -- Column referencing foreign key, plus state or item_id.
-CREATE INDEX IF NOT EXISTS progress_monitor_item_item_id_idx ON progress_monitor_item (item_id);
+CREATE INDEX progress_monitor_item_item_id_idx ON progress_monitor_item (item_id);
 -- get_processed_items_count()
-CREATE INDEX IF NOT EXISTS progress_monitor_item_dataset_id_state_idx ON progress_monitor_item (dataset_id, state);
+CREATE INDEX progress_monitor_item_dataset_id_state_idx ON progress_monitor_item (dataset_id, state);
 
-CREATE TABLE IF NOT EXISTS data_item (
+CREATE TABLE data_item (
     id bigserial PRIMARY KEY,
     data jsonb,
     dataset_id bigint,
@@ -95,7 +100,7 @@ CREATE TABLE IF NOT EXISTS data_item (
 
 -- Column referencing foreign key, plus ocid.
 -- time_variance/processor.py
-CREATE INDEX IF NOT EXISTS data_item_dataset_id_ocid_idx ON data_item (dataset_id, (data ->> 'ocid'));
+CREATE INDEX data_item_dataset_id_ocid_idx ON data_item (dataset_id, (data ->> 'ocid'));
 
 -- data_item is the largest and most frequently queried table, so rarely used indexes are avoided. The queries in
 -- workers/extract/dataset_filter.py and pelican-frontend/backend/api/views.py are rarely run, so we don't add the
@@ -107,7 +112,7 @@ CREATE INDEX IF NOT EXISTS data_item_dataset_id_ocid_idx ON data_item (dataset_i
 ALTER TABLE data_item
 ALTER COLUMN dataset_id SET STATISTICS 10000;
 
-CREATE TABLE IF NOT EXISTS field_level_check (
+CREATE TABLE field_level_check (
     id bigserial PRIMARY KEY,
     data_item_id bigint,
     dataset_id bigint,
@@ -117,10 +122,10 @@ CREATE TABLE IF NOT EXISTS field_level_check (
 );
 
 -- Column referencing foreign key.
-CREATE INDEX IF NOT EXISTS field_level_check_dataset_id_idx ON field_level_check (dataset_id);
-CREATE INDEX IF NOT EXISTS field_level_check_data_item_id_idx ON field_level_check (data_item_id);
+CREATE INDEX field_level_check_dataset_id_idx ON field_level_check (dataset_id);
+CREATE INDEX field_level_check_data_item_id_idx ON field_level_check (data_item_id);
 
-CREATE TABLE IF NOT EXISTS field_level_check_examples (
+CREATE TABLE field_level_check_examples (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     data jsonb,
@@ -131,11 +136,11 @@ CREATE TABLE IF NOT EXISTS field_level_check_examples (
 
 -- Column referencing foreign key, plus path.
 -- pelican-frontend/backend/api/views.py (FieldLevelDetail)
-CREATE INDEX IF NOT EXISTS field_level_check_examples_dataset_id_path_idx ON field_level_check_examples (
+CREATE INDEX field_level_check_examples_dataset_id_path_idx ON field_level_check_examples (
     dataset_id, path
 );
 
-CREATE TABLE IF NOT EXISTS resource_level_check (
+CREATE TABLE resource_level_check (
     id bigserial PRIMARY KEY,
     data_item_id bigint,
     dataset_id bigint,
@@ -145,10 +150,10 @@ CREATE TABLE IF NOT EXISTS resource_level_check (
 );
 
 -- Column referencing foreign key.
-CREATE INDEX IF NOT EXISTS resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
-CREATE INDEX IF NOT EXISTS resource_level_check_data_item_id_idx ON resource_level_check (data_item_id);
+CREATE INDEX resource_level_check_dataset_id_idx ON resource_level_check (dataset_id);
+CREATE INDEX resource_level_check_data_item_id_idx ON resource_level_check (data_item_id);
 
-CREATE TABLE IF NOT EXISTS resource_level_check_examples (
+CREATE TABLE resource_level_check_examples (
     id bigserial PRIMARY KEY,
     dataset_id bigint,
     data jsonb,
@@ -159,11 +164,11 @@ CREATE TABLE IF NOT EXISTS resource_level_check_examples (
 
 -- Column referencing foreign key, plus check_name.
 -- pelican-frontend/backend/api/views.py (ResourceLevelDetail)
-CREATE INDEX IF NOT EXISTS resource_level_check_examples_dataset_id_check_name_idx ON resource_level_check_examples (
+CREATE INDEX resource_level_check_examples_dataset_id_check_name_idx ON resource_level_check_examples (
     dataset_id, check_name
 );
 
-CREATE TABLE IF NOT EXISTS dataset_level_check (
+CREATE TABLE dataset_level_check (
     id bigserial PRIMARY KEY,
     check_name character varying,
     result boolean,
@@ -176,11 +181,11 @@ CREATE TABLE IF NOT EXISTS dataset_level_check (
 
 -- Column referencing foreign key, plus check_name.
 -- pelican-frontend/backend/exporter/template_tags/dataset.py
-CREATE INDEX IF NOT EXISTS dataset_level_check_dataset_id_check_name_idx ON dataset_level_check (
+CREATE INDEX dataset_level_check_dataset_id_check_name_idx ON dataset_level_check (
     dataset_id, check_name
 );
 
-CREATE TABLE IF NOT EXISTS time_variance_level_check (
+CREATE TABLE time_variance_level_check (
     id bigserial PRIMARY KEY,
     check_name character varying,
     coverage_result boolean,
@@ -195,11 +200,11 @@ CREATE TABLE IF NOT EXISTS time_variance_level_check (
 
 -- Column referencing foreign key, plus check_name.
 -- Note: pelican-frontend doesn't yet export time-based check results.
-CREATE INDEX IF NOT EXISTS time_variance_level_check_dataset_id_check_name_idx ON time_variance_level_check (
+CREATE INDEX time_variance_level_check_dataset_id_check_name_idx ON time_variance_level_check (
     dataset_id, check_name
 );
 
-CREATE TABLE IF NOT EXISTS exchange_rates (
+CREATE TABLE exchange_rates (
     id bigserial PRIMARY KEY,
     valid_on date NOT NULL UNIQUE,
     rates jsonb NOT NULL,
