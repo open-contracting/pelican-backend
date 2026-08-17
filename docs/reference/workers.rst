@@ -29,7 +29,7 @@ Extract collections from Kingfisher Process.
 
 .. note::
 
-   Some field-level checks use external codelists. These are cached in-memory by each worker for 1 day.
+   Some checks use codelists. The org-id.guide and OCID prefix codelists are retrieved once per worker process, and cached in-memory for 1 day. See also :ref:`ocds-codelists`.
 
 extract.dataset_filter
 ~~~~~~~~~~~~~~~~~~~~~~

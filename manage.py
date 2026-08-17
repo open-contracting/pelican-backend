@@ -5,7 +5,7 @@ from pathlib import Path
 import click
 import requests
 
-from pelican.util import exchange_rates_db, settings
+from pelican.util import codelists, exchange_rates_db, settings
 from pelican.util.services import Phase, State, commit, execute, publish, update_dataset_state
 
 CATEGORIES = {
@@ -284,6 +284,15 @@ def compare(title, defined, documented):
 def updatedocs():
     """Update the docs/checks.md page, using the checks' names and descriptions from Pelican frontend."""
     CHECKS_PAGE.write_text(markdown_page())
+
+
+@dev.command()
+def updatecodelists():
+    """Update the OCDS codelist files in the pelican/static/codelists directory."""
+    for name, url in codelists.CODELIST_URLS.items():
+        response = codelists.session.get(url, timeout=10)
+        response.raise_for_status()
+        (codelists.CODELIST_DIR / name).write_bytes(response.content)
 
 
 if __name__ == "__main__":

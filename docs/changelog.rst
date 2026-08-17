@@ -3,13 +3,14 @@ Changelog
 
 This changelog only notes major changes, to notify other developers.
 
-2026-08-14
+2026-08-17
 ----------
 
 -  feat: ``date_time`` now fails on future dates for fields expecting past dates (``date``, ``dateMet``, ``dateModified``, ``datePublished``, ``dateSigned``). Bump its ``version`` to 2.0. :issue:`135`
 -  feat: Add ``PREFETCH_COUNT`` setting, to limit the :ref`check-data-item` worker's threads and database connections.
 -  feat: Add :func:`pelican.util.getter.get_organization_identifier` function.
 -  fix: ``distribution.buyer`` and ``distribution.buyer_repetition`` now identify buyers by ``buyer.id``, instead of ``buyer.identifier.scheme`` and ``buyer.identifier.id`` (deprecated in OCDS 1.1). Bump their ``version`` to 2.0. :issue:`169`
+-  fix: Read the ``documentType``, ``language`` and ``mediaType`` codelists from the ``pelican/static/codelists`` directory, instead of from GitHub. Retrieve the org-id.guide and OCID prefix codelists once per worker process, instead of once per thread, and retry on connection errors, read timeouts, request timeouts and server errors, in addition to rate limiting. :issue:`48`
 -  fix: Workers open one database connection per thread, instead of sharing one connection across threads. :issue:`88`
 -  refactor: Add :func:`pelican.util.services.get_connection`, :func:`~pelican.util.services.execute` and :func:`~pelican.util.services.executemany`. :issue:`88`
 

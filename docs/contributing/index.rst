@@ -89,6 +89,17 @@ Time-based checks
 
 Any exceptions to the above must be moved to the global scope, or manually validated.
 
+.. _ocds-codelists:
+
+Codelists
+^^^^^^^^^
+
+The ``pelican/static/codelists`` directory caches OCDS codelists for field-level checks. A test fails if a file is out of date. To update:
+
+.. code-block:: bash
+
+   ./manage.py dev updatecodelists
+
 OCDS upgrades
 ^^^^^^^^^^^^^
 
