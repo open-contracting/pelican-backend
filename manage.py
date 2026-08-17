@@ -242,8 +242,8 @@ def compare(title, defined, documented):
 
 @dev.command()
 def updatedocs():
-    """Update the docs/checks.md page, using the check names and descriptions from Pelican frontend."""
-    import json5  # a development requirement, only
+    """Update docs/checks.md, using the checks' names and descriptions from Pelican frontend."""
+    import json5  # a development requirement only
 
     from contracting_process.field_level.definitions import coverage_checks
     from contracting_process.field_level.definitions import definitions as field_level

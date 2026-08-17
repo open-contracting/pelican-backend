@@ -1,5 +1,6 @@
-/* The checks page embeds Pelican frontend's messages as raw HTML, whose <code> elements have no
-   class. Style them like the <code class="literal"> elements that reStructuredText generates. */
+/* checks.md uses Pelican frontend's messages verbatim, whose <code> elements have no class.
+   Style them like the <code class="literal"> elements that reStructuredText generates.
+   https://github.com/pradyunsg/furo/blob/main/src/furo/assets/styles/content/_code.sass */
 code:not([class]) {
     background: var(--color-inline-code-background);
     border-radius: 0.2em;

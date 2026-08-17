@@ -24,7 +24,7 @@ Run the files in the ``pelican/migrations/`` directory in numerical order. For e
 
    psql -v ON_ERROR_STOP=1 pelican_backend $(printf -- '-f %s ' pelican/migrations/*.sql)
 
-To update an existing database, run only the files that it hasn't run yet.
+To update an existing database, run only the unapplied migrations.
 
 Change the schema
 -----------------
@@ -48,7 +48,7 @@ Change the schema
       psql -v ON_ERROR_STOP=1 pelican_backend_dev $(printf -- '-f %s ' pelican/migrations/*.sql)
 
 #. Make changes to the ``pelican_backend_dev`` database, using ``psql``.
-#. Write the patch, replacing ``NAME`` with a short name, like ``not_null``:
+#. Write the migration, replacing ``NAME`` with a short name, like ``not_null``:
 
    .. code-block:: bash
 
@@ -58,18 +58,17 @@ Change the schema
 
    .. attention::
 
-      pg-diff writes no ``DROP`` statements for tables, views, functions and aggregates that are missing from the ``pelican_backend_dev`` database. Write those yourself.
+      pg-diff writes no ``DROP`` statements for tables, views, functions and aggregates that were dropped from the ``pelican_backend_dev`` database. Write those manually.
 
-#. Edit the file, keeping only the relevant statements. Depending on the change, pg-diff writes:
+#. Edit the migration, keeping only the relevant statements. Depending on the change, pg-diff writes:
 
-   -  ``"public".`` schema qualifiers. Remove them. Otherwise, the statements fail in a database that uses another schema.
-   -  ``ALTER TABLE IF EXISTS``. Replace it with ``ALTER TABLE ONLY``. Otherwise, if the table is missing, the statement is skipped, without error.
-   -  ``OWNER TO`` statements, which name the owner in your local database. Remove them.
-   -  ``DROP INDEX`` and ``CREATE INDEX`` statements that recreate an unchanged index, if a column's definition changed. Remove them.
+   -  ``"public".`` schema qualifiers. Remove them; otherwise, the statements fail if a deployment uses another schema.
+   -  ``DROP INDEX`` and ``CREATE INDEX`` statements for unchanged indexes on altered columns. Remove them; otherwise, unchanged indexes are recreated unnecessarily.
+   -  ``OWNER TO`` statements for new objects, naming the owner in your local database. Remove them; otherwise, the statements fail in other databases.
+   -  ``IF EXISTS`` and ``IF NOT EXISTS`` clauses. Remove them; otherwise, a statement is silently skipped if the database isn't in the expected state.
+   -  ``CREATE SEQUENCE`` statements for new ``bigserial`` columns. Remove them, and replace each column definition, like ``id int8 NOT NULL DEFAULT nextval('table_column_seq'::regclass)``, with ``id bigserial``; otherwise, the sequence isn't owned by the column, and is orphaned if the table is dropped.
 
-   .. tip::
-
-      For a new table, write the statements yourself, following the ``001_base.sql`` file. Instead of a ``bigserial`` column, pg-diff writes a ``CREATE SEQUENCE`` statement, whose sequence isn't owned by the column, and is therefore left behind if the table is dropped.
+   Optionally, remove all SQL comments and ``COMMENT ON`` statements.
 
 #. Run the migration, and check that no differences remain. For example:
 
@@ -78,7 +77,7 @@ Change the schema
       psql -v ON_ERROR_STOP=1 pelican_backend -f pelican/migrations/20260814182412168_NAME.sql
       pg-diff -c development check
 
-   The second command should report:
+   The second command should output:
 
    .. code-block:: none
 

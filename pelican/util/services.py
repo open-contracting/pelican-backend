@@ -14,6 +14,7 @@ from yapw.clients import AsyncConsumer, Blocking
 
 from pelican.util import settings
 
+# Open one connection per thread, so that one thread doesn't commit another's incomplete work.
 db = threading.local()
 
 logger = logging.getLogger(__name__)
@@ -73,8 +74,6 @@ set_json_loads(orjson.loads)
 
 def get_connection() -> psycopg.Connection[dict[str, Any]]:
     """Connect to the database, if needed, and return the database connection."""
-    # A consumer callback runs in a worker thread. Each thread needs its own connection, so that a thread's commit
-    # doesn't commit another thread's incomplete work.
     if not hasattr(db, "connection"):
         db.connection = psycopg.connect(settings.DATABASE_URL, row_factory=dict_row)
 
@@ -97,12 +96,12 @@ def get_cursor(name="") -> psycopg.Cursor[dict[str, Any]]:
 
 
 def execute(statement: QueryNoTemplate, variables: Params | None = None) -> psycopg.Cursor[dict[str, Any]]:
-    """Execute a one-off statement, and return the cursor."""
+    """Execute a statement, and return a cursor, from which to read any results."""
     return get_connection().execute(statement, variables)
 
 
 def executemany(statement: QueryNoTemplate, variables_seq: Iterable[Params]) -> None:
-    """Execute a one-off statement against all parameter sequences."""
+    """Execute a statement, once for each set of parameters."""
     with get_connection().cursor() as cursor:
         cursor.executemany(statement, variables_seq)
 

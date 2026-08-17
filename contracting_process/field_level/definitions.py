@@ -8,7 +8,6 @@ from contracting_process.field_level.coverage import exists, non_empty
 from contracting_process.field_level.format import email, ocid, telephone
 from contracting_process.field_level.range import date_time, document_description_length, number
 
-# Fields whose values are the dates of events that have already occurred.
 PAST_DATE_FIELDS = {"date", "dateMet", "dateModified", "datePublished", "dateSigned"}
 
 
