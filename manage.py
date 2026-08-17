@@ -197,6 +197,7 @@ def restart_dataset_check(dataset_id):
     publish(message, "contracting_process_checker")
 
 
+CHECKS_PAGE = Path(__file__).resolve().parent / "docs" / "checks.md"
 DESCRIPTION_KEYS = ("descriptionLong", "description_long", "description", "count_header_tooltip")
 
 
@@ -234,15 +235,8 @@ def markdown_category(messages, name_key):
     return content, identifiers
 
 
-def compare(title, defined, documented):
-    for repository, identifiers in (("frontend", defined - documented), ("backend", documented - defined)):
-        if identifiers:
-            click.secho(f"{title} checks not in Pelican {repository}: {', '.join(identifiers)}", fg="yellow", err=True)
-
-
-@dev.command()
-def updatedocs():
-    """Update docs/checks.md, using the checks' names and descriptions from Pelican frontend."""
+def markdown_page():
+    """Return the Markdown for the docs/checks.md page."""
     import json5  # a development requirement only
 
     from contracting_process.field_level.definitions import coverage_checks
@@ -277,7 +271,19 @@ def updatedocs():
         content.extend(lines)
         compare(title, defined, documented)
 
-    (Path(__file__).resolve().parent / "docs" / "checks.md").write_text("\n".join(content))
+    return "\n".join(content)
+
+
+def compare(title, defined, documented):
+    for repository, identifiers in (("frontend", defined - documented), ("backend", documented - defined)):
+        if identifiers:
+            click.secho(f"{title} checks not in Pelican {repository}: {', '.join(identifiers)}", fg="yellow", err=True)
+
+
+@dev.command()
+def updatedocs():
+    """Update the docs/checks.md page, using the checks' names and descriptions from Pelican frontend."""
+    CHECKS_PAGE.write_text(markdown_page())
 
 
 if __name__ == "__main__":
