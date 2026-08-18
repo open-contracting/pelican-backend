@@ -45,41 +45,41 @@ def get_result(scope):
         return result
 
     ocid_histogram = {
-        "1": {"total_ocid_count": 0, "total_buyer_count": 0},
-        "2_20": {"total_ocid_count": 0, "total_buyer_count": 0},
-        "21_50": {"total_ocid_count": 0, "total_buyer_count": 0},
-        "51_100": {"total_ocid_count": 0, "total_buyer_count": 0},
-        "100+": {"total_ocid_count": 0, "total_buyer_count": 0},
+        "1": {"total_ocid_count": 0, "total_unique_count": 0},
+        "2_20": {"total_ocid_count": 0, "total_unique_count": 0},
+        "21_50": {"total_ocid_count": 0, "total_unique_count": 0},
+        "51_100": {"total_ocid_count": 0, "total_unique_count": 0},
+        "100+": {"total_ocid_count": 0, "total_unique_count": 0},
     }
-    total_buyer_count = len(scope["buyers"])
+    total_unique_count = len(scope["buyers"])
     sampler = ReservoirSampler(sample_size)
 
     for value in scope["buyers"].values():
         if value["count"] == 1:
             ocid_histogram["1"]["total_ocid_count"] += value["count"]
-            ocid_histogram["1"]["total_buyer_count"] += 1
+            ocid_histogram["1"]["total_unique_count"] += 1
             sampler.process(value["example"])
         elif 2 <= value["count"] <= 20:
             ocid_histogram["2_20"]["total_ocid_count"] += value["count"]
-            ocid_histogram["2_20"]["total_buyer_count"] += 1
+            ocid_histogram["2_20"]["total_unique_count"] += 1
         elif 21 <= value["count"] <= 50:
             ocid_histogram["21_50"]["total_ocid_count"] += value["count"]
-            ocid_histogram["21_50"]["total_buyer_count"] += 1
+            ocid_histogram["21_50"]["total_unique_count"] += 1
         elif 51 <= value["count"] <= 100:
             ocid_histogram["51_100"]["total_ocid_count"] += value["count"]
-            ocid_histogram["51_100"]["total_buyer_count"] += 1
+            ocid_histogram["51_100"]["total_unique_count"] += 1
         else:
             ocid_histogram["100+"]["total_ocid_count"] += value["count"]
-            ocid_histogram["100+"]["total_buyer_count"] += 1
+            ocid_histogram["100+"]["total_unique_count"] += 1
 
-    passed = ocid_histogram["1"]["total_buyer_count"] < 0.5 * total_buyer_count
+    passed = ocid_histogram["1"]["total_unique_count"] < 0.5 * total_unique_count
 
     result["result"] = passed
     result["value"] = 100 if passed else 0
     result["meta"] = {
         "counts": ocid_histogram,
         "total_ocid_count": total_ocid_count,
-        "total_buyer_count": total_buyer_count,
+        "total_unique_count": total_unique_count,
         "examples": sampler.sample,
     }
 

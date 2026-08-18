@@ -10,6 +10,7 @@ This changelog only notes major changes, to notify other developers.
 -  feat: Add ``PREFETCH_COUNT`` setting, to limit the :ref:`check-data-item` worker's threads and database connections.
 -  feat: Add :func:`pelican.util.getter.get_organization_identifier` function.
 -  fix: ``distribution.buyer`` and ``distribution.buyer_repetition`` now identify buyers by ``buyer.id``, instead of ``buyer.identifier.scheme`` and ``buyer.identifier.id`` (deprecated in OCDS 1.1). Bump their ``version`` to 2.0. :issue:`169`
+-  refactor: Rename the ``total_buyer_count`` key to a generic ``total_unique_count`` in the ``meta`` of the ``distribution.buyer`` check.
 -  fix: Read the ``documentType``, ``language`` and ``mediaType`` codelists from files instead of GitHub. Retrieve the org-id.guide and OCID prefix codelists once per worker process, instead of once per thread, and retry on connection/server errors and read/request timeouts, in addition to rate limiting. :issue:`48`
 -  fix: Workers open one database connection per thread, instead of sharing one connection across threads. :issue:`88`
 

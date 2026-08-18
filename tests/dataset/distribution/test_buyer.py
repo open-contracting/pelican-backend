@@ -66,9 +66,9 @@ def test_failed():
     assert result["result"] is False
     assert result["value"] == 0
     assert result["meta"]["total_ocid_count"] == buyer.min_items
-    assert result["meta"]["total_buyer_count"] == buyer.min_items
+    assert result["meta"]["total_unique_count"] == buyer.min_items
     assert result["meta"]["counts"]["1"]["total_ocid_count"] == buyer.min_items
-    assert result["meta"]["counts"]["1"]["total_buyer_count"] == buyer.min_items
+    assert result["meta"]["counts"]["1"]["total_unique_count"] == buyer.min_items
     assert len(result["meta"]["examples"]) == buyer.sample_size
 
     scope = {}
@@ -80,11 +80,11 @@ def test_failed():
     assert result["result"] is False
     assert result["value"] == 0
     assert result["meta"]["total_ocid_count"] == 2 * buyer.min_items
-    assert result["meta"]["total_buyer_count"] == buyer.min_items + 1
+    assert result["meta"]["total_unique_count"] == buyer.min_items + 1
     assert result["meta"]["counts"]["1"]["total_ocid_count"] == buyer.min_items
-    assert result["meta"]["counts"]["1"]["total_buyer_count"] == buyer.min_items
+    assert result["meta"]["counts"]["1"]["total_unique_count"] == buyer.min_items
     assert result["meta"]["counts"]["100+"]["total_ocid_count"] == buyer.min_items
-    assert result["meta"]["counts"]["100+"]["total_buyer_count"] == 1
+    assert result["meta"]["counts"]["100+"]["total_unique_count"] == 1
     assert len(result["meta"]["examples"]) == buyer.sample_size
 
 
