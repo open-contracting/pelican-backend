@@ -58,6 +58,7 @@ def collection_rows(kingfisher_process_cursor):
             options,
             data_type,
             compilation_started,
+            compilation_enqueued,
             store_start_at,
             store_end_at
         ) VALUES (
@@ -69,6 +70,7 @@ def collection_rows(kingfisher_process_cursor):
             '[]'::jsonb,
             '{}'::jsonb,
             '{}'::jsonb,
+            false,
             false,
             '2001-02-03 04:05:06',
             '9999-12-31 23:59:59'
@@ -91,6 +93,7 @@ def collection_rows(kingfisher_process_cursor):
             options,
             data_type,
             compilation_started,
+            compilation_enqueued,
             store_start_at,
             store_end_at
         ) VALUES (
@@ -103,6 +106,7 @@ def collection_rows(kingfisher_process_cursor):
             '[]'::jsonb,
             '{}'::jsonb,
             '{}'::jsonb,
+            false,
             false,
             '0001-01-01 00:00:00',
             '2001-02-03 07:08:09'
@@ -123,11 +127,13 @@ def collection_file(kingfisher_process_cursor, collection_rows):
         INSERT INTO collection_file (
             filename,
             url,
-            collection_id
+            collection_id,
+            compilation_started
         ) VALUES (
             'test.json',
             'https://example.com/test.json',
-            %(collection_id)s
+            %(collection_id)s,
+            false
         )
         """,
         {"collection_id": collection_rows[1]},

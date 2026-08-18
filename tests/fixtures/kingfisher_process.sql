@@ -20,14 +20,16 @@ CREATE TABLE IF NOT EXISTS collection (
     data_type jsonb NOT NULL,
     compilation_started boolean NOT NULL,
     completed_at timestamp with time zone,
-    scrapyd_job text NOT NULL
+    scrapyd_job text NOT NULL,
+    compilation_enqueued boolean NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS collection_file (
     id bigserial PRIMARY KEY,
     filename text NOT NULL,
     url text NOT NULL,
-    collection_id bigint NOT NULL
+    collection_id bigint NOT NULL,
+    compilation_started boolean NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS compiled_release (
