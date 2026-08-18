@@ -8,6 +8,8 @@ import cachetools.func
 import requests
 from requests.adapters import HTTPAdapter, Retry
 
+from pelican.util import settings
+
 CODELIST_DIR = Path(__file__).resolve().parent.parent / "static" / "codelists"
 
 CODELIST_URLS = {
@@ -28,8 +30,9 @@ adapter = HTTPAdapter(
 )
 
 session = requests.Session()
-session.mount("http://", adapter)
+session.headers["User-Agent"] = settings.USER_AGENT
 session.mount("https://", adapter)
+session.mount("http://", adapter)
 
 _lock = threading.Lock()
 

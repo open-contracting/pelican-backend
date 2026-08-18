@@ -3,6 +3,7 @@ import logging
 import requests
 from psycopg.types.json import Jsonb
 
+from pelican.util import settings
 from pelican.util.getter import deep_get, deep_has, get_values, parse_datetime
 from pelican.util.services import execute
 
@@ -192,7 +193,11 @@ def get_kingfisher_metadata(kingfisher_process_cursor, collection_id):
         for extension_url in deep_get(row["data"], "extensions", list):
             try:
                 # Security: Potential SSRF via extension URLs (within OCDS publication).
-                response = requests.get(extension_url, timeout=30)
+                response = requests.get(
+                    extension_url,
+                    timeout=settings.REQUESTS_TIMEOUT,
+                    headers={"User-Agent": settings.USER_AGENT},
+                )
                 if response.status_code != requests.codes.ok:
                     continue
 

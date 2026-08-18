@@ -74,7 +74,10 @@ PREFETCH_COUNT = int(os.getenv("PREFETCH_COUNT", str(multiprocessing.cpu_count()
 # solution. (2021-10-27: n=6.12318e+07: >300 kB: 2650 0.005%; >30 kB: 195009 0.3%)
 KINGFISHER_PROCESS_MAX_SIZE = int(os.getenv("KINGFISHER_PROCESS_MAX_SIZE", "300000"))
 
-# Timeout for URL availability check.
+# Identify Pelican to servers.
+USER_AGENT = "pelican (+https://www.open-contracting.org; data@open-contracting.org)"
+
+# Timeout for URL availability check and extension metadata retrieval.
 REQUESTS_TIMEOUT = 30
 
 # Do not set in development, to skip updates to exchange rates, and to save quota.
