@@ -4,6 +4,7 @@ from unittest.mock import patch
 import pytest
 
 from dataset.misc import url_availability
+from pelican.util import settings
 
 TEST_URL = os.getenv("TEST_URL", "http://httpbingo.org")
 
@@ -13,6 +14,7 @@ item_test_undefined = {"ocid": "0", "planning": {"documents": [{"url": f"{TEST_U
 
 class MockSettings:
     REQUESTS_TIMEOUT = 1
+    USER_AGENT = settings.USER_AGENT
 
 
 def test_undefined():
