@@ -1,5 +1,6 @@
 cachetools
 click
+json5
 jsonref
 orjson
 phonenumbers

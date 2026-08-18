@@ -24,7 +24,7 @@ idna==3.15
 iniconfig==1.1.1
     # via pytest
 json5==0.15.0
-    # via -r requirements_dev.in
+    # via -r requirements_base.txt
 jsonref==1.0.0.post1
     # via -r requirements_base.txt
 jsonschema==4.17.3
@@ -72,10 +72,6 @@ six==1.16.0
     #   -r requirements_base.txt
     #   python-dateutil
     #   rfc3339-validator
-typing-extensions==4.16.0
-    # via
-    #   -r requirements_base.txt
-    #   psycopg
 urllib3==2.7.0
     # via
     #   -r requirements_base.txt

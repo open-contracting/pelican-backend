@@ -3,10 +3,16 @@ import functools
 from pathlib import Path
 
 import click
+import json5
 import requests
 
+from contracting_process.field_level.definitions import coverage_checks
+from contracting_process.field_level.definitions import definitions as field_level
+from contracting_process.resource_level.definitions import definitions as resource_level
+from dataset.definitions import definitions as dataset_level
 from pelican.util import codelists, exchange_rates_db, settings
 from pelican.util.services import Phase, State, commit, execute, publish, update_dataset_state
+from time_variance.definitions import definitions as time_level
 
 CATEGORIES = {
     "coverage": "Coverage",
@@ -237,14 +243,6 @@ def markdown_category(messages):
 
 def markdown_page():
     """Return the Markdown for the docs/checks.md page."""
-    import json5  # a development requirement only
-
-    from contracting_process.field_level.definitions import coverage_checks
-    from contracting_process.field_level.definitions import definitions as field_level
-    from contracting_process.resource_level.definitions import definitions as resource_level
-    from dataset.definitions import definitions as dataset_level
-    from time_variance.definitions import definitions as time_level
-
     messages_url = (
         "https://raw.githubusercontent.com/open-contracting/pelican-frontend/main/frontend/src/messages/en.js"
     )

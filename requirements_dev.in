@@ -1,7 +1,6 @@
 -r requirements_base.txt
 psycopg[binary]
 coverage
-json5
 jsonschema
 pytest
 pytest-subtests
