@@ -36,6 +36,8 @@ sentry-sdk==2.8.0
     # via -r requirements_base.in
 six==1.16.0
     # via python-dateutil
+typing-extensions==4.16.0
+    # via psycopg
 urllib3==2.7.0
     # via
     #   requests
