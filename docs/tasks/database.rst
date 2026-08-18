@@ -83,6 +83,8 @@ Change the schema
 
       No patch has been created because no differences have been found!
 
+.. _load-exchange-rates:
+
 Load exchange rates
 -------------------
 
@@ -94,9 +96,11 @@ Instead, load a file:
 
    psql pelican_backend -c "\copy exchange_rates (valid_on, rates) from 'pelican/static/exchange_rates_dump.csv' delimiter ',' csv header;"
 
+Then, schedule the :ref:`manage-update-exchange-rates` command to update the rates daily, after 00:05 UTC, `when fixer.io publishes the previous day's rates <https://fixer.io/faq>`__.
+
 .. note::
 
-   The :ref:`extract-kingfisher-process` worker fetches missing exchange rates when it receives a message. To avoid duplication across processes and/or threads, you can run the :ref:`manage-update-exchange-rates` command periodically.
+   If the ``FIXER_IO_API_KEY`` environment variable is set, the :ref:`extract-kingfisher-process` worker also retrieves any missing rates when it receives a message.
 
 Dump exchange rates
 -------------------

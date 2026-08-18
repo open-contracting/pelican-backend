@@ -2,7 +2,7 @@ import click
 
 from contracting_process import processor
 from pelican.util import settings
-from pelican.util.currency_converter import bootstrap
+from pelican.util.currency_converter import get_exchange_rates
 from pelican.util.services import consume, execute
 from pelican.util.workers import finish_callback
 
@@ -13,7 +13,7 @@ routing_key = "contracting_process_checker"
 @click.command()
 def start():
     """Perform the field-level and compiled release-level checks."""
-    bootstrap()
+    get_exchange_rates()
     consume(on_message_callback=callback, queue=consume_routing_key, prefetch_count=settings.PREFETCH_COUNT)
 
 

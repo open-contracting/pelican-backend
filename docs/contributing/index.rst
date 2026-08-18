@@ -81,7 +81,7 @@ Code fixtures
 For :ref:`test_fixtures.py<testing>` to work, check that all OCDS data is in the global scope. For each type of check, there should be …
 
 Compiled release-level checks
-  In ``tests/compiled_release/*``, no results for ``calculate\((?!\w+\)|{}\))``, and the results for ``import (?!bootstrap|calculate|functools|get_empty_result_resource)`` should be followed by a statement like ``calculate = functools.partial(roles.calculate_path_role, ...)``
+  In ``tests/compiled_release/*``, no results for ``calculate\((?!\w+\)|{}\))``, and the results for ``import (?!calculate|functools|get_empty_result_resource)`` should be followed by a statement like ``calculate = functools.partial(roles.calculate_path_role, ...)``
 Dataset-level checks
   No results for ``add_item\((?!\w+, \w+(\[\w+\])?, \w+( \+ \d+)?\))``
 Time-based checks

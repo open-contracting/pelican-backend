@@ -27,10 +27,6 @@ Extract collections from Kingfisher Process.
 #. Initializes each item's state as in-progress
 #. Publishes a message with batches of item IDs
 
-.. note::
-
-   Some checks use codelists. The org-id.guide and OCID prefix codelists are retrieved once per worker process, and cached in-memory for 1 day. See also :ref:`ocds-codelists`.
-
 extract.dataset_filter
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -50,6 +46,14 @@ The worker will ignore a message if the dataset is not in the ``CHECKED`` phase.
 
 Check
 -----
+
+.. note::
+
+   Some checks use codelists. The org-id.guide and OCID prefix codelists are retrieved once per worker process, and cached in-memory for 1 day. See also :ref:`ocds-codelists`.
+
+.. note::
+
+   Some checks convert currencies. The exchange rates are read from the ``exchange_rates`` table, and cached in-memory for 1 day. See :ref:`load-exchange-rates`.
 
 .. _check-data-item:
 

@@ -1,8 +1,4 @@
 from dataset.metadata_aggregator import add_item, get_kingfisher_metadata, get_result
-from pelican.util.currency_converter import bootstrap
-
-bootstrap()
-
 
 items_test_compiled_releases = [
     {"ocid": "0", "date": "2019-01-10T22:00:00+01:00"},

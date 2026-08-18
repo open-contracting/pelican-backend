@@ -1,8 +1,4 @@
 from contracting_process.resource_level.consistent.contracts_value import calculate
-from pelican.util.currency_converter import bootstrap
-
-bootstrap()
-
 
 item_undefined_contracts = {"date": "2019-01-10T22:00:00+01:00", "awards": [{"id": 0}]}
 item_undefined_awards = {"date": "2019-01-10T22:00:00+01:00", "contracts": [{"awardID": 0}]}

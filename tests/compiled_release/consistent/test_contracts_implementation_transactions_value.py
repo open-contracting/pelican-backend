@@ -1,7 +1,4 @@
 from contracting_process.resource_level.consistent.contracts_implementation_transactions_value import calculate
-from pelican.util.currency_converter import bootstrap
-
-bootstrap()
 
 item_empty = {"contracts": [{}, {"implementation": {}}, {"implementation": {"transactions": []}}]}
 item_same_id = {

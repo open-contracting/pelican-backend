@@ -2,7 +2,7 @@
 #    uv pip compile requirements_dev.in -o requirements_dev.txt
 attrs==21.2.0
     # via jsonschema
-cachetools==4.2.4
+cachetools==7.1.7
     # via -r requirements_base.txt
 certifi==2024.7.4
     # via
@@ -72,8 +72,6 @@ six==1.16.0
     #   -r requirements_base.txt
     #   python-dateutil
     #   rfc3339-validator
-typing-extensions==4.16.0
-    # via psycopg
 urllib3==2.7.0
     # via
     #   -r requirements_base.txt

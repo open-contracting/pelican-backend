@@ -1,7 +1,5 @@
 from dataset.distribution import value
-from pelican.util.currency_converter import bootstrap
 
-bootstrap()
 contracts_value = value.ModuleType("contracts.value")
 
 item_unset1 = {"ocid": "1"}

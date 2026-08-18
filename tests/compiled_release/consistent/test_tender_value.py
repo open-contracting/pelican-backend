@@ -1,8 +1,4 @@
 from contracting_process.resource_level.consistent.tender_value import calculate
-from pelican.util.currency_converter import bootstrap
-
-bootstrap()
-
 
 item_test_undefined1 = {"tender": {}, "planning": {"budget": {}}}
 

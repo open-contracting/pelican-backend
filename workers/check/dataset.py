@@ -5,7 +5,7 @@ from yapw.methods import ack, nack
 
 from dataset import processor
 from pelican.util import settings
-from pelican.util.currency_converter import bootstrap
+from pelican.util.currency_converter import get_exchange_rates
 from pelican.util.services import (
     Phase,
     State,
@@ -26,7 +26,7 @@ logger = logging.getLogger("pelican.workers.check.dataset")
 @click.command()
 def start():
     """Perform the dataset-level checks."""
-    bootstrap()
+    get_exchange_rates()
     consume(on_message_callback=callback, queue=consume_routing_key)
 
 

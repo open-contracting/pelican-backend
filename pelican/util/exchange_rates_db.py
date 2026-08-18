@@ -55,6 +55,7 @@ def update_from_fixer_io() -> None:
 
         symbols = ",".join(data["symbols"])
 
+        # Start at max_date, not the next day, because fixer.io occasionally revises rates.
         target_date = max_date
         # Don't retrieve today's exchange rates, because the data might be incomplete.
         while target_date < date_now:
@@ -69,10 +70,6 @@ def update_from_fixer_io() -> None:
                 # The Basic plan is required to request rates for all base currencies. The Professional plan supports
                 # the Time-Series Endpoint, which can request rates for multiple dates at once.
                 # https://fixer.io/documentation
-                #
-                # "The Fixer API delivers EOD / End of Day historical exchange rates, which become available at 00:05am
-                # GMT for the previous day and are time stamped at one second before midnight."
-                # https://fixer.io/faq
                 response = requests.get(
                     f"{BASE_URL}/{date_str}?access_key={access_key}&base=EUR&symbols={symbols}", timeout=10
                 )
