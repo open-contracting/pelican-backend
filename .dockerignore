@@ -24,3 +24,4 @@ pyproject.toml
 
 # Generated files
 **/node_modules
+**/dist
