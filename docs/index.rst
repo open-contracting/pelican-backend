@@ -19,7 +19,8 @@ We use "extract" instead of "import", like in the Extract-Transform-Load pattern
    :caption: Contents
    :maxdepth: 2
 
-   checks
+   checks/en
+   checks/es
    tasks/index
    reference/index
    contributing/index

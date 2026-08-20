@@ -9,7 +9,7 @@ Add checks
    dataset
    time-based
 
-Once the check's name and description are added to `Pelican frontend <https://github.com/open-contracting/pelican-frontend>`__, update :doc:`../../checks`:
+Once the check's name and description are added to `Pelican frontend <https://github.com/open-contracting/pelican-frontend>`__, update :doc:`../../checks/en`:
 
 .. code-block:: bash
 
