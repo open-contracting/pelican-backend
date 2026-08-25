@@ -54,7 +54,22 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
     ]
     failing = [
         (
-            {  # invalid
+            {
+                "tender": {
+                    "milestones": [
+                        {"title": "some_milestone", "status": "scheduled", "dateMet": "2000-01-01T00:00:00Z"},
+                        {"title": "some_milestone", "status": "scheduled", "dateMet": None},
+                    ]
+                },
+            },
+            {"failed_paths": [{"path": "tender.milestones[0]", "status": "scheduled"}]},
+            2,
+            1,
+        ),
+    ]
+    failing__invalid_schema = [
+        (
+            {
                 "tender": {
                     "milestones": [
                         {"title": "some_milestone", "status": "scheduled", "dateMet": {"some": "thing"}},
