@@ -3,6 +3,13 @@ Changelog
 
 This changelog only notes major changes, to notify other developers.
 
+2026-08-25
+----------
+
+-  fix: ``misc.url_availability`` requests each unique URL at most once, and closes responses. :issue:`6`
+-  fix: The :ref:`check-dataset` worker calculates dataset-level check results before opening the transaction that inserts them, so that no transaction is held open while slow checks (like ``misc.url_availability``, which performs HTTP requests) run. :issue:`6`
+-  fix: The :ref:`check-dataset` worker sets a 3-hour consumer timeout, like the report worker, since its final message can take longer than RabbitMQ's 30-minute default. :issue:`6`
+
 2026-08-17
 ----------
 

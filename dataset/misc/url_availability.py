@@ -10,6 +10,8 @@ The URL fields are:
 -  ``contracts.implementation.documents.url``
 
 The test is skipped if fewer than 100 URL values are present.
+
+Each unique URL is requested at most once.
 """
 
 import requests
@@ -57,27 +59,33 @@ def get_result(scope):
         result["meta"] = {"reason": f"fewer than {min_items} occurrences of necessary fields"}
         return result
 
+    statuses = {}
     passed_count = 0
     passed_examples = []
     failed_examples = []
     for sample in sampler:
-        try:
-            # Security: Potential SSRF via user-provided URL (within OCDS publication).
-            response = requests.get(
-                sample["value"],
-                timeout=settings.REQUESTS_TIMEOUT,
-                headers={"User-Agent": settings.USER_AGENT},
-                stream=True,
-            )
-            if requests.codes.ok <= response.status_code < requests.codes.bad_request:
-                sample["status"] = "OK"
-                passed_examples.append(sample)
-                passed_count += 1
-            else:
-                sample["status"] = response.status_code
-                failed_examples.append(sample)
-        except requests.RequestException:
-            sample["status"] = "ERROR"
+        url = sample["value"]
+        if url not in statuses:
+            try:
+                # Security: Potential SSRF via user-provided URL (within OCDS publication).
+                with requests.get(
+                    url,
+                    timeout=settings.REQUESTS_TIMEOUT,
+                    headers={"User-Agent": settings.USER_AGENT},
+                    stream=True,
+                ) as response:
+                    if requests.codes.ok <= response.status_code < requests.codes.bad_request:
+                        statuses[url] = "OK"
+                    else:
+                        statuses[url] = response.status_code
+            except requests.RequestException:
+                statuses[url] = "ERROR"
+
+        sample["status"] = statuses[url]
+        if sample["status"] == "OK":
+            passed_examples.append(sample)
+            passed_count += 1
+        else:
             failed_examples.append(sample)
 
     result["result"] = passed_count == total_count

@@ -27,7 +27,14 @@ logger = logging.getLogger("pelican.workers.check.dataset")
 def start():
     """Perform the dataset-level checks."""
     get_exchange_rates()
-    consume(on_message_callback=callback, queue=consume_routing_key)
+    consume(
+        on_message_callback=callback,
+        queue=consume_routing_key,
+        # 3 hours in milliseconds. The final message can exceed RabbitMQ's 30-minute default, since the data item scan
+        # scales with dataset size, and misc.url_availability can wait up to REQUESTS_TIMEOUT per sampled URL.
+        # https://www.rabbitmq.com/consumers.html
+        arguments={"x-consumer-timeout": 3 * 60 * 60 * 1000},
+    )
 
 
 def callback(client_state, channel, method, properties, input_message):
