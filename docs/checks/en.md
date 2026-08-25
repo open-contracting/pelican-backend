@@ -306,13 +306,13 @@ Each <code>contracts[].awardID</code> is present and matches the <code>id</code>
 
 #### Tender ID is unique
 
-<p>Each <code>tender.id</code> is across within the collection.</p><p>The test is skipped if the field is never present.</p>
+<p>Each <code>tender.id</code> is unique across the collection.</p><p>The test is skipped if the field is never present.</p>
 
 ### Miscellaneous
 
 #### URL availability
 
-<p>A random sample of 100 URL values return responses without HTTP error codes. The URL fields are:</p><ul><li><code>planning.documents.url</code></li><li><code>tender.documents.url</code></li><li><code>awards.documents.url</code></li><li><code>contracts.documents.url</code></li><li><code>contracts.implementation.documents.url</code></li></ul><p>The test is skipped if fewer than 100 URL values are present.</p>
+<p>A random sample of 100 URL values return no responses with HTTP error codes. The URL fields are:</p><ul><li><code>planning.documents.url</code></li><li><code>tender.documents.url</code></li><li><code>awards.documents.url</code></li><li><code>contracts.documents.url</code></li><li><code>contracts.implementation.documents.url</code></li></ul><p>The test is skipped if fewer than 100 URL values are present.</p>
 
 ### Consistency
 

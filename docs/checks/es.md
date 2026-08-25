@@ -4,17 +4,17 @@
 
 ## A nivel de campo
 
-<p>These checks operate on individual fields within compiled releases; each occurrence of each field is analyzed in isolation. There are two types of checks:</p><ul><li><p><b>Coverage:</b> There is one check per field in the release schema. If a field is set, and its value is neither null nor empty (whether it is an object, array or string), then the coverage test passes.</p><p>If a field is on an object in an array, then the coverage test is run for each object in the array. <i>Example</i>: There are 100 compiled releases, all of which have 5 parties. The check for the <code>parties</code> field will be reported out of 100, but the checks for its child fields (like <code>parties.id</code>) will be reported out of 500.</p><p>Child fields are reported in the context of their parent field. <i>Example</i>: There are 100 compiled releases, 10 of which set <code>tender</code>. The check for the <code>tender</code> field will be reported out of 100, but the checks for its child fields (like <code>tender.id</code>) will be reported out of 10.</p></li><li><p><b>Quality:</b> If there is a quality check for the field, and if the coverage test passes, then the quality test is run. The quality checks differ per field, and are described in detail on sub-pages. <i>Examples</i>: <code>ocid</code> value has a registered prefix; release date is in the past.</p></li></ul>
+<p>Estas comprobaciones operan sobre campos individuales dentro de las entregas compiladas; cada aparición de cada campo se analiza de forma aislada. Hay dos tipos de comprobaciones:</p><ul><li><p><b>Cobertura:</b> Hay una comprobación por cada campo del esquema de entregas. Si un campo está establecido, y su valor no es nulo ni está vacío (ya sea un objeto, una lista o una cadena), entonces la prueba de cobertura pasa.</p><p>Si un campo está en un objeto de una lista, entonces la prueba de cobertura se ejecuta para cada objeto de la lista. <i>Ejemplo</i>: Hay 100 entregas compiladas, todas con 5 parties. La comprobación del campo <code>parties</code> se reporta sobre 100, pero las comprobaciones de sus campos hijos (como <code>parties.id</code>) se reportan sobre 500.</p><p>Los campos hijos se reportan en el contexto de su campo padre. <i>Ejemplo</i>: Hay 100 entregas compiladas, 10 de las cuales establecen <code>tender</code>. La comprobación del campo <code>tender</code> se reporta sobre 100, pero las comprobaciones de sus campos hijos (como <code>tender.id</code>) se reportan sobre 10.</p></li><li><p><b>Calidad:</b> Si hay una comprobación de calidad para el campo, y si la prueba de cobertura pasa, entonces se ejecuta la prueba de calidad. Las comprobaciones de calidad difieren según el campo, y se describen en detalle en las subpáginas. <i>Ejemplos</i>: el valor de <code>ocid</code> tiene un prefijo registrado; la fecha de la entrega está en el pasado.</p></li></ul>
 
 ### Cobertura
 
 #### El campo está establecido
 
-Hay una prueba por cada aparición <i>posible</i> del campo. <i>Ejemplo</i>: Si el campo padre <code>tender</code> está establecido en 10 compiled releases, entonces el campo hijo <code>tender.id</code> se reporta sobre 10. Si hay 100 entradas en todos los arrays <code>awards</code> de todos los compiled releases, entonces el campo <code>awards.id</code> se reporta sobre 100.
+Hay una prueba por cada aparición <i>posible</i> del campo. <i>Ejemplo</i>: Si el campo padre <code>tender</code> está establecido en 10 entregas compiladas, entonces el campo hijo <code>tender.id</code> se reporta sobre 10. Si hay 100 entradas en todas las listas <code>awards</code> de todas las entregas compiladas, entonces el campo <code>awards.id</code> se reporta sobre 100.
 
 #### El campo no es nulo ni está vacío
 
-Hay una prueba por cada aparición <i>real</i> del campo. La prueba pasa si el valor del campo no es nulo ni está vacío (es decir, no es una cadena vacía, un array vacío ni un objeto vacío). Vea la comprobación anterior para otros detalles.
+Hay una prueba por cada aparición <i>real</i> del campo. La prueba pasa si el valor del campo no es nulo ni está vacío (es decir, no es una cadena vacía, una lista vacía ni un objeto vacío). Vea la comprobación anterior para otros detalles.
 
 ### Calidad
 
@@ -60,7 +60,7 @@ El valor es una cadena y es un código ISO 639-1 de dos letras en minúsculas. (
 
 ## A nivel de compiled release
 
-<p>These checks operate on individual compiled releases; each compiled release is analyzed in isolation. There are three types of checks:</p><ul><li><p><b>Coherence</b>: The data makes sense and is possible. <i>Example</i>: A start date that is after an end date is incoherent.</p></li><li><p><b>Consistency</b>: If the value of one field implies the value of another field, the values should be identical or commensurate. <i>Examples</i>: The entry in the <code>parties</code> array that is referenced from the <code>buyer</code> field should have 'buyer' in its <code>roles</code> array; the monetary value of an award should be commensurate with the monetary values of its related contracts.</p></li><li><p><b>Reference</b>: A reference field has a valid target. <i>Examples</i>: Every <code>awardID</code> in every contract matches the <code>id</code> of an award; every <code>buyer.id</code> matches the <code>id</code> of a party.</p></li><li><p>A check is 'N/A' if the relevant fields are not set; any other reasons to skip a test are noted for each check. <i>Example</i>: If the <code>contracts.awardID</code> field is not set, then the reference check is not run.</p></li></ul>
+<p>Estas comprobaciones operan sobre entregas compiladas individuales; cada entrega compilada se analiza de forma aislada. Hay tres tipos de comprobaciones:</p><ul><li><p><b>Coherencia</b>: Los datos tienen sentido y son posibles. <i>Ejemplo</i>: Una fecha de inicio posterior a una fecha de fin es incoherente.</p></li><li><p><b>Consistencia</b>: Si el valor de un campo implica el valor de otro campo, los valores deben ser idénticos o proporcionados. <i>Ejemplos</i>: La entrada de la lista <code>parties</code> a la que hace referencia el campo <code>buyer</code> debe tener 'buyer' en su lista <code>roles</code>; el valor monetario de una adjudicación debe ser proporcionado a los valores monetarios de sus contratos relacionados.</p></li><li><p><b>Referencia</b>: Un campo de referencia tiene un destino válido. <i>Ejemplos</i>: Cada <code>awardID</code> de cada contrato coincide con el <code>id</code> de una adjudicación; cada <code>buyer.id</code> coincide con el <code>id</code> de una parte.</p></li><li><p>Una comprobación es 'N/A' si los campos pertinentes no están establecidos; cualquier otro motivo para omitir una prueba se indica en cada comprobación. <i>Ejemplo</i>: Si el campo <code>contracts.awardID</code> no está establecido, entonces la comprobación de referencia no se ejecuta.</p></li></ul>
 
 ### Coherencia
 
@@ -90,49 +90,49 @@ Si el <code>status</code> de un hito es no cumplido ('scheduled' o 'notMet'), en
 
 #### Los valores monetarios son realistas
 
-<p>Cada valor monetario está entre -5 mil millones de USD y +5 mil millones de USD.</p><p>Dado que la prueba opera en todos los objetos de valor, ignora silenciosamente cualquier monto faltante o no numérico y cualquier moneda faltante o desconocida. Si es necesaria la conversión de moneda, pero la fecha del release no es válida, es anterior a 1999 o está en el futuro, la prueba ignora silenciosamente el valor.</p>
+<p>Cada valor monetario está entre -5 mil millones de USD y +5 mil millones de USD.</p><p>Dado que la prueba opera en todos los objetos de valor, ignora silenciosamente cualquier monto faltante o no numérico y cualquier moneda faltante o desconocida. Si es necesaria la conversión de moneda, pero la fecha de la entrega no es válida, es anterior a 1999 o está en el futuro, la prueba ignora silenciosamente el valor.</p>
 
 #### Línea de tiempo del proceso de contratación
 
-<p>Todas las fechas relacionadas con las etapas del proceso de contratación siguen una línea de tiempo coherente.</p><ul><li><code>tender.tenderPeriod.endDate <= tender.contractPeriod.startDate</code>: El último día para las presentaciones no es posterior a la fecha de inicio prevista del contrato.</li><li><code>tender.tenderPeriod.endDate <= awards[].date</code>: El último día para las presentaciones no es posterior a la fecha de una adjudicación.</li><li><code>tender.tenderPeriod.endDate <= contracts[].dateSigned</code>: El último día para las presentaciones no es posterior a la fecha de firma de un contrato.</li><li><code>awards[i].date <= contracts[].dateSigned</code>: La fecha de una adjudicación no es posterior a la fecha de firma de ninguno de sus contratos relacionados.</li><li><code>contracts[].dateSigned <= contracts[].implementation.transactions[].date</code>: La fecha de firma de un contrato no es posterior a la fecha de ninguna de sus transacciones relacionadas.</li></ul><p>Además, el <code>date</code> de cada adjudicación y el <code>dateSigned</code> de cada contrato no son posteriores a la fecha del release.</p><p>Dado que la prueba opera en múltiples fechas, ignora silenciosamente cualquier fecha que no pueda analizarse.</p>
+<p>Todas las fechas relacionadas con las etapas del proceso de contratación siguen una línea de tiempo coherente.</p><ul><li><code>tender.tenderPeriod.endDate <= tender.contractPeriod.startDate</code>: El último día para las presentaciones no es posterior a la fecha de inicio prevista del contrato.</li><li><code>tender.tenderPeriod.endDate <= awards[].date</code>: El último día para las presentaciones no es posterior a la fecha de una adjudicación.</li><li><code>tender.tenderPeriod.endDate <= contracts[].dateSigned</code>: El último día para las presentaciones no es posterior a la fecha de firma de un contrato.</li><li><code>awards[i].date <= contracts[].dateSigned</code>: La fecha de una adjudicación no es posterior a la fecha de firma de ninguno de sus contratos relacionados.</li><li><code>contracts[].dateSigned <= contracts[].implementation.transactions[].date</code>: La fecha de firma de un contrato no es posterior a la fecha de ninguna de sus transacciones relacionadas.</li></ul><p>Además, el <code>date</code> de cada adjudicación y el <code>dateSigned</code> de cada contrato no son posteriores a la fecha de la entrega.</p><p>Dado que la prueba opera en múltiples fechas, ignora silenciosamente cualquier fecha que no pueda analizarse.</p>
 
-#### Release date
+#### Fecha de la entrega
 
-<p>No past date is after the release date.</p><ul><li>For each award, <code>date</code> isn't after the release date.</li><li>For each contract, <code>dateSigned</code> isn't after the release date.</li><li>For each milestone, <code>dateModified</code> and <code>dateMet</code> aren't after the release date.</li><li>For each amendment, <code>date</code> isn't after the release date.</li><li>For each document, <code>datePublished</code> and <code>dateModified</code> aren't after the release date.</li></ul><p>Since the test operates on multiple dates, the test silently ignores any dates that can't be parsed.</p>
+<p>Ninguna fecha pasada es posterior a la fecha de la entrega.</p><ul><li>Para cada adjudicación, <code>date</code> no es posterior a la fecha de la entrega.</li><li>Para cada contrato, <code>dateSigned</code> no es posterior a la fecha de la entrega.</li><li>Para cada hito, <code>dateModified</code> y <code>dateMet</code> no son posteriores a la fecha de la entrega.</li><li>Para cada enmienda, <code>date</code> no es posterior a la fecha de la entrega.</li><li>Para cada documento, <code>datePublished</code> y <code>dateModified</code> no son posteriores a la fecha de la entrega.</li></ul><p>Dado que la prueba opera en múltiples fechas, ignora silenciosamente cualquier fecha que no pueda analizarse.</p>
 
 #### Fechas de hito
 
-<p>Para cada hito, <code>dateModified</code> y <code>dateMet</code> no son posteriores a la fecha del release.</p><p>Dado que la prueba opera en todos los objetos de hito, ignora silenciosamente cualquier fecha que no pueda analizarse.</p>
+<p>Para cada hito, <code>dateModified</code> y <code>dateMet</code> no son posteriores a la fecha de la entrega.</p><p>Dado que la prueba opera en todos los objetos de hito, ignora silenciosamente cualquier fecha que no pueda analizarse.</p>
 
 #### Fechas de enmienda
 
-<p>Para cada enmienda, <code>date</code> no es posterior a la fecha del release, y: el <code>date</code> de una enmienda de la licitación no es anterior al <code>tenderPeriod</code>; el <code>date</code> de una enmienda de una adjudicación no es anterior al <code>date</code> de la adjudicación; el <code>date</code> de una enmienda de un contrato no es anterior al <code>dateSigned</code> del contrato.</p><p>Dado que la prueba opera en todos los objetos de enmienda, ignora silenciosamente cualquier fecha que no pueda analizarse.</p>
+<p>Para cada enmienda, <code>date</code> no es posterior a la fecha de la entrega, y: el <code>date</code> de una enmienda de la licitación no es anterior al <code>tenderPeriod</code>; el <code>date</code> de una enmienda de una adjudicación no es anterior al <code>date</code> de la adjudicación; el <code>date</code> de una enmienda de un contrato no es anterior al <code>dateSigned</code> del contrato.</p><p>Dado que la prueba opera en todos los objetos de enmienda, ignora silenciosamente cualquier fecha que no pueda analizarse.</p>
 
 #### Fechas de documento
 
-<p>Para cada documento, <code>datePublished</code> y <code>dateModified</code> no son posteriores a la fecha del release, y <code>datePublished</code> no es posterior a <code>dateModified</code>.</p><p>Dado que la prueba opera en todos los objetos de documento, ignora silenciosamente cualquier fecha que no pueda analizarse.</p>
+<p>Para cada documento, <code>datePublished</code> y <code>dateModified</code> no son posteriores a la fecha de la entrega, y <code>datePublished</code> no es posterior a <code>dateModified</code>.</p><p>Dado que la prueba opera en todos los objetos de documento, ignora silenciosamente cualquier fecha que no pueda analizarse.</p>
 
 ### Consistencia
 
 #### El número de oferentes es consistente
 
-<p>El valor del campo <code>numberOfTenderers</code> es igual al número de entradas del array <code>tenderers</code>.</p><p>La prueba se omite si el campo <code>tenderers</code> no es un array.</p>
+<p>El valor del campo <code>numberOfTenderers</code> es igual al número de entradas de la lista <code>tenderers</code>.</p><p>La prueba se omite si el campo <code>tenderers</code> no es una lista.</p>
 
 #### El presupuesto de la planificación es acorde con el valor de la licitación
 
-<p><code>planning.budget.amount</code> no es menor que el 50%, ni mayor que el 150%, de <code>tender.value</code>, después de la conversión a USD si es necesaria.</p><p>La prueba se omite si falta un monto, es cero o no es numérico, si falta una moneda o es desconocida, si los dos montos no son ambos positivos o ambos negativos, o si es necesaria la conversión de moneda y la fecha del release no es válida, es anterior a 1999 o está en el futuro.</p>
+<p><code>planning.budget.amount</code> no es menor que el 50%, ni mayor que el 150%, de <code>tender.value</code>, después de la conversión a USD si es necesaria.</p><p>La prueba se omite si falta un monto, es cero o no es numérico, si falta una moneda o es desconocida, si los dos montos no son ambos positivos o ambos negativos, o si es necesaria la conversión de moneda y la fecha de la entrega no es válida, es anterior a 1999 o está en el futuro.</p>
 
 #### Los valores de los contratos son acordes con el valor de la adjudicación
 
-<p>Para cada adjudicación, la suma de los valores de sus contratos no es menor que el 50%, ni mayor que el 150%, del valor de la adjudicación, después de la conversión a USD si es necesaria.</p><p>Dado que la prueba opera en todos los valores de adjudicaciones y contratos, ignora silenciosamente cualquier contrato cuyo <code>awardID</code> no coincida con el <code>id</code> de exactamente una adjudicación, si falta un monto, es cero o no es numérico, si falta una moneda o es desconocida, si los dos montos no son ambos positivos o ambos negativos, o si es necesaria la conversión de moneda y la fecha del release no es válida, es anterior a 1999 o está en el futuro.</p>
+<p>Para cada adjudicación, la suma de los valores de sus contratos no es menor que el 50%, ni mayor que el 150%, del valor de la adjudicación, después de la conversión a USD si es necesaria.</p><p>Dado que la prueba opera en todos los valores de adjudicaciones y contratos, ignora silenciosamente cualquier contrato cuyo <code>awardID</code> no coincida con el <code>id</code> de exactamente una adjudicación, si falta un monto, es cero o no es numérico, si falta una moneda o es desconocida, si los dos montos no son ambos positivos o ambos negativos, o si es necesaria la conversión de moneda y la fecha de la entrega no es válida, es anterior a 1999 o está en el futuro.</p>
 
 #### Los valores de las transacciones son acordes con el valor del contrato
 
-<p>Para cada contrato, la suma de los valores de sus transacciones es menor o igual que el valor del contrato, después de la conversión a USD si es necesaria.</p><p>Dado que la prueba opera en todos los objetos de contrato y de transacción, ignora silenciosamente cualquier monto faltante o no numérico y cualquier moneda faltante o desconocida. Si es necesaria la conversión de moneda, pero la fecha del release no es válida, es anterior a 1999 o está en el futuro, la prueba ignora silenciosamente el contrato y sus transacciones.</p>
+<p>Para cada contrato, la suma de los valores de sus transacciones es menor o igual que el valor del contrato, después de la conversión a USD si es necesaria.</p><p>Dado que la prueba opera en todos los objetos de contrato y de transacción, ignora silenciosamente cualquier monto faltante o no numérico y cualquier moneda faltante o desconocida. Si es necesaria la conversión de moneda, pero la fecha de la entrega no es válida, es anterior a 1999 o está en el futuro, la prueba ignora silenciosamente el contrato y sus transacciones.</p>
 
 #### Las partes son referenciadas
 
-<p>Para cada rol de cada parte, hay una referencia a la organización. <i>Ejemplo</i>: Si una parte tiene los roles 'supplier' y 'payee', se la referencia desde al menos una entrada <code>suppliers</code> de una adjudicación y desde al menos un campo <code>payee</code> de una transacción. Los roles que se prueban son:</p><ul><li>procuringEntity</li><li>tenderer</li><li>supplier</li><li>payer</li><li>payee</li></ul><p>El rol 'buyer' no se prueba, porque puede haber varios compradores en el array <code>parties</code>, pero solo hay un campo <code>buyer</code> para el comprador principal.</p><p>Dado que la prueba opera en todos los objetos de organización, ignora silenciosamente cualquier parte a la que le falte el campo <code>id</code>, ya que no puede ser referenciada.</p>
+<p>Para cada rol de cada parte, hay una referencia a la organización. <i>Ejemplo</i>: Si una parte tiene los roles 'supplier' y 'payee', se la referencia desde al menos una entrada <code>suppliers</code> de una adjudicación y desde al menos un campo <code>payee</code> de una transacción. Los roles que se prueban son:</p><ul><li>procuringEntity</li><li>tenderer</li><li>supplier</li><li>payer</li><li>payee</li></ul><p>El rol 'buyer' no se prueba, porque puede haber varios compradores en la lista <code>parties</code>, pero solo hay un campo <code>buyer</code> para el comprador principal.</p><p>Dado que la prueba opera en todos los objetos de organización, ignora silenciosamente cualquier parte a la que le falte el campo <code>id</code>, ya que no puede ser referenciada.</p>
 
 #### La duración del período es consistente con las fechas de inicio y de fin
 
@@ -140,27 +140,27 @@ Si el <code>status</code> de un hito es no cumplido ('scheduled' o 'notMet'), en
 
 #### El rol del comprador está establecido
 
-<p>La parte referenciada por el campo <code>buyer</code> tiene 'buyer' en su array <code>roles</code>.</p><p>La prueba se omite si falta el <code>id</code> de referencia o si no coincide con el <code>id</code> de exactamente una parte.</p>
+<p>La parte referenciada por el campo <code>buyer</code> tiene 'buyer' en su lista <code>roles</code>.</p><p>La prueba se omite si falta el <code>id</code> de referencia o si no coincide con el <code>id</code> de exactamente una parte.</p>
 
 #### El rol del proveedor está establecido
 
-<p>Cada parte referenciada por una entrada <code>awards[].suppliers</code> tiene 'supplier' en su array <code>roles</code>.</p><p>La prueba se omite si falta todo <code>id</code> de referencia o si ninguno coincide con el <code>id</code> de exactamente una parte.</p>
+<p>Cada parte referenciada por una entrada <code>awards[].suppliers</code> tiene 'supplier' en su lista <code>roles</code>.</p><p>La prueba se omite si falta todo <code>id</code> de referencia o si ninguno coincide con el <code>id</code> de exactamente una parte.</p>
 
 #### El rol del oferente está establecido
 
-<p>Cada parte referenciada por una entrada <code>tender.tenderers</code> tiene 'tenderer' en su array <code>roles</code>.</p><p>La prueba se omite si falta todo <code>id</code> de referencia o si ninguno coincide con el <code>id</code> de exactamente una parte.</p>
+<p>Cada parte referenciada por una entrada <code>tender.tenderers</code> tiene 'tenderer' en su lista <code>roles</code>.</p><p>La prueba se omite si falta todo <code>id</code> de referencia o si ninguno coincide con el <code>id</code> de exactamente una parte.</p>
 
 #### El rol de la entidad contratante está establecido
 
-<p>La parte referenciada por el campo <code>tender.procuringEntity</code> tiene 'procuringEntity' en su array <code>roles</code>.</p><p>La prueba se omite si falta el <code>id</code> de referencia o si no coincide con el <code>id</code> de exactamente una parte.</p>
+<p>La parte referenciada por el campo <code>tender.procuringEntity</code> tiene 'procuringEntity' en su lista <code>roles</code>.</p><p>La prueba se omite si falta el <code>id</code> de referencia o si no coincide con el <code>id</code> de exactamente una parte.</p>
 
 #### El rol del pagador está establecido
 
-<p>Cada parte referenciada por un campo <code>contracts[].implementation.transactions[].payer</code> tiene 'payer' en su array <code>roles</code>.</p><p>La prueba se omite si falta todo <code>id</code> de referencia o si ninguno coincide con el <code>id</code> de exactamente una parte.</p>
+<p>Cada parte referenciada por un campo <code>contracts[].implementation.transactions[].payer</code> tiene 'payer' en su lista <code>roles</code>.</p><p>La prueba se omite si falta todo <code>id</code> de referencia o si ninguno coincide con el <code>id</code> de exactamente una parte.</p>
 
 #### El rol del beneficiario está establecido
 
-<p>Cada parte referenciada por un campo <code>contracts[].implementation.transactions[].payee</code> tiene 'payee' en su array <code>roles</code>.</p><p>La prueba se omite si falta todo <code>id</code> de referencia o si ninguno coincide con el <code>id</code> de exactamente una parte.</p>
+<p>Cada parte referenciada por un campo <code>contracts[].implementation.transactions[].payee</code> tiene 'payee' en su lista <code>roles</code>.</p><p>La prueba se omite si falta todo <code>id</code> de referencia o si ninguno coincide con el <code>id</code> de exactamente una parte.</p>
 
 #### El nombre del comprador es consistente
 
@@ -218,126 +218,126 @@ Cada <code>contracts[].awardID</code> está presente y coincide con el <code>id<
 
 ## A nivel de dataset
 
-<p>These checks operate on a collection: all compiled releases from a given source at a single point in time. There are five types of checks:</p><ul><li><p><b>Distribution</b>: The distribution of a field's values suggests no omissions or inaccuracies. <i>Examples</i>: If all <code>procurementMethod</code> fields have a value of 'open', then the collection either omits or misreports non-open methods; if all <code>tender.status</code> fields have a value of 'active', then the collection either omits or misreports non-active statuses.</p></li><li><p><b>Repetition</b>: The repetition of a field's values suggests no data entry or mapping issues. <i>Examples</i>: If the contract value is zero 10% of the time, there might be a data mapping issue; if the award value is $25,000 10% of the time, there might be a data entry issue.</p></li><li><p><b>Uniqueness</b>: A field's values are unique across the collection.</p></li><li><p><b>Availability</b>: A random sample of URL values return no responses with HTTP error codes.</p></li><li><p><b>Related processes</b>: A related process reference field has a valid target within the collection, and its <code>title</code> is consistent with the target's <code>tender.title</code>.</p></li></ul><p>Some checks report distributions, but don't pass or fail; for example, the distribution of document types has no pass-fail criterion.</p><p>Some of these checks might, in principle, serve as red flags. The difference is that red flags are more sensitive. These checks have higher thresholds for failure; i.e. the data needs to be not only suspect (mild outliers) but <i>bad</i> (extreme outlier).</p>
+<p>Estas comprobaciones operan sobre una colección: todas las entregas compiladas de una misma fuente en un único momento. Hay cinco tipos de comprobaciones:</p><ul><li><p><b>Distribución</b>: La distribución de los valores de un campo no sugiere omisiones ni inexactitudes. <i>Ejemplos</i>: Si todos los campos <code>procurementMethod</code> tienen el valor 'open', entonces la colección omite o informa incorrectamente los métodos que no son abiertos; si todos los campos <code>tender.status</code> tienen el valor 'active', entonces la colección omite o informa incorrectamente los estados que no son activos.</p></li><li><p><b>Repetición</b>: La repetición de los valores de un campo no sugiere problemas de captura ni de mapeo de datos. <i>Ejemplos</i>: Si el valor del contrato es cero el 10% de las veces, podría haber un problema de mapeo de datos; si el valor de la adjudicación es $25.000 el 10% de las veces, podría haber un problema de captura de datos.</p></li><li><p><b>Unicidad</b>: Los valores de un campo son únicos en toda la colección.</p></li><li><p><b>Disponibilidad</b>: Una muestra aleatoria de valores de URL no devuelve respuestas con códigos de error HTTP.</p></li><li><p><b>Procesos relacionados</b>: Un campo de referencia a un proceso relacionado tiene un destino válido dentro de la colección, y su <code>title</code> es consistente con el <code>tender.title</code> del destino.</p></li></ul><p>Algunas comprobaciones informan distribuciones, pero no pasan ni fallan; por ejemplo, la distribución de los tipos de documento no tiene un criterio de éxito o fallo.</p><p>Algunas de estas comprobaciones podrían, en principio, servir como señales de alerta. La diferencia es que las señales de alerta son más sensibles. Estas comprobaciones tienen umbrales de fallo más altos; es decir, los datos no solo tienen que ser sospechosos (valores atípicos leves) sino <i>malos</i> (valores atípicos extremos).</p>
 
 ### Distribución
 
 #### Distribución del estado de licitación
 
-<p>Visualizes the distribution of <code>tender.status</code> values. The 'active' and 'complete' codes each occur in between 0.1% and 99% of cases.</p><p>The test is skipped if the field is never present. The codelist is closed.</p>
+<p>Visualiza la distribución de los valores de <code>tender.status</code>. Los códigos 'active' y 'complete' aparecen cada uno entre el 0,1% y el 99% de los casos.</p><p>La prueba se omite si el campo nunca está presente. La lista de códigos es cerrada.</p>
 
 #### Repetición del valor de los contratos
 
-<p>Lists the 5 most frequent pairs of <code>contracts.value.amount</code> and <code>contracts.value.currency</code>. The 3 most frequent pairs appear in fewer than 10% of cases.</p><p>The test is skipped if there are no pairs.</p>
+<p>Lista los 5 pares más frecuentes de <code>contracts.value.amount</code> y <code>contracts.value.currency</code>. Los 3 pares más frecuentes aparecen en menos del 10% de los casos.</p><p>La prueba se omite si no hay pares.</p>
 
 #### Repetición del valor de las adjudicaciones
 
-<p>Lists the 5 most frequent pairs of <code>awards.value.amount</code> and <code>awards.value.currency</code>. The 3 most frequent pairs appear in fewer than 10% of cases.</p><p>The test is skipped if there are no pairs.</p>
+<p>Lista los 5 pares más frecuentes de <code>awards.value.amount</code> y <code>awards.value.currency</code>. Los 3 pares más frecuentes aparecen en menos del 10% de los casos.</p><p>La prueba se omite si no hay pares.</p>
 
 #### Repetición del valor de licitación
 
-<p>Lists the 5 most frequent pairs of <code>tender.value.amount</code> and <code>tender.value.currency</code>. The 3 most frequent pairs appear in fewer than 10% of cases.</p><p>The test is skipped if there are no pairs.</p>
+<p>Lista los 5 pares más frecuentes de <code>tender.value.amount</code> y <code>tender.value.currency</code>. Los 3 pares más frecuentes aparecen en menos del 10% de los casos.</p><p>La prueba se omite si no hay pares.</p>
 
 #### Distribución de comprador
 
-<p>Fewer than 50% of all buyers are identified in only one compiled release. Failure indicates issues in buyer identification. Buyers are identified by <code>buyer.id</code>. For illustration purposes, the share of all buyers identified in other numbers of compiled releases is shown.</p><p>The test is skipped if the <code>buyer.id</code> field is present in fewer than 1,000 compiled releases.</p>
+<p>Menos del 50% de todos los compradores se identifican en una sola entrega compilada. El fallo indica problemas en la identificación del comprador. Los compradores se identifican por <code>buyer.id</code>. A modo de ilustración, se muestra la proporción de todos los compradores identificados en otros números de entregas compiladas.</p><p>La prueba se omite si el campo <code>buyer.id</code> está presente en menos de 1.000 entregas compiladas.</p>
 
 #### Repetición de comprador
 
-<p>The most common buyer is identified in 1% to 50% of compiled releases. Failure indicates issues in buyer identification or buyer over-representation. Buyers are identified by <code>buyer.id</code>.</p><p>The test is skipped if the <code>buyer.id</code> field is present in fewer than 1,000 compiled releases.</p>
+<p>El comprador más común se identifica en entre el 1% y el 50% de las entregas compiladas. El fallo indica problemas en la identificación del comprador o una sobrerrepresentación del comprador. Los compradores se identifican por <code>buyer.id</code>.</p><p>La prueba se omite si el campo <code>buyer.id</code> está presente en menos de 1.000 entregas compiladas.</p>
 
 #### Distribución del valor de licitación
 
-<p>The total value of the top 1% of tenders is less than the total value of the remaining tenders. Failure indicates extreme outliers in the top 1%. All values are converted to USD as of the compiled release's <code>date</code>. For illustration purposes, the shares of other ranges of values are shown.</p><p>The test is skipped if fewer than 100 values are included. A value is excluded if an amount is missing or non-numeric, if a currency is missing or unknown, or if currency conversion is necessary and the release date is invalid, before 1999, or in the future.</p>
+<p>El valor total del 1% superior de las licitaciones es menor que el valor total de las licitaciones restantes. El fallo indica valores atípicos extremos en el 1% superior. Todos los valores se convierten a USD a la <code>date</code> de la entrega compilada. A modo de ilustración, se muestran las proporciones de otros rangos de valores.</p><p>La prueba se omite si se incluyen menos de 100 valores. Un valor se excluye si falta un monto o no es numérico, si falta una moneda o es desconocida, o si es necesaria la conversión de moneda y la fecha de la entrega no es válida, es anterior a 1999 o está en el futuro.</p>
 
 #### Distribución del valor de las adjudicaciones
 
-<p>The total value of the top 1% of award values is less than the total value of the remaining award values. Failure indicates extreme outliers in the top 1%. All values are converted to USD as of the compiled release's <code>date</code>. For illustration purposes, the shares of other ranges of values are shown.</p><p>The test is skipped if fewer than 100 values are included. A value is excluded if an amount is missing or non-numeric, if a currency is missing or unknown, or if currency conversion is necessary and the release date is invalid, before 1999, or in the future.</p>
+<p>El valor total del 1% superior de los valores de las adjudicaciones es menor que el valor total de los valores de las adjudicaciones restantes. El fallo indica valores atípicos extremos en el 1% superior. Todos los valores se convierten a USD a la <code>date</code> de la entrega compilada. A modo de ilustración, se muestran las proporciones de otros rangos de valores.</p><p>La prueba se omite si se incluyen menos de 100 valores. Un valor se excluye si falta un monto o no es numérico, si falta una moneda o es desconocida, o si es necesaria la conversión de moneda y la fecha de la entrega no es válida, es anterior a 1999 o está en el futuro.</p>
 
 #### Distribución del valor de los contratos
 
-<p>The total value of the top 1% of contract values is less than the total value of the remaining contract values. Failure indicates extreme outliers in the top 1%. All values are converted to USD as of the compiled release's <code>date</code>. For illustration purposes, the shares of other ranges of values are shown.</p><p>The test is skipped if fewer than 100 values are included. A value is excluded if an amount is missing or non-numeric, if a currency is missing or unknown, or if currency conversion is necessary and the release date is invalid, before 1999, or in the future.</p>
+<p>El valor total del 1% superior de los valores de los contratos es menor que el valor total de los valores de los contratos restantes. El fallo indica valores atípicos extremos en el 1% superior. Todos los valores se convierten a USD a la <code>date</code> de la entrega compilada. A modo de ilustración, se muestran las proporciones de otros rangos de valores.</p><p>La prueba se omite si se incluyen menos de 100 valores. Un valor se excluye si falta un monto o no es numérico, si falta una moneda o es desconocida, o si es necesaria la conversión de moneda y la fecha de la entrega no es válida, es anterior a 1999 o está en el futuro.</p>
 
 #### Distribución de la categoría principal de contratación
 
-<p>Visualizes the distribution of <code>tender.mainProcurementCategory</code> values. No code occurs in more than 95% of cases.</p><p>The test is skipped if the field is never present. The codelist is closed.</p>
+<p>Visualiza la distribución de los valores de <code>tender.mainProcurementCategory</code>. Ningún código aparece en más del 95% de los casos.</p><p>La prueba se omite si el campo nunca está presente. La lista de códigos es cerrada.</p>
 
 #### Distribución del método de contratación
 
-<p>Visualizes the distribution of <code>tender.procurementMethod</code> values. The 'open' code occurs in between 0.1% and 99% of cases.</p><p>The test is skipped if the field is never present. The codelist is closed.</p>
+<p>Visualiza la distribución de los valores de <code>tender.procurementMethod</code>. El código 'open' aparece entre el 0,1% y el 99% de los casos.</p><p>La prueba se omite si el campo nunca está presente. La lista de códigos es cerrada.</p>
 
 #### Distribución del criterio de adjudicación
 
-<p>Visualizes the distribution of <code>tender.awardCriteria</code> values. No test is performed.</p><p>The codelist is open.</p>
+<p>Visualiza la distribución de los valores de <code>tender.awardCriteria</code>. No se realiza ninguna prueba.</p><p>La lista de códigos es abierta.</p>
 
 #### Distribución del método de presentación
 
-<p>Visualizes the distribution of <code>tender.submissionMethod</code> values. No test is performed.</p><p>The codelist is open.</p>
+<p>Visualiza la distribución de los valores de <code>tender.submissionMethod</code>. No se realiza ninguna prueba.</p><p>La lista de códigos es abierta.</p>
 
 #### Distribución del estado de adjudicación
 
-<p>Visualizes the distribution of <code>awards.status</code> values. The 'active' code occurs in between 0.1% and 99% of cases.</p><p>The test is skipped if the field is never present. The codelist is closed.</p>
+<p>Visualiza la distribución de los valores de <code>awards.status</code>. El código 'active' aparece entre el 0,1% y el 99% de los casos.</p><p>La prueba se omite si el campo nunca está presente. La lista de códigos es cerrada.</p>
 
 #### Distribución del estado del contrato
 
-<p>Visualizes the distribution of <code>contracts.status</code> values. The 'active' and 'terminated' codes each occur in between 0.1% and 99% of cases.</p><p>The test is skipped if the field is never present. The codelist is closed.</p>
+<p>Visualiza la distribución de los valores de <code>contracts.status</code>. Los códigos 'active' y 'terminated' aparecen cada uno entre el 0,1% y el 99% de los casos.</p><p>La prueba se omite si el campo nunca está presente. La lista de códigos es cerrada.</p>
 
 #### Distribución del estado del hito
 
-<p>Visualizes the distribution of milestone <code>status</code> values. The 'met' code occurs in between 0.1% and 99% of cases. The milestone fields are:</p><ul><li><code>planning.milestones.status</code></li><li><code>tender.milestones.status</code></li><li><code>awards.milestones.status</code></li><li><code>contracts.implementation.milestones.status</code></li></ul><p>The test is skipped if the field is never present. The codelist is closed.</p>
+<p>Visualiza la distribución de los valores de <code>status</code> de los hitos. El código 'met' aparece entre el 0,1% y el 99% de los casos. Los campos de hito son:</p><ul><li><code>planning.milestones.status</code></li><li><code>tender.milestones.status</code></li><li><code>awards.milestones.status</code></li><li><code>contracts.implementation.milestones.status</code></li></ul><p>La prueba se omite si el campo nunca está presente. La lista de códigos es cerrada.</p>
 
 #### Distribución del tipo de hito
 
-<p>Visualizes the distribution of milestone <code>type</code> values. No test is performed. The milestone fields are:</p><ul><li><code>planning.milestones.type</code></li><li><code>tender.milestones.type</code></li><li><code>awards.milestones.type</code></li><li><code>contracts.implementation.milestones.type</code></li></ul><p>The codelist is open.</p>
+<p>Visualiza la distribución de los valores de <code>type</code> de los hitos. No se realiza ninguna prueba. Los campos de hito son:</p><ul><li><code>planning.milestones.type</code></li><li><code>tender.milestones.type</code></li><li><code>awards.milestones.type</code></li><li><code>contracts.implementation.milestones.type</code></li></ul><p>La lista de códigos es abierta.</p>
 
 #### Distribución de la moneda
 
-<p>Visualizes the distribution of <code>currency</code> values. No test is performed. The fields are:</p><ul><li><code>planning.budget.value.currency</code></li><li><code>tender.value.currency</code></li><li><code>tender.minValue.currency</code></li><li><code>awards.value.currency</code></li><li><code>contracts.value.currency</code></li><li><code>contracts.implementation.transactions.value.currency</code></li></ul><p>The codelist is closed.</p>
+<p>Visualiza la distribución de los valores de <code>currency</code>. No se realiza ninguna prueba. Los campos son:</p><ul><li><code>planning.budget.value.currency</code></li><li><code>tender.value.currency</code></li><li><code>tender.minValue.currency</code></li><li><code>awards.value.currency</code></li><li><code>contracts.value.currency</code></li><li><code>contracts.implementation.transactions.value.currency</code></li></ul><p>La lista de códigos es cerrada.</p>
 
 #### Distribución de la relación de los procesos relacionados
 
-<p>Visualizes the distribution of <code>relatedProcesses.relationship</code> values. No test is performed.</p><p>The codelist is open.</p>
+<p>Visualiza la distribución de los valores de <code>relatedProcesses.relationship</code>. No se realiza ninguna prueba.</p><p>La lista de códigos es abierta.</p>
 
 #### Distribución del tipo de documento
 
-<p>Visualizes the distribution of document <code>documentType</code> values. No test is performed. The document fields are:</p><ul><li><code>planning.documents.documentType</code></li><li><code>tender.documents.documentType</code></li><li><code>awards.documents.documentType</code></li><li><code>contracts.documents.documentType</code></li><li><code>contracts.implementation.documents.documentType</code></li></ul><p>The codelist is open.</p>
+<p>Visualiza la distribución de los valores de <code>documentType</code> de los documentos. No se realiza ninguna prueba. Los campos de documento son:</p><ul><li><code>planning.documents.documentType</code></li><li><code>tender.documents.documentType</code></li><li><code>awards.documents.documentType</code></li><li><code>contracts.documents.documentType</code></li><li><code>contracts.implementation.documents.documentType</code></li></ul><p>La lista de códigos es abierta.</p>
 
 ### Unicidad
 
 #### El ID de licitación es único
 
-<p>Each <code>tender.id</code> is across within the collection.</p><p>The test is skipped if the field is never present.</p>
+<p>Cada <code>tender.id</code> es único en toda la colección.</p><p>La prueba se omite si el campo nunca está presente.</p>
 
 ### Misceláneo
 
 #### Disponibilidad de la URL
 
-<p>A random sample of 100 URL values return responses without HTTP error codes. The URL fields are:</p><ul><li><code>planning.documents.url</code></li><li><code>tender.documents.url</code></li><li><code>awards.documents.url</code></li><li><code>contracts.documents.url</code></li><li><code>contracts.implementation.documents.url</code></li></ul><p>The test is skipped if fewer than 100 URL values are present.</p>
+<p>Una muestra aleatoria de 100 valores de URL no devuelve respuestas con códigos de error HTTP. Los campos de URL son:</p><ul><li><code>planning.documents.url</code></li><li><code>tender.documents.url</code></li><li><code>awards.documents.url</code></li><li><code>contracts.documents.url</code></li><li><code>contracts.implementation.documents.url</code></li></ul><p>La prueba se omite si hay menos de 100 valores de URL presentes.</p>
 
 ### Consistencia
 
 #### El título de la licitación es consistente
 
-A related process object has the same value for its <code>title</code> field as the <code>tender.title</code> field of the compiled release it references. The related process fields are: <ul><li><code>contracts.relatedProcesses</code></li><li><code>relatedProcesses</code></li></ul>
+Un objeto de proceso relacionado tiene en su campo <code>title</code> el mismo valor que el campo <code>tender.title</code> de la entrega compilada a la que hace referencia. Los campos de procesos relacionados son: <ul><li><code>contracts.relatedProcesses</code></li><li><code>relatedProcesses</code></li></ul>
 
 ### Referencia
 
 #### Referencia al proceso relacionado
 
-If a related process has a <code>scheme</code> of 'ocid' and its <code>identifier</code> is present, then its <code>identifier</code> matches the <code>ocid</code> of a compiled release. The related process fields are: <ul><li><code>contracts.relatedProcesses</code></li><li><code>relatedProcesses</code></li></ul>
+Si un proceso relacionado tiene un <code>scheme</code> de 'ocid' y su <code>identifier</code> está presente, entonces su <code>identifier</code> coincide con el <code>ocid</code> de una entrega compilada. Los campos de procesos relacionados son: <ul><li><code>contracts.relatedProcesses</code></li><li><code>relatedProcesses</code></li></ul>
 
 ## Basadas en el tiempo
 
-<p>These checks focus on changes within a dataset over time. Each check has two steps:</p><ul><li><b>Find pairs:</b> The compiled releases in the older collection are filtered according to check-specific criteria, and then each is attempted to be paired with a compiled release with the same OCID in the newer collection. If no pair is found, this test fails. <i>Example</i>: The buyer should be invariant across time. If an older release sets the <code>buyer</code> field (thereby satisfying the check's criterion), then it is attempted to be paired with a newer release.</li><li><b>Check pairs:</b> Once a pair is found, the check is run. <i>Example</i>: The buyer should be invariant across time. If the two releases have different values for the <code>buyer</code> field, this test fails.</li></ul>
+<p>Estas comprobaciones se centran en los cambios dentro de un conjunto de datos a lo largo del tiempo. Cada comprobación tiene dos pasos:</p><ul><li><b>Encontrar pares:</b> Las entregas compiladas de la colección más antigua se filtran según criterios propios de cada comprobación, y luego se intenta emparejar cada una con una entrega compilada con el mismo OCID en la colección más reciente. Si no se encuentra ningún par, esta prueba falla. <i>Ejemplo</i>: El comprador debería ser invariable a lo largo del tiempo. Si una entrega más antigua establece el campo <code>buyer</code> (cumpliendo así el criterio de la comprobación), entonces se intenta emparejarla con una entrega más reciente.</li><li><b>Comprobar los pares:</b> Una vez encontrado un par, se ejecuta la comprobación. <i>Ejemplo</i>: El comprador debería ser invariable a lo largo del tiempo. Si las dos entregas tienen valores distintos para el campo <code>buyer</code>, esta prueba falla.</li></ul>
 
-### Stage stability
+### Estabilidad de la etapa
 
-A compiled release in the newer collection has at least the same number of <code>planning</code>, <code>tender</code>, <code>awards</code> and <code>contracts</code> objects as its pair in the older collection.
+Una entrega compilada de la colección más reciente tiene al menos el mismo número de objetos <code>planning</code>, <code>tender</code>, <code>awards</code> y <code>contracts</code> que su par en la colección más antigua.
 
-### OCID persistence
+### Persistencia del OCID
 
-<p>All OCIDs in an older collection of a data source are present in this newer collection of the same source.</p><p>This check always has the same results for pairs found and pairs passed, because no further tests are run in the latter step.</p>
+<p>Todos los OCIDs de una colección más antigua de una fuente de datos están presentes en esta colección más reciente de la misma fuente.</p><p>Esta comprobación siempre tiene los mismos resultados para los pares encontrados y los pares exitosos, porque no se ejecutan más pruebas en el segundo paso.</p>
 
-### Tender title stability
+### Estabilidad del título de la licitación
 
-<p>The tender title is invariant across time.</p><p>If a compiled release in the older collection sets the <code>tender.title</code> field, then its pair in the newer collection has a matching <code>tender.title</code> field. Values are lowercased and whitespace-normalized for matching.</p>
+<p>El título de la licitación es invariable a lo largo del tiempo.</p><p>Si una entrega compilada de la colección más antigua establece el campo <code>tender.title</code>, entonces su par en la colección más reciente tiene un campo <code>tender.title</code> coincidente. Los valores se pasan a minúsculas y se normalizan los espacios en blanco para la comparación.</p>
