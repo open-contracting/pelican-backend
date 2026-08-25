@@ -33,6 +33,29 @@ def test_undefined():
     assert result["meta"] == {"reason": "fewer than 100 occurrences of necessary fields"}
 
 
+items_test_deduplicated = [
+    {"ocid": str(num), "planning": {"documents": [{"url": f"{TEST_URL}/status/200"}]}} for num in range(99)
+]
+items_test_deduplicated.append({"ocid": "99", "planning": {"documents": [{"url": f"{TEST_URL}/status/201"}]}})
+
+
+def test_deduplicated():
+    with patch.object(url_availability.requests, "get") as mock_get:
+        mock_get.return_value.__enter__.return_value.status_code = 200
+
+        scope = {}
+        for item_id, item in enumerate(items_test_deduplicated):
+            scope = url_availability.add_item(scope, item, item_id)
+
+        result = url_availability.get_result(scope)
+
+    assert result["result"] is True
+    assert result["value"] == 100
+    assert len(result["meta"]["passed_examples"]) == 100
+    assert len(result["meta"]["failed_examples"]) == 0
+    assert mock_get.call_count == 2
+
+
 item_test_passed = {
     "ocid": "0",
     "planning": {"documents": [{"url": f"{TEST_URL}/status/200"} for _ in range(25)]},

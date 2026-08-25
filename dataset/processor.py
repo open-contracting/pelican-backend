@@ -4,7 +4,7 @@ from psycopg.types.json import Jsonb
 
 from dataset import metadata_aggregator
 from dataset.definitions import definitions
-from pelican.util.services import get_cursor
+from pelican.util.services import commit, get_cursor
 
 logger = logging.getLogger("pelican.dataset.processor")
 
@@ -35,15 +35,24 @@ def do_work(dataset_id):
         logger.info("Dataset %s: No items found, skipping dataset-level checks", dataset_id)
         return
 
+    # End the read transaction, so that no transaction is open while calculating results, which can be slow (for
+    # example, misc.url_availability performs HTTP requests). An old open transaction holds back the xmin horizon.
+    commit()
+
+    results = {}
+    for check_name, check in definitions.items():
+        logger.info("Dataset %s: Calculating %s dataset-level check result", dataset_id, check_name)
+        result = check.get_result(check_scope[check_name])
+
+        if "meta" not in result or result["meta"] is None:
+            result["meta"] = {}
+
+        result["meta"]["version"] = result["version"]
+        results[check_name] = result
+
     with get_cursor() as cursor:
-        for check_name, check in definitions.items():
+        for check_name, result in results.items():
             logger.info("Dataset %s: Inserting %s dataset-level check result", dataset_id, check_name)
-            result = check.get_result(check_scope[check_name])
-
-            if "meta" not in result or result["meta"] is None:
-                result["meta"] = {}
-
-            result["meta"]["version"] = result["version"]
 
             cursor.execute(
                 """\
