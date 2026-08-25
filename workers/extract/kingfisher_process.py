@@ -65,8 +65,9 @@ def callback(client_state, channel, method, properties, input_message):
                 {"name": name, "ancestor_id": ancestor_id},
             ).fetchone()["id"]
 
+            initial = metadata_aggregator.get_result(metadata_aggregator.get_initial_scope())
             metadata = metadata_aggregator.get_kingfisher_metadata(kingfisher_process_cursor, collection_id)
-            metadata_aggregator.update_metadata(metadata, dataset_id)
+            metadata_aggregator.update_metadata(initial | metadata, dataset_id)
 
             commit()
 

@@ -5,6 +5,7 @@ from psycopg import sql
 from psycopg.types.json import Jsonb
 from yapw.methods import nack
 
+from dataset import metadata_aggregator
 from pelican.util.services import commit, consume, get_cursor
 from pelican.util.workers import process_items
 
@@ -68,7 +69,7 @@ def callback(client_state, channel, method, properties, input_message):
             nack(client_state, channel, method.delivery_tag, requeue=False)
             return
 
-        meta = {
+        meta = metadata_aggregator.get_result(metadata_aggregator.get_initial_scope()) | {
             k: v
             for k, v in row["meta"].items()
             if k not in {"tender_lifecycle", "compiled_releases", "data_quality_tool_metadata"}

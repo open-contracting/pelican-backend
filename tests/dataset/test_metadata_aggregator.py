@@ -1,4 +1,4 @@
-from dataset.metadata_aggregator import add_item, get_kingfisher_metadata, get_result
+from dataset.metadata_aggregator import add_item, get_initial_scope, get_kingfisher_metadata, get_result
 
 items_test_compiled_releases = [
     {"ocid": "0", "date": "2019-01-10T22:00:00+01:00"},
@@ -48,6 +48,15 @@ def create_compiled_release(cursor, collection_id, collection_file_id, data_rows
             "max_data_id": max_data_id,
         },
     )
+
+
+def test_initial_scope():
+    result = get_result(get_initial_scope())
+
+    assert result == {
+        "compiled_releases": {"total_unique_ocids": 0},
+        "tender_lifecycle": {"planning": 0, "tender": 0, "award": 0, "contract": 0, "implementation": 0},
+    }
 
 
 def test_compiled_releases():

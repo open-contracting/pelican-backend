@@ -13,12 +13,16 @@ DATETIME_STR_FORMAT = "%Y-%m-%d %H.%M.%S"
 logger = logging.getLogger(__name__)
 
 
+def get_initial_scope():
+    return {
+        "compiled_releases": {"total_unique_ocids": None, "_ocid_set": set()},
+        "tender_lifecycle": {"planning": 0, "tender": 0, "award": 0, "contract": 0, "implementation": 0},
+    }
+
+
 def add_item(scope, item, item_id):
     if not scope:
-        scope = {
-            "compiled_releases": {"total_unique_ocids": None, "_ocid_set": set()},
-            "tender_lifecycle": {"planning": 0, "tender": 0, "award": 0, "contract": 0, "implementation": 0},
-        }
+        scope = get_initial_scope()
 
     scope["compiled_releases"]["_ocid_set"].add(item["ocid"])
 
