@@ -10,11 +10,12 @@ Worker failure
 
 Workers make state changes as late as possible, and acknowledge messages once processing is complete. There are exceptions:
 
--  To implement the `Aggregator pattern <https://www.enterpriseintegrationpatterns.com/patterns/messaging/Aggregator.html>`__, the :ref:`check-dataset` worker sets the dataset's state to in-progress before doing work. The worker will then acknowledge messages for the same dataset without further processing. However, this means that, if the worker fails, then the redelivery is ignored. To reset a dataset's state and re-publish the corresponding message, run, for example:
+-  The :ref:`check-dataset` worker (to implement the `Aggregator pattern <https://www.enterpriseintegrationpatterns.com/patterns/messaging/Aggregator.html>`__) and the :ref:`check-time-based` worker (to not repeat work if a message is redelivered) set the dataset's state to in-progress before doing work. These workers will then acknowledge messages for the same dataset without further processing. However, this means that, if a worker fails, then the redelivery is ignored. To reset a dataset's state and re-publish the corresponding message, run, for example:
 
    .. code-block:: bash
 
       ./manage.py dev restart-dataset-check 123
+      ./manage.py dev restart-time-based-check 123
 
 -  In the :ref:`workers-extract` workers, the message is acknowledged before publishing a message for each batch of extracted data. This avoids `cascading redelivery <https://ocp-software-handbook.readthedocs.io/en/latest/services/rabbitmq.html#idempotence>`__, as there is logic that can fail between each publish. However, this means that, if the worker fails, then the missing batches are never extracted. After fixing the issue, :ref:`manage-add` a new dataset and :ref:`manage-remove` the old dataset.
 

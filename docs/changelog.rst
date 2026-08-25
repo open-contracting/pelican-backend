@@ -14,6 +14,8 @@ This changelog only notes major changes, to notify other developers.
    -  refactor: Add :func:`pelican.util.services.claim_dataset_phase`.
 
 -  refactor: Rename the ``PREFETCH_COUNT`` setting to ``DATA_ITEM_PREFETCH_COUNT``, to distinguish it from ``DATASET_PREFETCH_COUNT``.
+-  fix: The :ref:`check-time-based` worker claims the dataset before performing time-based checks, so that a redelivered message doesn't insert duplicate results, and sets a 3-hour consumer timeout, like the report worker. Add ``restart-time-based-check`` command. :issue:`173`
+-  fix: The :ref:`check-data-item` worker skips items whose checks are already committed, so that a redelivered message doesn't insert duplicate results. :issue:`173`
 
 2026-08-17
 ----------
