@@ -14,7 +14,7 @@ routing_key = "contracting_process_checker"
 def start():
     """Perform the field-level and compiled release-level checks."""
     get_exchange_rates()
-    consume(on_message_callback=callback, queue=consume_routing_key, prefetch_count=settings.PREFETCH_COUNT)
+    consume(on_message_callback=callback, queue=consume_routing_key, prefetch_count=settings.DATA_ITEM_PREFETCH_COUNT)
 
 
 def callback(client_state, channel, method, properties, input_message):

@@ -30,21 +30,24 @@ def test_undefined():
     result = url_availability.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "fewer than 100 occurrences of necessary fields"}
+    assert result["meta"] == {"reason": "fewer than 100 unique values of necessary fields"}
 
 
-items_test_deduplicated = [
-    {"ocid": str(num), "planning": {"documents": [{"url": f"{TEST_URL}/status/200"}]}} for num in range(99)
+# 100 unique URL values, of which one occurs 101 times.
+items_test_unique = [
+    {"ocid": str(num), "planning": {"documents": [{"url": f"{TEST_URL}/status/200?num={num}"}]}} for num in range(99)
 ]
-items_test_deduplicated.append({"ocid": "99", "planning": {"documents": [{"url": f"{TEST_URL}/status/201"}]}})
+items_test_unique.extend(
+    {"ocid": str(num), "planning": {"documents": [{"url": f"{TEST_URL}/status/200?num=99"}]}} for num in range(99, 200)
+)
 
 
-def test_deduplicated():
+def test_unique():
     with patch.object(url_availability.requests, "get") as mock_get:
         mock_get.return_value.__enter__.return_value.status_code = 200
 
         scope = {}
-        for item_id, item in enumerate(items_test_deduplicated):
+        for item_id, item in enumerate(items_test_unique):
             scope = url_availability.add_item(scope, item, item_id)
 
         result = url_availability.get_result(scope)
@@ -53,15 +56,16 @@ def test_deduplicated():
     assert result["value"] == 100
     assert len(result["meta"]["passed_examples"]) == 100
     assert len(result["meta"]["failed_examples"]) == 0
-    assert mock_get.call_count == 2
+    assert len({example["value"] for example in result["meta"]["passed_examples"]}) == 100
+    assert mock_get.call_count == 100
 
 
 item_test_passed = {
     "ocid": "0",
-    "planning": {"documents": [{"url": f"{TEST_URL}/status/200"} for _ in range(25)]},
-    "tender": {"documents": [{"url": f"{TEST_URL}/status/200"} for _ in range(25)]},
-    "awards": [{"documents": [{"url": f"{TEST_URL}/status/200"}]} for _ in range(25)],
-    "contracts": [{"documents": [{"url": f"{TEST_URL}/status/200"}]} for _ in range(25)],
+    "planning": {"documents": [{"url": f"{TEST_URL}/status/200?num=p{i}"} for i in range(25)]},
+    "tender": {"documents": [{"url": f"{TEST_URL}/status/200?num=t{i}"} for i in range(25)]},
+    "awards": [{"documents": [{"url": f"{TEST_URL}/status/200?num=a{i}"}]} for i in range(25)],
+    "contracts": [{"documents": [{"url": f"{TEST_URL}/status/200?num=c{i}"}]} for i in range(25)],
 }
 
 
@@ -79,7 +83,7 @@ def test_passed():
 
 
 items_test_failed_multiple = [
-    {"ocid": str(num), "planning": {"documents": [{"url": f"{TEST_URL}/status/200"}]}} for num in range(99)
+    {"ocid": str(num), "planning": {"documents": [{"url": f"{TEST_URL}/status/200?num={num}"}]}} for num in range(99)
 ]
 items_test_failed_multiple.append({"ocid": "99", "planning": {"documents": [{"url": f"{TEST_URL}/delay/10"}]}})
 

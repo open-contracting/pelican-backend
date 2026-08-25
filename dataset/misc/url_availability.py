@@ -1,5 +1,5 @@
 """
-A random sample of 100 URL values return responses without HTTP error codes.
+A random sample of 100 unique URL values return responses without HTTP error codes.
 
 The URL fields are:
 
@@ -9,9 +9,7 @@ The URL fields are:
 -  ``contracts.documents.url``
 -  ``contracts.implementation.documents.url``
 
-The test is skipped if fewer than 100 URL values are present.
-
-Each unique URL is requested at most once.
+The test is skipped if fewer than 100 unique URL values are present.
 """
 
 import requests
@@ -20,7 +18,7 @@ from pelican.util import settings
 from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
 from pelican.util.getter import get_values
 
-version = 1.0
+version = 2.0
 min_items = 100
 
 paths = [
@@ -34,13 +32,16 @@ paths = [
 
 def add_item(scope, item, item_id):
     scope.setdefault("sampler", ReservoirSampler(min_items))
+    scope.setdefault("seen", set())
 
     ocid = item["ocid"]
 
     for path in paths:
         # Use get_values(), since `path` can contain an array as an ancestor.
         for value in get_values(item, path, value_only=True):
-            if type(value) is str:
+            # Sample unique values, so that a repeated URL neither dominates the sample nor is requested twice.
+            if type(value) is str and value not in scope["seen"]:
+                scope["seen"].add(value)
                 scope["sampler"].process({"value": value, "item_id": item_id, "ocid": ocid})
 
     return scope
@@ -56,32 +57,28 @@ def get_result(scope):
 
     total_count = len(sampler)
     if total_count < min_items:
-        result["meta"] = {"reason": f"fewer than {min_items} occurrences of necessary fields"}
+        result["meta"] = {"reason": f"fewer than {min_items} unique values of necessary fields"}
         return result
 
-    statuses = {}
     passed_count = 0
     passed_examples = []
     failed_examples = []
     for sample in sampler:
-        url = sample["value"]
-        if url not in statuses:
-            try:
-                # Security: Potential SSRF via user-provided URL (within OCDS publication).
-                with requests.get(
-                    url,
-                    timeout=settings.REQUESTS_TIMEOUT,
-                    headers={"User-Agent": settings.USER_AGENT},
-                    stream=True,
-                ) as response:
-                    if requests.codes.ok <= response.status_code < requests.codes.bad_request:
-                        statuses[url] = "OK"
-                    else:
-                        statuses[url] = response.status_code
-            except requests.RequestException:
-                statuses[url] = "ERROR"
+        try:
+            # Security: Potential SSRF via user-provided URL (within OCDS publication).
+            with requests.get(
+                sample["value"],
+                timeout=settings.REQUESTS_TIMEOUT,
+                headers={"User-Agent": settings.USER_AGENT},
+                stream=True,
+            ) as response:
+                if requests.codes.ok <= response.status_code < requests.codes.bad_request:
+                    sample["status"] = "OK"
+                else:
+                    sample["status"] = response.status_code
+        except requests.RequestException:
+            sample["status"] = "ERROR"
 
-        sample["status"] = statuses[url]
         if sample["status"] == "OK":
             passed_examples.append(sample)
             passed_count += 1

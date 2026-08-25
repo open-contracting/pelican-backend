@@ -60,7 +60,7 @@ In each worker, the queue name and binding key is set by ``consume_routing_key``
 PostgreSQL
 ----------
 
-This project opens one connection per thread, so that one thread doesn't commit another's incomplete work. Each :doc:`worker<workers>` uses one thread, except the :ref:`check-data-item` and :ref:`check-dataset` workers, which each use ``PREFETCH_COUNT`` threads (one per CPU, by default). Set ``PREFETCH_COUNT`` to keep total connections within PostgreSQL's ``max_connections``, taking into account other workers and services.
+This project opens one connection per thread, so that one thread doesn't commit another's incomplete work. Each :doc:`worker<workers>` uses one thread, except the :ref:`check-data-item` worker, which uses ``DATA_ITEM_PREFETCH_COUNT`` threads (one per CPU, by default), and the :ref:`check-dataset` worker, which uses ``DATASET_PREFETCH_COUNT`` threads (2, by default, since each thread holds one dataset's accumulated check state in memory). Set these to keep total connections within PostgreSQL's ``max_connections``, taking into account other workers and services.
 
 Tables
 ~~~~~~

@@ -63,10 +63,14 @@ EXTRACTOR_PAGE_SIZE = int(os.getenv("EXTRACTOR_PAGE_SIZE", "1000"))
 # should divide evenly into EXTRACTOR_PAGE_SIZE.
 EXTRACTOR_MAX_BATCH_SIZE = min(EXTRACTOR_PAGE_SIZE, int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", "100")))
 
-# The check.data_item and check.dataset workers each process this many messages at once, using one thread and one
-# database connection per message. Keep it within PostgreSQL's max_connections, taking into account other workers and
-# services.
-PREFETCH_COUNT = int(os.getenv("PREFETCH_COUNT", str(multiprocessing.cpu_count())))
+# The check.data_item worker processes this many messages at once, using one thread and one database connection per
+# message. Keep it within PostgreSQL's max_connections, taking into account other workers and services.
+DATA_ITEM_PREFETCH_COUNT = int(os.getenv("DATA_ITEM_PREFETCH_COUNT", str(multiprocessing.cpu_count())))
+
+# The check.dataset worker processes this many messages at once, using one thread and one database connection per
+# message. Each message holds the accumulated state of all dataset-level checks for one dataset in memory, which grows
+# with dataset size, so keep it low.
+DATASET_PREFETCH_COUNT = int(os.getenv("DATASET_PREFETCH_COUNT", "2"))
 
 # Do not import compiled releases whose size is larger than this number of bytes.
 #
