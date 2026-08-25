@@ -237,6 +237,17 @@ def restart_dataset_check(dataset_id):
     publish(message, "contracting_process_checker")
 
 
+@dev.command()
+@click.argument("dataset_id", type=int)
+def restart_time_based_check(dataset_id):
+    """Restart the time-based check if the check.time_based worker failed."""
+    update_dataset_state(dataset_id, Phase.DATASET, State.OK)
+    commit()
+
+    message = {"dataset_id": dataset_id}
+    publish(message, "dataset_checker")
+
+
 def markdown_heading(text, level):
     return [f"{'#' * level} {text}", ""]
 

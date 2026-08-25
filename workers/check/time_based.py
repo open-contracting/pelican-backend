@@ -1,27 +1,41 @@
+import logging
+
 import click
+from yapw.methods import ack
 
 from pelican.util import settings
-from pelican.util.services import Phase, State, commit, consume, update_dataset_state
+from pelican.util.services import Phase, State, claim_dataset_phase, consume
 from pelican.util.workers import finish_callback, is_step_required
 from time_variance import processor
 
 consume_routing_key = "dataset_checker"
 routing_key = "time_variance_checker"
+logger = logging.getLogger("pelican.workers.check.time_based")
 
 
 @click.command()
 def start():
     """Perform the time-based checks."""
-    consume(on_message_callback=callback, queue=consume_routing_key)
+    consume(
+        on_message_callback=callback,
+        queue=consume_routing_key,
+        # 3 hours in milliseconds. The time-based checks scan every item of the ancestor dataset, which can exceed
+        # RabbitMQ's 30-minute default.
+        # https://www.rabbitmq.com/consumers.html
+        arguments={"x-consumer-timeout": 3 * 60 * 60 * 1000},
+    )
 
 
 def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
-    if is_step_required(settings.Steps.TIME_BASED):
-        update_dataset_state(dataset_id, Phase.TIME_VARIANCE, State.IN_PROGRESS)
-        commit()
+    # Claim the dataset, so that a redelivered message doesn't repeat the checks.
+    if not claim_dataset_phase(dataset_id, Phase.DATASET, State.OK, Phase.TIME_VARIANCE, State.IN_PROGRESS):
+        logger.info("Dataset %s: TIME_VARIANCE phase already started", dataset_id)
+        ack(client_state, channel, method.delivery_tag)
+        return
 
+    if is_step_required(settings.Steps.TIME_BASED):
         processor.do_work(dataset_id)
 
     finish_callback(client_state, channel, method, dataset_id, phase=Phase.TIME_VARIANCE, routing_key=routing_key)
