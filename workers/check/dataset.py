@@ -9,12 +9,11 @@ from pelican.util.currency_converter import get_exchange_rates
 from pelican.util.services import (
     Phase,
     State,
-    commit,
+    claim_dataset_phase,
     consume,
     get_dataset_progress,
     get_processed_items_count,
     get_total_items_count,
-    update_dataset_state,
 )
 from pelican.util.workers import finish_callback, is_step_required
 
@@ -30,6 +29,7 @@ def start():
     consume(
         on_message_callback=callback,
         queue=consume_routing_key,
+        prefetch_count=settings.PREFETCH_COUNT,
         # 3 hours in milliseconds. The final message can exceed RabbitMQ's 30-minute default, since the data item scan
         # scales with dataset size, and misc.url_availability can wait up to REQUESTS_TIMEOUT per sampled URL.
         # https://www.rabbitmq.com/consumers.html
@@ -56,6 +56,16 @@ def callback(client_state, channel, method, properties, input_message):
         ack(client_state, channel, delivery_tag)
         return
 
+    if dataset["phase"] != Phase.CONTRACTING_PROCESS or dataset["state"] != State.OK:
+        logger.error(
+            "Dataset %s is in an unexpected state (phase=%s, state=%s).",
+            dataset_id,
+            dataset["phase"],
+            dataset["state"],
+        )
+        nack(client_state, channel, delivery_tag, requeue=False)
+        return
+
     # Implement the Aggregator pattern.
     processed_count = get_processed_items_count(dataset_id)
     total_count = get_total_items_count(dataset_id)
@@ -66,28 +76,20 @@ def callback(client_state, channel, method, properties, input_message):
         ack(client_state, channel, delivery_tag)
         return
 
-    if not is_step_required(settings.Steps.DATASET):
-        finish_callback(client_state, channel, method, dataset_id, phase=Phase.DATASET, routing_key=routing_key)
+    # The guards above are not atomic with this update. Claim the dataset, in case messages for the same dataset are
+    # processed concurrently.
+    if not claim_dataset_phase(dataset_id, Phase.CONTRACTING_PROCESS, State.OK, Phase.DATASET, State.IN_PROGRESS):
+        logger.info("Dataset %s: DATASET phase already in-progress", dataset_id)
+        ack(client_state, channel, delivery_tag)
         return
 
-    if dataset["phase"] == Phase.CONTRACTING_PROCESS and dataset["state"] == State.OK and not difference:
+    if is_step_required(settings.Steps.DATASET):
         logger.info(
             "Dataset %s: Processed all %s items, starting dataset-level checks...", dataset_id, processed_count
         )
-        update_dataset_state(dataset_id, Phase.DATASET, State.IN_PROGRESS)
-        commit()
-
         processor.do_work(dataset_id)
 
-        finish_callback(client_state, channel, method, dataset_id, phase=Phase.DATASET, routing_key=routing_key)
-    else:
-        logger.error(
-            "Dataset %s is in an unexpected state (phase=%s, state=%s).",
-            dataset_id,
-            dataset["phase"],
-            dataset["state"],
-        )
-        nack(client_state, channel, delivery_tag, requeue=False)
+    finish_callback(client_state, channel, method, dataset_id, phase=Phase.DATASET, routing_key=routing_key)
 
 
 if __name__ == "__main__":
