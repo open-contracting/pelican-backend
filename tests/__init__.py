@@ -117,6 +117,9 @@ class CompiledReleaseTests:
     maxDiff = None
     passing_kwargs = {}
     failing_kwargs = {}
+    # Items that are invalid OCDS, to test behavior on realistic data. tests/test_fixtures.py keys off the
+    # `__invalid_schema` suffix to expect these items to be invalid, and all other attributes' items to be valid.
+    failing__invalid_schema = []
     method = "calculate"
 
     def setUp(self):
@@ -151,7 +154,7 @@ class CompiledReleaseTests:
                 }
 
     def test_failing(self):
-        for item, meta, application_count, pass_count in self.failing:
+        for item, meta, application_count, pass_count in self.failing + self.failing__invalid_schema:
             with self.subTest(item=item):
                 result = self.method(item, **self.failing_kwargs)
 

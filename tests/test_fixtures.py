@@ -39,6 +39,11 @@ def get_test_cases():
                     continue
                 if isinstance(value, dict | list):
                     yield filename, key, value
+                elif isinstance(value, type) and value.__module__ == module.__name__:
+                    for attr, cases in vars(value).items():
+                        if attr in {"skipping", "passing", "failing", "failing__invalid_schema"}:
+                            # The first entry in each test case is the item to check.
+                            yield filename, f"{key}.{attr}", [case[0] for case in cases]
 
 
 def add_id(value, *keys):
