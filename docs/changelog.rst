@@ -9,6 +9,9 @@ This changelog only notes major changes, to notify other developers.
 -  fix: ``misc.url_availability`` requests each unique URL at most once, and closes responses. :issue:`6`
 -  fix: The :ref:`check-dataset` worker calculates dataset-level check results before opening the transaction that inserts them, so that no transaction is held open while slow checks (like ``misc.url_availability``, which performs HTTP requests) run. :issue:`6`
 -  fix: The :ref:`check-dataset` worker sets a 3-hour consumer timeout, like the report worker, since its final message can take longer than RabbitMQ's 30-minute default. :issue:`6`
+-  feat: The :ref:`check-dataset` worker processes ``PREFETCH_COUNT`` messages at once, like the :ref:`check-data-item` worker, so that one slow dataset doesn't delay other datasets. To support this, the worker claims the dataset atomically before performing dataset-level checks, so that concurrent messages for the same dataset don't repeat the checks. :issue:`173`
+
+   -  refactor: Add :func:`pelican.util.services.claim_dataset_phase`.
 
 2026-08-17
 ----------

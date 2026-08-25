@@ -169,6 +169,33 @@ def update_dataset_state(dataset_id: int, phase: str, state: str, size: int | No
     execute(statement, variables)
 
 
+def claim_dataset_phase(dataset_id: int, from_phase: str, from_state: str, phase: str, state: str) -> bool:
+    """
+    Update and commit a dataset's progress to the given phase and state, if it is in the given phase and state.
+
+    Use this instead of :func:`update_dataset_state`, if messages for the same dataset can be processed concurrently.
+
+    :param dataset_id: the dataset's ID
+    :param from_phase: the phase the dataset must be in
+    :param from_state: the state the dataset must be in
+    :param phase: the phase to set
+    :param state: the state to set
+    :return: whether the dataset was claimed
+    """
+    # If another connection claimed the dataset but hasn't committed, this blocks until it commits, then matches 0
+    # rows, since the WHERE condition is re-evaluated in the READ COMMITTED isolation level.
+    cursor = execute(
+        """\
+        UPDATE progress_monitor_dataset
+        SET phase = %(phase)s, state = %(state)s, modified = now()
+        WHERE dataset_id = %(dataset_id)s AND phase = %(from_phase)s AND state = %(from_state)s
+        """,
+        {"dataset_id": dataset_id, "from_phase": from_phase, "from_state": from_state, "phase": phase, "state": state},
+    )
+    commit()
+    return cursor.rowcount == 1
+
+
 def initialize_items_state(dataset_id: int, item_ids: list[int]) -> None:
     """
     Initialize data items' progress.
