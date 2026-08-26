@@ -23,7 +23,8 @@ def callback(client_state, channel, method, properties, input_message):
 
     if method.redelivered:
         # Skip items whose checks are already committed: a batch's check results and item states commit atomically,
-        # which can occur before the message is acknowledged.
+        # which can occur before the message is acknowledged. The check tables have no unique constraint, so
+        # duplicate rows would go unnoticed, and would skew the report's percentages.
         rows = execute(
             """\
             SELECT data_item.data, data_item.id
