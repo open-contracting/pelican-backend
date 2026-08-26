@@ -23,13 +23,13 @@ def start():
 def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
-    if is_step_required(settings.Steps.TIME_BASED):
-        # Claim the dataset, so that a redelivered message doesn't repeat the checks.
-        if not claim_dataset_phase(dataset_id, Phase.DATASET, State.OK, Phase.TIME_VARIANCE, State.IN_PROGRESS):
-            logger.info("Dataset %s: TIME_VARIANCE phase already started", dataset_id)
-            ack(client_state, channel, method.delivery_tag)
-            return
+    # Claim the dataset, so that a redelivered message doesn't repeat the checks or publish again.
+    if not claim_dataset_phase(dataset_id, Phase.DATASET, State.OK, Phase.TIME_VARIANCE, State.IN_PROGRESS):
+        logger.info("Dataset %s: TIME_VARIANCE phase already in-progress", dataset_id)
+        ack(client_state, channel, method.delivery_tag)
+        return
 
+    if is_step_required(settings.Steps.TIME_BASED):
         processor.do_work(dataset_id)
 
     finish_callback(client_state, channel, method, dataset_id, phase=Phase.TIME_VARIANCE, routing_key=routing_key)
