@@ -30,8 +30,8 @@ def start():
         on_message_callback=callback,
         queue=consume_routing_key,
         prefetch_count=settings.DATASET_PREFETCH_COUNT,
-        # The data item scan scales with dataset size, and misc.url_availability can wait up to REQUESTS_TIMEOUT
-        # per sampled URL.
+        # The dataset-level checks process every data item, and misc.url_availability can wait up to
+        # REQUESTS_TIMEOUT per sampled URL.
         arguments={"x-consumer-timeout": settings.RABBIT_CONSUMER_TIMEOUT},
     )
 
