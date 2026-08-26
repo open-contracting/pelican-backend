@@ -16,24 +16,20 @@ logger = logging.getLogger("pelican.workers.check.time_based")
 @click.command()
 def start():
     """Perform the time-based checks."""
-    consume(
-        on_message_callback=callback,
-        queue=consume_routing_key,
-        # The time-based checks process every data item of the ancestor dataset.
-        arguments=SLOW_CONSUMER_ARGUMENTS,
-    )
+    # The time-based checks process every data item of the ancestor dataset.
+    consume(on_message_callback=callback, queue=consume_routing_key, arguments=SLOW_CONSUMER_ARGUMENTS)
 
 
 def callback(client_state, channel, method, properties, input_message):
     dataset_id = input_message["dataset_id"]
 
-    # Claim the dataset, so that a redelivered message doesn't repeat the checks.
-    if not claim_dataset_phase(dataset_id, Phase.DATASET, State.OK, Phase.TIME_VARIANCE, State.IN_PROGRESS):
-        logger.info("Dataset %s: TIME_VARIANCE phase already started", dataset_id)
-        ack(client_state, channel, method.delivery_tag)
-        return
-
     if is_step_required(settings.Steps.TIME_BASED):
+        # Claim the dataset, so that a redelivered message doesn't repeat the checks.
+        if not claim_dataset_phase(dataset_id, Phase.DATASET, State.OK, Phase.TIME_VARIANCE, State.IN_PROGRESS):
+            logger.info("Dataset %s: TIME_VARIANCE phase already started", dataset_id)
+            ack(client_state, channel, method.delivery_tag)
+            return
+
         processor.do_work(dataset_id)
 
     finish_callback(client_state, channel, method, dataset_id, phase=Phase.TIME_VARIANCE, routing_key=routing_key)
