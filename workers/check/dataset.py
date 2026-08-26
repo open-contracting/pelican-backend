@@ -30,11 +30,9 @@ def start():
         on_message_callback=callback,
         queue=consume_routing_key,
         prefetch_count=settings.DATASET_PREFETCH_COUNT,
-        # 3 hours in milliseconds. The message that finds all items processed performs the checks, which can exceed
-        # RabbitMQ's 30-minute default: the data item scan scales with dataset size, and misc.url_availability can
-        # wait up to REQUESTS_TIMEOUT per sampled URL.
-        # https://www.rabbitmq.com/consumers.html
-        arguments={"x-consumer-timeout": 3 * 60 * 60 * 1000},
+        # The data item scan scales with dataset size, and misc.url_availability can wait up to REQUESTS_TIMEOUT
+        # per sampled URL.
+        arguments={"x-consumer-timeout": settings.RABBIT_CONSUMER_TIMEOUT},
     )
 
 

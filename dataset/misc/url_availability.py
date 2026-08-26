@@ -41,8 +41,8 @@ def add_item(scope, item, item_id):
         for value in get_values(item, path, value_only=True):
             # Sample unique values, so that a repeated URL neither dominates the sample nor is requested twice.
             if type(value) is str and value not in scope["seen"]:
-                scope["seen"].add(value)
                 scope["sampler"].process({"value": value, "item_id": item_id, "ocid": ocid})
+                scope["seen"].add(value)
 
     return scope
 

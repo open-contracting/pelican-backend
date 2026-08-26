@@ -63,13 +63,12 @@ EXTRACTOR_PAGE_SIZE = int(os.getenv("EXTRACTOR_PAGE_SIZE", "1000"))
 # should divide evenly into EXTRACTOR_PAGE_SIZE.
 EXTRACTOR_MAX_BATCH_SIZE = min(EXTRACTOR_PAGE_SIZE, int(os.getenv("EXTRACTOR_MAX_BATCH_SIZE", "100")))
 
-# The check.data_item worker processes this many messages at once, using one thread and one database connection per
-# message. Keep it within PostgreSQL's max_connections, taking into account other workers and services.
+# The check.data_item worker processes this many messages at once, using one thread and one DB connection per message.
+# Keep it within PostgreSQL's max_connections, taking into account other workers and services.
 DATA_ITEM_PREFETCH_COUNT = int(os.getenv("DATA_ITEM_PREFETCH_COUNT", str(multiprocessing.cpu_count())))
 
-# The check.dataset worker processes this many messages at once, using one thread and one database connection per
-# message. Each message holds the accumulated state of all dataset-level checks for one dataset in memory, which grows
-# with dataset size, so keep it low.
+# The check.dataset worker processes this many messages at once, using one thread and one DB connection per message.
+# Each thread holds the state of all dataset-level checks for one dataset in memory, which grows with dataset size.
 DATASET_PREFETCH_COUNT = int(os.getenv("DATASET_PREFETCH_COUNT", "2"))
 
 # Do not import compiled releases whose size is larger than this number of bytes.
@@ -128,6 +127,9 @@ KINGFISHER_PROCESS_DATABASE_URL = os.getenv(
 RABBIT_URL = os.getenv("RABBIT_URL", "amqp://127.0.0.1")
 # The name of the RabbitMQ exchange. Follow the pattern `{project}_{service}_{environment}`.
 RABBIT_EXCHANGE_NAME = os.getenv("RABBIT_EXCHANGE_NAME", "pelican_development")
+# How long a worker can take to process a message, in milliseconds. RabbitMQ's default is 30 minutes.
+# https://www.rabbitmq.com/consumers.html
+RABBIT_CONSUMER_TIMEOUT = 3 * 60 * 60 * 1000
 
 if "SENTRY_DSN" in os.environ:
     sentry_sdk.init(

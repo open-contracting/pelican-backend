@@ -35,9 +35,8 @@ def do_work(dataset_id):
         logger.info("Dataset %s: No items found, skipping dataset-level checks", dataset_id)
         return
 
-    # End the read transaction, so that no transaction is open while calculating results, which can be slow (for
-    # example, misc.url_availability performs HTTP requests). While any transaction is open, PostgreSQL can't vacuum
-    # rows deleted or updated since it started, in any table.
+    # End the read transaction, so that no transaction is open while calculating results (which can be slow). While
+    # a transaction is open, PostgreSQL can't vacuum any table's rows that were deleted or updated since it started.
     commit()
 
     results = {}
