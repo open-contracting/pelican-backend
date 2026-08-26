@@ -30,7 +30,7 @@ def test_undefined():
     result = url_availability.get_result(scope)
     assert result["result"] is None
     assert result["value"] is None
-    assert result["meta"] == {"reason": "fewer than 100 unique values of necessary fields"}
+    assert result["meta"] == {"reason": "fewer than 100 unique values in necessary fields"}
 
 
 # 100 unique URL values, of which one occurs 101 times.
