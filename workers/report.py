@@ -7,7 +7,7 @@ import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
 from dataset import metadata_aggregator
 from pelican.util import settings
-from pelican.util.services import Phase, consume
+from pelican.util.services import CONSUMER_TIMEOUT_ARGUMENTS, Phase, consume
 from pelican.util.workers import finish_callback, is_step_required
 
 consume_routing_key = "time_variance_checker"
@@ -20,7 +20,7 @@ def start():
     consume(
         on_message_callback=callback,
         queue=consume_routing_key,
-        arguments={"x-consumer-timeout": settings.RABBIT_CONSUMER_TIMEOUT},
+        arguments=CONSUMER_TIMEOUT_ARGUMENTS,
     )
 
 
