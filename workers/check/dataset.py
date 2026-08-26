@@ -7,6 +7,7 @@ from dataset import processor
 from pelican.util import settings
 from pelican.util.currency_converter import get_exchange_rates
 from pelican.util.services import (
+    CONSUMER_TIMEOUT_ARGUMENTS,
     Phase,
     State,
     claim_dataset_phase,
@@ -32,7 +33,7 @@ def start():
         prefetch_count=settings.DATASET_PREFETCH_COUNT,
         # The dataset-level checks process every data item, and misc.url_availability can wait up to
         # REQUESTS_TIMEOUT per sampled URL.
-        arguments={"x-consumer-timeout": settings.RABBIT_CONSUMER_TIMEOUT},
+        arguments=CONSUMER_TIMEOUT_ARGUMENTS,
     )
 
 

@@ -127,9 +127,6 @@ KINGFISHER_PROCESS_DATABASE_URL = os.getenv(
 RABBIT_URL = os.getenv("RABBIT_URL", "amqp://127.0.0.1")
 # The name of the RabbitMQ exchange. Follow the pattern `{project}_{service}_{environment}`.
 RABBIT_EXCHANGE_NAME = os.getenv("RABBIT_EXCHANGE_NAME", "pelican_development")
-# How long a worker can take to process a message, in milliseconds. RabbitMQ's default is 30 minutes.
-# https://www.rabbitmq.com/consumers.html
-RABBIT_CONSUMER_TIMEOUT = 3 * 60 * 60 * 1000
 
 if "SENTRY_DSN" in os.environ:
     sentry_sdk.init(
