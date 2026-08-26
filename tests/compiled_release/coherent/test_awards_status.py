@@ -40,12 +40,6 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
             0,
         ),
         (
-            {"awards": [{"status": "pending", "id": None}], "contracts": [{"awardID": None}]},
-            {"failed_paths": [{"path": "awards[0]", "id": None}]},
-            1,
-            0,
-        ),
-        (
             {
                 "awards": [{"status": "pending", "id": 0}, {"status": "pending", "id": 1}],
                 "contracts": [{"awardID": 1}, {"awardID": 2}],
@@ -53,5 +47,13 @@ class TestCase(CompiledReleaseTests, unittest.TestCase):
             {"failed_paths": [{"path": "awards[1]", "id": 1}]},
             2,
             1,
+        ),
+    ]
+    failing__invalid_schema = [
+        (
+            {"awards": [{"status": "pending", "id": None}], "contracts": [{"awardID": None}]},
+            {"failed_paths": [{"path": "awards[0]", "id": None}]},
+            1,
+            0,
         ),
     ]
