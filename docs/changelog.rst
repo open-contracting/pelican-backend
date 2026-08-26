@@ -6,8 +6,8 @@ This changelog only notes major changes, to notify other developers.
 2026-08-25
 ----------
 
--  feat: ``misc.url_availability`` samples unique URL values, so that a repeated URL neither dominates the sample nor is requested twice, and skips if fewer than 100 unique URL values are present. Also, close responses. :issue:`6`
--  fix: The :ref:`check-dataset` worker calculates dataset-level check results before opening the transaction that inserts them, so that no transaction is held open while slow checks (like ``misc.url_availability``, which performs HTTP requests) run. :issue:`6`
+-  feat: ``misc.url_availability`` samples unique URL values, so that a repeated URL neither dominates the sample nor is requested twice, and skips if fewer than 100 unique URL values are present. It also closes responses. :issue:`6`
+-  fix: The :ref:`check-dataset` worker calculates dataset-level check results before opening the transaction that inserts them, so that no transaction is held open while checks run. :issue:`6`
 -  fix: The :ref:`check-dataset` worker sets a 3-hour consumer timeout, like the report worker, since the dataset-level checks can take longer than RabbitMQ's 30-minute default. :issue:`6`
 -  feat: The :ref:`check-dataset` worker processes ``DATASET_PREFETCH_COUNT`` messages at once (2, by default), so that one slow dataset doesn't delay other datasets. To support this, the worker claims the dataset atomically before performing dataset-level checks, so that concurrent messages for the same dataset don't repeat the checks. :issue:`173`
 
@@ -15,7 +15,7 @@ This changelog only notes major changes, to notify other developers.
 
 -  refactor: Rename the ``PREFETCH_COUNT`` setting to ``DATA_ITEM_PREFETCH_COUNT``, to distinguish it from ``DATASET_PREFETCH_COUNT``.
 -  fix: The :ref:`check-time-based` worker claims the dataset before performing time-based checks, so that a redelivered message doesn't insert duplicate results, and sets a 3-hour consumer timeout, like the report worker. Add ``restart-time-based-check`` command. :issue:`173`
--  fix: The :ref:`check-data-item` worker skips items whose checks are already committed, so that a redelivered message doesn't insert duplicate results. :issue:`173`
+-  fix: The :ref:`check-data-item` worker skips items whose checks are already committed, when a message is redelivered, so that it doesn't insert duplicate results. :issue:`173`
 
 2026-08-17
 ----------
