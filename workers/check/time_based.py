@@ -19,7 +19,7 @@ def start():
     consume(
         on_message_callback=callback,
         queue=consume_routing_key,
-        # The time-based checks scan every item of the ancestor dataset.
+        # The time-based checks process every data item of the ancestor dataset.
         arguments={"x-consumer-timeout": settings.RABBIT_CONSUMER_TIMEOUT},
     )
 
