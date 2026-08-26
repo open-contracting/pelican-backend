@@ -6,15 +6,13 @@ This changelog only notes major changes, to notify other developers.
 2026-08-25
 ----------
 
--  feat: ``misc.url_availability`` samples unique URL values, so that a repeated URL neither dominates the sample nor is requested twice, and skips if fewer than 100 unique URL values are present. It also closes the HTTP responses, to release their connections. :issue:`6`
--  fix: The :ref:`check-data-item` worker skips items whose checks are already committed, when a message is redelivered, so that it doesn't insert duplicate results. :issue:`173`
+-  feat: ``misc.url_availability`` samples unique URL values, so that a repeated URL neither dominates the sample nor is requested twice, and skips if fewer than 100 unique URL values are present. It now closes the streaming responses to release the HTTP connections. :issue:`6`
+-  fix: When a message is redelivered, the :ref:`check-data-item` worker skips any item whose checks are committed, to not insert duplicate results. :issue:`173`
 -  fix: The :ref:`check-dataset` worker no longer keeps a transaction open while performing checks. :issue:`6`
--  fix: The :ref:`check-dataset` worker sets a 3-hour consumer timeout, like the report worker, since the dataset-level checks can take longer than RabbitMQ's 30-minute default. :issue:`6`
--  feat: The :ref:`check-dataset` worker processes ``DATASET_PREFETCH_COUNT`` messages at once (2, by default), so that one slow dataset doesn't delay other datasets. To support this, the worker claims the dataset atomically before performing dataset-level checks, so that concurrent messages for the same dataset don't repeat the checks. :issue:`173`
-
-   -  refactor: Add :func:`pelican.util.services.claim_dataset_phase`.
-
--  fix: The :ref:`check-time-based` worker claims the dataset before performing time-based checks, so that a redelivered message doesn't insert duplicate results, and sets a 3-hour consumer timeout, like the report worker. Add ``restart-time-based-check`` command. :issue:`173`
+-  feat: The :ref:`check-dataset` worker processes ``DATASET_PREFETCH_COUNT`` messages at once (2, by default), so that one slow dataset doesn't delay other datasets. The worker claims the dataset atomically before performing checks, using the new :func:`pelican.util.services.claim_dataset_phase` function, so that concurrent messages for the same dataset don't repeat work. :issue:`173`
+-  fix: The :ref:`check-time-based` worker claims the dataset atomically before performing checks, so that a redelivered message doesn't insert duplicate results. :issue:`173`
+-  feat: Add :doc:`restart-time-based-check<tasks/troubleshoot>` command.
+-  fix: The :ref:`check-dataset` and :ref:`check-time-based` workers set a 3-hour consumer timeout, like the report worker, since the checks can take longer than RabbitMQ's 30-minute default. :issue:`6`
 -  refactor: Rename the ``PREFETCH_COUNT`` setting to ``DATA_ITEM_PREFETCH_COUNT``, to distinguish it from ``DATASET_PREFETCH_COUNT``.
 
 2026-08-17
