@@ -22,18 +22,17 @@ def callback(client_state, channel, method, properties, input_message):
     item_ids = input_message["item_ids"]
 
     if method.redelivered:
-        # Skip items whose checks are already committed: a batch's check results and item states commit atomically,
+        # Skip items whose checks are committed: a batch's check results and item states commit atomically,
         # which can occur before the message is acknowledged. The check tables have no unique constraint, so
         # duplicate rows would go unnoticed, and would skew the report's percentages.
         rows = execute(
             """\
             SELECT data_item.data, data_item.id
             FROM data_item
-            JOIN progress_monitor_item
-                ON progress_monitor_item.dataset_id = %(dataset_id)s AND progress_monitor_item.item_id = data_item.id
+            JOIN progress_monitor_item ON progress_monitor_item.item_id = data_item.id
             WHERE data_item.id = ANY(%(ids)s) AND progress_monitor_item.state != %(state)s
             """,
-            {"dataset_id": dataset_id, "ids": item_ids, "state": State.OK},
+            {"ids": item_ids, "state": State.OK},
         )
     else:
         rows = execute("SELECT data, id FROM data_item WHERE id = ANY(%(ids)s)", {"ids": item_ids})
