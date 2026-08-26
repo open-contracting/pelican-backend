@@ -18,7 +18,7 @@ from pelican.util import settings
 from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
 from pelican.util.getter import get_values
 
-version = 2.0
+version = 1.0
 min_items = 100
 
 paths = [
@@ -57,7 +57,7 @@ def get_result(scope):
 
     total_count = len(sampler)
     if total_count < min_items:
-        result["meta"] = {"reason": f"fewer than {min_items} unique values of necessary fields"}
+        result["meta"] = {"reason": f"fewer than {min_items} unique values in necessary fields"}
         return result
 
     passed_count = 0
@@ -74,15 +74,13 @@ def get_result(scope):
             ) as response:
                 if requests.codes.ok <= response.status_code < requests.codes.bad_request:
                     sample["status"] = "OK"
+                    passed_examples.append(sample)
+                    passed_count += 1
                 else:
                     sample["status"] = response.status_code
+                    failed_examples.append(sample)
         except requests.RequestException:
             sample["status"] = "ERROR"
-
-        if sample["status"] == "OK":
-            passed_examples.append(sample)
-            passed_count += 1
-        else:
             failed_examples.append(sample)
 
     result["result"] = passed_count == total_count
