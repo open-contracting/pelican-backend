@@ -4,7 +4,7 @@ import click
 from yapw.methods import ack
 
 from pelican.util import settings
-from pelican.util.services import CONSUMER_TIMEOUT_ARGUMENTS, Phase, State, claim_dataset_phase, consume
+from pelican.util.services import SLOW_CONSUMER_ARGUMENTS, Phase, State, claim_dataset_phase, consume
 from pelican.util.workers import finish_callback, is_step_required
 from time_variance import processor
 
@@ -20,7 +20,7 @@ def start():
         on_message_callback=callback,
         queue=consume_routing_key,
         # The time-based checks process every data item of the ancestor dataset.
-        arguments=CONSUMER_TIMEOUT_ARGUMENTS,
+        arguments=SLOW_CONSUMER_ARGUMENTS,
     )
 
 
