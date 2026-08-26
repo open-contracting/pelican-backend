@@ -31,8 +31,7 @@ def start():
         on_message_callback=callback,
         queue=consume_routing_key,
         prefetch_count=settings.DATASET_PREFETCH_COUNT,
-        # The dataset-level checks process every data item, and misc.url_availability can wait up to
-        # REQUESTS_TIMEOUT per sampled URL.
+        # Every data item is processed, and misc.url_availability can wait up to REQUESTS_TIMEOUT per sampled URL.
         arguments=SLOW_CONSUMER_ARGUMENTS,
     )
 
@@ -76,8 +75,7 @@ def callback(client_state, channel, method, properties, input_message):
         ack(client_state, channel, delivery_tag)
         return
 
-    # The guards above are not atomic with this update. Claim the dataset, in case messages for the same dataset are
-    # processed concurrently.
+    # The guards above are not atomic with this update.
     if not claim_dataset_phase(dataset_id, Phase.CONTRACTING_PROCESS, State.OK, Phase.DATASET, State.IN_PROGRESS):
         logger.info("Dataset %s: DATASET phase already in-progress", dataset_id)
         ack(client_state, channel, delivery_tag)

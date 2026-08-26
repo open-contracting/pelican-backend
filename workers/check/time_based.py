@@ -16,7 +16,7 @@ logger = logging.getLogger("pelican.workers.check.time_based")
 @click.command()
 def start():
     """Perform the time-based checks."""
-    # The time-based checks process every data item of the ancestor dataset.
+    # Every data item of the ancestor dataset is processed.
     consume(on_message_callback=callback, queue=consume_routing_key, arguments=SLOW_CONSUMER_ARGUMENTS)
 
 
