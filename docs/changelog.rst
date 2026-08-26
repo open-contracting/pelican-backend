@@ -13,7 +13,7 @@ This changelog only notes major changes, to notify other developers.
 -  fix: The :ref:`check-dataset` worker no longer keeps a transaction open while performing checks. :issue:`6`
 -  feat: The :ref:`check-dataset` worker processes ``DATASET_PREFETCH_COUNT`` messages at once (2, by default), so that one slow dataset doesn't delay other datasets. The worker claims the dataset atomically before performing checks, using the new :func:`pelican.util.services.claim_dataset_phase` function, so that concurrent messages for the same dataset don't repeat work. :issue:`173`
 -  fix: The :ref:`check-time-based` worker claims the dataset atomically before performing checks, so that a redelivered message doesn't insert duplicate results. :issue:`173`
--  fix: The :ref:`check-dataset` and :ref:`check-time-based` workers set a 3-hour consumer timeout, like the report worker, since the checks can take longer than RabbitMQ's 30-minute default. :issue:`6`
+-  fix: Workers no longer set the ``x-consumer-timeout`` queue argument, which RabbitMQ 4.3 rejects for classic queues, since only quorum queues support delivery acknowledgement timeouts. Set ``consumer_timeout`` in ``rabbitmq.conf``, if using an older version of RabbitMQ.
 -  refactor: Rename the ``PREFETCH_COUNT`` setting to ``DATA_ITEM_PREFETCH_COUNT``, to distinguish it from ``DATASET_PREFETCH_COUNT``.
 
 2026-08-17

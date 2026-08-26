@@ -7,7 +7,6 @@ from dataset import processor
 from pelican.util import settings
 from pelican.util.currency_converter import get_exchange_rates
 from pelican.util.services import (
-    SLOW_CONSUMER_ARGUMENTS,
     Phase,
     State,
     claim_dataset_phase,
@@ -31,8 +30,6 @@ def start():
         on_message_callback=callback,
         queue=consume_routing_key,
         prefetch_count=settings.DATASET_PREFETCH_COUNT,
-        # Every data item is processed, and misc.url_availability can wait up to REQUESTS_TIMEOUT per sampled URL.
-        arguments=SLOW_CONSUMER_ARGUMENTS,
     )
 
 

@@ -4,7 +4,7 @@ import click
 from yapw.methods import ack
 
 from pelican.util import settings
-from pelican.util.services import SLOW_CONSUMER_ARGUMENTS, Phase, State, claim_dataset_phase, consume
+from pelican.util.services import Phase, State, claim_dataset_phase, consume
 from pelican.util.workers import finish_callback, is_step_required
 from time_variance import processor
 
@@ -16,8 +16,7 @@ logger = logging.getLogger("pelican.workers.check.time_based")
 @click.command()
 def start():
     """Perform the time-based checks."""
-    # Every data item of the ancestor dataset is processed.
-    consume(on_message_callback=callback, queue=consume_routing_key, arguments=SLOW_CONSUMER_ARGUMENTS)
+    consume(on_message_callback=callback, queue=consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):

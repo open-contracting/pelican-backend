@@ -7,7 +7,7 @@ import contracting_process.resource_level.examples as resource_level_examples
 import contracting_process.resource_level.report as resource_level_report
 from dataset import metadata_aggregator
 from pelican.util import settings
-from pelican.util.services import SLOW_CONSUMER_ARGUMENTS, Phase, consume
+from pelican.util.services import Phase, consume
 from pelican.util.workers import finish_callback, is_step_required
 
 consume_routing_key = "time_variance_checker"
@@ -17,11 +17,7 @@ logger = logging.getLogger("pelican.workers.report")
 @click.command()
 def start():
     """Create reports, pick examples, and update dataset metadata."""
-    consume(
-        on_message_callback=callback,
-        queue=consume_routing_key,
-        arguments=SLOW_CONSUMER_ARGUMENTS,
-    )
+    consume(on_message_callback=callback, queue=consume_routing_key)
 
 
 def callback(client_state, channel, method, properties, input_message):

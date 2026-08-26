@@ -50,10 +50,6 @@ YAPW_KWARGS = {
     "decode": decode,
 }
 
-# Queue arguments for a consumer whose callback can take longer than RabbitMQ's 30-minute consumer timeout.
-# https://www.rabbitmq.com/consumers.html
-SLOW_CONSUMER_ARGUMENTS = {"x-consumer-timeout": 3 * 60 * 60 * 1000}  # 3 hours, in milliseconds
-
 
 def consume(*args: Any, prefetch_count=1, **kwargs: Any) -> None:
     """Consume messages from RabbitMQ."""
