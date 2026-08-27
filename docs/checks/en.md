@@ -292,7 +292,7 @@ Each <code>contracts[].awardID</code> is present and matches the <code>id</code>
 
 #### Currency distribution
 
-<p>Visualizes the distribution of <code>currency</code> values. No test is performed. The fields are:</p><ul><li><code>planning.budget.value.currency</code></li><li><code>tender.value.currency</code></li><li><code>tender.minValue.currency</code></li><li><code>awards.value.currency</code></li><li><code>contracts.value.currency</code></li><li><code>contracts.implementation.transactions.value.currency</code></li></ul><p>The codelist is closed.</p>
+<p>Visualizes the distribution of <code>currency</code> values. No test is performed. The fields are:</p><ul><li><code>planning.budget.amount.currency</code></li><li><code>tender.items.unit.value.currency</code></li><li><code>tender.value.currency</code></li><li><code>tender.minValue.currency</code></li><li><code>awards.value.currency</code></li><li><code>awards.items.unit.value.currency</code></li><li><code>contracts.value.currency</code></li><li><code>contracts.items.unit.value.currency</code></li><li><code>contracts.implementation.transactions.value.currency</code></li></ul><p>The codelist is closed.</p>
 
 #### Related process relation distribution
 

@@ -292,7 +292,7 @@ Cada <code>contracts[].awardID</code> está presente y coincide con el <code>id<
 
 #### Distribución de la moneda
 
-<p>Visualiza la distribución de los valores de <code>currency</code>. No se realiza ninguna prueba. Los campos son:</p><ul><li><code>planning.budget.value.currency</code></li><li><code>tender.value.currency</code></li><li><code>tender.minValue.currency</code></li><li><code>awards.value.currency</code></li><li><code>contracts.value.currency</code></li><li><code>contracts.implementation.transactions.value.currency</code></li></ul><p>La lista de códigos es cerrada.</p>
+<p>Visualiza la distribución de los valores de <code>currency</code>. No se realiza ninguna prueba. Los campos son:</p><ul><li><code>planning.budget.amount.currency</code></li><li><code>tender.items.unit.value.currency</code></li><li><code>tender.value.currency</code></li><li><code>tender.minValue.currency</code></li><li><code>awards.value.currency</code></li><li><code>awards.items.unit.value.currency</code></li><li><code>contracts.value.currency</code></li><li><code>contracts.items.unit.value.currency</code></li><li><code>contracts.implementation.transactions.value.currency</code></li></ul><p>La lista de códigos es cerrada.</p>
 
 #### Distribución de la relación de los procesos relacionados
 
