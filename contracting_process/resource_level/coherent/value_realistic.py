@@ -11,8 +11,10 @@ import datetime
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
 from pelican.util.currency_converter import convert
 from pelican.util.getter import deep_get, get_values
+from pelican.util.schema import get_paths
 
-version = 1.0
+version = 2.0
+paths = get_paths("Value")
 
 
 def calculate(item):
@@ -20,16 +22,7 @@ def calculate(item):
 
     date = deep_get(item, "date", datetime.date)
 
-    values = []
-    for path in (
-        "tender.value",
-        "tender.minValue",
-        "awards.value",
-        "contracts.value",
-        "planning.budget.amount",
-        "contracts.implementation.transactions.value",
-    ):
-        values.extend(get_values(item, path))
+    values = [value for path in paths for value in get_values(item, path)]
 
     application_count = 0
     pass_count = 0

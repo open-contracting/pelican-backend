@@ -10,6 +10,7 @@ from dataset.distribution import (
 from dataset.misc import url_availability
 from dataset.reference import related_process_identifier
 from dataset.unique import tender_id
+from pelican.util.schema import get_paths
 
 definitions = {
     "distribution.main_procurement_category": main_procurement_category,
@@ -45,46 +46,20 @@ definitions = {
         ["active", "terminated"],
     ),
     "distribution.milestone_status": code_distribution.CodeDistribution(
-        [
-            "planning.milestones.status",
-            "tender.milestones.status",
-            "contracts.milestones.status",
-            "contracts.implementation.milestones.status",
-        ],
+        [f"{path}.status" for path in get_paths("Milestone")],
         ["met"],
     ),
     "distribution.milestone_type": code_distribution.CodeDistribution(
-        [
-            "planning.milestones.type",
-            "tender.milestones.type",
-            "contracts.milestones.type",
-            "contracts.implementation.milestones.type",
-        ]
+        [f"{path}.type" for path in get_paths("Milestone")]
     ),
     "distribution.document_document_type": code_distribution.CodeDistribution(
-        [
-            "planning.documents.documentType",
-            "tender.documents.documentType",
-            "contracts.documents.documentType",
-            "contracts.implementation.documents.documentType",
-            "awards.documents.documentType",
-        ]
+        [f"{path}.documentType" for path in get_paths("Document")]
     ),
     "distribution.value_currency": code_distribution.CodeDistribution(
-        [
-            "tender.value.currency",
-            "tender.minValue.currency",
-            "awards.value.currency",
-            "contracts.value.currency",
-            "planning.budget.amount.currency",
-            "contracts.implementation.transactions.value.currency",
-        ]
+        [f"{path}.currency" for path in get_paths("Value")]
     ),
     "distribution.related_process_relation": code_distribution.CodeDistribution(
-        [
-            "relatedProcesses.relationship",
-            "contracts.relatedProcesses.relationship",
-        ]
+        [f"{path}.relationship" for path in get_paths("RelatedProcess")]
     ),
     "misc.url_availability": url_availability,
     "consistent.related_process_title": related_process_title,

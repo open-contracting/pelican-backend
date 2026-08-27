@@ -3,6 +3,12 @@ Changelog
 
 This changelog only notes major changes, to notify other developers.
 
+2026-08-26
+----------
+
+-  feat: Determine compiled release-level and dataset-level checks' paths based on the release schema, using the new :mod:`pelican.util.schema` module. :issue:`12`
+-  fix: ``coherent.value_realistic`` and ``distribution.value_currency`` now check the ``tender``, ``awards`` and ``contracts`` ``items.unit.value`` objects, which were omitted. Bump ``coherent.value_realistic``'s ``version`` to 2.0. :issue:`12`
+
 2026-08-25
 ----------
 

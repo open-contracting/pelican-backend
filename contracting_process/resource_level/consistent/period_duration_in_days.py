@@ -12,23 +12,16 @@ import math
 
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
 from pelican.util.getter import deep_get, get_values
+from pelican.util.schema import get_paths
 
 version = 1.0
+paths = get_paths("Period")
 
 
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    periods = []
-    for path in (
-        "tender.tenderPeriod",
-        "tender.enquiryPeriod",
-        "tender.awardPeriod",
-        "tender.contractPeriod",
-        "awards.contractPeriod",
-        "contracts.period",
-    ):
-        periods.extend(get_values(item, path))
+    periods = [value for path in paths for value in get_values(item, path)]
 
     application_count = 0
     pass_count = 0
