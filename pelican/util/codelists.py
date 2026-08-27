@@ -10,7 +10,7 @@ from requests.adapters import HTTPAdapter, Retry
 
 from pelican.util import settings
 
-CODELIST_DIR = Path(__file__).resolve().parent.parent / "static" / "codelists"
+CODELIST_DIR = Path(__file__).resolve().parents[1] / "static" / "codelists"
 
 CODELIST_URLS = {
     "documentType.csv": "https://raw.githubusercontent.com/open-contracting/standard/1.1/schema/codelists/documentType.csv",
