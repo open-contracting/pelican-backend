@@ -58,6 +58,7 @@ def _checks(field):
         if key == "numberOfTenderers":
             checks.append((number.calculate, number.name))
     elif refs[-1] == "Value":  # noqa: SIM102 # consistency
+        # A refund reverses the payer and payee, rather than setting a negative amount.
         if key == "amount" and field.path[-3] in {"transactions", "unit"}:
             checks.append((number.calculate, number.name))
 

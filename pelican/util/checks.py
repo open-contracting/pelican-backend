@@ -187,7 +187,7 @@ def coherent_dates_check(version: float, pairs: list[tuple[dict[str, Any], dict[
     A pair of dates is coherent if the first date is less than or equal to the second date.
 
     :param version: the check's version
-    :param pairs: date value pairs
+    :param pairs: pairs of values from :func:`~pelican.util.getter.get_values`
     """
     result = get_empty_result_resource(version)
 

@@ -144,6 +144,16 @@ def get_organization_identifier(item: Any, path: str) -> tuple[str, str] | None:
 
 
 def get_values(item: Any, str_path: str, *, value_only: bool | None = False) -> list[Any]:
+    """
+    Return a list with one entry per occurrence of a period-separated path.
+
+    Each entry is a ``{"path": ..., "value": ...}`` dict, whose ``path`` fills in the array indexes. For example,
+    ``get_values(item, "awards.id")`` returns ``path`` values like ``awards[0].id``, ``awards[1].id``, etc.
+
+    :param item: the value to index into
+    :param str_path: a period-separated list of keys
+    :param value_only: whether to return the values without their paths
+    """
     index: int | None
 
     if item is None:
