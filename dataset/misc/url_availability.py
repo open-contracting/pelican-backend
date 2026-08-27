@@ -17,17 +17,12 @@ import requests
 from pelican.util import settings
 from pelican.util.checks import ReservoirSampler, get_empty_result_dataset
 from pelican.util.getter import get_values
+from pelican.util.schema import get_paths
 
 version = 1.0
 min_items = 100
 
-paths = [
-    "planning.documents.url",
-    "tender.documents.url",
-    "awards.documents.url",
-    "contracts.documents.url",
-    "contracts.implementation.documents.url",
-]
+paths = tuple(f"{path}.url" for path in get_paths("Document"))
 
 
 def add_item(scope, item, item_id):

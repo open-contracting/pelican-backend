@@ -60,18 +60,6 @@ def test_failed():
     assert result["meta"] == {
         "failed_paths": [
             {
-                "path_1": "contracts[0].milestones[0].dateModified",
-                "path_2": "date",
-                "value_1": "2015-12-31T00:00:00Z",
-                "value_2": "2000-12-31T00:00:00Z",
-            },
-            {
-                "path_1": "contracts[0].milestones[0].dateMet",
-                "path_2": "date",
-                "value_1": "2017-12-31T00:00:00Z",
-                "value_2": "2000-12-31T00:00:00Z",
-            },
-            {
                 "path_1": "contracts[1].implementation.milestones[0].dateModified",
                 "path_2": "date",
                 "value_1": "2015-12-30T00:00:00Z",
@@ -81,6 +69,18 @@ def test_failed():
                 "path_1": "contracts[1].implementation.milestones[1].dateMet",
                 "path_2": "date",
                 "value_1": "2017-12-30T00:00:00Z",
+                "value_2": "2000-12-31T00:00:00Z",
+            },
+            {
+                "path_1": "contracts[0].milestones[0].dateModified",
+                "path_2": "date",
+                "value_1": "2015-12-31T00:00:00Z",
+                "value_2": "2000-12-31T00:00:00Z",
+            },
+            {
+                "path_1": "contracts[0].milestones[0].dateMet",
+                "path_2": "date",
+                "value_1": "2017-12-31T00:00:00Z",
                 "value_2": "2000-12-31T00:00:00Z",
             },
         ]

@@ -8,28 +8,23 @@ Coherence check for period objects.
 
 from pelican.util.checks import coherent_dates_check
 from pelican.util.getter import get_values
+from pelican.util.schema import get_paths
 
 version = 1.0
+paths = tuple((f"{path}.startDate", f"{path}.endDate") for path in get_paths("Period"))
 
 
 def calculate(item):
     pairs = []
 
-    for first_path, second_path, split in (
-        ("tender.tenderPeriod.startDate", "tender.tenderPeriod.endDate", False),
-        ("tender.enquiryPeriod.startDate", "tender.enquiryPeriod.endDate", False),
-        ("tender.awardPeriod.startDate", "tender.awardPeriod.endDate", False),
-        ("tender.contractPeriod.startDate", "tender.contractPeriod.endDate", False),
-        ("awards.contractPeriod.startDate", "awards.contractPeriod.endDate", True),
-        ("contracts.period.startDate", "contracts.period.endDate", True),
-    ):
+    for first_path, second_path in paths:
         first_dates = get_values(item, first_path)
         second_dates = get_values(item, second_path)
         pairs.extend(
             (first_date, second_date)
             for first_date in first_dates
             for second_date in second_dates
-            if not split or first_date["path"].split(".", 1)[0] == second_date["path"].split(".", 1)[0]
+            if first_date["path"].rsplit(".", 1)[0] == second_date["path"].rsplit(".", 1)[0]  # `split` not needed
         )
 
     return coherent_dates_check(version, pairs)

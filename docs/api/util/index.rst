@@ -7,6 +7,7 @@ Utilities
    codelists
    currency_converter
    getter
+   schema
    services
    settings
    workers
