@@ -15,6 +15,8 @@ This project uses a direct exchange in the same way as the `default exchange <ht
 
 In each worker, the queue name and binding key is set by ``consume_routing_key``. The routing key of published messages is set by ``routing_key``. Queue names and routing keys are prefixed by the exchange name, set by the ``RABBIT_EXCHANGE_NAME`` environment variable.
 
+`Pelican frontend <https://pelican-frontend.readthedocs.io/en/latest/>`__ shares this exchange. Its API publishes the messages that start extraction, filtering and wiping, and its own worker consumes the ``report_exporter_init`` queue.
+
 .. list-table::
    :header-rows: 1
 
@@ -54,6 +56,10 @@ In each worker, the queue name and binding key is set by ``consume_routing_key``
      - ``wiper_init``
      - N/A
      - N/A
+   * - Pelican frontend's ``manage.py export``
+     - ``report_exporter_init``
+     - N/A
+     - ``{"export_id": 1}``
 
 .. _postgresql:
 
