@@ -4,7 +4,7 @@ import click
 import psycopg
 from psycopg import sql
 from psycopg.types.json import Jsonb
-from yapw.methods import nack
+from yapw.methods import ack
 
 from dataset import metadata_aggregator
 from pelican.util import exchange_rates_db, settings
@@ -83,7 +83,7 @@ def callback(client_state, channel, method, properties, input_message):
             )
         else:
             logger.error("No rows found in `compiled_release` where collection_id = %s", collection_id)
-            nack(client_state, channel, method.delivery_tag, requeue=False)
+            ack(client_state, channel, method.delivery_tag)  # ack: users re-run the add command if needed
 
 
 def insert_items(cursors, dataset_id, ids):
