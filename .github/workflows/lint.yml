@@ -6,7 +6,8 @@ jobs:
     permissions:
       contents: write
     secrets:
-      personal-access-token: ${{ secrets.PAT }}
+      client-id: ${{ secrets.APP_CLIENT_ID }}
+      private-key: ${{ secrets.APP_PRIVATE_KEY }}
     with:
       # Copy of release-schema.json to generate checks.
       ocds-schema-exceptions: release-schema.json
