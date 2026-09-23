@@ -44,8 +44,9 @@ def update_from_fixer_io() -> None:
             # curl 'https://data.fixer.io/api/symbols?access_key=' | jq '.symbols | keys | join(",")'
             response = requests.get(f"{BASE_URL}/symbols?access_key={access_key}", timeout=10)
             response.raise_for_status()
-        except requests.RequestException:
-            logger.exception("Couldn't retrieve currency symbols")
+        except requests.RequestException as e:
+            # The exception message can contain the URL, which contains the access key.
+            logger.error("Couldn't retrieve currency symbols: %s", type(e).__name__)  # noqa: TRY400
             return
 
         data = response.json()
@@ -74,8 +75,9 @@ def update_from_fixer_io() -> None:
                     f"{BASE_URL}/{date_str}?access_key={access_key}&base=EUR&symbols={symbols}", timeout=10
                 )
                 response.raise_for_status()
-            except requests.RequestException:
-                logger.exception("Couldn't retrieve currency rates")
+            except requests.RequestException as e:
+                # The exception message can contain the URL, which contains the access key.
+                logger.error("Couldn't retrieve currency rates: %s", type(e).__name__)  # noqa: TRY400
                 break
 
             try:
