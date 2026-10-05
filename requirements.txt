@@ -47,7 +47,7 @@ typing-extensions==4.16.0
     # via
     #   -r requirements_base.txt
     #   psycopg
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   -r requirements_base.txt
     #   requests
