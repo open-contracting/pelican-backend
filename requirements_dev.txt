@@ -28,9 +28,7 @@ jsonref==1.0.0.post1
 jsonschema==4.17.3
     # via -r requirements_dev.in
 orjson==3.11.6
-    # via
-    #   -r requirements_base.txt
-    #   yapw
+    # via -r requirements_base.txt
 packaging==23.1
     # via pytest
 phonenumbers==8.10.17
@@ -41,7 +39,7 @@ pika==1.3.2
     #   yapw
 pluggy==1.6.0
     # via pytest
-psycopg[binary]==3.3.4
+psycopg==3.3.4
     # via
     #   -r requirements_base.txt
     #   -r requirements_dev.in
@@ -83,5 +81,5 @@ urllib3==2.8.0
     #   sentry-sdk
 validate-email==1.3
     # via -r requirements_base.txt
-yapw[perf]==0.1.4
+yapw==0.1.4
     # via -r requirements_base.txt
