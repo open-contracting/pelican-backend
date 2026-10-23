@@ -2,7 +2,7 @@
 #    uv pip compile requirements_base.in -o requirements_base.txt
 cachetools==7.1.7
     # via -r requirements_base.in
-certifi==2026.7.22
+certifi==2026.10.19
     # via
     #   requests
     #   sentry-sdk
