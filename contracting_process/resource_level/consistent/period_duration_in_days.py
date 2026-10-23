@@ -7,7 +7,7 @@ If ``endDate`` is blank or unparsable, then, for each period, ``durationInDays``
 Since the test operates on all period objects, the test silently ignores any dates that can't be parsed.
 """
 
-import datetime
+import datetime as dt
 import math
 
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
@@ -27,9 +27,9 @@ def calculate(item):
     pass_count = 0
     failed_paths = []
     for period in periods:
-        start_date = deep_get(period["value"], "startDate", datetime.datetime)
-        end_date = deep_get(period["value"], "endDate", datetime.datetime)
-        max_extent_date = deep_get(period["value"], "maxExtentDate", datetime.datetime)
+        start_date = deep_get(period["value"], "startDate", dt.datetime)
+        end_date = deep_get(period["value"], "endDate", dt.datetime)
+        max_extent_date = deep_get(period["value"], "maxExtentDate", dt.datetime)
         duration_in_days = deep_get(period, "value.durationInDays", float)
 
         if start_date is None or duration_in_days is None or (end_date is None and max_extent_date is None):

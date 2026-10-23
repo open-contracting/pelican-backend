@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import re
 from typing import Any
 
@@ -18,7 +18,7 @@ def get_amount(no_conversion, amount, currency, date):
 
 
 # https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
-def parse_datetime(string: str | None) -> datetime.datetime | None:
+def parse_datetime(string: str | None) -> dt.datetime | None:
     """
     Parse a string to a datetime.
 
@@ -31,12 +31,12 @@ def parse_datetime(string: str | None) -> datetime.datetime | None:
     except ValueError:
         pass
     try:
-        return datetime.datetime.strptime(string, "%Y-%m-%dT%H:%M:%S%z")
+        return dt.datetime.strptime(string, "%Y-%m-%dT%H:%M:%S%z")
     except ValueError:
         return None
 
 
-def parse_date(string: str | None) -> datetime.date | None:
+def parse_date(string: str | None) -> dt.date | None:
     """
     Parse a string to a date.
 
@@ -49,7 +49,7 @@ def parse_date(string: str | None) -> datetime.date | None:
     except ValueError:
         pass
     try:
-        return datetime.datetime.strptime(string[:10], "%Y-%m-%d").date()
+        return dt.datetime.strptime(string[:10], "%Y-%m-%d").date()
     except ValueError:
         return None
 
@@ -99,9 +99,9 @@ def deep_get(value: Any, path: str, force: type[Any] | None = None) -> Any:
             return None
 
     if force and type(value) is not force:
-        if force is datetime.date:
+        if force is dt.date:
             return parse_date(value)
-        if force is datetime.datetime:
+        if force is dt.datetime:
             return parse_datetime(value)
         if force in {dict, list}:
             value = force()

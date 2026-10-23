@@ -8,7 +8,7 @@ amounts aren't both positive or both negative, or if currency conversion is nece
 before 1999, or in the future.
 """
 
-import datetime
+import datetime as dt
 
 from pelican.util.checks import complete_result_resource_pass_fail, get_empty_result_resource
 from pelican.util.currency_converter import convert
@@ -32,7 +32,7 @@ def calculate(item):
         result["meta"] = {"reason": "an amount is missing or non-numeric"}
         return result
 
-    date = deep_get(item, "date", datetime.date)
+    date = deep_get(item, "date", dt.date)
 
     if planning_currency != tender_currency:
         planning_amount = convert(planning_amount, planning_currency, "USD", date)

@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import logging
 
 import psycopg
@@ -14,7 +14,7 @@ logger = logging.getLogger("pelican.tools.exchange_rates_db")
 BASE_URL = "https://data.fixer.io/api"
 
 
-def load() -> list[tuple[datetime.date, dict[str, float]]]:
+def load() -> list[tuple[dt.date, dict[str, float]]]:
     rows = execute("SELECT valid_on, rates FROM exchange_rates")
     return [(row["valid_on"], row["rates"]) for row in rows]
 
@@ -29,7 +29,7 @@ def update_from_fixer_io() -> None:
             raise EmptyExchangeRatesTableError
 
         max_date = query_result["max_valid_on"]
-        date_now = datetime.datetime.now(tz=datetime.UTC).date()
+        date_now = dt.datetime.now(tz=dt.UTC).date()
         length = (date_now - max_date).days
 
         if not length:
@@ -111,6 +111,6 @@ def update_from_fixer_io() -> None:
             else:
                 commit()
 
-            target_date += datetime.timedelta(days=1)
+            target_date += dt.timedelta(days=1)
 
         logger.info("Exchange rates update finished.")

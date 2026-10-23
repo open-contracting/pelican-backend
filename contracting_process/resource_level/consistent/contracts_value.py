@@ -12,7 +12,7 @@ Since the test operates on all award and contract values, the test silently igno
 5. if currency conversion is necessary and the release date is invalid, before 1999, or in the future
 """
 
-import datetime
+import datetime as dt
 from collections import Counter, defaultdict
 
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
@@ -34,7 +34,7 @@ def calculate(item):
         result["meta"] = {"reason": "no contract has an awardID"}
         return result
 
-    date = deep_get(item, "date", datetime.datetime)
+    date = deep_get(item, "date", dt.datetime)
 
     award_id_counts = Counter(str(award["id"]) for award in awards)
 

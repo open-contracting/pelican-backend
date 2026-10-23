@@ -6,7 +6,7 @@ missing or unknown currencies. If currency conversion is necessary, but the rele
 the future, the test silently ignores the value.
 """
 
-import datetime
+import datetime as dt
 
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
 from pelican.util.currency_converter import convert
@@ -20,7 +20,7 @@ paths = get_paths("Value")
 def calculate(item):
     result = get_empty_result_resource(version)
 
-    date = deep_get(item, "date", datetime.date)
+    date = deep_get(item, "date", dt.date)
 
     values = [value for path in paths for value in get_values(item, path)]
 

@@ -8,7 +8,7 @@ amounts and any missing or unknown currencies. If currency conversion is necessa
 before 1999, or in the future, the test silently ignores the contract and its transactions.
 """
 
-import datetime
+import datetime as dt
 
 from pelican.util.checks import complete_result_resource, get_empty_result_resource
 from pelican.util.getter import deep_get, get_amount, get_values
@@ -24,7 +24,7 @@ def calculate(item):
         result["meta"] = {"reason": "no contract is set"}
         return result
 
-    date = deep_get(item, "date", datetime.datetime)
+    date = deep_get(item, "date", dt.datetime)
 
     application_count = 0
     pass_count = 0

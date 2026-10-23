@@ -8,7 +8,7 @@ non-numeric, if a currency is missing or unknown, or if currency conversion is n
 invalid, before 1999, or in the future.
 """
 
-import datetime
+import datetime as dt
 import functools
 from operator import itemgetter
 
@@ -30,7 +30,7 @@ def add_item(scope, item, item_id, path):
     scope.setdefault("values", [])
 
     ocid = item["ocid"]
-    date = deep_get(item, "date", datetime.date)
+    date = deep_get(item, "date", dt.date)
 
     # Use get_values(), since `path` can contain an array as an ancestor.
     for value in get_values(item, path):

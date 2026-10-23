@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import os
 from operator import itemgetter
 
@@ -28,9 +28,9 @@ class ExchangeRates:
     instance), instead of modifying an existing one.
     """
 
-    def __init__(self, data: list[tuple[datetime.date, dict[str, float]]]):
-        self.rates: dict[datetime.date, dict[str, float]] = {}
-        self.bounds: dict[str, tuple[datetime.date, datetime.date]] = {}
+    def __init__(self, data: list[tuple[dt.date, dict[str, float]]]):
+        self.rates: dict[dt.date, dict[str, float]] = {}
+        self.bounds: dict[str, tuple[dt.date, dt.date]] = {}
         self.currencies: set[str] = set()
 
         for item in data:
@@ -39,7 +39,7 @@ class ExchangeRates:
         data.sort(key=itemgetter(0))
 
         if settings.CURRENCY_CONVERTER_INTERPOLATION:
-            real_data_dates: dict[str, list[datetime.date]] = {currency: [] for currency in self.currencies}
+            real_data_dates: dict[str, list[dt.date]] = {currency: [] for currency in self.currencies}
 
             for item in data:
                 self.rates[item[0]] = item[1]
@@ -84,7 +84,7 @@ class ExchangeRates:
 
         distance_to_start = None
         distance_to_end = None
-        current_date = start_date + datetime.timedelta(days=1)
+        current_date = start_date + dt.timedelta(days=1)
         while current_date < end_date:
             distance_to_start = (current_date - start_date).days
             distance_to_end = (end_date - current_date).days
@@ -94,7 +94,7 @@ class ExchangeRates:
                 and distance_to_start > settings.CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK
                 and distance_to_end > settings.CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK
             ):
-                current_date += datetime.timedelta(
+                current_date += dt.timedelta(
                     days=distance_to_end - settings.CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK
                 )
                 continue
@@ -105,7 +105,7 @@ class ExchangeRates:
                 self.rates.setdefault(current_date, {})
                 self.rates[current_date][currency] = end_date_rate
 
-            current_date += datetime.timedelta(days=1)
+            current_date += dt.timedelta(days=1)
 
     def interpolation_linear(self, currency, start_date, end_date):
         # start_date and end_date are exclusive.
@@ -114,7 +114,7 @@ class ExchangeRates:
 
         distance_to_start = None
         distance_to_end = None
-        current_date = start_date + datetime.timedelta(days=1)
+        current_date = start_date + dt.timedelta(days=1)
         while current_date < end_date:
             distance_to_start = (current_date - start_date).days
             distance_to_end = (end_date - current_date).days
@@ -124,7 +124,7 @@ class ExchangeRates:
                 and distance_to_start > settings.CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK
                 and distance_to_end > settings.CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK
             ):
-                current_date += datetime.timedelta(
+                current_date += dt.timedelta(
                     days=distance_to_end - settings.CURRENCY_CONVERTER_INTERPOLATION_MAX_DAYS_FALLBACK
                 )
                 continue
@@ -136,7 +136,7 @@ class ExchangeRates:
                 6,
             )
 
-            current_date += datetime.timedelta(days=1)
+            current_date += dt.timedelta(days=1)
 
     def extrapolation_closest_rate(self, currency, rel_date):
         bound = self.bounds[currency]
@@ -159,7 +159,7 @@ class ExchangeRates:
         if original_currency not in self.currencies or target_currency not in self.currencies:
             return None
 
-        if type(rel_date) is not datetime.date:
+        if type(rel_date) is not dt.date:
             try:
                 rel_date = rel_date.date()
             except AttributeError:
