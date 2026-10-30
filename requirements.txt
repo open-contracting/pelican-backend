@@ -35,7 +35,7 @@ psycopg[c]==3.3.4
     #   -r requirements_base.txt
 psycopg-c==3.3.4
     # via psycopg
-python-dateutil==2.8.0
+python-dateutil==2.9.0.post0
     # via -r requirements_base.txt
 requests==2.33.0
     # via -r requirements_base.txt
