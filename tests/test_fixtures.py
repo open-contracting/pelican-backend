@@ -17,7 +17,7 @@ warnings.formatwarning = custom_warning_formatter
 def get_test_cases():
     excluded_files = {"test_fixtures.py", "test_converter.py"}
 
-    for root, dirs, files in os.walk("tests"):
+    for root, dirs, files in Path("tests").walk():
         for directory in list(dirs):
             # Field-level tests use sub-schema, not the release schema.
             if directory.startswith("__") or directory == "field":  # __pycache__
@@ -27,7 +27,7 @@ def get_test_cases():
             if not file.startswith("test_") or not file.endswith(".py") or file in excluded_files:
                 continue
 
-            filename = Path(root) / file
+            filename = root / file
 
             # https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
             spec = importlib.util.spec_from_file_location("dummy", filename)
