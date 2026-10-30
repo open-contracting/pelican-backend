@@ -6,7 +6,7 @@ Read the rest of the documentation to understand how Pelican backend works, and 
 Setup
 -----
 
-Create a Python 3.13 virtual environment.
+Create a Python 3.14 virtual environment.
 
 Install development dependencies:
 
