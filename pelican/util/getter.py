@@ -49,7 +49,7 @@ def parse_date(string: str | None) -> dt.date | None:
     except ValueError:
         pass
     try:
-        return dt.datetime.strptime(string[:10], "%Y-%m-%d").date()
+        return dt.date.strptime(string[:10], "%Y-%m-%d")
     except ValueError:
         return None
 
