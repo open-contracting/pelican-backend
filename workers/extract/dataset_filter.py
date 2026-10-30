@@ -110,16 +110,16 @@ def callback(client_state, channel, method, properties, input_message):
             parts.append("AND data->>'date' <= %(release_date_to)s")
 
         if "buyer" in filter_message:
-            variables["buyer"] = tuple(filter_message["buyer"])
-            parts.append("AND data->'buyer'->>'name' IN %(buyer)s")
+            variables["buyer"] = filter_message["buyer"]
+            parts.append("AND data->'buyer'->>'name' = ANY(%(buyer)s)")
 
         if "buyer_regex" in filter_message:
             variables["buyer_regex"] = filter_message["buyer_regex"]
             parts.append("AND data->'buyer'->>'name' ILIKE %(buyer_regex)s")
 
         if "procuring_entity" in filter_message:
-            variables["procuring_entity"] = tuple(filter_message["procuring_entity"])
-            parts.append("AND data->'tender'->'procuringEntity'->>'name' IN %(procuring_entity)s")
+            variables["procuring_entity"] = filter_message["procuring_entity"]
+            parts.append("AND data->'tender'->'procuringEntity'->>'name' = ANY(%(procuring_entity)s)")
 
         if "procuring_entity_regex" in filter_message:
             variables["procuring_entity_regex"] = filter_message["procuring_entity_regex"]
