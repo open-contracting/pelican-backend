@@ -98,41 +98,34 @@ def callback(client_state, channel, method, properties, input_message):
         )
         commit()
 
-        variables = {"dataset_id_original": dataset_id_original}
-        parts = ["SELECT id FROM data_item WHERE dataset_id = %(dataset_id_original)s"]
+        statement = t"SELECT id FROM data_item WHERE dataset_id = {dataset_id_original}"
 
         if "release_date_from" in filter_message:
-            variables["release_date_from"] = filter_message["release_date_from"]
-            parts.append("AND data->>'date' >= %(release_date_from)s")
+            statement += t" AND data->>'date' >= {filter_message['release_date_from']}"
 
         if "release_date_to" in filter_message:
-            variables["release_date_to"] = filter_message["release_date_to"]
-            parts.append("AND data->>'date' <= %(release_date_to)s")
+            statement += t" AND data->>'date' <= {filter_message['release_date_to']}"
 
         if "buyer" in filter_message:
-            variables["buyer"] = filter_message["buyer"]
-            parts.append("AND data->'buyer'->>'name' = ANY(%(buyer)s)")
+            statement += t" AND data->'buyer'->>'name' = ANY({filter_message['buyer']})"
 
         if "buyer_regex" in filter_message:
-            variables["buyer_regex"] = filter_message["buyer_regex"]
-            parts.append("AND data->'buyer'->>'name' ILIKE %(buyer_regex)s")
+            statement += t" AND data->'buyer'->>'name' ILIKE {filter_message['buyer_regex']}"
 
         if "procuring_entity" in filter_message:
-            variables["procuring_entity"] = filter_message["procuring_entity"]
-            parts.append("AND data->'tender'->'procuringEntity'->>'name' = ANY(%(procuring_entity)s)")
+            statement += t" AND data->'tender'->'procuringEntity'->>'name' = ANY({filter_message['procuring_entity']})"
 
         if "procuring_entity_regex" in filter_message:
-            variables["procuring_entity_regex"] = filter_message["procuring_entity_regex"]
-            parts.append("AND data->'tender'->'procuringEntity'->>'name' ILIKE %(procuring_entity_regex)s")
+            statement += (
+                t" AND data->'tender'->'procuringEntity'->>'name' ILIKE {filter_message['procuring_entity_regex']}"
+            )
 
         if max_items is not None:
-            variables["limit"] = max_items
-            parts.append("LIMIT %(limit)s")
+            statement += t" LIMIT {max_items}"
 
-        statement = sql.SQL(" ".join(parts))
-        logger.info(statement.as_string(cursor))
+        logger.info(sql.as_string(statement, cursor))
 
-        ids = [row["id"] for row in cursor.execute(statement, variables)]
+        ids = [row["id"] for row in cursor.execute(statement)]
 
         process_items(
             client_state=client_state,
