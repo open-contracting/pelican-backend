@@ -55,7 +55,7 @@ pytest==9.0.3
     #   pytest-subtests
 pytest-subtests==0.5.0
     # via -r requirements_dev.in
-python-dateutil==2.9.0.post0
+python-dateutil==3.0.0
     # via -r requirements_base.txt
 requests==2.33.0
     # via -r requirements_base.txt
@@ -70,6 +70,10 @@ six==1.16.0
     #   -r requirements_base.txt
     #   python-dateutil
     #   rfc3339-validator
+tzdata==2026.5
+    # via
+    #   -r requirements_base.txt
+    #   python-dateutil
 urllib3==2.8.0
     # via
     #   -r requirements_base.txt

@@ -33,13 +33,17 @@ psycopg==3.3.4
     #   -r requirements.in
 psycopg-c==3.3.4
     # via psycopg
-python-dateutil==2.9.0.post0
+python-dateutil==3.0.0
     # via -r requirements_base.txt
 requests==2.33.0
     # via -r requirements_base.txt
 sentry-sdk==2.8.0
     # via -r requirements_base.txt
 six==1.16.0
+    # via
+    #   -r requirements_base.txt
+    #   python-dateutil
+tzdata==2026.5
     # via
     #   -r requirements_base.txt
     #   python-dateutil
