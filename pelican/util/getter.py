@@ -108,7 +108,7 @@ def deep_get(value: Any, path: str, force: type[Any] | None = None) -> Any:
         elif force in {float, int, str}:
             try:
                 value = force(value)
-            except (ValueError, TypeError):
+            except ValueError, TypeError:
                 return None
         else:
             raise NotImplementedError
@@ -188,7 +188,7 @@ def get_values(item: Any, str_path: str, *, value_only: bool | None = False) -> 
         try:
             field = groups[0][0]
             index = int(groups[0][1])
-        except (IndexError, TypeError, ValueError):
+        except IndexError, TypeError, ValueError:
             pass
 
     if (
@@ -254,7 +254,7 @@ def get_values(item: Any, str_path: str, *, value_only: bool | None = False) -> 
         try:
             field = groups[0][0]
             index = int(groups[0][1])
-        except (IndexError, TypeError, ValueError):
+        except IndexError, TypeError, ValueError:
             pass
 
     if (

@@ -66,12 +66,12 @@ def process_items(
 
     items_inserted = 0
 
-    for page_number, page in enumerate(batched(ids, settings.EXTRACTOR_PAGE_SIZE)):
+    for page_number, page in enumerate(batched(ids, settings.EXTRACTOR_PAGE_SIZE, strict=False)):
         # insert_items() returns the id's of the rows inserted into the data_item table.
         # psycopg adapts a list to an array, but a tuple to a record.
         item_ids = insert_items(cursors, dataset_id, list(page))
         commit()
-        for item_ids_batch in batched(item_ids, settings.EXTRACTOR_MAX_BATCH_SIZE):
+        for item_ids_batch in batched(item_ids, settings.EXTRACTOR_MAX_BATCH_SIZE, strict=False):
             items_inserted += len(item_ids_batch)
 
             initialize_items_state(dataset_id, item_ids_batch)

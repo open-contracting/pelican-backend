@@ -168,7 +168,7 @@ class ExchangeRates:
         if type(amount) is not float:
             try:
                 amount = float(amount)
-            except (TypeError, ValueError):
+            except TypeError, ValueError:
                 return None
 
         original_currency_rate = None

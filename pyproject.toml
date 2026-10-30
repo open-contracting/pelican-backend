@@ -1,6 +1,7 @@
 [project]
 name = "pelican-backend"
 version = "0.0.0"
+requires-python = ">=3.14"
 
 [tool.ruff]
 line-length = 119
@@ -11,6 +12,7 @@ ignore = [
     "ANN", "C901", "COM812", "CPY001", "D203", "D212", "D415", "EM", "ISC001", "PERF203", "PLR091", "Q000",
     "ARG001",  # pika
     "D1",
+    "TC",
     "DTZ",
     "ERA001",  # commented-out code
     "PLR2004",  # magic
