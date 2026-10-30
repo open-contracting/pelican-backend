@@ -1,6 +1,7 @@
 import logging
 from collections.abc import Callable
 from functools import cache
+from itertools import batched
 from math import ceil
 from typing import Any
 
@@ -65,12 +66,12 @@ def process_items(
 
     items_inserted = 0
 
-    for page_number, i in enumerate(range(0, len(ids), settings.EXTRACTOR_PAGE_SIZE)):
+    for page_number, page in enumerate(batched(ids, settings.EXTRACTOR_PAGE_SIZE)):
         # insert_items() returns the id's of the rows inserted into the data_item table.
-        item_ids = insert_items(cursors, dataset_id, ids[i : i + settings.EXTRACTOR_PAGE_SIZE])
+        # psycopg adapts a list to an array, but a tuple to a record.
+        item_ids = insert_items(cursors, dataset_id, list(page))
         commit()
-        for j in range(0, len(item_ids), settings.EXTRACTOR_MAX_BATCH_SIZE):
-            item_ids_batch = item_ids[j : j + settings.EXTRACTOR_MAX_BATCH_SIZE]
+        for item_ids_batch in batched(item_ids, settings.EXTRACTOR_MAX_BATCH_SIZE):
             items_inserted += len(item_ids_batch)
 
             initialize_items_state(dataset_id, item_ids_batch)
