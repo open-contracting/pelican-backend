@@ -15,7 +15,7 @@ charset-normalizer==3.1.0
     #   requests
 click==8.1.6
     # via -r requirements_base.txt
-coverage==6.5.0
+coverage==7.17.0
     # via -r requirements_dev.in
 idna==3.15
     # via
@@ -47,7 +47,7 @@ psycopg-binary==3.3.4
     # via psycopg
 pygments==2.20.0
     # via pytest
-pyrsistent==0.18.0
+pyrsistent==0.20.0
     # via jsonschema
 pytest==9.0.3
     # via
