@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 # Open one connection per thread, so that one thread doesn't commit another's incomplete work.
 db = threading.local()
+connections: list[psycopg.Connection[dict[str, Any]]] = []
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +58,10 @@ YAPW_KWARGS = {
 def consume(*args: Any, prefetch_count=1, **kwargs: Any) -> None:
     """Consume messages from RabbitMQ."""
     client = AsyncConsumer(*args, prefetch_count=prefetch_count, **kwargs, **YAPW_KWARGS)
-    client.start()
+    try:
+        client.start()
+    finally:
+        close_connections()
 
 
 def publish(*args: Any, **kwargs: Any) -> None:
@@ -79,8 +83,17 @@ def get_connection() -> psycopg.Connection[dict[str, Any]]:
     """Connect to the database, if needed, and return the database connection."""
     if not hasattr(db, "connection"):
         db.connection = psycopg.connect(settings.DATABASE_URL, row_factory=dict_row)
+        connections.append(db.connection)
 
     return db.connection
+
+
+def close_connections() -> None:
+    """Close all threads' database connections."""
+    while connections:
+        connections.pop().close()
+    if hasattr(db, "connection"):
+        del db.connection
 
 
 def get_cursor(name="") -> psycopg.Cursor[dict[str, Any]]:
