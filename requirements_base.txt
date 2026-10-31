@@ -20,7 +20,7 @@ orjson==3.11.6
     #   yapw
 phonenumbers==8.10.17
     # via -r requirements_base.in
-pika==1.3.2
+pika==1.4.4
     # via
     #   -r requirements_base.in
     #   yapw
