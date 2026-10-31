@@ -1,13 +1,10 @@
 import logging
-from collections.abc import Callable
 from functools import cache
 from itertools import batched
 from math import ceil
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import pika
 from yapw.methods import ack, publish
-from yapw.types import State as ClientState
 
 from pelican.util import settings
 from pelican.util.services import (
@@ -18,6 +15,12 @@ from pelican.util.services import (
     initialize_items_state,
     update_dataset_state,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    import pika
+    from yapw.types import State as ClientState
 
 logger = logging.getLogger(__name__)
 

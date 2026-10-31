@@ -1,9 +1,11 @@
 import random
-from collections.abc import Callable, Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pelican.exceptions import NonPositiveLimitError
 from pelican.util.getter import parse_date
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
 
 
 def get_empty_result_resource(version: float = 1.0) -> dict[str, Any]:

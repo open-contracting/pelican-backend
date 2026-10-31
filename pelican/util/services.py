@@ -1,18 +1,21 @@
 import logging
 import threading
-from collections.abc import Iterable
 from functools import cache
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import orjson
 import psycopg
 from psycopg import sql
-from psycopg.abc import Params, QueryNoTemplate
 from psycopg.rows import dict_row
 from psycopg.types.json import set_json_dumps, set_json_loads
 from yapw.clients import AsyncConsumer, Blocking
 
 from pelican.util import settings
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from psycopg.abc import Params, QueryNoTemplate
 
 # Open one connection per thread, so that one thread doesn't commit another's incomplete work.
 db = threading.local()
