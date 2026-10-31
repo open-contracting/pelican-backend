@@ -30,7 +30,7 @@ python-dateutil==3.0.0
     # via -r requirements_base.in
 requests==2.33.0
     # via -r requirements_base.in
-sentry-sdk==2.8.0
+sentry-sdk==2.73.0
     # via -r requirements_base.in
 six==1.16.0
     # via python-dateutil

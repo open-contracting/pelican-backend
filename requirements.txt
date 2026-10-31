@@ -37,7 +37,7 @@ python-dateutil==3.0.0
     # via -r requirements_base.txt
 requests==2.33.0
     # via -r requirements_base.txt
-sentry-sdk==2.8.0
+sentry-sdk==2.73.0
     # via -r requirements_base.txt
 six==1.16.0
     # via
