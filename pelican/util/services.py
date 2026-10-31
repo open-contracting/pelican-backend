@@ -19,7 +19,8 @@ if TYPE_CHECKING:
 
 # Open one connection per thread, so that one thread doesn't commit another's incomplete work.
 db = threading.local()
-connections: list[psycopg.Connection[dict[str, Any]]] = []
+connections: dict[threading.Thread, psycopg.Connection[dict[str, Any]]] = {}
+connections_lock = threading.Lock()
 
 logger = logging.getLogger(__name__)
 
@@ -83,15 +84,20 @@ def get_connection() -> psycopg.Connection[dict[str, Any]]:
     """Connect to the database, if needed, and return the database connection."""
     if not hasattr(db, "connection"):
         db.connection = psycopg.connect(settings.DATABASE_URL, row_factory=dict_row)
-        connections.append(db.connection)
+        with connections_lock:
+            # yapw replaces its threads when reconnecting, so close the connections of exited threads.
+            for thread in [thread for thread in connections if not thread.is_alive()]:
+                connections.pop(thread).close()
+            connections[threading.current_thread()] = db.connection
 
     return db.connection
 
 
 def close_connections() -> None:
     """Close all threads' database connections."""
-    while connections:
-        connections.pop().close()
+    with connections_lock:
+        while connections:
+            connections.popitem()[1].close()
     if hasattr(db, "connection"):
         del db.connection
 
