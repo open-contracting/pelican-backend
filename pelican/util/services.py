@@ -86,8 +86,9 @@ def get_connection() -> psycopg.Connection[dict[str, Any]]:
         db.connection = psycopg.connect(settings.DATABASE_URL, row_factory=dict_row)
         with connections_lock:
             # yapw replaces its threads when reconnecting, so close the connections of exited threads.
-            for thread in [thread for thread in connections if not thread.is_alive()]:
-                connections.pop(thread).close()
+            for thread in list(connections):
+                if not thread.is_alive():
+                    connections.pop(thread).close()
             connections[threading.current_thread()] = db.connection
 
     return db.connection
