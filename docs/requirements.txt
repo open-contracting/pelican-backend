@@ -1,3 +1,4 @@
+# Install the application requirements, for autodoc.
 -r ../requirements_base.txt
 furo
 myst-parser
